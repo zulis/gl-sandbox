@@ -4,11 +4,10 @@
 //#include <glm/gtc/matrix_transform.hpp>
 #include <Core/Math.h>
 
-class Transform3d
+class Transform3D
 {
 	public:
-		Transform3d(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
-		virtual ~Transform3d() {};
+		Transform3D(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
 
 		void setPosition(float x, float y, float z);
 		void setRotation(float x, float y, float z);
@@ -34,7 +33,7 @@ class Transform3d
 };
 
 //=========================================================================
-Transform3d::Transform3d(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+Transform3D::Transform3D(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 {
 	mPosition = position;
 	mRotation = rotation;
@@ -43,70 +42,70 @@ Transform3d::Transform3d(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale
 }
 
 //=========================================================================
-void Transform3d::setPosition(float x, float y, float z)
+void Transform3D::setPosition(float x, float y, float z)
 {
 	setPosition(glm::vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3d::setRotation(float x, float y, float z)
+void Transform3D::setRotation(float x, float y, float z)
 {
 	setRotation(glm::vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3d::setRotationX(float x)
+void Transform3D::setRotationX(float x)
 {
 	setRotation(glm::vec3(x, mRotation.y, mRotation.z));
 }
 
 //=========================================================================
-void Transform3d::setRotationY(float y)
+void Transform3D::setRotationY(float y)
 {
 	setRotation(glm::vec3(mRotation.x, y, mRotation.z));
 }
 
 //=========================================================================
-void Transform3d::setRotationZ(float z)
+void Transform3D::setRotationZ(float z)
 {
 	setRotation(glm::vec3(mRotation.x, mRotation.y, z));
 }
 
 //=========================================================================
-void Transform3d::setScale(float x, float y, float z)
+void Transform3D::setScale(float x, float y, float z)
 {
 	setScale(glm::vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3d::setPosition(glm::vec3 position)
+void Transform3D::setPosition(glm::vec3 position)
 {
 	mPosition = position;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3d::setRotation(glm::vec3 rotation)
+void Transform3D::setRotation(glm::vec3 rotation)
 {
 	mRotation = rotation;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3d::setScale(float scale)
+void Transform3D::setScale(float scale)
 {
 	setScale(scale, scale, scale);
 }
 
 //=========================================================================
-void Transform3d::setScale(glm::vec3 scale)
+void Transform3D::setScale(glm::vec3 scale)
 {
 	mScale = scale;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3d::updateMatrix()
+void Transform3D::updateMatrix()
 {
 	mMatrix = glm::mat4(1.0f);
 	mMatrix = glm::translate(mMatrix, mPosition);
@@ -117,19 +116,19 @@ void Transform3d::updateMatrix()
 }
 
 //=========================================================================
-glm::mat4 Transform3d::getMatrix()
+glm::mat4 Transform3D::getMatrix()
 {
 	return mMatrix;
 }
 
 //=========================================================================
-void Transform3d::setMatrix(glm::mat4 matrix)
+void Transform3D::setMatrix(glm::mat4 matrix)
 {
 	mMatrix = matrix;
 }
 
 //=========================================================================
-glm::vec3 Transform3d::getPosition() const
+glm::vec3 Transform3D::getPosition() const
 {
 	return glm::vec3(mMatrix[3][0], mMatrix[3][1], mMatrix[3][2]);
 }

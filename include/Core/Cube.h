@@ -8,7 +8,7 @@
 
 typedef std::shared_ptr<class Cube> CubeRef;
 
-class Cube : public Drawable, public Transform3d
+class Cube : public Drawable, public Transform3D
 {
 	public:
 		static CubeRef create(float size = 100.0f, bool stroked = false);

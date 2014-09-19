@@ -148,9 +148,6 @@
     <ClInclude Include="..\include\Core\Material.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Transform3d.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Texture.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
@@ -196,10 +193,25 @@
     <ClInclude Include="..\include\Core\Quad.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Transform2d.h">
+    <ClInclude Include="..\include\Core\Cube.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Cube.h">
+    <ClInclude Include="..\include\Core\ShaderConstants.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Transform3D.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Transform2D.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\MeshLoader.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\TextureType.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\MeshData.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
   </ItemGroup>

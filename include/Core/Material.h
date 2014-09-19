@@ -4,45 +4,12 @@
 #include <algorithm>
 #include <string>
 #include "Core/Shader.h"
-#include "Core/Drawable.h"
+//#include "Core/Drawable.h"
 #include "Core/Texture.h"
 #include "Core/Light.h"
+#include "Core/TextureType.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
-
-enum class TextureType
-{
-    AmbientColor,
-    DiffuseColor,
-    SpecularColor,
-    SpecularLevel,
-    Glossiness,
-    SelfIllumination,
-    Opacity,
-    FilterColor,
-    Bump,
-    Reflection,
-    Refraction,
-    Displacement,
-    Unknown
-};
-
-std::map<TextureType, std::string> TextureTypeName =
-{
-	{ TextureType::AmbientColor, "AmbientColor" },
-	{ TextureType::DiffuseColor, "DiffuseColor" },
-	{ TextureType::SpecularColor, "SpecularColor" },
-	{ TextureType::SpecularLevel, "SpecularLevel" },
-	{ TextureType::Glossiness, "Glossiness" },
-	{ TextureType::SelfIllumination, "SelfIllumination" },
-	{ TextureType::Opacity, "Opacity" },
-	{ TextureType::FilterColor, "FilterColor" },
-	{ TextureType::Bump, "Bump" },
-	{ TextureType::Reflection, "Reflection" },
-	{ TextureType::Refraction, "Refraction" },
-	{ TextureType::Displacement, "Displacement" },
-	{ TextureType::Unknown, "Unknown" },
-};
 
 //=========================================================================
 class Material
