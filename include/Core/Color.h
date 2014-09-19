@@ -1,0 +1,87 @@
+#pragma once
+
+class Color
+{
+	public:
+		Color();
+		Color(float r, float g, float b, float a = 1.0f);
+
+		float r, g, b, a;
+
+		static Color black();
+		static Color gray(float value);
+		static Color red();
+		static Color green();
+		static Color blue();
+		static Color white();
+
+		operator Color* ();
+		operator const Color* () const;
+
+};
+
+//=========================================================================
+Color::Color()
+{
+	this->r = 0.0f;
+	this->g = 0.0f;
+	this->b = 0.0f;
+	this->a = 1.0f;
+}
+
+//=========================================================================
+Color::Color(float r, float g, float b, float a)
+{
+	this->r = r;
+	this->g = g;
+	this->b = b;
+	this->a = a;
+}
+
+//=========================================================================
+Color Color::black()
+{
+	return Color(0, 0, 0);
+}
+
+//=========================================================================
+Color Color::gray(float value)
+{
+	return Color(value, value, value);
+}
+
+//=========================================================================
+Color Color::red()
+{
+	return Color(1, 0, 0);
+}
+
+//=========================================================================
+Color Color::green()
+{
+	return Color(0, 1, 0);
+}
+
+//=========================================================================
+Color Color::blue()
+{
+	return Color(0, 0, 1);
+}
+
+//=========================================================================
+Color Color::white()
+{
+	return Color(1, 1, 1);
+}
+
+//=========================================================================
+Color::operator Color* ()
+{
+	return (Color*) this;
+}
+
+//=========================================================================
+Color::operator const Color* () const
+{
+	return (const Color*) this;
+}

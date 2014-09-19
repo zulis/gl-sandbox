@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Include\Core">
+      <UniqueIdentifier>{42387aeb-223b-4e22-8dc7-317a98440c12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Components">
+      <UniqueIdentifier>{bf0cbf78-0c84-4c5c-ae85-63102de20ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Systems">
+      <UniqueIdentifier>{c8626aca-02f9-4163-933d-918a66f5f02e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Artemis">
+      <UniqueIdentifier>{7f76d79e-b223-4562-8010-6dd5de3104c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Spatial">
+      <UniqueIdentifier>{5f76a831-9316-4a74-bc0f-27cc29f64d3a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\external\src\artemis\Component.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\ComponentType.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\ComponentTypeManager.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\DelayedEntityProcessingSystem.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\DelayedEntitySystem.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\Entity.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\EntityManager.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\EntityProcessingSystem.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\EntitySystem.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\GroupManager.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\SystemBitManager.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\SystemManager.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\TagManager.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\artemis\World.cpp">
+      <Filter>Src\Artemis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Main.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Core\Window.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Game.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\GL.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\GLCore.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Color.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\StateManager.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\State.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\KeyEvent.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\MouseEvent.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Defines.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Components\TransformComponent.h">
+      <Filter>Include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Camera.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\AABB.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Plane.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Math.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Image.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\ResourceManager.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\ImageManager.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Geometry.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Shader.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Components\RenderComponent.h">
+      <Filter>Include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Spatial\Spatial.h">
+      <Filter>Include\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Mesh.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Drawable.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Material.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Transform3d.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Texture.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Light.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\MaterialPhong.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\MaterialBasic.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Time.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Spatial\MeshSpatial.h">
+      <Filter>Include\Spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Components\VelocityComponent.h">
+      <Filter>Include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Components\KeyboardComponent.h">
+      <Filter>Include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Systems\KeyboardSystem.h">
+      <Filter>Include\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Components\PlayerComponent.h">
+      <Filter>Include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Systems\PlayerMovementSystem.h">
+      <Filter>Include\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Systems\RenderSystem.h">
+      <Filter>Include\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityFactory.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Font.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Quad.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Transform2d.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Cube.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
