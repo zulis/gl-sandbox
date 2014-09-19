@@ -89,7 +89,7 @@ void EntityFactory::setup(const CameraRef& camera)
 
 	//auto mesh = MeshSpatial::create("assets/models/teapot/teapot.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/rocks/1/rock_01_v2.fbx");
-	auto mesh = MeshSpatial::create("assets/models/ship/ship.obj");
+	auto mesh = MeshSpatial::create("assets/models/ship/ship.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/imrod/imrod.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/sponza/sponza.obj");
 	//mesh->setTexturePath("assets/textures/sponza");
