@@ -69,8 +69,8 @@ Quad::Quad(const std::string& fileName, float width, float height)
 
 	if (width == 0 || height == 0)
 	{
-		mWidth = mTexture->getWidth();
-		mHeight = mTexture->getHeight();
+		mWidth = (float)mTexture->getWidth();
+		mHeight = (float)mTexture->getHeight();
 	}
 	else
 	{

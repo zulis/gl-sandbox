@@ -233,7 +233,7 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 
 	GLfloat anisotropy;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLint)anisotropy);
 
 	glBindTexture(mFormat.mTarget, 0);
 }

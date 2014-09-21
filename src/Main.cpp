@@ -14,16 +14,16 @@
 
 class Main : public State
 {
-	public:
-		virtual void setup();
-		virtual void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent);
-		virtual void update(float elapsedTime);
-		virtual void draw();
-		virtual void resize(int width, int height);
+public:
+	virtual void setup();
+	virtual void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent);
+	virtual void update(float elapsedTime);
+	virtual void draw();
+	virtual void resize(int width, int height);
 
 private:
-	float mStrafeSpeed{ 2.0f };
-	float mStrafeFastSpeed{ 4.0f };
+	float mStrafeSpeed{ 0.2f };
+	float mStrafeFastSpeed{ 0.4f };
 	bool mMouseLocked{ false };
 	float mCenterPositionX;
 	float mCenterPositionY;
@@ -34,7 +34,7 @@ private:
 	CameraRef mCamera;
 	Image* mIconImage;
 	ImageManager mImageMng;
-	
+
 	//MeshRef mMesh;
 	//MaterialPhongRef mMaterial;
 	FontRef mFont;
@@ -93,56 +93,56 @@ void Main::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
 {
 	mEntityFactory->input(keyEvent, mouseEvent);
 
-	if(keyEvent.isUp(KEY_ESCAPE))
+	if (keyEvent.isUp(KEY_ESCAPE))
 		quit();
 
-	if(keyEvent.isUp(KEY_F11))
+	if (keyEvent.isUp(KEY_F11))
 		Window::setFullScreenDesktop(!Window::isFullScreen());
 
-	/*if (keyEvent.isDown(KEY_LSHIFT))
+	if (keyEvent.isDown(KEY_LSHIFT))
 		mCamera->setStrafeSpeed(mStrafeFastSpeed);
-		else
+	else
 		mCamera->setStrafeSpeed(mStrafeSpeed);
 
-		if (keyEvent.isDown(KEY_W))
+	if (keyEvent.isDown(KEY_W))
 		mCamera->move(Camera::FORWARD);
-		else if (keyEvent.isDown(KEY_S))
+	else if (keyEvent.isDown(KEY_S))
 		mCamera->move(Camera::BACKWARD);
 
-		if (keyEvent.isDown(KEY_A))
+	if (keyEvent.isDown(KEY_A))
 		mCamera->move(Camera::LEFT);
-		else if (keyEvent.isDown(KEY_D))
+	else if (keyEvent.isDown(KEY_D))
 		mCamera->move(Camera::RIGHT);
 
-		if (keyEvent.isDown(KEY_Q))
+	if (keyEvent.isDown(KEY_Q))
 		mCamera->move(Camera::UP);
-		else if (keyEvent.isDown(KEY_Z))
+	else if (keyEvent.isDown(KEY_Z))
 		mCamera->move(Camera::DOWN);
 
-		if (mouseEvent.getWheel() != 0)
+	if (mouseEvent.getWheel() != 0)
 		mCamera->move(mouseEvent.getWheel() > 0 ? Camera::FORWARD : Camera::BACKWARD);
 
-		if (mouseEvent.isDown(BUTTON_LEFT))
+	if (mouseEvent.isDown(BUTTON_LEFT))
 		mRotateY += mouseEvent.getChangeX();
 
-		if (mMouseLocked)
-		{
+	if (mMouseLocked)
+	{
 		auto deltaPosX = mouseEvent.getX() - mCenterPositionX;
 		auto deltaPosY = mouseEvent.getY() - mCenterPositionY;
 		mCamera->rotate(deltaPosX, deltaPosY);
-		}
+	}
 
-		if (mouseEvent.isDown(BUTTON_RIGHT))
-		{
+	if (mouseEvent.isDown(BUTTON_RIGHT))
+	{
 		Window::hideMouse();
 		Window::setMousePosition(mCenterPositionX, mCenterPositionY);
 		mMouseLocked = true;
-		}
-		else
-		{
+	}
+	else
+	{
 		Window::showMouse();
 		mMouseLocked = false;
-		}*/
+	}
 }
 
 //=========================================================================
@@ -183,7 +183,7 @@ void Main::resize(int width, int height)
 	mCamera->setAspectRatio(Window::getAspectRatio());
 
 	calculateMouseCenterPosition();
-	Window::setMousePosition(mCenterPositionX, mCenterPositionY);
+	Window::setMousePosition((int)mCenterPositionX, (int)mCenterPositionY);
 }
 
 //=========================================================================

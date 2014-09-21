@@ -87,8 +87,10 @@ void EntityFactory::setup(const CameraRef& camera)
 	mat->setShininess(1.0f);
 	mat->addLight(light);
 
+	auto mesh = MeshSpatial::create("assets/models/misc/thing.fbx");
+	//auto mesh = MeshSpatial::create("assets/models/misc/sphere.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/teapot/teapot.fbx");
-	auto mesh = MeshSpatial::create("assets/models/rocks/1/rock_01.fbx");
+	//auto mesh = MeshSpatial::create("assets/models/rocks/1/rock_01.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/ship/ship.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/imrod/imrod.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/sponza/sponza.obj");
@@ -98,16 +100,16 @@ void EntityFactory::setup(const CameraRef& camera)
 	mat->setGeomMaterials(mesh->getGeomMaterial());
 
 	auto transform = new TransformComponent();
-	transform->setScale(glm::vec3(0.01));
+	transform->setScale(glm::vec3(0.05f));
 
 	Entity& e = mWorld.createEntity();
 	e.setGroup("static");
 	//e.addComponent(transform);
-	e.addComponent(new TransformComponent);
+	e.addComponent(transform);
 	e.addComponent(new VelocityComponent);
 	e.addComponent(new KeyboardComponent);
 	e.addComponent(new RenderComponent(mesh, mCamera));
-	e.addComponent(new PlayerComponent(KEY_W, KEY_S, KEY_A, KEY_D, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT));
+	e.addComponent(new PlayerComponent(KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT));
 	e.refresh();
 }
 

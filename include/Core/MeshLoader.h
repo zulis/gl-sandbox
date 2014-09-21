@@ -84,8 +84,8 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			const aiMesh* mesh = scene->mMeshes[n];
 			const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-			printf("    %i vertices in mesh[%i]\n", mesh->mNumVertices, n);
-			printf("    %i faces in mesh[%i]\n", mesh->mNumFaces, n);
+			printf("    mesh[%i] [Geometry.Vertices]    : %i\n", n, mesh->mNumVertices);
+			printf("    mesh[%i] [Geometry.Faces]       : %i\n", n, mesh->mNumFaces);
 
 			MeshPart meshPart;
 
@@ -98,6 +98,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				const aiVector3D* bitangent = &(mesh->mBitangents[i]);
 				const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
 
+				/*
 				// put the three vectors into my glm::vec3 struct format for doing maths
 				glm::vec3 t(tangent->x, tangent->y, tangent->z);
 				glm::vec3 n(normal->x, normal->y, normal->z);
@@ -118,11 +119,12 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				{
 					det = 1.0f;
 				}
-
+				meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
+				*/
 
 				meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z));
 				meshPart.geometry.normals.push_back(glm::vec3(normal->x, normal->y, normal->z));
-				meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
+				meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
 				meshPart.geometry.bitangents.push_back(glm::vec3(bitangent->x, bitangent->y, bitangent->z));
 				meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
 			}
@@ -140,30 +142,38 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 #pragma region materials
 			aiString textureFileName;
-			aiColor4D diffuse;
 
-			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
-				meshPart.material.Kd = glm::vec3(diffuse.r, diffuse.g, diffuse.b);
+			aiColor4D ambientColor;
+			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambientColor))
+				meshPart.material.ambientColor = Color(ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a);
 
-			aiColor4D ambient;
+			aiColor4D diffuseColor;
+			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuseColor))
+				meshPart.material.diffuseColor = Color(diffuseColor.r, diffuseColor.g, diffuseColor.b, diffuseColor.a);
 
-			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambient))
-				meshPart.material.Ka = glm::vec3(ambient.r, ambient.g, ambient.b);
+			aiColor4D specularColor;
+			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specularColor))
+				meshPart.material.specularColor = Color(specularColor.r, specularColor.g, specularColor.b, specularColor.a);
 
-			aiColor4D specular;
+			aiColor4D emissiveColor;
+			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emissiveColor))
+				meshPart.material.emissiveColor = Color(emissiveColor.r, emissiveColor.g, emissiveColor.b, emissiveColor.a);
 
-			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular))
-				meshPart.material.Ks = glm::vec3(specular.r, specular.g, specular.b);
+			aiColor4D transparentColor;
+			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_TRANSPARENT, &transparentColor))
+				meshPart.material.transparentColor = Color(transparentColor.r, transparentColor.g, transparentColor.b, transparentColor.a);
 
 			float shininess = 0.0;
 			unsigned int max;
 			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS, &shininess, &max);
-			meshPart.material.Shininess = shininess;
+			meshPart.material.shininess = shininess;
 
-			printf("		mesh[%i] [Material.Ka] : %.3f %.3f %.3f\n", n, meshPart.material.Ka.r, meshPart.material.Ka.g, meshPart.material.Ka.b);
-			printf("		mesh[%i] [Material.Kd] : %.3f %.3f %.3f\n", n, meshPart.material.Kd.r, meshPart.material.Kd.g, meshPart.material.Kd.b);
-			printf("		mesh[%i] [Material.Ks] : %.3f %.3f %.3f\n", n, meshPart.material.Ks.r, meshPart.material.Ks.g, meshPart.material.Ks.b);
-			printf("		mesh[%i] [Material.Shininess] : %.3f\n", n, meshPart.material.Shininess);
+			printf("    mesh[%i] [Material.Ambient]     : %.3f %.3f %.3f %.3f\n", n, meshPart.material.ambientColor.r, meshPart.material.ambientColor.g, meshPart.material.ambientColor.b, meshPart.material.ambientColor.a);
+			printf("    mesh[%i] [Material.Diffuse]     : %.3f %.3f %.3f %.3f\n", n, meshPart.material.diffuseColor.r, meshPart.material.diffuseColor.g, meshPart.material.diffuseColor.b, meshPart.material.diffuseColor.a);
+			printf("    mesh[%i] [Material.Specular]    : %.3f %.3f %.3f %.3f\n", n, meshPart.material.specularColor.r, meshPart.material.specularColor.g, meshPart.material.specularColor.b, meshPart.material.specularColor.a);
+			printf("    mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f\n", n, meshPart.material.emissiveColor.r, meshPart.material.emissiveColor.g, meshPart.material.emissiveColor.b, meshPart.material.emissiveColor.a);
+			printf("    mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f\n", n, meshPart.material.transparentColor.r, meshPart.material.transparentColor.g, meshPart.material.transparentColor.b, meshPart.material.transparentColor.a);
+			printf("    mesh[%i] [Material.Shininess]   : %.3f\n", n, meshPart.material.shininess);
 
 			for (unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
 			{
@@ -228,7 +238,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 					}
 
-					printf("		mesh[%i] [%s] : %s\n", n, TextureTypeName[meshTexture.type].c_str(), textureFileName.C_Str());
+					printf("    mesh[%i] [Texture.%s] : %s\n", n, TextureTypeName[meshTexture.type].c_str(), textureFileName.C_Str());
 
 					meshTexture.fileName = getFileName(std::string(textureFileName.C_Str()));
 					meshPart.material.textures.push_back(meshTexture);
@@ -244,6 +254,8 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 		return result;
 	}
+
+	return result;
 }
 
 //=========================================================================

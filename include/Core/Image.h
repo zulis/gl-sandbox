@@ -154,7 +154,7 @@ void Image::generateCheckTexture()
 
 	GLubyte checkImage[128][128][4];
 
-	int i, j, c;
+	unsigned int i, j, c;
 
 	for(i = 0; i < mWidth; i++)
 	{

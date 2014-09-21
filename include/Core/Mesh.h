@@ -86,38 +86,6 @@ void Mesh::load(const std::string& fileName, float scaleFactor)
 }
 
 //=========================================================================
-// void Mesh::parseNode(const aiNode* node)
-// {
-// 	/*for (auto n = 0; n < node->mMeshes; n++)
-// 	{
-// 
-// 	}*/
-// 
-// 	aiVector3D scaling, position;
-// 	aiQuaternion rotation;
-// 
-// 	aiMatrix4x4 m = node->mTransformation;
-// 	//m.Transpose();
-// 	m.Decompose(scaling, rotation, position);
-// 
-// 	for (unsigned int n = 0; n < node->mNumChildren; n++)
-// 	{
-// 		parseNode(node->mChildren[n]);
-// 	}
-// }
-
-////=========================================================================
-//std::string Mesh::getFileName(std::string& pathName)
-//{
-//	const size_t idx = pathName.find_last_of("\\/");
-//
-//	if(std::string::npos != idx)
-//		pathName.erase(0, idx + 1);
-//
-//	return pathName;
-//}
-
-//=========================================================================
 void Mesh::setGeometry(std::vector<GeometryRef>* geometries)
 {
 	for(auto& geometry : mGeometries)

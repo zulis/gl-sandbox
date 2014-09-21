@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "Core/Color.h"
 #include "Core/Math.h"
 #include "Core/TextureType.h"
 
@@ -10,7 +11,7 @@ struct MeshGeometry
 	std::vector<glm::vec3> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<glm::vec3> normals;
-	std::vector<glm::vec4> tangents;
+	std::vector<glm::vec3> tangents;
 	std::vector<glm::vec3> bitangents;
 	std::vector<glm::vec2> texCoords;
 };
@@ -23,10 +24,12 @@ struct MeshTexture
 
 struct MeshMaterial
 {
-	glm::vec3 Kd{ glm::vec3(0.8f, 0.8f, 0.8f) };
-	glm::vec3 Ka{ glm::vec3(0.8f, 0.8f, 0.8f) };
-	glm::vec3 Ks{ glm::vec3(0.1f, 0.1f, 0.1f) };
-	float Shininess{ 0.5f };
+	Color diffuseColor;
+	Color ambientColor;
+	Color specularColor;
+	Color emissiveColor;
+	Color transparentColor;
+	float shininess{ 0.5f };
 	std::vector<MeshTexture> textures;
 };
 
