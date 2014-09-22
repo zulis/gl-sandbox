@@ -19,7 +19,6 @@ public:
 
 	void setFrustumCulling(bool isOn);
 	void setMaterial(const MaterialRef& material);
-	const std::vector<Material::GeometryMaterial>& getGeomMaterial();
 	void setTexturePath(const std::string& texturePath);
 
 private:
@@ -65,12 +64,6 @@ void MeshSpatial::setFrustumCulling(bool isOn)
 void MeshSpatial::setMaterial(const MaterialRef& material)
 {
 	Mesh::setMaterial(material);
-}
-
-//=========================================================================
-const std::vector<Material::GeometryMaterial>& MeshSpatial::getGeomMaterial()
-{
-	return Mesh::getGeomMaterial();
 }
 
 //=========================================================================

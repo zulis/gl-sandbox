@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <string>
 #include "Core/Shader.h"
-//#include "Core/Drawable.h"
 #include "Core/Texture.h"
 #include "Core/Light.h"
 #include "Core/TextureType.h"
@@ -14,8 +13,6 @@ typedef std::shared_ptr<class Material> MaterialRef;
 //=========================================================================
 class Material
 {
-		friend class Drawable;
-
 	public:
 		struct GeometryTexture
 		{
@@ -45,12 +42,14 @@ class Material
 			}
 		};
 
-	protected:
+		Shader* getShader();
 		virtual void bind() = 0;
 		virtual void unbind();
 		virtual void updateUniforms(unsigned int geometryIndex) {}
-		Shader* getShader();
 
+		void setShaderValues(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model);
+
+	protected:
 		void setGeomMaterials(const std::vector<Material::GeometryMaterial>& geomMaterials);
 		virtual void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseColor, unsigned int geometryIndex = 0);
 		void bindGeomMaterial(unsigned int geometryIndex);
@@ -225,4 +224,41 @@ void Material::setShininess(float shininess)
 void Material::addLight(const Light& light)
 {
 	mLights.push_back(light);
+}
+
+//=========================================================================
+void Material::setShaderValues(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model)
+{
+	if (mShader->hasUniform(ShaderConstants::ProjectionMatrix))
+		mShader->setUniform(ShaderConstants::ProjectionMatrix, projection);
+
+	if (mShader->hasUniform(ShaderConstants::ViewMatrix))
+		mShader->setUniform(ShaderConstants::ViewMatrix, view);
+
+	if (mShader->hasUniform(ShaderConstants::ModelMatrix))
+		mShader->setUniform(ShaderConstants::ModelMatrix, model);
+
+	if (mShader->hasUniform(ShaderConstants::ModelViewMatrix))
+		mShader->setUniform(ShaderConstants::ModelViewMatrix, view * model);
+
+	if (mShader->hasUniform(ShaderConstants::MVP))
+		mShader->setUniform(ShaderConstants::MVP, projection * view * model);
+
+	if (mShader->hasUniform(ShaderConstants::NormalMatrix))
+	{
+		auto mv = view * model;
+		mShader->setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
+	}
+
+	/*if (mShader->hasUniform(Shader::Kd))
+	mShader->setUniform(Shader::Kd, mMaterial->getDiffuse());
+
+	if (mShader->hasUniform(Shader::Ka))
+	mShader->setUniform(Shader::Ka, mMaterial->getAmbient());
+
+	if (mShader->hasUniform(Shader::Ks))
+	mShader->setUniform(Shader::Ks, mMaterial->getSpecular());
+
+	if (mShader->hasUniform(Shader::Shininess))
+	mShader->setUniform(Shader::Shininess, mMaterial->getShininess());*/
 }

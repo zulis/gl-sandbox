@@ -87,17 +87,17 @@ void EntityFactory::setup(const CameraRef& camera)
 	mat->setShininess(1.0f);
 	mat->addLight(light);
 
-	auto mesh = MeshSpatial::create("assets/models/misc/thing.fbx");
+	//auto mesh = MeshSpatial::create("assets/models/misc/thing.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/misc/sphere.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/teapot/teapot.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/rocks/1/rock_01.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/ship/ship.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/imrod/imrod.fbx");
-	//auto mesh = MeshSpatial::create("assets/models/sponza/sponza.obj");
+	auto mesh = MeshSpatial::create("assets/models/sponza/sponza.obj");
 	//mesh->setTexturePath("assets/textures/sponza");
 	mesh->setFrustumCulling(true);
 	mesh->setMaterial(mat);
-	mat->setGeomMaterials(mesh->getGeomMaterial());
+	//mat->setGeomMaterials(mesh->getGeomMaterial());
 
 	auto transform = new TransformComponent();
 	transform->setScale(glm::vec3(0.05f));

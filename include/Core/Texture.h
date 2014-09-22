@@ -29,8 +29,8 @@ struct TextureCollection
 	}
 
 	std::string fileName;
-	GLuint textureID{ 0 };
-	unsigned int refCount{ 1 };
+	GLuint textureID { 0 };
+	unsigned int refCount { 1 };
 	unsigned int width;
 	unsigned int height;
 };
@@ -51,7 +51,7 @@ public:
 	void bind(GLuint textureUnit = 0);
 	void unbind(GLuint textureUnit = 0);
 
-	
+
 	int getWidth() const;
 	int getHeight() const;
 	/*int getChannels() const;
@@ -88,8 +88,8 @@ private:
 	static std::vector<TextureCollection>* mTextureCollection;
 
 	//unsigned char* mPixels;
-	unsigned int mWidth{ 0 };
-	unsigned int mHeight{ 0 };
+	unsigned int mWidth { 0 };
+	unsigned int mHeight { 0 };
 	//unsigned int mChannels{ 0 };
 };
 
@@ -154,7 +154,7 @@ Texture::Texture(const std::string& fileName, const Format& format)
 
 	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
 
-	if (it != mTextureCollection->end())
+	if(it != mTextureCollection->end())
 	{
 		(*it).increaseRef();
 		mTextureID = (*it).textureID;
@@ -164,8 +164,8 @@ Texture::Texture(const std::string& fileName, const Format& format)
 	else
 	{
 		mImage = mImageMng.get()->getResource(fileName);
-		
-		if (mFormat.mFlipped)
+
+		if(mFormat.mFlipped)
 			mImage->flipVertical();
 
 		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
@@ -188,16 +188,16 @@ Texture::~Texture()
 
 	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
 
-	if (it != mTextureCollection->end())
+	if(it != mTextureCollection->end())
 	{
 		refCount = (*it).decreaseRef();
 	}
 
-	if (refCount == 0)
+	if(refCount == 0)
 	{
 		mTextureCollection->erase(it);
 
-		if (mTextureID)
+		if(mTextureID)
 			glDeleteTextures(1, &mTextureID);
 
 		printf("%s : texture released\n", mFileName.c_str());
@@ -212,14 +212,14 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 	mWidth = width;
 	mHeight = height;
 
-	if (mFormat.mMipmapping)
+	if(mFormat.mMipmapping)
 	{
 		mFormat.mMinFilter = GL_LINEAR_MIPMAP_LINEAR;
 		mFormat.mMagFilter = GL_LINEAR;
 	}
 
 	int numMipmaps = 1;
-	while ((width | height) >> numMipmaps) numMipmaps += 1;
+	while((width | height) >> numMipmaps) numMipmaps += 1;
 
 	glGenTextures(1, &mTextureID);
 	glBindTexture(mFormat.mTarget, mTextureID);

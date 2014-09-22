@@ -142,9 +142,6 @@
     <ClInclude Include="..\include\Core\Mesh.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Drawable.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Material.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
