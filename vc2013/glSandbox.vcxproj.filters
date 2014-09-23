@@ -211,5 +211,8 @@
     <ClInclude Include="..\include\Core\MeshData.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Core\MaterialDefault.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

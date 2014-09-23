@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 VertexNormal;
 layout (location = 2) in vec2 VertexTexCoord;
-layout (location = 3) in vec4 VertexTangent;
+layout (location = 3) in vec3 VertexTangent;
 
 uniform struct LightInfo
 {
@@ -24,9 +24,9 @@ void main()
 {
     // Transform normal and tangent to eye space
     vec3 norm = normalize( NormalMatrix * VertexNormal );
-    vec3 tang = normalize( NormalMatrix * vec3(VertexTangent) );
+    vec3 tang = normalize( NormalMatrix * VertexTangent );
     // Compute the binormal
-    vec3 binormal = normalize( cross( norm, tang ) ) * VertexTangent.w;
+    vec3 binormal = normalize( cross( norm, tang ) ) * /*VertexTangent.w*/0.0;
 
     // Matrix for transformation to tangent space
     mat3 toObjectLocal = mat3(

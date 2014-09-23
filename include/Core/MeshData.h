@@ -2,8 +2,10 @@
 
 #include <string>
 #include <vector>
+#include "Core/GL.h"
 #include "Core/Color.h"
 #include "Core/Math.h"
+#include "Core/Texture.h"
 #include "Core/TextureType.h"
 
 struct MeshGeometry
@@ -19,18 +21,38 @@ struct MeshGeometry
 struct MeshTexture
 {
 	TextureType type;
-	std::string fileName;
+	TextureRef texture;
+	//std::string fileName;
+	//GLuint textureID;
+
+ 	bool operator==(const MeshTexture& t) const
+ 	{
+ 		return t.type == type;
+ 	}
 };
 
 struct MeshMaterial
 {
-	Color diffuseColor;
-	Color ambientColor;
-	Color specularColor;
-	Color emissiveColor;
-	Color transparentColor;
-	float shininess{ 0.5f };
+	Color diffuse;
+	Color ambient;
+	Color specular;
+	Color emissive;
+	Color transparent;
+	float shininess;
 	std::vector<MeshTexture> textures;
+
+	TextureRef getTexture(TextureType type) const
+	{
+		MeshTexture mt;
+		mt.type = type;
+
+		auto it = std::find(textures.begin(), textures.end(), mt);
+ 
+ 		if (it != textures.end())
+ 			return (*it).texture;
+ 		else
+			return NULL;
+	}
 };
 
 struct MeshPart

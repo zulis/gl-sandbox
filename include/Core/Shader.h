@@ -1,13 +1,13 @@
-#pragma once
+﻿#pragma once
 
 #include <memory>
 #include <string>
 #include <vector>
-#include <fstream>
 #include <map>
+#include <fstream>
+#include "Core/GL.h"
 #include "Core/ShaderConstants.h"
 #include "Core/Math.h"
-#include "core/GL.h"
 
 typedef std::shared_ptr<class Shader> ShaderRef;
 
@@ -29,6 +29,7 @@ class Shader
 		//void setUniform(const std::string& name, const Texture* tex);
 		//void setUniform(const std::string& name, const TextureCube* tex);
 		void setUniform(const std::string& name, int i) const;
+		void setUniform(const std::string& name, unsigned int i) const;
 		void setUniform(const std::string& name, float f) const;
 		void setUniform(const std::string& name, float f1, float f2) const;
 		void setUniform(const std::string& name, const glm::vec2 vec2) const;
@@ -59,6 +60,7 @@ class Shader
 
 		void loadFromFile(const std::string& fileName);
 		std::vector<char> readSource(const std::string& path);
+		void dumpShaderInfo(const std::string& fileName);
 };
 
 //=========================================================================
@@ -159,17 +161,17 @@ void Shader::loadFromFile(const std::string& fileName)
 	else
 	{
 		int maxUniforms;
-		glGetProgramiv(mProgramID, GL_ACTIVE_UNIFORMS,&maxUniforms);
+		glGetProgramiv(mProgramID, GL_ACTIVE_UNIFORMS, &maxUniforms);
 		int maxUlen;
-		glGetProgramiv(mProgramID, GL_ACTIVE_UNIFORM_MAX_LENGTH,&maxUlen);
+		glGetProgramiv(mProgramID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUlen);
 
-		GLchar* ubuf=(char*)malloc(maxUlen+1);
+		GLchar* ubuf = (char*)malloc(maxUlen+1);
 
 		for(int i=0 ; i < maxUniforms; i++)
 		{
 			int size;
 			GLenum type;
-			glGetActiveUniform(mProgramID,i,maxUlen,NULL,&size,&type,ubuf);
+			glGetActiveUniform(mProgramID, i, maxUlen, NULL, &size, &type, ubuf);
 
 			mUniformMap[ubuf] = glGetUniformLocation(mProgramID, ubuf);
 		}
@@ -177,11 +179,11 @@ void Shader::loadFromFile(const std::string& fileName)
 		free(ubuf);
 
 		int maxAttributes;
-		glGetProgramiv(mProgramID, GL_ACTIVE_ATTRIBUTES,&maxAttributes);
+		glGetProgramiv(mProgramID, GL_ACTIVE_ATTRIBUTES, &maxAttributes);
 		int maxAlen;
 		glGetProgramiv(mProgramID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAlen);
 
-		GLchar* abuf=(char*)malloc(maxAlen+1);
+		GLchar* abuf = (char*)malloc(maxAlen+1);
 
 		for(int i=0 ; i < maxAttributes; i++)
 		{
@@ -193,6 +195,33 @@ void Shader::loadFromFile(const std::string& fileName)
 		}
 
 		free(abuf);
+
+		dumpShaderInfo(fileName);
+
+		/*
+		// New way
+		GLint numActiveAttribs = 0;
+		GLint numActiveUniforms = 0;
+		glGetProgramInterfaceiv(mProgramID, GL_PROGRAM_INPUT​, GL_ACTIVE_RESOURCES​, &numActiveAttribs);
+		glGetProgramInterfaceiv(mProgramID, GL_UNIFORM​, GL_ACTIVE_RESOURCES​, &numActiveAttribs);
+
+		std::vector<GLchar> nameData(256);
+		std::vector<GLenum> properties;
+		properties.push_back(GL_NAME_LENGTH​);
+		properties.push_back(GL_TYPE​);
+		properties.push_back(GL_ARRAY_SIZE​);
+		std::vector<GLint> values(properties.size());
+		for (int attrib = 0; attrib < numActiveAttribs; ++attrib)
+		{
+			glGetProgramResourceiv(mProgramID, GL_PROGRAM_INPUT, attrib, properties.size(),
+				&properties[0], values.size(), NULL, &values[0]);
+
+			nameData.resize(properties[0]); //The length of the name.
+			glGetProgramResourceName(mProgramID, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
+			std::string name((char*)&nameData[0], nameData.size() - 1);
+		}
+		// the same with uniforms
+		*/
 	}
 }
 
@@ -228,6 +257,35 @@ std::vector<char> Shader::readSource(const std::string& path)
 	source.push_back(0);
 
 	return source;
+}
+
+/// <summary>
+/// Dumps various shader information to the console.
+/// </summary>
+void Shader::dumpShaderInfo(const std::string& fileName)
+{
+	printf("------------------------------------------------\n");
+	printf("Shader: %s\n", fileName.c_str());
+	printf("Program ID: %s\n", std::to_string(mProgramID).c_str());
+	printf("VertexShader ID: %s\n", std::to_string(mVertexShaderID).c_str());
+	printf("FragmentShader ID: %s\n", std::to_string(mFragmentShaderID).c_str());
+	printf("\n");
+	printf("Uniforms:\n");
+
+	for (std::map<std::string, GLuint>::iterator i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
+	{
+		printf("  %s -> %d\n", i->first.c_str(), i->second);
+	}
+
+	printf("\n");
+	printf("Attributes:\n");
+
+	for (std::map<std::string, GLuint>::iterator i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
+	{
+		printf("  %s -> %d\n", i->first.c_str(), i->second);
+	}
+
+	printf("------------------------------------------------\n");
 }
 
 //=========================================================================
@@ -268,6 +326,12 @@ void Shader::unbind()
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, int i) const
+{
+	glUniform1i(getUniform(name), i);
+}
+
+//=========================================================================
+void Shader::setUniform(const std::string& name, unsigned int i) const
 {
 	glUniform1i(getUniform(name), i);
 }

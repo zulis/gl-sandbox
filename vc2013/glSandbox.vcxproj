@@ -271,6 +271,7 @@
     <ClInclude Include="..\include\Core\Light.h" />
     <ClInclude Include="..\include\Core\Material.h" />
     <ClInclude Include="..\include\Core\MaterialBasic.h" />
+    <ClInclude Include="..\include\Core\MaterialDefault.h" />
     <ClInclude Include="..\include\Core\MaterialPhong.h" />
     <ClInclude Include="..\include\Core\Math.h" />
     <ClInclude Include="..\include\Core\Mesh.h" />

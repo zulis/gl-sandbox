@@ -10,30 +10,31 @@ typedef std::shared_ptr<class MeshSpatial> MeshSpatialRef;
 class MeshSpatial : private Mesh, public Spatial
 {
 public:
-	static MeshSpatialRef create(const std::string& fileName);
+	static MeshSpatialRef create();
 
 	virtual void setMatrix(glm::mat4 matrix);
 	virtual void update(float deltaTime);
 	virtual void draw(const CameraRef& camera);
 	virtual bool isCulled(const Camera& camera);
 
+	void loadFromFile(const std::string& fileName);
 	void setFrustumCulling(bool isOn);
 	void setMaterial(const MaterialRef& material);
 	void setTexturePath(const std::string& texturePath);
 
 private:
-	MeshSpatial(const std::string& fileName);
+	MeshSpatial();
 
 };
 
 //=========================================================================
-MeshSpatialRef MeshSpatial::create(const std::string& fileName)
+MeshSpatialRef MeshSpatial::create()
 {
-	return MeshSpatialRef(new MeshSpatial(fileName));
+	return MeshSpatialRef(new MeshSpatial);
 }
 
 //=========================================================================
-MeshSpatial::MeshSpatial(const std::string& fileName) : Mesh(fileName)
+MeshSpatial::MeshSpatial() : Mesh()
 {
 }
 
@@ -77,4 +78,10 @@ bool MeshSpatial::isCulled(const Camera& camera)
 {
 	auto aabb = Mesh::getAABB().transformed(Mesh::getMatrix());
 	return !camera.intersects(aabb);
+}
+
+//=========================================================================
+void MeshSpatial::loadFromFile(const std::string& fileName)
+{
+	Mesh::loadFromFile(fileName);
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Math.h"
+
 class Color
 {
 	public:
@@ -17,6 +19,9 @@ class Color
 
 		operator Color* ();
 		operator const Color* () const;
+
+		glm::vec3 rgb() const;
+		glm::vec4 rgba() const;
 
 };
 
@@ -84,4 +89,16 @@ Color::operator Color* ()
 Color::operator const Color* () const
 {
 	return (const Color*) this;
+}
+
+//=========================================================================
+glm::vec3 Color::rgb() const
+{
+	return glm::vec3(r, g, b);
+}
+
+//=========================================================================
+glm::vec4 Color::rgba() const
+{
+	return glm::vec4(r, g, b, a);
 }

@@ -47,7 +47,15 @@ class Material
 		virtual void unbind();
 		virtual void updateUniforms(unsigned int geometryIndex) {}
 
-		void setShaderValues(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model);
+		struct ShaderValues
+		{
+			glm::mat4 projection;
+			glm::mat4 view;
+			glm::mat4 model;
+			MeshMaterial meshMaterial;
+		};
+
+		void setShaderValues(const ShaderValues& shaderValues);
 
 	protected:
 		void setGeomMaterials(const std::vector<Material::GeometryMaterial>& geomMaterials);
@@ -67,10 +75,10 @@ class Material
 
 		std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 
-		glm::vec3 mMaterialKd { glm::vec4(-1.0f) };
-		glm::vec3 mMaterialKa { glm::vec4(-1.0f) };
-		glm::vec3 mMaterialKs { glm::vec4(-1.0f) };
-		float mMaterialShininess { -1.0f };
+		glm::vec3 mMaterialKa{ glm::vec4(0.0f) };
+		glm::vec3 mMaterialKd { glm::vec4(0.0f) };
+		glm::vec3 mMaterialKs { glm::vec4(0.0f) };
+		float mMaterialShininess { 0.0f };
 
 		std::vector<Light> mLights;
 };
@@ -155,14 +163,14 @@ void Material::bindGeomMaterial(unsigned int geometryIndex)
 	{
 		geomMaterial = (*it);
 
-		if(mShader->hasUniform(ShaderConstants::MaterialKd))
-			mShader->setUniform(ShaderConstants::MaterialKd, mMaterialKd == glm::vec3(-1.0f) ? geomMaterial.Kd : mMaterialKd);
+		if(mShader->hasUniform(ShaderConstants::MaterialDiffuse))
+			mShader->setUniform(ShaderConstants::MaterialDiffuse, mMaterialKd == glm::vec3(-1.0f) ? geomMaterial.Kd : mMaterialKd);
 
-		if(mShader->hasUniform(ShaderConstants::MaterialKa))
-			mShader->setUniform(ShaderConstants::MaterialKa, mMaterialKa == glm::vec3(-1.0f) ? geomMaterial.Ka : mMaterialKa);
+		if(mShader->hasUniform(ShaderConstants::MaterialAmbient))
+			mShader->setUniform(ShaderConstants::MaterialAmbient, mMaterialKa == glm::vec3(-1.0f) ? geomMaterial.Ka : mMaterialKa);
 
-		if(mShader->hasUniform(ShaderConstants::MaterialKs))
-			mShader->setUniform(ShaderConstants::MaterialKs, mMaterialKs == glm::vec3(-1.0f) ? geomMaterial.Ks : mMaterialKs);
+		if(mShader->hasUniform(ShaderConstants::MaterialSpecular))
+			mShader->setUniform(ShaderConstants::MaterialSpecular, mMaterialKs == glm::vec3(-1.0f) ? geomMaterial.Ks : mMaterialKs);
 
 		if(mShader->hasUniform(ShaderConstants::MaterialShininess))
 			mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess == -1.0f ? geomMaterial.Shininess : mMaterialShininess);
@@ -227,38 +235,80 @@ void Material::addLight(const Light& light)
 }
 
 //=========================================================================
-void Material::setShaderValues(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model)
+void Material::setShaderValues(const ShaderValues& shaderValues)
 {
 	if (mShader->hasUniform(ShaderConstants::ProjectionMatrix))
-		mShader->setUniform(ShaderConstants::ProjectionMatrix, projection);
+		mShader->setUniform(ShaderConstants::ProjectionMatrix, shaderValues.projection);
 
 	if (mShader->hasUniform(ShaderConstants::ViewMatrix))
-		mShader->setUniform(ShaderConstants::ViewMatrix, view);
+		mShader->setUniform(ShaderConstants::ViewMatrix, shaderValues.view);
 
 	if (mShader->hasUniform(ShaderConstants::ModelMatrix))
-		mShader->setUniform(ShaderConstants::ModelMatrix, model);
+		mShader->setUniform(ShaderConstants::ModelMatrix, shaderValues.model);
 
 	if (mShader->hasUniform(ShaderConstants::ModelViewMatrix))
-		mShader->setUniform(ShaderConstants::ModelViewMatrix, view * model);
+		mShader->setUniform(ShaderConstants::ModelViewMatrix, shaderValues.view * shaderValues.model);
 
 	if (mShader->hasUniform(ShaderConstants::MVP))
-		mShader->setUniform(ShaderConstants::MVP, projection * view * model);
+		mShader->setUniform(ShaderConstants::MVP, shaderValues.projection * shaderValues.view * shaderValues.model);
 
 	if (mShader->hasUniform(ShaderConstants::NormalMatrix))
 	{
-		auto mv = view * model;
+		auto mv = shaderValues.view * shaderValues.model;
 		mShader->setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
 	}
 
-	/*if (mShader->hasUniform(Shader::Kd))
-	mShader->setUniform(Shader::Kd, mMaterial->getDiffuse());
+	if (mShader->hasUniform(ShaderConstants::MaterialAmbient))
+		mShader->setUniform(ShaderConstants::MaterialAmbient, shaderValues.meshMaterial.ambient.rgba());
 
-	if (mShader->hasUniform(Shader::Ka))
-	mShader->setUniform(Shader::Ka, mMaterial->getAmbient());
+	if (mShader->hasUniform(ShaderConstants::MaterialDiffuse))
+		mShader->setUniform(ShaderConstants::MaterialDiffuse, shaderValues.meshMaterial.diffuse.rgba());
 
-	if (mShader->hasUniform(Shader::Ks))
-	mShader->setUniform(Shader::Ks, mMaterial->getSpecular());
+	if (mShader->hasUniform(ShaderConstants::MaterialSpecular))
+		mShader->setUniform(ShaderConstants::MaterialSpecular, shaderValues.meshMaterial.specular.rgba());
 
-	if (mShader->hasUniform(Shader::Shininess))
-	mShader->setUniform(Shader::Shininess, mMaterial->getShininess());*/
+	if (mShader->hasUniform(ShaderConstants::MaterialShininess))
+		mShader->setUniform(ShaderConstants::MaterialShininess, shaderValues.meshMaterial.shininess);
+
+	if (mShader->hasUniform(ShaderConstants::TexDiffuse))
+	{
+		auto texture = shaderValues.meshMaterial.getTexture(TextureType::DiffuseColor);
+
+		if (texture != NULL)
+		{
+			auto pos = mShader->getUniform(ShaderConstants::TexDiffuse);
+			auto texID = (unsigned int)texture->getTextureID();
+
+			texture->bind(texID);
+			mShader->setUniform(ShaderConstants::TexDiffuse, texID);
+		}
+	}
+
+	if (mShader->hasUniform(ShaderConstants::TexNormal))
+	{
+		auto texture = shaderValues.meshMaterial.getTexture(TextureType::Bump);
+
+		if (texture != NULL)
+		{
+			auto pos = mShader->getUniform(ShaderConstants::TexNormal);
+			auto texID = (unsigned int)texture->getTextureID();
+
+			texture->bind(texID);
+			mShader->setUniform(ShaderConstants::TexNormal, texID);
+		}
+	}
+
+	if (mShader->hasUniform(ShaderConstants::TexSpecular))
+	{
+		auto texture = shaderValues.meshMaterial.getTexture(TextureType::SpecularColor);
+
+		if (texture != NULL)
+		{
+			auto pos = mShader->getUniform(ShaderConstants::TexSpecular);
+			auto texID = (unsigned int)texture->getTextureID();
+
+			texture->bind(texID);
+			mShader->setUniform(ShaderConstants::TexSpecular, texID);
+		}
+	}
 }

@@ -54,6 +54,7 @@ public:
 
 	int getWidth() const;
 	int getHeight() const;
+	GLuint getTextureID() const;
 	/*int getChannels() const;
 	const unsigned char* getPixels() const;
 	const std::string& getFileName() const;
@@ -265,6 +266,12 @@ int Texture::getWidth() const
 int Texture::getHeight() const
 {
 	return mHeight;
+}
+
+//=========================================================================
+GLuint Texture::getTextureID() const
+{
+	return mTextureID;
 }
 
 /*//=========================================================================

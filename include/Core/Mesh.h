@@ -11,16 +11,18 @@
 #include "Core/Material.h"
 #include "Core/Texture.h"
 #include "Core/AABB.h"
+#include "Core/MaterialDefault.h"
 
 typedef std::shared_ptr<class Mesh> MeshRef;
 
 class Mesh : public Transform3D
 {
 	public:
-		static MeshRef create(const std::string& fileName, float scaleFactor = 1.0f);
-		Mesh(const std::string& fileName, float scaleFactor = 1.0f);
+		static MeshRef create();
+		Mesh();
 		~Mesh();
 
+		void loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
 		void draw(const CameraRef& camera);
 		
 		//const std::vector<Material::GeometryMaterial>& getGeomMaterial();
@@ -33,7 +35,6 @@ class Mesh : public Transform3D
 private:
 	MeshLoaderRef mMeshLoader;
 	std::vector<GeometryRef> mGeometries;
-	void load(const std::string& fileName, float scaleFactor);
 	std::string mTexturePath { std::string() };
 	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 	AABB mAABB;
@@ -42,29 +43,22 @@ private:
 	MaterialRef mMaterial;
 	//std::string getFileName(std::string& pathName);
 	//void parseNode(const aiNode* node);
+	MeshData mMeshData;
 
 	void draw(const Camera& camera, const glm::mat4& model);
-	void draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera, const glm::mat4& model);
+	void draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera, const glm::mat4& model);
 
 };
 
 //=========================================================================
-MeshRef Mesh::create(const std::string& fileName, float scaleFactor)
+MeshRef Mesh::create()
 {
-	return MeshRef(new Mesh(fileName, scaleFactor));
+	return MeshRef(new Mesh);
 }
 
 //=========================================================================
-Mesh::Mesh(const std::string& fileName, float scaleFactor)
+Mesh::Mesh()
 {
-	mTexturePath = fileName;
-
-	const size_t idx = mTexturePath.find_last_of("\\/");
-
-	if(std::string::npos != idx)
-		mTexturePath.erase(idx, mTexturePath.length() - idx);
-
-	load(fileName, scaleFactor);
 }
 
 //=========================================================================
@@ -73,17 +67,32 @@ Mesh::~Mesh()
 }
 
 //=========================================================================
-void Mesh::load(const std::string& fileName, float scaleFactor)
+void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 {
+/*
+// 	if (mTexturePath == std::string())
+// 	{
+// 		mTexturePath = fileName;
+// 
+// 		const size_t idx = mTexturePath.find_last_of("\\/");
+// 
+// 		if (std::string::npos != idx)
+// 			mTexturePath.erase(idx, mTexturePath.length() - idx);
+// 	}
+*/
+
 	mMeshLoader = MeshLoader::create();
-	MeshData meshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
+	mMeshLoader->setTexturePath(mTexturePath);
+	mMeshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
+
+	mMaterial = MaterialDefault::create();
 
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
 	glm::vec3 min(maxFloat);
 	glm::vec3 max(minFloat);
 
-	for each (MeshPart meshPart in meshData)
+	for each (MeshPart meshPart in mMeshData)
 	{
 		auto geometry = GeometryRef(new Geometry);
 		geometry->setDrawType(Geometry::TRIANGLES);
@@ -97,7 +106,7 @@ void Mesh::load(const std::string& fileName, float scaleFactor)
 
 		AABB aabb = geometry->getAABB();
 		mAABBMap[geometry] = aabb;
-		
+
 		if (aabb.getMax().x > max.x)
 			max.x = aabb.getMax().x;
 
@@ -172,7 +181,7 @@ void Mesh::setMaterial(const MaterialRef& material)
 //=========================================================================
 void Mesh::draw(const Camera& camera, const glm::mat4& model)
 {
-	unsigned int geometryIndex = 0;
+	unsigned int index = 0;
 
 	for each (auto geometry in mGeometries)
 	{
@@ -183,24 +192,30 @@ void Mesh::draw(const Camera& camera, const glm::mat4& model)
 
 			if (notCulled)
 			{
-				draw(geometry, geometryIndex, camera, model);
+				draw(geometry, index, camera, model);
 			}
 		}
 		else
 		{
-			draw(geometry, geometryIndex, camera, model);
+			draw(geometry, index, camera, model);
 		}
 
-		geometryIndex++;
+		index++;
 	}
 }
 
 //=========================================================================
-void Mesh::draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera, const glm::mat4& model)
+void Mesh::draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera, const glm::mat4& model)
 {
+	Material::ShaderValues shaderValues;
+	shaderValues.projection = camera.getProjectionMatrix();
+	shaderValues.view = camera.getViewMatrix();
+	shaderValues.model = model;
+	shaderValues.meshMaterial = mMeshData[index].material;
+
 	mMaterial->bind();
-	mMaterial->setShaderValues(camera.getProjectionMatrix(), camera.getViewMatrix(), model);
-	mMaterial->updateUniforms(geometryIndex);
+	mMaterial->setShaderValues(shaderValues);
+	//mMaterial->updateUniforms(index);
 	geometry->draw(*mMaterial->getShader());
 	mMaterial->unbind();
 }
