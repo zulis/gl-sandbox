@@ -160,9 +160,6 @@
     <ClInclude Include="..\include\Core\Time.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Spatial\MeshSpatial.h">
-      <Filter>Include\Spatial</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Components\VelocityComponent.h">
       <Filter>Include\Components</Filter>
     </ClInclude>
@@ -213,6 +210,9 @@
     </ClInclude>
     <ClInclude Include="..\include\Core\MaterialDefault.h">
       <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Spatial\MeshSpatial.h">
+      <Filter>Include\Spatial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

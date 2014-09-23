@@ -87,11 +87,22 @@ void EntityFactory::setup(const CameraRef& camera)
 	mat->setShininess(1.0f);
 	mat->addLight(light);
 
+
+
+
 	auto mesh = MeshSpatial::create();
-	//auto mesh = MeshSpatial::create("assets/models/misc/thing.fbx");
+	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
+	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
+	mesh->loadFromFile("assets/models/ship/ship.fbx");
+
+	//mesh->setTexturePath("assets/models/sponza/textures");
+	//mesh->loadFromFile("assets/models/sponza/sponza.obj");
+
+	//auto mesh = MeshSpatial::create();
+	//mesh->loadFromFile("assets/models/misc/thing.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/misc/sphere.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/teapot/teapot.fbx");
-	mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
+	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/ship/ship.fbx");
 	//auto mesh = MeshSpatial::create("assets/models/imrod/imrod.fbx");
 	

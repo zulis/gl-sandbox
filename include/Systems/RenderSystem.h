@@ -40,12 +40,12 @@ void RenderSystem::processEntity(Entity& e)
 	auto camera = mRenderMapper.get(e)->getCamera();
 	auto transformComp = mTransformMapper.get(e);
 
-	if (renderable->isCulled(*camera))
-	{
-		printf("culled\n");
-	}
+// 	if (renderable->isCulled(*camera))
+// 	{
+// 		printf("culled\n");
+// 	}
 
 	renderable->setMatrix(transformComp->getMatrix());
-	renderable->update(world->getDelta());
+	//renderable->update(world->getDelta());
 	renderable->draw(camera);
 }

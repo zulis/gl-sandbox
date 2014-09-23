@@ -20,7 +20,7 @@ class Mesh : public Transform3D
 	public:
 		static MeshRef create();
 		Mesh();
-		~Mesh();
+		virtual ~Mesh();
 
 		void loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
 		void draw(const CameraRef& camera);
