@@ -196,7 +196,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		free(abuf);
 
-		dumpShaderInfo(fileName);
+		//dumpShaderInfo(fileName);
 
 		/*
 		// New way

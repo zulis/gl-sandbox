@@ -15,7 +15,7 @@ class MaterialPhong : public Material
 		MaterialPhong();
 		virtual ~MaterialPhong();
 
-		virtual void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseColor, unsigned int geometryIndex = 0);
+		virtual void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 		virtual void setGeomMaterials(const std::vector<Material::GeometryMaterial>& geomMaterials);
 		virtual void setAmbientColor(float r, float g, float b);
 		virtual void setDiffuseColor(float r, float g, float b);
@@ -78,13 +78,13 @@ void MaterialPhong::updateUniforms(unsigned int geometryIndex)
 {
 	Material::bindGeomMaterial(geometryIndex);
 
-	if(!Material::bindTexture(TextureType::DiffuseColor, 0, geometryIndex))
+	if(!Material::bindTexture(TextureType::DiffuseMap, 0, geometryIndex))
 		mDefaultDiffuse->bind(0);
 
-	if(!Material::bindTexture(TextureType::Bump, 1, geometryIndex))
+	if(!Material::bindTexture(TextureType::NormalMap, 1, geometryIndex))
 		mDefaultNormal->bind(1);
 
-	if (!Material::bindTexture(TextureType::SpecularColor, 2, geometryIndex))
+	if (!Material::bindTexture(TextureType::SpecularMap, 2, geometryIndex))
 		mDefaultSpecular->bind(2);
 }
 

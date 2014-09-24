@@ -59,7 +59,7 @@ class Material
 
 	protected:
 		void setGeomMaterials(const std::vector<Material::GeometryMaterial>& geomMaterials);
-		virtual void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseColor, unsigned int geometryIndex = 0);
+		virtual void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 		void bindGeomMaterial(unsigned int geometryIndex);
 		bool bindTexture(const TextureType& textureType, unsigned int textureunit = 0, unsigned int geometryIndex = 0);
 		virtual void setAmbientColor(float r, float g, float b);
@@ -272,7 +272,7 @@ void Material::setShaderValues(const ShaderValues& shaderValues)
 
 	if (mShader->hasUniform(ShaderConstants::TexDiffuse))
 	{
-		auto texture = shaderValues.meshMaterial.getTexture(TextureType::DiffuseColor);
+		auto texture = shaderValues.meshMaterial.getTexture(TextureType::DiffuseMap);
 
 		if (texture != NULL)
 		{
@@ -286,7 +286,7 @@ void Material::setShaderValues(const ShaderValues& shaderValues)
 
 	if (mShader->hasUniform(ShaderConstants::TexNormal))
 	{
-		auto texture = shaderValues.meshMaterial.getTexture(TextureType::Bump);
+		auto texture = shaderValues.meshMaterial.getTexture(TextureType::NormalMap);
 
 		if (texture != NULL)
 		{
@@ -300,7 +300,7 @@ void Material::setShaderValues(const ShaderValues& shaderValues)
 
 	if (mShader->hasUniform(ShaderConstants::TexSpecular))
 	{
-		auto texture = shaderValues.meshMaterial.getTexture(TextureType::SpecularColor);
+		auto texture = shaderValues.meshMaterial.getTexture(TextureType::SpecularMap);
 
 		if (texture != NULL)
 		{

@@ -6,6 +6,7 @@
 #include <FreeImage.h>
 #include "Core/GL.h"
 #include "Core/ImageManager.h"
+#include "Core/Log.h"
 
 struct TextureCollection
 {
@@ -17,14 +18,14 @@ struct TextureCollection
 	unsigned int increaseRef()
 	{
 		refCount++;
-		printf("  %s ref increased to %i\n", fileName.c_str(), refCount);
+		logNote("Texture ref increased to %i: %s", refCount, fileName.c_str());
 		return refCount;
 	}
 
 	unsigned int decreaseRef()
 	{
 		refCount--;
-		printf("  %s ref decreased to %i\n", fileName.c_str(), refCount);
+		logNote("Texture ref decreased to %i: %s", refCount, fileName.c_str());
 		return refCount;
 	}
 
@@ -175,7 +176,7 @@ Texture::Texture(const std::string& fileName, const Format& format)
 		textureCollection.width = mImage->getWidth();
 		textureCollection.height = mImage->getHeight();
 
-		printf("%s : texture created\n", fileName.c_str());
+		logNote("Texture created: %s", fileName.c_str());
 		mTextureCollection->push_back(textureCollection);
 	}
 }
@@ -201,7 +202,7 @@ Texture::~Texture()
 		if(mTextureID)
 			glDeleteTextures(1, &mTextureID);
 
-		printf("%s : texture released\n", mFileName.c_str());
+		logNote("Texture released: %s", mFileName.c_str());
 	}
 }
 

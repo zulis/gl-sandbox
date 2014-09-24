@@ -5,15 +5,15 @@
 
 enum class TextureType
 {
-	AmbientColor,
-	DiffuseColor,
-	SpecularColor,
+	AmbientMap,
+	DiffuseMap,
+	SpecularMap,
 	SpecularLevel,
 	Glossiness,
 	SelfIllumination,
-	Opacity,
+	OpacityMap,
 	FilterColor,
-	Bump,
+	NormalMap,
 	Reflection,
 	Refraction,
 	Displacement,
@@ -22,15 +22,15 @@ enum class TextureType
 
 std::map<TextureType, std::string> TextureTypeName =
 {
-	{ TextureType::AmbientColor, "AmbientColor" },
-	{ TextureType::DiffuseColor, "DiffuseColor" },
-	{ TextureType::SpecularColor, "SpecularColor" },
+	{ TextureType::AmbientMap, "AmbientMap" },
+	{ TextureType::DiffuseMap, "DiffuseMap" },
+	{ TextureType::SpecularMap, "SpecularMap" },
 	{ TextureType::SpecularLevel, "SpecularLevel" },
 	{ TextureType::Glossiness, "Glossiness" },
 	{ TextureType::SelfIllumination, "SelfIllumination" },
-	{ TextureType::Opacity, "Opacity" },
+	{ TextureType::OpacityMap, "OpacityMap" },
 	{ TextureType::FilterColor, "FilterColor" },
-	{ TextureType::Bump, "Bump" },
+	{ TextureType::NormalMap, "NormalMap" },
 	{ TextureType::Reflection, "Reflection" },
 	{ TextureType::Refraction, "Refraction" },
 	{ TextureType::Displacement, "Displacement" },

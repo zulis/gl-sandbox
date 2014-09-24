@@ -214,5 +214,8 @@
     <ClInclude Include="..\include\Spatial\MeshSpatial.h">
       <Filter>Include\Spatial</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Core\Log.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

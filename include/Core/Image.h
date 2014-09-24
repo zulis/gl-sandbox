@@ -2,6 +2,7 @@
 
 #include <string>
 #include <FreeImage.h>
+#include "Core/Log.h"
 
 class Image
 {
@@ -126,7 +127,7 @@ void Image::loadFromFile(const std::string& fileName)
 			// If this somehow one of these failed (they shouldn't), return failure
 			if((bits == 0) || (mWidth == 0) || (mHeight == 0))
 			{
-				printf("Could not load texture %s\n", fileName.c_str());
+				logError("Could not load texture: %s", fileName.c_str());
 				generateCheckTexture();
 			}
 			else
@@ -175,7 +176,7 @@ void Image::generateCheckTexture()
 //=========================================================================
 void Image::FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char* message)
 {
-	printf("FreeImage error: %s\n", message);
+	logError("FreeImage error: %s", message);
 }
 
 //=========================================================================

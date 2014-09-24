@@ -269,6 +269,7 @@
     <ClInclude Include="..\include\Core\ImageManager.h" />
     <ClInclude Include="..\include\Core\KeyEvent.h" />
     <ClInclude Include="..\include\Core\Light.h" />
+    <ClInclude Include="..\include\Core\Log.h" />
     <ClInclude Include="..\include\Core\Material.h" />
     <ClInclude Include="..\include\Core\MaterialBasic.h" />
     <ClInclude Include="..\include\Core\MaterialDefault.h" />

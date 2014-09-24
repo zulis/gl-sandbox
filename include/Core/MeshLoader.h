@@ -11,6 +11,7 @@
 #include "Core/MeshData.h"
 #include "Core/TextureType.h"
 #include "Core/Texture.h"
+#include "Core/Log.h"
 
 typedef std::shared_ptr<class MeshLoader> MeshLoaderRef;
 
@@ -63,7 +64,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 	if (!scene)
 	{
-		printf("Could not load mesh %s\n", fileName.c_str());
+		logError("Could not load mesh: %s", fileName.c_str());
 	}
 	else
 	{
@@ -75,12 +76,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			const_cast<aiMatrix4x4&>(scene->mRootNode->mTransformation) = scaling * scene->mRootNode->mTransformation;
 		}
 
-		printf("Mesh loaded %s\n", fileName.c_str());
-		printf("  %i meshes\n", scene->mNumMeshes);
-		printf("  %i animations\n", scene->mNumAnimations);
-		printf("  %i materials\n", scene->mNumMaterials);
-		printf("  %i textures\n", scene->mNumTextures);
-		printf("  %i lights\n", scene->mNumLights);
+		logNote("Mesh loaded: %s", fileName.c_str());
+		logNote("  Submeshes  : %i", scene->mNumMeshes);
+		logNote("  Animations : %i", scene->mNumAnimations);
+		logNote("  Materials  : %i", scene->mNumMaterials);
+		logNote("  Textures   : %i", scene->mNumTextures);
 
 		const aiVector3D zero3D(0.0f, 0.0f, 0.0f);
 
@@ -89,8 +89,8 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			const aiMesh* mesh = scene->mMeshes[n];
 			const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-			printf("    mesh[%i] [Geometry.Vertices]    : %i\n", n, mesh->mNumVertices);
-			printf("    mesh[%i] [Geometry.Faces]       : %i\n", n, mesh->mNumFaces);
+			logNote("  mesh[%i] [Geometry.Vertices]    : %i", n, mesh->mNumVertices);
+			logNote("  mesh[%i] [Geometry.Faces]       : %i", n, mesh->mNumFaces);
 
 			MeshPart meshPart;
 
@@ -104,6 +104,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
 
 				/*
+				// another example http://www.keithlantz.net/2011/10/tangent-space-normal-mapping-with-glsl/
 				// put the three vectors into my glm::vec3 struct format for doing maths
 				glm::vec3 t(tangent->x, tangent->y, tangent->z);
 				glm::vec3 n(normal->x, normal->y, normal->z);
@@ -178,12 +179,12 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS, &shininess, &max);
 			meshPart.material.shininess = shininess;
 
-			printf("    mesh[%i] [Material.Ambient]     : %.3f %.3f %.3f %.3f\n", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
-			printf("    mesh[%i] [Material.Diffuse]     : %.3f %.3f %.3f %.3f\n", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
-			printf("    mesh[%i] [Material.Specular]    : %.3f %.3f %.3f %.3f\n", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
-			printf("    mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f\n", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
-			printf("    mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f\n", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
-			printf("    mesh[%i] [Material.Shininess]   : %.3f\n", n, meshPart.material.shininess);
+			logNote("  mesh[%i] [Material.Ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
+			logNote("  mesh[%i] [Material.Diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
+			logNote("  mesh[%i] [Material.Specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
+			logNote("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
+			logNote("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
+			logNote("  mesh[%i] [Material.Shininess]   : %.3f", n, meshPart.material.shininess);
 
 			for (unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
 			{
@@ -200,15 +201,15 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					switch ((aiTextureType)m)
 					{
 					case aiTextureType_DIFFUSE:
-						meshTexture.type = TextureType::DiffuseColor;
+						meshTexture.type = TextureType::DiffuseMap;
 						break;
 
 					case aiTextureType_SPECULAR:
-						meshTexture.type = TextureType::SpecularColor;
+						meshTexture.type = TextureType::SpecularMap;
 						break;
 
 					case aiTextureType_AMBIENT:
-						meshTexture.type = TextureType::AmbientColor;
+						meshTexture.type = TextureType::AmbientMap;
 						break;
 
 					case aiTextureType_EMISSIVE:
@@ -216,7 +217,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 
 					case aiTextureType_HEIGHT:
-						meshTexture.type = TextureType::Bump;
+						meshTexture.type = TextureType::NormalMap;
 						break;
 
 					case aiTextureType_NORMALS:
@@ -228,7 +229,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 
 					case aiTextureType_OPACITY:
-						meshTexture.type = TextureType::Opacity;
+						meshTexture.type = TextureType::OpacityMap;
 						break;
 
 					case aiTextureType_DISPLACEMENT:
@@ -248,7 +249,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 					}
 
-					printf("    mesh[%i] [Texture.%s] : %s\n", n, TextureTypeName[meshTexture.type].c_str(), textureFileName.C_Str());
+					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.type].c_str(), textureFileName.C_Str());
 
 					auto texFileName = getFileName(std::string(textureFileName.C_Str()));
 					meshTexture.texture = Texture::create(texturePath + "/" + texFileName);
