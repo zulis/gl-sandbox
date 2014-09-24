@@ -33,11 +33,11 @@ struct MeshTexture
 
 struct MeshMaterial
 {
-	Color diffuse;
 	Color ambient;
+	Color diffuse;
 	Color specular;
-	Color emissive;
-	Color transparent;
+	//Color emissive;
+	//Color transparent;
 	float shininess;
 	std::vector<MeshTexture> textures;
 
@@ -48,9 +48,9 @@ struct MeshMaterial
 
 		auto it = std::find(textures.begin(), textures.end(), mt);
  
- 		if (it != textures.end())
- 			return (*it).texture;
- 		else
+		if (it != textures.end())
+			return (*it).texture;
+		else
 			return NULL;
 	}
 };

@@ -11,10 +11,10 @@ typedef std::shared_ptr<class Cube> CubeRef;
 class Cube : public Drawable, public Transform3D
 {
 	public:
-		static CubeRef create(float size = 100.0f, bool stroked = false);
+		static CubeRef create(float size = 1.0f, bool stroked = false);
 		static CubeRef create(AABB aabb);
 
-		Cube(float size = 100.0f, bool stroked = false);
+		Cube(float size = 1.0f, bool stroked = false);
 		Cube(AABB aabb);
 		~Cube();
 

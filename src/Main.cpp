@@ -52,7 +52,7 @@ void Main::setup()
 	Window::setSize(800, 600);
 
 	mCamera = Camera::create();
-	mCamera->setPosition(0, 0, 10);
+	mCamera->setPosition(0, 0, 2);
 	mCamera->setLookAt(0, 0, 0);
 	mCamera->setRotateSpeed(0.002f);
 	mCamera->setStrafeSpeed(mStrafeSpeed);
@@ -135,7 +135,7 @@ void Main::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
 	if (mouseEvent.isDown(BUTTON_RIGHT))
 	{
 		Window::hideMouse();
-		Window::setMousePosition(mCenterPositionX, mCenterPositionY);
+		Window::setMousePosition((int)mCenterPositionX, (int)mCenterPositionY);
 		mMouseLocked = true;
 	}
 	else

@@ -8,6 +8,7 @@
 #include "Core/Window.h"
 #include "Core/StateManager.h"
 #include "Core/Time.h"
+#include "Core/Log.h"
 
 using namespace std::placeholders;
 
@@ -56,6 +57,10 @@ bool Game::initialise()
 		Window::showMessageBox("OpenGL initialization failed.");
 		return false;
 	}
+
+	auto major = ogl_GetMajorVersion();
+	auto minor = ogl_GetMinorVersion();
+	logNote("Using OpenGL %i.%i", major, minor);
 
 	// Enable 3D rendering & alpha
 	gl::enable3D();

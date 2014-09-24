@@ -166,24 +166,28 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specularColor))
 				meshPart.material.specular = Color(specularColor.r, specularColor.g, specularColor.b, specularColor.a);
 
-			aiColor4D emissiveColor;
+			/*aiColor4D emissiveColor;
 			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emissiveColor))
-				meshPart.material.emissive = Color(emissiveColor.r, emissiveColor.g, emissiveColor.b, emissiveColor.a);
+			meshPart.material.emissive = Color(emissiveColor.r, emissiveColor.g, emissiveColor.b, emissiveColor.a);
 
 			aiColor4D transparentColor;
 			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_TRANSPARENT, &transparentColor))
-				meshPart.material.transparent = Color(transparentColor.r, transparentColor.g, transparentColor.b, transparentColor.a);
+			meshPart.material.transparent = Color(transparentColor.r, transparentColor.g, transparentColor.b, transparentColor.a);*/
 
 			float shininess = 0.0;
 			unsigned int max;
 			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS, &shininess, &max);
 			meshPart.material.shininess = shininess;
 
+			float shininessStrength = 0.0;
+			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS_STRENGTH, &shininessStrength, &max);
+			//meshPart.material.shininess = shininess;
+
 			logNote("  mesh[%i] [Material.Ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
 			logNote("  mesh[%i] [Material.Diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
 			logNote("  mesh[%i] [Material.Specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
-			logNote("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
-			logNote("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
+			//logNote("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
+			//logNote("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
 			logNote("  mesh[%i] [Material.Shininess]   : %.3f", n, meshPart.material.shininess);
 
 			for (unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
@@ -204,48 +208,50 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						meshTexture.type = TextureType::DiffuseMap;
 						break;
 
-					case aiTextureType_SPECULAR:
-						meshTexture.type = TextureType::SpecularMap;
-						break;
+ 					case aiTextureType_SPECULAR:
+ 						meshTexture.type = TextureType::SpecularMap;
+ 						break;
 
-					case aiTextureType_AMBIENT:
-						meshTexture.type = TextureType::AmbientMap;
-						break;
+// 					case aiTextureType_AMBIENT:
+// 						meshTexture.type = TextureType::AmbientMap;
+// 						break;
 
-					case aiTextureType_EMISSIVE:
-						meshTexture.type = TextureType::SelfIllumination;
-						break;
+// 					case aiTextureType_EMISSIVE:
+// 						meshTexture.type = TextureType::SelfIllumination;
+// 						break;
 
 					case aiTextureType_HEIGHT:
 						meshTexture.type = TextureType::NormalMap;
 						break;
 
-					case aiTextureType_NORMALS:
-						meshTexture.type = TextureType::Unknown; // ???
-						break;
-
-					case aiTextureType_SHININESS:
-						meshTexture.type = TextureType::Glossiness;
-						break;
+// 					case aiTextureType_NORMALS:
+// 						meshTexture.type = TextureType::Unknown; // ???
+// 						break;
+// 
+// 					case aiTextureType_SHININESS:
+// 						meshTexture.type = TextureType::Glossiness;
+// 						break;
 
 					case aiTextureType_OPACITY:
 						meshTexture.type = TextureType::OpacityMap;
 						break;
 
-					case aiTextureType_DISPLACEMENT:
-						meshTexture.type = TextureType::Displacement;
-						break;
-
-					case aiTextureType_LIGHTMAP:
-						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
-						break;
-
-					case aiTextureType_REFLECTION:
-						meshTexture.type = TextureType::Reflection;
-						break;
+// 					case aiTextureType_DISPLACEMENT:
+// 						meshTexture.type = TextureType::Displacement;
+// 						break;
+// 
+// 					case aiTextureType_LIGHTMAP:
+// 						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
+// 						break;
+// 
+// 					case aiTextureType_REFLECTION:
+// 						meshTexture.type = TextureType::Reflection;
+// 						break;
 
 					default:
-						meshTexture.type = TextureType::Unknown;
+						//meshTexture.type = TextureType::Unknown;
+						++index;
+						continue;
 						break;
 					}
 

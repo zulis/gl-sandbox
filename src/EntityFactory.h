@@ -9,17 +9,15 @@
 #include "Core/Mesh.h"
 #include "Core/MaterialPhong.h"
 
-#include "Components/RenderComponent.h"
+#include "Components/MeshRenderComponent.h"
 #include "Components/TransformComponent.h"
 #include "Components/VelocityComponent.h"
 #include "Components/KeyboardComponent.h"
 #include "Components/PlayerComponent.h"
 
-#include "Systems/RenderSystem.h"
+#include "Systems/MeshRenderSystem.h"
 #include "Systems/KeyboardSystem.h"
 #include "Systems/PlayerMovementSystem.h"
-
-#include "Spatial/MeshSpatial.h"
 
 typedef std::shared_ptr<class EntityFactory> EntityFactoryRef;
 
@@ -41,7 +39,7 @@ private:
 	World mWorld;
 	SystemManager* mSm;
 	EntityManager* mEm;
-	EntityProcessingSystem* mRenderSystem;
+	EntityProcessingSystem* mMeshRenderSystem;
 	KeyboardSystem* mKeyboardSystem;
 	PlayerMovementSystem* mPlayerMovementSystem;
 
@@ -71,7 +69,7 @@ void EntityFactory::setup(const CameraRef& camera)
 	mCamera = camera;
 
 	mSm = mWorld.getSystemManager();
-	mRenderSystem = mSm->setSystem<RenderSystem>();
+	mMeshRenderSystem = mSm->setSystem<MeshRenderSystem>();
 	mKeyboardSystem = mSm->setSystem<KeyboardSystem>();
 	mPlayerMovementSystem = mSm->setSystem<PlayerMovementSystem>();
 	mEm = mWorld.getEntityManager();
@@ -90,10 +88,11 @@ void EntityFactory::setup(const CameraRef& camera)
 
 
 
-	auto mesh = MeshSpatial::create();
+	auto mesh = Mesh::create();
 	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
-	mesh->loadFromFile("assets/models/ship/ship.fbx");
+	//mesh->loadFromFile("assets/models/ship/ship.fbx");
+	mesh->loadFromFile("assets/models/box/box.fbx");
 
 	//mesh->setTexturePath("assets/models/sponza/textures");
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj");
@@ -123,7 +122,7 @@ void EntityFactory::setup(const CameraRef& camera)
 	e.addComponent(transform);
 	e.addComponent(new VelocityComponent);
 	e.addComponent(new KeyboardComponent);
-	e.addComponent(new RenderComponent(mesh, mCamera));
+	e.addComponent(new MeshRenderComponent(mesh, mCamera));
 	e.addComponent(new PlayerComponent(KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT));
 	e.refresh();
 }
@@ -148,7 +147,7 @@ void EntityFactory::update(float elapsedTime)
 void EntityFactory::draw()
 {
 	//gl::enableCullFace(gl::CullFaceType::Back);
-	mRenderSystem->process();
+	mMeshRenderSystem->process();
 	//gl::disableCullFace();
 }
 

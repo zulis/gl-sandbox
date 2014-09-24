@@ -5,40 +5,40 @@
 #include "Core/Mesh.h"
 #include "Core/Camera.h"
 
-class RenderComponent : public Component
+class MeshRenderComponent : public Component
 {
 public:
-	RenderComponent(MeshRef renderable, CameraRef camera);
-	MeshRef getRenderable() const;
+	MeshRenderComponent(MeshRef mesh, CameraRef camera);
+	MeshRef getMesh() const;
 	CameraRef getCamera() const;
 	bool isCulled(const Camera& camera);
 
 private:
-	MeshRef mRenderable;
+	MeshRef mMesh;
 	CameraRef mCamera;
 };
 
 //=========================================================================
-RenderComponent::RenderComponent(MeshRef renderable, CameraRef camera)
+MeshRenderComponent::MeshRenderComponent(MeshRef mesh, CameraRef camera)
 {
-	mRenderable = renderable;
+	mMesh = mesh;
 	mCamera = camera;
 }
 
 //=========================================================================
-MeshRef RenderComponent::getRenderable() const
+MeshRef MeshRenderComponent::getMesh() const
 {
-	return mRenderable;
+	return mMesh;
 }
 
 //=========================================================================
-CameraRef RenderComponent::getCamera() const
+CameraRef MeshRenderComponent::getCamera() const
 {
 	return mCamera;
 }
 
 //=========================================================================
-bool RenderComponent::isCulled(const Camera& camera)
+bool MeshRenderComponent::isCulled(const Camera& camera)
 {
 	//return mRenderable->isCulled(camera);
 	return false;

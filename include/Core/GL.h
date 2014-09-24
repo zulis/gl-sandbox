@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/GLCore.h"
+#include "Core/GLCore44.h"
 #include <gl/GL.h> // Should be after GLCore
 #include "Core/Color.h"
 

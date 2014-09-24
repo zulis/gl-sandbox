@@ -3,15 +3,15 @@
 #include <functional>
 #include <Artemis.h>
 #include "Components/TransformComponent.h"
-#include "Components/RenderComponent.h"
+#include "Components/MeshRenderComponent.h"
 
-class RenderSystem : public EntityProcessingSystem
+class MeshRenderSystem : public EntityProcessingSystem
 {
 public:
-	RenderSystem();
+	MeshRenderSystem();
 
 private:
-	ComponentMapper<RenderComponent> mRenderMapper;
+	ComponentMapper<MeshRenderComponent> mRenderMapper;
 	ComponentMapper<TransformComponent> mTransformMapper;
 
 private:
@@ -20,23 +20,23 @@ private:
 };
 
 //=========================================================================
-RenderSystem::RenderSystem()
+MeshRenderSystem::MeshRenderSystem()
 {
-	addComponentType<RenderComponent>();
+	addComponentType<MeshRenderComponent>();
 	addComponentType<TransformComponent>();
 }
 
 //=========================================================================
-void RenderSystem::initialize()
+void MeshRenderSystem::initialize()
 {
 	mRenderMapper.init(*world);
 	mTransformMapper.init(*world);
 }
 
 //=========================================================================
-void RenderSystem::processEntity(Entity& e)
+void MeshRenderSystem::processEntity(Entity& e)
 {
-	auto renderable = mRenderMapper.get(e)->getRenderable();
+	auto renderable = mRenderMapper.get(e)->getMesh();
 	auto camera = mRenderMapper.get(e)->getCamera();
 	auto transformComp = mTransformMapper.get(e);
 

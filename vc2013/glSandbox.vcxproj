@@ -252,7 +252,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\Components\KeyboardComponent.h" />
     <ClInclude Include="..\include\Components\PlayerComponent.h" />
-    <ClInclude Include="..\include\Components\RenderComponent.h" />
+    <ClInclude Include="..\include\Components\MeshRenderComponent.h" />
     <ClInclude Include="..\include\Components\TransformComponent.h" />
     <ClInclude Include="..\include\Components\VelocityComponent.h" />
     <ClInclude Include="..\include\Core\AABB.h" />
@@ -264,7 +264,7 @@
     <ClInclude Include="..\include\Core\Game.h" />
     <ClInclude Include="..\include\Core\Geometry.h" />
     <ClInclude Include="..\include\Core\GL.h" />
-    <ClInclude Include="..\include\Core\GLCore.h" />
+    <ClInclude Include="..\include\Core\GLCore44.h" />
     <ClInclude Include="..\include\Core\Image.h" />
     <ClInclude Include="..\include\Core\ImageManager.h" />
     <ClInclude Include="..\include\Core\KeyEvent.h" />
@@ -292,11 +292,9 @@
     <ClInclude Include="..\include\Core\Transform2D.h" />
     <ClInclude Include="..\include\Core\Transform3D.h" />
     <ClInclude Include="..\include\Core\Window.h" />
-    <ClInclude Include="..\include\Spatial\MeshSpatial.h" />
-    <ClInclude Include="..\include\Spatial\Spatial.h" />
     <ClInclude Include="..\include\Systems\KeyboardSystem.h" />
     <ClInclude Include="..\include\Systems\PlayerMovementSystem.h" />
-    <ClInclude Include="..\include\Systems\RenderSystem.h" />
+    <ClInclude Include="..\include\Systems\MeshRenderSystem.h" />
     <ClInclude Include="..\src\EntityFactory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

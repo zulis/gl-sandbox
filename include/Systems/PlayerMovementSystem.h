@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Artemis.h>
-#include "Components/RenderComponent.h"
+#include "Components/MeshRenderComponent.h"
 #include "Components/PlayerComponent.h"
 #include "Components/VelocityComponent.h"
 #include "Components/TransformComponent.h"
@@ -13,12 +13,13 @@ public:
 
 private:
 	ComponentMapper<PlayerComponent> mPlayerMapper;
-	ComponentMapper<RenderComponent> mRenderMapper;
+	ComponentMapper<MeshRenderComponent> mMeshRenderMapper;
 	ComponentMapper<KeyboardComponent> mKeyboardMapper;
 	ComponentMapper<VelocityComponent> mVelocityMapper;
 	ComponentMapper<TransformComponent> mTransformMapper;
 	float mPlayerMoveSpeed{ 0.05f };
-	float mPlayerRotateSpeed{ 3.0f };
+	//float mPlayerRotateSpeed{ 3.0f };
+	float mPlayerRotateSpeed{ 1.0f };
 	float mPlayerDragFactor{ mPlayerMoveSpeed * 20 };
 
 
@@ -36,7 +37,7 @@ private:
 PlayerMovementSystem::PlayerMovementSystem()
 {
 	addComponentType<PlayerComponent>();
-	addComponentType<RenderComponent>();
+	addComponentType<MeshRenderComponent>();
 	addComponentType<KeyboardComponent>();
 	addComponentType<VelocityComponent>();
 	addComponentType<TransformComponent>();
@@ -46,7 +47,7 @@ PlayerMovementSystem::PlayerMovementSystem()
 void PlayerMovementSystem::initialize()
 {
 	mPlayerMapper.init(*world);
-	mRenderMapper.init(*world);
+	mMeshRenderMapper.init(*world);
 	mKeyboardMapper.init(*world);
 	mVelocityMapper.init(*world);
 	mTransformMapper.init(*world);
@@ -56,7 +57,7 @@ void PlayerMovementSystem::initialize()
 void PlayerMovementSystem::processEntity(Entity& e)
 {
 	auto player = mPlayerMapper.get(e);
-	auto renderable = mRenderMapper.get(e)->getRenderable();
+	auto renderable = mMeshRenderMapper.get(e)->getMesh();
 	auto keyboard = mKeyboardMapper.get(e);
 	auto velocity = mVelocityMapper.get(e);
 	auto transform = mTransformMapper.get(e);
@@ -84,7 +85,8 @@ void PlayerMovementSystem::processEntity(Entity& e)
 		rotationZ -= mPlayerRotateSpeed * world->getDelta();
 	}
 
-	transform->setRotation(glm::vec3(0.0f, 0.0f, rotationZ));
+	//transform->setRotation(glm::vec3(0.0f, 0.0f, rotationZ));
+	transform->setRotation(glm::vec3(0.0f, rotationZ, 0.0f));
 
 	//auto position = transform->getPosition();
 

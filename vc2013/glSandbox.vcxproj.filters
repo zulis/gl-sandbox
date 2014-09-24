@@ -15,14 +15,11 @@
     <Filter Include="Include\Components">
       <UniqueIdentifier>{bf0cbf78-0c84-4c5c-ae85-63102de20ef1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Systems">
-      <UniqueIdentifier>{c8626aca-02f9-4163-933d-918a66f5f02e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Artemis">
       <UniqueIdentifier>{7f76d79e-b223-4562-8010-6dd5de3104c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Spatial">
-      <UniqueIdentifier>{5f76a831-9316-4a74-bc0f-27cc29f64d3a}</UniqueIdentifier>
+    <Filter Include="Include\Systems">
+      <UniqueIdentifier>{c8626aca-02f9-4163-933d-918a66f5f02e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +79,6 @@
     <ClInclude Include="..\include\Core\GL.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\GLCore.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Color.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
@@ -133,12 +127,6 @@
     <ClInclude Include="..\include\Core\Shader.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Components\RenderComponent.h">
-      <Filter>Include\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Spatial\Spatial.h">
-      <Filter>Include\Spatial</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Mesh.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
@@ -175,9 +163,6 @@
     <ClInclude Include="..\include\Systems\PlayerMovementSystem.h">
       <Filter>Include\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Systems\RenderSystem.h">
-      <Filter>Include\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\EntityFactory.h">
       <Filter>Src</Filter>
     </ClInclude>
@@ -211,11 +196,17 @@
     <ClInclude Include="..\include\Core\MaterialDefault.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Spatial\MeshSpatial.h">
-      <Filter>Include\Spatial</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Log.h">
       <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\GLCore44.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Components\MeshRenderComponent.h">
+      <Filter>Include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Systems\MeshRenderSystem.h">
+      <Filter>Include\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
