@@ -7,7 +7,7 @@
 #include "Core/KeyEvent.h"
 #include "Core/MouseEvent.h"
 #include "Core/Mesh.h"
-#include "Core/MaterialPhong.h"
+//#include "Core/MaterialPhong.h"
 
 #include "Components/MeshRenderComponent.h"
 #include "Components/TransformComponent.h"
@@ -75,24 +75,25 @@ void EntityFactory::setup(const CameraRef& camera)
 	mEm = mWorld.getEntityManager();
 	mSm->initializeAll();
 
-	Light light;
-	light.position = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
-	light.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
+// 	Light light;
+// 	light.position = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+// 	light.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	auto mat = MaterialPhong::create();
-	mat->setAmbientColor(0.1f, 0.1f, 0.1f);
-	mat->setSpecularColor(0.2f, 0.2f, 0.2f);
-	mat->setShininess(1.0f);
-	mat->addLight(light);
+// 	auto mat = MaterialPhong::create();
+// 	mat->setAmbientColor(0.1f, 0.1f, 0.1f);
+// 	mat->setSpecularColor(0.2f, 0.2f, 0.2f);
+// 	mat->setShininess(1.0f);
+// 	mat->addLight(light);
 
 
 
 
 	auto mesh = Mesh::create();
-	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
+	mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
-	mesh->loadFromFile("assets/models/box/box.fbx");
+	
+	//mesh->loadFromFile("assets/models/box/box.fbx");
 
 	//mesh->setTexturePath("assets/models/sponza/textures");
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj");

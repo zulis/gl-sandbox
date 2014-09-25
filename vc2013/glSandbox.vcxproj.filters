@@ -139,12 +139,6 @@
     <ClInclude Include="..\include\Core\Light.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\MaterialPhong.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\MaterialBasic.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Time.h">
       <Filter>Include\Core</Filter>
     </ClInclude>

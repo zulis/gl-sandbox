@@ -8,7 +8,7 @@
 #include "EntityFactory.h"
 
 #include "Core/Mesh.h"
-#include "Core/MaterialPhong.h"
+//#include "Core/MaterialPhong.h"
 #include "Core/Font.h"
 #include "Core/Quad.h"
 

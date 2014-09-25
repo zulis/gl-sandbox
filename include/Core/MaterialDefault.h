@@ -11,9 +11,12 @@ class MaterialDefault : public Material
 		MaterialDefault();
 		virtual ~MaterialDefault();
 
-	protected:
-		virtual void bind();
-		
+	private:
+		TextureRef mDefaultDiffuse;
+		TextureRef mDefaultNormal;
+		TextureRef mDefaultSpecular;
+
+		virtual void updateUniforms(unsigned int geometryIndex);
 };
 
 //=========================================================================
@@ -25,7 +28,9 @@ MaterialDefaultRef MaterialDefault::create()
 //=========================================================================
 MaterialDefault::MaterialDefault() : Material("assets/shaders/materialDefault")
 {
-	
+	mDefaultDiffuse = Texture::create("assets/textures/misc/white.png");
+	mDefaultNormal = Texture::create("assets/textures/misc/normal.png");
+	mDefaultSpecular = Texture::create("assets/textures/misc/white.png");
 }
 
 //=========================================================================
@@ -34,7 +39,14 @@ MaterialDefault::~MaterialDefault()
 }
 
 //=========================================================================
-void MaterialDefault::bind()
+void MaterialDefault::updateUniforms(unsigned int geometryIndex)
 {
-	mShader->bind();
+	if (!bindTexture(TextureType::DiffuseMap, 0, geometryIndex))
+		mDefaultDiffuse->bind(0);
+
+	if (!bindTexture(TextureType::NormalMap, 1, geometryIndex))
+		mDefaultNormal->bind(1);
+
+	if (!bindTexture(TextureType::SpecularMap, 2, geometryIndex))
+		mDefaultSpecular->bind(2);
 }

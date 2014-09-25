@@ -4,10 +4,9 @@ in vec3 LightDir;
 in vec3 ViewDir;
 in vec2 TexCoord;
 
-//layout(binding=0) uniform sampler2D TexDiffuse;
-uniform sampler2D TexDiffuse;
-uniform sampler2D TexSpecular;
-uniform sampler2D TexNormal;
+layout(binding = 0) uniform sampler2D TexDiffuse;
+layout(binding = 1) uniform sampler2D TexNormal;
+layout(binding = 2) uniform sampler2D TexSpecular;
 
 /*uniform*/ struct DirectionalLight
 {
@@ -29,7 +28,7 @@ out vec4 FragColor;
 
 void main()
 {
-	DirectionalLight1.direction = vec3(0.0f, 0.0f, -1.0f);
+	DirectionalLight1.direction = vec3(-0.5f, -1.0f, -1.0f);
 	DirectionalLight1.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	DirectionalLight1.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	DirectionalLight1.specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);

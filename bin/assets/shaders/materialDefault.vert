@@ -24,7 +24,7 @@ out vec2 TexCoord;
 
 void main()
 {
-	DirectionalLight1.direction = vec3(0.0f, 0.0f, -1.0f);
+	DirectionalLight1.direction = vec3(-0.5f, -1.0f, -1.0f);
 	DirectionalLight1.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	DirectionalLight1.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	DirectionalLight1.specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);

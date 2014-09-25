@@ -45,8 +45,10 @@ private:
 	//void parseNode(const aiNode* node);
 	MeshData mMeshData;
 
-	void draw(const Camera& camera, const glm::mat4& model);
-	void draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera, const glm::mat4& model);
+	void updateUniforms(const Camera& camera);
+	void draw(const Camera& camera);
+	void draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera);
+	void setupMaterial();
 
 };
 
@@ -86,6 +88,7 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 	mMeshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
 
 	mMaterial = MaterialDefault::create();
+	setupMaterial();
 
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
@@ -132,7 +135,7 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 //=========================================================================
 void Mesh::draw(const CameraRef& camera)
 {
-	draw(*camera.get(), getMatrix());
+	draw(*camera.get());
 }
 
 //=========================================================================
@@ -176,10 +179,38 @@ void Mesh::setMaterial(const MaterialRef& material)
 {
 	mMaterial.reset();
 	mMaterial = material;
+	setupMaterial();
 }
 
 //=========================================================================
-void Mesh::draw(const Camera& camera, const glm::mat4& model)
+void Mesh::updateUniforms(const Camera& camera)
+{
+	const Shader* shader = mMaterial->getShader();
+
+	if (shader->hasUniform(ShaderConstants::ProjectionMatrix))
+		shader->setUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
+
+	if (shader->hasUniform(ShaderConstants::ViewMatrix))
+		shader->setUniform(ShaderConstants::ViewMatrix, camera.getViewMatrix());
+
+	if (shader->hasUniform(ShaderConstants::ModelMatrix))
+		shader->setUniform(ShaderConstants::ModelMatrix, getMatrix());
+
+	if (shader->hasUniform(ShaderConstants::ModelViewMatrix))
+		shader->setUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * getMatrix());
+
+	if (shader->hasUniform(ShaderConstants::MVP))
+		shader->setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
+
+	if (shader->hasUniform(ShaderConstants::NormalMatrix))
+	{
+		auto mv = camera.getViewMatrix() * getMatrix();
+		shader->setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
+	}
+}
+
+//=========================================================================
+void Mesh::draw(const Camera& camera)
 {
 	unsigned int index = 0;
 
@@ -187,17 +218,17 @@ void Mesh::draw(const Camera& camera, const glm::mat4& model)
 	{
 		if (mCullingIsOn)
 		{
-			auto aabb = mAABBMap[geometry].transformed(model);
+			auto aabb = mAABBMap[geometry].transformed(getMatrix());
 			auto notCulled = camera.intersects(aabb);
 
 			if (notCulled)
 			{
-				draw(geometry, index, camera, model);
+				draw(geometry, index, camera);
 			}
 		}
 		else
 		{
-			draw(geometry, index, camera, model);
+			draw(geometry, index, camera);
 		}
 
 		index++;
@@ -205,20 +236,42 @@ void Mesh::draw(const Camera& camera, const glm::mat4& model)
 }
 
 //=========================================================================
-void Mesh::draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera, const glm::mat4& model)
+void Mesh::draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera)
 {
-	Material::ShaderValues shaderValues;
-	shaderValues.projection = camera.getProjectionMatrix();
-	shaderValues.view = camera.getViewMatrix();
-	shaderValues.model = model;
-	shaderValues.meshMaterial = mMeshData[index].material;
+// 	Material::ShaderValues shaderValues;
+// 	shaderValues.projection = camera.getProjectionMatrix();
+// 	shaderValues.view = camera.getViewMatrix();
+// 	shaderValues.model = model;
+// 	shaderValues.meshMaterial = mMeshData[index].material;
 
 	mMaterial->bind();
-	mMaterial->setShaderValues(shaderValues);
+	updateUniforms(camera);
+	mMaterial->updateUniforms(index);
 	//mMaterial->updateUniforms(index);
 	geometry->draw(*mMaterial->getShader());
 	mMaterial->unbind();
 }
+
+//=========================================================================
+void Mesh::setupMaterial()
+{
+	if (mMaterial)
+	{
+		unsigned int geometryIndex = 0;
+
+		for each (MeshPart meshPart in mMeshData)
+		{
+			for each (auto meshTexture in meshPart.material.textures)
+			{
+				mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
+			}
+
+			geometryIndex++;
+		}
+	}
+}
+
+
 
 //=========================================================================
 //void Mesh::draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model)

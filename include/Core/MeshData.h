@@ -13,21 +13,21 @@ struct MeshGeometry
 	std::vector<glm::vec3> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<glm::vec3> normals;
+	std::vector<glm::vec2> texCoords;
 	std::vector<glm::vec3> tangents;
 	std::vector<glm::vec3> bitangents;
-	std::vector<glm::vec2> texCoords;
 };
 
 struct MeshTexture
 {
-	TextureType type;
-	TextureRef texture;
-	//std::string fileName;
+	TextureType textureType;
+	//TextureRef texture;
+	std::string fileName;
 	//GLuint textureID;
 
  	bool operator==(const MeshTexture& t) const
  	{
- 		return t.type == type;
+ 		return t.textureType == textureType;
  	}
 };
 
@@ -41,18 +41,18 @@ struct MeshMaterial
 	float shininess;
 	std::vector<MeshTexture> textures;
 
-	TextureRef getTexture(TextureType type) const
-	{
-		MeshTexture mt;
-		mt.type = type;
-
-		auto it = std::find(textures.begin(), textures.end(), mt);
- 
-		if (it != textures.end())
-			return (*it).texture;
-		else
-			return NULL;
-	}
+// 	TextureRef getTexture(TextureType type) const
+// 	{
+// 		MeshTexture mt;
+// 		mt.type = type;
+// 
+// 		auto it = std::find(textures.begin(), textures.end(), mt);
+//  
+// 		if (it != textures.end())
+// 			return (*it).texture;
+// 		else
+// 			return NULL;
+// 	}
 };
 
 struct MeshPart

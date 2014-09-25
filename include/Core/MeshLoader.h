@@ -10,7 +10,6 @@
 #pragma endregion assimp
 #include "Core/MeshData.h"
 #include "Core/TextureType.h"
-#include "Core/Texture.h"
 #include "Core/Log.h"
 
 typedef std::shared_ptr<class MeshLoader> MeshLoaderRef;
@@ -183,12 +182,12 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS_STRENGTH, &shininessStrength, &max);
 			//meshPart.material.shininess = shininess;
 
-			logNote("  mesh[%i] [Material.Ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
-			logNote("  mesh[%i] [Material.Diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
-			logNote("  mesh[%i] [Material.Specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
+			logNote("  mesh[%i] [Material.ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
+			logNote("  mesh[%i] [Material.diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
+			logNote("  mesh[%i] [Material.specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
 			//logNote("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
 			//logNote("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
-			logNote("  mesh[%i] [Material.Shininess]   : %.3f", n, meshPart.material.shininess);
+			logNote("  mesh[%i] [Material.shininess]   : %.3f", n, meshPart.material.shininess);
 
 			for (unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
 			{
@@ -205,11 +204,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					switch ((aiTextureType)m)
 					{
 					case aiTextureType_DIFFUSE:
-						meshTexture.type = TextureType::DiffuseMap;
+						meshTexture.textureType = TextureType::DiffuseMap;
 						break;
 
  					case aiTextureType_SPECULAR:
- 						meshTexture.type = TextureType::SpecularMap;
+ 						meshTexture.textureType = TextureType::SpecularMap;
  						break;
 
 // 					case aiTextureType_AMBIENT:
@@ -221,7 +220,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 // 						break;
 
 					case aiTextureType_HEIGHT:
-						meshTexture.type = TextureType::NormalMap;
+						meshTexture.textureType = TextureType::NormalMap;
 						break;
 
 // 					case aiTextureType_NORMALS:
@@ -233,7 +232,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 // 						break;
 
 					case aiTextureType_OPACITY:
-						meshTexture.type = TextureType::OpacityMap;
+						meshTexture.textureType = TextureType::OpacityMap;
 						break;
 
 // 					case aiTextureType_DISPLACEMENT:
@@ -255,10 +254,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 					}
 
-					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.type].c_str(), textureFileName.C_Str());
+					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.textureType].c_str(), textureFileName.C_Str());
 
 					auto texFileName = getFileName(std::string(textureFileName.C_Str()));
-					meshTexture.texture = Texture::create(texturePath + "/" + texFileName);
+					//meshTexture.texture = Texture::create(texturePath + "/" + texFileName);
+					meshTexture.fileName = texturePath + "/" + texFileName;
 					meshPart.material.textures.push_back(meshTexture);
 
 					++index;
