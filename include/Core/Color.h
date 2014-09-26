@@ -16,6 +16,8 @@ class Color
 		static Color green();
 		static Color blue();
 		static Color white();
+		static Color pink();
+		static Color normal();
 
 		operator Color* ();
 		operator const Color* () const;
@@ -77,6 +79,18 @@ Color Color::blue()
 Color Color::white()
 {
 	return Color(1, 1, 1);
+}
+
+//=========================================================================
+Color Color::pink()
+{
+	return Color(1, 0, 1);
+}
+
+//=========================================================================
+Color Color::normal()
+{
+	return Color(128.0f / 255.0f, 128.0f / 255.0f, 1.0f);
 }
 
 //=========================================================================

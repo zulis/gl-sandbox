@@ -49,6 +49,7 @@ class Geometry
 
 		unsigned int getDrawType() const;
 
+		bool hasIndices() const;
 		bool hasTexCoords() const;
 		bool hasNormals() const;
 		bool hasTangents() const;
@@ -216,6 +217,12 @@ const std::vector<glm::vec3> Geometry::getBitangents() const
 unsigned int Geometry::getDrawType() const
 {
 	return mDrawType;
+}
+
+//=========================================================================
+bool Geometry::hasIndices() const
+{
+	return mIndices.size() > 0;
 }
 
 //=========================================================================
@@ -397,59 +404,62 @@ void Geometry::generateNormals()
 //=========================================================================
 void Geometry::generateTangents()
 {
-	std::vector<glm::vec3> tan1Accum;
-	std::vector<glm::vec3> tan2Accum;
-
-	for(unsigned int i = 0; i < mVertices.size(); i++)
+	if (hasIndices() && hasNormals())
 	{
-		tan1Accum.push_back(glm::vec3(0.0f));
-		tan2Accum.push_back(glm::vec3(0.0f));
-		mTangents.push_back(glm::vec3(0.0f));
+		std::vector<glm::vec3> tan1Accum;
+		std::vector<glm::vec3> tan2Accum;
+
+		for (unsigned int i = 0; i < mVertices.size(); i++)
+		{
+			tan1Accum.push_back(glm::vec3(0.0f));
+			tan2Accum.push_back(glm::vec3(0.0f));
+			mTangents.push_back(glm::vec3(0.0f));
+		}
+
+		// Compute the tangent vector
+		for (unsigned int i = 0; i < mIndices.size(); i += 3)
+		{
+			const glm::vec3& p1 = mVertices[mIndices[i]];
+			const glm::vec3& p2 = mVertices[mIndices[i + 1]];
+			const glm::vec3& p3 = mVertices[mIndices[i + 2]];
+
+			const glm::vec2& tc1 = mTexCoords[mIndices[i]];
+			const glm::vec2& tc2 = mTexCoords[mIndices[i + 1]];
+			const glm::vec2& tc3 = mTexCoords[mIndices[i + 2]];
+
+			glm::vec3 q1 = p2 - p1;
+			glm::vec3 q2 = p3 - p1;
+			float s1 = tc2.x - tc1.x, s2 = tc3.x - tc1.x;
+			float t1 = tc2.y - tc1.y, t2 = tc3.y - tc1.y;
+			float r = 1.0f / (s1 * t2 - s2 * t1);
+			glm::vec3 tan1((t2*q1.x - t1*q2.x) * r,
+				(t2*q1.y - t1*q2.y) * r,
+				(t2*q1.z - t1*q2.z) * r);
+			glm::vec3 tan2((s1*q2.x - s2*q1.x) * r,
+				(s1*q2.y - s2*q1.y) * r,
+				(s1*q2.z - s2*q1.z) * r);
+			tan1Accum[mIndices[i]] += tan1;
+			tan1Accum[mIndices[i + 1]] += tan1;
+			tan1Accum[mIndices[i + 2]] += tan1;
+			tan2Accum[mIndices[i]] += tan2;
+			tan2Accum[mIndices[i + 1]] += tan2;
+			tan2Accum[mIndices[i + 2]] += tan2;
+		}
+
+		for (unsigned int i = 0; i < mVertices.size(); ++i)
+		{
+			const glm::vec3& n = mNormals[i];
+			glm::vec3& t1 = tan1Accum[i];
+			glm::vec3& t2 = tan2Accum[i];
+
+			// Gram-Schmidt orthogonalize
+			mTangents[i] = glm::vec3(glm::normalize(t1 - (glm::dot(n, t1) * n)));
+			//mTangents[i] = glm::vec4(glm::normalize(t1 - (glm::dot(n, t1) * n)), 0.0f);
+			// Store handedness in w
+			//mTangents[i].w = (glm::dot(glm::cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
+		}
+
+		tan1Accum.clear();
+		tan2Accum.clear();
 	}
-
-	// Compute the tangent vector
-	for(unsigned int i = 0; i < mIndices.size(); i += 3)
-	{
-		const glm::vec3& p1 = mVertices[mIndices[i]];
-		const glm::vec3& p2 = mVertices[mIndices[i + 1]];
-		const glm::vec3& p3 = mVertices[mIndices[i + 2]];
-
-		const glm::vec2& tc1 = mTexCoords[mIndices[i]];
-		const glm::vec2& tc2 = mTexCoords[mIndices[i + 1]];
-		const glm::vec2& tc3 = mTexCoords[mIndices[i + 2]];
-
-		glm::vec3 q1 = p2 - p1;
-		glm::vec3 q2 = p3 - p1;
-		float s1 = tc2.x - tc1.x, s2 = tc3.x - tc1.x;
-		float t1 = tc2.y - tc1.y, t2 = tc3.y - tc1.y;
-		float r = 1.0f / (s1 * t2 - s2 * t1);
-		glm::vec3 tan1((t2*q1.x - t1*q2.x) * r,
-		               (t2*q1.y - t1*q2.y) * r,
-		               (t2*q1.z - t1*q2.z) * r);
-		glm::vec3 tan2((s1*q2.x - s2*q1.x) * r,
-		               (s1*q2.y - s2*q1.y) * r,
-		               (s1*q2.z - s2*q1.z) * r);
-		tan1Accum[mIndices[i]] += tan1;
-		tan1Accum[mIndices[i + 1]] += tan1;
-		tan1Accum[mIndices[i + 2]] += tan1;
-		tan2Accum[mIndices[i]] += tan2;
-		tan2Accum[mIndices[i + 1]] += tan2;
-		tan2Accum[mIndices[i + 2]] += tan2;
-	}
-
-	for(unsigned int i = 0; i < mVertices.size(); ++i)
-	{
-		const glm::vec3& n = mNormals[i];
-		glm::vec3& t1 = tan1Accum[i];
-		glm::vec3& t2 = tan2Accum[i];
-
-		// Gram-Schmidt orthogonalize
-		mTangents[i] = glm::vec3(glm::normalize(t1 - (glm::dot(n, t1) * n)));
-		//mTangents[i] = glm::vec4(glm::normalize(t1 - (glm::dot(n, t1) * n)), 0.0f);
-		// Store handedness in w
-		//mTangents[i].w = (glm::dot(glm::cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
-	}
-
-	tan1Accum.clear();
-	tan2Accum.clear();
 }

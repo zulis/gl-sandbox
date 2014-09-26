@@ -89,11 +89,12 @@ void EntityFactory::setup(const CameraRef& camera)
 
 
 	auto mesh = Mesh::create();
-	mesh->loadFromFile("assets/models/misc/sphere.fbx");
+	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
 	
 	//mesh->loadFromFile("assets/models/box/box.fbx");
+	mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj");
 
 	//mesh->setTexturePath("assets/models/sponza/textures");
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj");
@@ -114,7 +115,7 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mat->setGeomMaterials(mesh->getGeomMaterial());
 
 	auto transform = new TransformComponent();
-	//transform->setScale(glm::vec3(0.05f));
+	transform->setScale(glm::vec3(0.02f));
 	//transform->setScale(glm::vec3(3.f));
 
 	Entity& e = mWorld.createEntity();

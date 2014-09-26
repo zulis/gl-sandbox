@@ -24,10 +24,10 @@ out vec2 TexCoord;
 
 void main()
 {
-	DirectionalLight1.direction = vec3(-0.5f, -1.0f, -1.0f);
-	DirectionalLight1.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	DirectionalLight1.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	DirectionalLight1.specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	DirectionalLight1.direction = vec3(0.0, 0.0, -1.0);
+	DirectionalLight1.ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	DirectionalLight1.diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	DirectionalLight1.specular = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	// Create a matrix to transform vectors from eye space to tangent space.
 
