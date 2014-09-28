@@ -6,6 +6,7 @@
 #include <FreeImage.h>
 #include "Core/GL.h"
 #include "Core/ImageManager.h"
+#include "Core/Color.h"
 #include "Core/Log.h"
 
 struct TextureCollection
@@ -45,8 +46,10 @@ public:
 	struct Format;
 
 	static TextureRef create(const std::string& fileName = std::string(), const Format& format = Format());
+	static TextureRef create(const Color& color, const Format& format = Format());
 
 	Texture(const std::string& fileName = std::string(), const Format& format = Format());
+	Texture(const Color& color, const Format& format = Format());
 	virtual ~Texture();
 
 	void bind(GLuint textureUnit = 0);
@@ -82,6 +85,9 @@ public:
 private:
 	ImageManager mImageMng;
 	Image* mImage;
+	void getTexture(const std::string& fileName, const Format& format);
+	void getTexture(const Color& color, const Format& format);
+	std::string colorToString(const Color& color);
 	void loadFromRaw(const int format, const int width, const int height, const unsigned char* pixels);
 
 	GLuint mTextureID;
@@ -93,6 +99,7 @@ private:
 	unsigned int mWidth { 0 };
 	unsigned int mHeight { 0 };
 	//unsigned int mChannels{ 0 };
+
 };
 
 std::vector<TextureCollection>* Texture::mTextureCollection = new std::vector<TextureCollection>();
@@ -101,6 +108,12 @@ std::vector<TextureCollection>* Texture::mTextureCollection = new std::vector<Te
 TextureRef Texture::create(const std::string& fileName, const Format& format)
 {
 	return TextureRef(new Texture(fileName, format));
+}
+
+//=========================================================================
+TextureRef Texture::create(const Color& color, const Format& format)
+{
+	return TextureRef(new Texture(color, format));
 }
 
 //=========================================================================
@@ -148,37 +161,12 @@ void Texture::Format::setMagFilter(GLenum magFiler)
 //=========================================================================
 Texture::Texture(const std::string& fileName, const Format& format)
 {
-	mFormat = format;
-	mFileName = fileName;
+	getTexture(fileName, format);
+}
 
-	TextureCollection textureCollection;
-	textureCollection.fileName = fileName;
-
-	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
-
-	if(it != mTextureCollection->end())
-	{
-		(*it).increaseRef();
-		mTextureID = (*it).textureID;
-		mWidth = (*it).width;
-		mHeight = (*it).height;
-	}
-	else
-	{
-		mImage = mImageMng.get()->getResource(fileName);
-
-		if(mFormat.mFlipped)
-			mImage->flipVertical();
-
-		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
-
-		textureCollection.textureID = mTextureID;
-		textureCollection.width = mImage->getWidth();
-		textureCollection.height = mImage->getHeight();
-
-		logNote("Texture created: %s", fileName.c_str());
-		mTextureCollection->push_back(textureCollection);
-	}
+Texture::Texture(const Color& color, const Format& format)
+{
+	getTexture(color, format);
 }
 
 //=========================================================================
@@ -204,6 +192,86 @@ Texture::~Texture()
 
 		logNote("Texture released: %s", mFileName.c_str());
 	}
+}
+
+//=========================================================================
+void Texture::getTexture(const std::string& fileName, const Format& format)
+{
+	mFormat = format;
+	mFileName = fileName;
+
+	TextureCollection textureCollection;
+	textureCollection.fileName = fileName;
+
+	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
+
+	if (it != mTextureCollection->end())
+	{
+		(*it).increaseRef();
+		mTextureID = (*it).textureID;
+		mWidth = (*it).width;
+		mHeight = (*it).height;
+	}
+	else
+	{
+		mImage = mImageMng.get()->getResource(fileName);
+
+		if (mFormat.mFlipped)
+			mImage->flipVertical();
+
+		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
+
+		textureCollection.textureID = mTextureID;
+		textureCollection.width = mImage->getWidth();
+		textureCollection.height = mImage->getHeight();
+
+		logNote("Texture created: %s", mFileName.c_str());
+		mTextureCollection->push_back(textureCollection);
+	}
+}
+
+//=========================================================================
+void Texture::getTexture(const Color& color, const Format& format)
+{
+	mFormat = format;
+	mFileName = colorToString(color);
+
+	TextureCollection textureCollection;
+	textureCollection.fileName = colorToString(color);
+
+	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
+
+	if (it != mTextureCollection->end())
+	{
+		(*it).increaseRef();
+		mTextureID = (*it).textureID;
+		mWidth = (*it).width;
+		mHeight = (*it).height;
+	}
+	else
+	{
+		mImage = new Image(color);
+
+		if (mFormat.mFlipped)
+			mImage->flipVertical();
+
+		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
+
+		textureCollection.textureID = mTextureID;
+		textureCollection.width = mImage->getWidth();
+		textureCollection.height = mImage->getHeight();
+
+		logNote("Texture created: %s", mFileName.c_str());
+		mTextureCollection->push_back(textureCollection);
+
+		delete mImage;
+	}
+}
+
+//=========================================================================
+std::string Texture::colorToString(const Color& color)
+{
+	return "Color (r:" + std::to_string(color.r) + " g:" + std::to_string(color.g) + " b:" + std::to_string(color.b) + " a:" + std::to_string(color.a) + ")";
 }
 
 //=========================================================================

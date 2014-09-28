@@ -27,7 +27,6 @@ ImageManager* ImageManager::get()
 //=========================================================================
 Image* ImageManager::loadFromFile(const std::string& fileName)
 {
-	Image* image = new Image();
-	image->loadFromFile(fileName);
+	Image* image = new Image(fileName);
 	return image;
 }

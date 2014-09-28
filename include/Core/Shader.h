@@ -2,12 +2,15 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
+#include <iostream>
 #include <vector>
 #include <map>
 #include <fstream>
 #include "Core/GL.h"
 #include "Core/ShaderConstants.h"
 #include "Core/Math.h"
+#include "Core/Log.h"
 
 typedef std::shared_ptr<class Shader> ShaderRef;
 
@@ -15,52 +18,52 @@ typedef std::shared_ptr<class Shader> ShaderRef;
 
 class Shader
 {
-	public:
-		static ShaderRef create(const std::string& fileName);
+public:
+	static ShaderRef create(const std::string& fileName);
 
-		Shader(const std::string& fileName);
-		~Shader();
+	Shader(const std::string& fileName);
+	~Shader();
 
-		bool isLoaded() const;
-		const std::string& errors() const;
-		void bind();
-		void unbind();
+	bool isLoaded() const;
+	const std::string& errors() const;
+	void bind();
+	void unbind();
 
-		//void setUniform(const std::string& name, const Texture* tex);
-		//void setUniform(const std::string& name, const TextureCube* tex);
-		void setUniform(const std::string& name, int i) const;
-		void setUniform(const std::string& name, unsigned int i) const;
-		void setUniform(const std::string& name, float f) const;
-		void setUniform(const std::string& name, float f1, float f2) const;
-		void setUniform(const std::string& name, const glm::vec2 vec2) const;
-		void setUniform(const std::string& name, float f1, float f2, float f3) const;
-		void setUniform(const std::string& name, float f1, float f2, float f3, float f4) const;
-		void setUniform(const std::string& name, const glm::vec3& vec3) const;
-		//void setUniform(const std::string& name, const vec4& vec4) const;
-		void setUniform(const std::string& name, const glm::mat3& mat3, bool transpose = false) const;
-		void setUniform(const std::string& name, const glm::mat4& mat4, bool transpose = false) const;
-		void setUniform(const std::string& name, bool b) const;
-		void setUniform(const std::string& name, const glm::vec4* vec4, int count) const;
-		void setUniform(const std::string& name, const glm::vec4 vec4) const;
+	//void setUniform(const std::string& name, const Texture* tex);
+	//void setUniform(const std::string& name, const TextureCube* tex);
+	void setUniform(const std::string& name, int i) const;
+	void setUniform(const std::string& name, unsigned int i) const;
+	void setUniform(const std::string& name, float f) const;
+	void setUniform(const std::string& name, float f1, float f2) const;
+	void setUniform(const std::string& name, const glm::vec2 vec2) const;
+	void setUniform(const std::string& name, float f1, float f2, float f3) const;
+	void setUniform(const std::string& name, float f1, float f2, float f3, float f4) const;
+	void setUniform(const std::string& name, const glm::vec3& vec3) const;
+	//void setUniform(const std::string& name, const vec4& vec4) const;
+	void setUniform(const std::string& name, const glm::mat3& mat3, bool transpose = false) const;
+	void setUniform(const std::string& name, const glm::mat4& mat4, bool transpose = false) const;
+	void setUniform(const std::string& name, bool b) const;
+	void setUniform(const std::string& name, const glm::vec4* vec4, int count) const;
+	void setUniform(const std::string& name, const glm::vec4 vec4) const;
 
-		GLuint getAttribute(const std::string& name) const;
-		GLuint getUniform(const std::string& name) const;
+	GLuint getAttribute(const std::string& name) const;
+	GLuint getUniform(const std::string& name) const;
 
-		bool hasAttribute(const std::string& name) const;
-		bool hasUniform(const std::string& name) const;
+	bool hasAttribute(const std::string& name) const;
+	bool hasUniform(const std::string& name) const;
 
-	private:
-		std::map<const std::string, GLuint> mAttributeMap;
-		std::map<const std::string, GLuint> mUniformMap;
-		GLuint mVertexShaderID;
-		GLuint mFragmentShaderID;
-		GLuint mProgramID;
-		bool mIsLoaded;
-		std::string mErrors;
+private:
+	std::map<const std::string, GLuint> mAttributeMap;
+	std::map<const std::string, GLuint> mUniformMap;
+	GLuint mVertexShaderID;
+	GLuint mFragmentShaderID;
+	GLuint mProgramID;
+	bool mIsLoaded;
+	std::string mErrors;
 
-		void loadFromFile(const std::string& fileName);
-		std::vector<char> readSource(const std::string& path);
-		void dumpShaderInfo(const std::string& fileName);
+	void loadFromFile(const std::string& fileName);
+	std::string/*std::vector<char>*/ readSource(std::string& path);
+	void dumpShaderInfo(const std::string& fileName);
 };
 
 //=========================================================================
@@ -80,13 +83,13 @@ Shader::~Shader()
 {
 	unbind();
 
-	if(mVertexShaderID > 0)
+	if (mVertexShaderID > 0)
 		glDeleteShader(mVertexShaderID);
 
-	if(mFragmentShaderID > 0)
+	if (mFragmentShaderID > 0)
 		glDeleteShader(mFragmentShaderID);
 
-	if(mProgramID > 0)
+	if (mProgramID > 0)
 		glDeleteProgram(mProgramID);
 
 	mAttributeMap.clear();
@@ -96,24 +99,34 @@ Shader::~Shader()
 //=========================================================================
 void Shader::loadFromFile(const std::string& fileName)
 {
-	const GLchar* source[1];
-	int length = 0;
+	//const GLchar* source[1];
+	//int length = 0;
 
 	// Load the fragment shader and compile
-	std::vector<char> fragmentSource = readSource(fileName + ".frag");
+	std::string fragmentSource = readSource(fileName + ".frag");
+	const char *source = fragmentSource.c_str();
+	mFragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(mFragmentShaderID, 1, &source, NULL);
+	glCompileShader(mFragmentShaderID);
+	/*std::vector<char> fragmentSource = readSource(fileName + ".frag");
 	source[0] = &fragmentSource.front();
 	length = fragmentSource.size()-1;
 	mFragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(mFragmentShaderID, 1, source, &length);
-	glCompileShader(mFragmentShaderID);
+	glCompileShader(mFragmentShaderID);*/
 
 	// Load the vertex shader and compile
-	std::vector<char> vertexSource = readSource(fileName + ".vert");
+	std::string vertexSource = readSource(fileName + ".vert");
+	source = vertexSource.c_str();
+	mVertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(mVertexShaderID, 1, &source, NULL);
+	glCompileShader(mVertexShaderID);
+	/*std::vector<char> vertexSource = readSource(fileName + ".vert");
 	source[0] = &vertexSource.front();
 	length = vertexSource.size()-1;
 	mVertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(mVertexShaderID, 1, source, &length);
-	glCompileShader(mVertexShaderID);
+	glCompileShader(mVertexShaderID);*/
 
 	// Create the vertex program
 	mProgramID = glCreateProgram();
@@ -124,14 +137,14 @@ void Shader::loadFromFile(const std::string& fileName)
 	// Error checking
 	glGetProgramiv(mProgramID, GL_LINK_STATUS, (GLint*)&mIsLoaded);
 
-	if(!mIsLoaded)
+	if (!mIsLoaded)
 	{
 		GLchar tempErrorLog[ERROR_BUFSIZE];
 		GLsizei length;
 
 		glGetShaderInfoLog(mFragmentShaderID, ERROR_BUFSIZE, &length, tempErrorLog);
 
-		if(length > 0)
+		if (length > 0)
 		{
 			mErrors += "Fragment shader errors:\n";
 			mErrors += std::string(tempErrorLog, length) + "\n";
@@ -139,7 +152,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		glGetShaderInfoLog(mVertexShaderID, ERROR_BUFSIZE, &length, tempErrorLog);
 
-		if(length > 0)
+		if (length > 0)
 		{
 			mErrors += "Vertex shader errors:\n";
 			mErrors += std::string(tempErrorLog, length) + "\n";
@@ -147,16 +160,16 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		glGetProgramInfoLog(mProgramID, ERROR_BUFSIZE, &length, tempErrorLog);
 
-		if(length > 0)
+		if (length > 0)
 		{
 			mErrors += "Linker errors:\n";
 			mErrors += std::string(tempErrorLog, length) + "\n";
 		}
 
-		printf("Could not load shader %s\n", fileName.c_str());
-		printf("-------------------------------------------------------------------------\n");
-		printf(mErrors.c_str());
-		printf("-------------------------------------------------------------------------\n");
+		logError("Could not load shader %s\n", fileName.c_str());
+		logError("-------------------------------------------------------------------------\n");
+		logError(mErrors.c_str());
+		logError("-------------------------------------------------------------------------\n");
 	}
 	else
 	{
@@ -165,9 +178,9 @@ void Shader::loadFromFile(const std::string& fileName)
 		int maxUlen;
 		glGetProgramiv(mProgramID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUlen);
 
-		GLchar* ubuf = (char*)malloc(maxUlen+1);
+		GLchar* ubuf = (char*)malloc(maxUlen + 1);
 
-		for(int i=0 ; i < maxUniforms; i++)
+		for (int i = 0; i < maxUniforms; i++)
 		{
 			int size;
 			GLenum type;
@@ -183,9 +196,9 @@ void Shader::loadFromFile(const std::string& fileName)
 		int maxAlen;
 		glGetProgramiv(mProgramID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAlen);
 
-		GLchar* abuf = (char*)malloc(maxAlen+1);
+		GLchar* abuf = (char*)malloc(maxAlen + 1);
 
-		for(int i=0 ; i < maxAttributes; i++)
+		for (int i = 0; i < maxAttributes; i++)
 		{
 			int size;
 			GLenum type;
@@ -213,12 +226,12 @@ void Shader::loadFromFile(const std::string& fileName)
 		std::vector<GLint> values(properties.size());
 		for (int attrib = 0; attrib < numActiveAttribs; ++attrib)
 		{
-			glGetProgramResourceiv(mProgramID, GL_PROGRAM_INPUT, attrib, properties.size(),
-				&properties[0], values.size(), NULL, &values[0]);
+		glGetProgramResourceiv(mProgramID, GL_PROGRAM_INPUT, attrib, properties.size(),
+		&properties[0], values.size(), NULL, &values[0]);
 
-			nameData.resize(properties[0]); //The length of the name.
-			glGetProgramResourceName(mProgramID, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
-			std::string name((char*)&nameData[0], nameData.size() - 1);
+		nameData.resize(properties[0]); //The length of the name.
+		glGetProgramResourceName(mProgramID, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
+		std::string name((char*)&nameData[0], nameData.size() - 1);
 		}
 		// the same with uniforms
 		*/
@@ -226,17 +239,49 @@ void Shader::loadFromFile(const std::string& fileName)
 }
 
 //=========================================================================
-std::vector<char> Shader::readSource(const std::string& path)
+//std::vector<char> Shader::readSource(const std::string& path)
+std::string Shader::readSource(std::string& path)
 {
+	std::ifstream source(path);
+	std::string line;
+	std::string search = "#include";
+	std::stringstream  ss;
+
+	unsigned int curLine = 0;
+	while (std::getline(source, line))
+	{
+		curLine++;
+		if (line.find(search, 0) != std::string::npos)
+		{
+			// Extract file name
+			line = line.substr(line.find('"') + 1);
+			line = line.erase(line.find('"'), line.length());
+
+			// Extract path name
+			const size_t idx = path.find_last_of("\\/") + 1;
+
+			if (std::string::npos != idx)
+				path.erase(idx, path.length() - idx);
+
+			// Include file content
+			ss << readSource(path + line);
+		}
+		else
+			ss << line << std::endl;
+	}
+
+	return ss.str();
+
+	/*
 	// Open the file
 	std::vector<char> source;
 	std::ifstream in(path.c_str());
 
 	if(in.fail())
 	{
-		printf("Shader file doesn't exist %s\n", path.c_str());
-		source.push_back(0);
-		return source;
+	logError("Shader file doesn't exist %s\n", path.c_str());
+	source.push_back(0);
+	return source;
 	}
 
 	// Seek to the end of the file to get the size
@@ -247,8 +292,8 @@ std::vector<char> Shader::readSource(const std::string& path)
 
 	if(source.empty())
 	{
-		source.push_back(0);
-		return source;
+	source.push_back(0);
+	return source;
 	}
 
 	// Now read the whole buffer in one call, and don't
@@ -257,6 +302,7 @@ std::vector<char> Shader::readSource(const std::string& path)
 	source.push_back(0);
 
 	return source;
+	*/
 }
 
 /// <summary>
@@ -264,28 +310,28 @@ std::vector<char> Shader::readSource(const std::string& path)
 /// </summary>
 void Shader::dumpShaderInfo(const std::string& fileName)
 {
-	printf("------------------------------------------------\n");
-	printf("Shader: %s\n", fileName.c_str());
-	printf("Program ID: %s\n", std::to_string(mProgramID).c_str());
-	printf("VertexShader ID: %s\n", std::to_string(mVertexShaderID).c_str());
-	printf("FragmentShader ID: %s\n", std::to_string(mFragmentShaderID).c_str());
-	printf("\n");
-	printf("Uniforms:\n");
+	logNote("------------------------------------------------\n");
+	logNote("Shader: %s\n", fileName.c_str());
+	logNote("Program ID: %s\n", std::to_string(mProgramID).c_str());
+	logNote("VertexShader ID: %s\n", std::to_string(mVertexShaderID).c_str());
+	logNote("FragmentShader ID: %s\n", std::to_string(mFragmentShaderID).c_str());
+	logNote("\n");
+	logNote("Uniforms:\n");
 
 	for (std::map<std::string, GLuint>::iterator i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
 	{
-		printf("  %s -> %d\n", i->first.c_str(), i->second);
+		logNote("  %s -> %d\n", i->first.c_str(), i->second);
 	}
 
-	printf("\n");
-	printf("Attributes:\n");
+	logNote("\n");
+	logNote("Attributes:\n");
 
 	for (std::map<std::string, GLuint>::iterator i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
 	{
-		printf("  %s -> %d\n", i->first.c_str(), i->second);
+		logNote("  %s -> %d\n", i->first.c_str(), i->second);
 	}
 
-	printf("------------------------------------------------\n");
+	logNote("------------------------------------------------\n");
 }
 
 //=========================================================================
@@ -411,11 +457,11 @@ void Shader::setUniform(const std::string& name, bool b) const
 //=========================================================================
 GLuint Shader::getAttribute(const std::string& name) const
 {
-	if(hasAttribute(name))
+	if (hasAttribute(name))
 		return mAttributeMap.find(name)->second;
 	else
 	{
-		printf("Attribute '%s' not found\n", name.c_str());
+		logError("Attribute '%s' not found\n", name.c_str());
 		return NULL;
 	}
 }
@@ -423,11 +469,11 @@ GLuint Shader::getAttribute(const std::string& name) const
 //=========================================================================
 GLuint Shader::getUniform(const std::string& name) const
 {
-	if(hasUniform(name))
+	if (hasUniform(name))
 		return mUniformMap.find(name)->second;
 	else
 	{
-		printf("Uniform '%s' not found\n", name.c_str());
+		logError("Uniform '%s' not found\n", name.c_str());
 		return NULL;
 	}
 }
@@ -437,7 +483,7 @@ bool Shader::hasAttribute(const std::string& name) const
 {
 	auto it = mAttributeMap.find(name);
 
-	if(it == mAttributeMap.end())
+	if (it == mAttributeMap.end())
 		return false;
 	else
 		return true;
@@ -448,7 +494,7 @@ bool Shader::hasUniform(const std::string& name) const
 {
 	auto it = mUniformMap.find(name);
 
-	if(it == mUniformMap.end())
+	if (it == mUniformMap.end())
 		return false;
 	else
 		return true;

@@ -22,8 +22,8 @@ public:
 	virtual void resize(int width, int height);
 
 private:
-	float mStrafeSpeed{ 0.2f };
-	float mStrafeFastSpeed{ 0.4f };
+	float mStrafeSpeed{ 0.1f };
+	float mStrafeFastSpeed{ 0.2f };
 	bool mMouseLocked{ false };
 	float mCenterPositionX;
 	float mCenterPositionY;

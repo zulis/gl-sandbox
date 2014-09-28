@@ -1,22 +1,6 @@
-#version 430
+#version 440
 
-in vec3 VertexPosition;
-in vec3 VertexNormal;
-in vec2 VertexTexCoord;
-in vec4 VertexTangent;
-
-uniform mat4 ProjectionMatrix;
-uniform mat4 ViewMatrix;
-uniform mat4 ModelMatrix;
-uniform mat3 NormalMatrix;
-
-/*uniform*/ struct DirectionalLight
-{
-	vec3 direction;
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-} DirectionalLight1;
+#include "common.glsl"
 
 out vec3 LightDir;
 out vec3 ViewDir;
@@ -24,10 +8,10 @@ out vec2 TexCoord;
 
 void main()
 {
-	DirectionalLight1.direction = vec3(-0.5f, -1.0f, -1.0f);
-	DirectionalLight1.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	DirectionalLight1.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	DirectionalLight1.specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	DirectionalLight1.direction = vec3(0.0, 0.0, -1.0);
+	DirectionalLight1.ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	DirectionalLight1.diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	DirectionalLight1.specular = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	// Create a matrix to transform vectors from eye space to tangent space.
 

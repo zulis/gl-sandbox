@@ -31,6 +31,7 @@ class Mesh : public Transform3D
 		AABB getAABB() const;
 		void setFrustumCulling(bool isOn);
 		void setMaterial(const MaterialRef& material);
+		const MaterialRef& getMaterial() const;
 
 private:
 	MeshLoaderRef mMeshLoader;
@@ -183,6 +184,12 @@ void Mesh::setMaterial(const MaterialRef& material)
 }
 
 //=========================================================================
+const MaterialRef& Mesh::getMaterial() const
+{
+	return mMaterial;
+}
+
+//=========================================================================
 void Mesh::updateUniforms(const Camera& camera)
 {
 	const Shader* shader = mMaterial->getShader();
@@ -270,6 +277,8 @@ void Mesh::setupMaterial()
 		}
 	}
 }
+
+
 
 
 

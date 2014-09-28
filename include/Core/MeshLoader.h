@@ -254,12 +254,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 					}
 
-					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.textureType].c_str(), textureFileName.C_Str());
-
 					auto texFileName = getFileName(std::string(textureFileName.C_Str()));
-					//meshTexture.texture = Texture::create(texturePath + "/" + texFileName);
 					meshTexture.fileName = texturePath + "/" + texFileName;
 					meshPart.material.textures.push_back(meshTexture);
+
+					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.textureType].c_str(), texFileName.c_str());
 
 					++index;
 				}

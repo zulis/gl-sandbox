@@ -28,9 +28,9 @@ MaterialDefaultRef MaterialDefault::create()
 //=========================================================================
 MaterialDefault::MaterialDefault() : Material("assets/shaders/materialDefault")
 {
-	mDefaultDiffuse = Texture::create("assets/textures/misc/white.png");
-	mDefaultNormal = Texture::create("assets/textures/misc/normal.png");
-	mDefaultSpecular = Texture::create("assets/textures/misc/white.png");
+	mDefaultDiffuse = Texture::create(Color::white()/*"assets/textures/default/default_d.png"*/);
+	mDefaultNormal = Texture::create(Color::normal()/*"assets/textures/default/default_n.png"*/);
+	mDefaultSpecular = Texture::create(Color::white());
 }
 
 //=========================================================================

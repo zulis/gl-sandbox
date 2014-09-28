@@ -149,41 +149,12 @@ void Material::addTexture(const std::string& fileName, const TextureType& textur
 	matTexture.textureType = textureType;
 	matTexture.texture = Texture::create(fileName);
 
+	auto it = std::find(mTextures.begin(), mTextures.end(), matTexture);
+
+	if (it != mTextures.end())
+		mTextures.erase(it);
+
 	mTextures.push_back(matTexture);
-
-	/*GeometryMaterial geomMaterial;
-	geomMaterial.geometryIndex = geometryIndex;
-
-	auto it1 = std::find(mGeometriesMaterials.begin(), mGeometriesMaterials.end(), geomMaterial);
-
-	if(it1 != mGeometriesMaterials.end())
-	{
-	geomMaterial = (*it1);
-
-	GeometryTexture textureInfo;
-	textureInfo.textureType = textureType;
-	textureInfo.fileName = fileName;
-
-	auto it2 = std::find(geomMaterial.textures.begin(), geomMaterial.textures.end(), textureInfo);
-
-	if(it2 != geomMaterial.textures.end())
-	{
-	(*it2).texture.reset();
-	geomMaterial.textures.erase(it2);
-	}
-
-	textureInfo.texture = Texture::create(fileName);
-	geomMaterial.textures.push_back(textureInfo);
-	}
-	else
-	{
-	GeometryTexture textureInfo;
-	textureInfo.textureType = textureType;
-	textureInfo.fileName = fileName;
-	textureInfo.texture = Texture::create(fileName);
-	geomMaterial.textures.push_back(textureInfo);
-	mGeometriesMaterials.push_back(geomMaterial);
-	}*/
 }
 
 //=========================================================================

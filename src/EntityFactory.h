@@ -89,32 +89,32 @@ void EntityFactory::setup(const CameraRef& camera)
 
 
 	auto mesh = Mesh::create();
-	mesh->loadFromFile("assets/models/misc/sphere.fbx");
+	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
 	
 	//mesh->loadFromFile("assets/models/box/box.fbx");
+	mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj");
+	//mesh->loadFromFile("assets/models/teapot/teapot.obj");
 
-	//mesh->setTexturePath("assets/models/sponza/textures");
-	//mesh->loadFromFile("assets/models/sponza/sponza.obj");
 
-	//auto mesh = MeshSpatial::create();
-	//mesh->loadFromFile("assets/models/misc/thing.fbx");
-	//auto mesh = MeshSpatial::create("assets/models/misc/sphere.fbx");
-	//auto mesh = MeshSpatial::create("assets/models/teapot/teapot.fbx");
-	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
-	//auto mesh = MeshSpatial::create("assets/models/ship/ship.fbx");
-	//auto mesh = MeshSpatial::create("assets/models/imrod/imrod.fbx");
-	
 	//mesh->setTexturePath("assets/models/sponza/textures");
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj");
 	//mesh->setFrustumCulling(true);
 	
+
+	auto mat = mesh->getMaterial();
+	mat->addTexture("assets/models/leprechaun/leprechaun_d.png");
+	//mat->addTexture("assets/models/leprechaun/leprechaun_n.png", TextureType::NormalMap);
+	//mat->addTexture("assets/models/leprechaun/leprechaun_s.png", TextureType::SpecularMap);
+	
+
 	//mesh->setMaterial(mat);
 	//mat->setGeomMaterials(mesh->getGeomMaterial());
 
 	auto transform = new TransformComponent();
-	//transform->setScale(glm::vec3(0.05f));
+	transform->setScale(glm::vec3(0.02f));
+	//transform->setRotation(glm::vec3(0, 0, 0));
 	//transform->setScale(glm::vec3(3.f));
 
 	Entity& e = mWorld.createEntity();
