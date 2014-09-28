@@ -95,7 +95,10 @@ void EntityFactory::setup(const CameraRef& camera)
 	
 	//mesh->loadFromFile("assets/models/box/box.fbx");
 	mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj");
+<<<<<<< HEAD
 	//mesh->loadFromFile("assets/models/teapot/teapot.obj");
+=======
+>>>>>>> origin/master
 
 
 	//mesh->setTexturePath("assets/models/sponza/textures");
@@ -114,7 +117,10 @@ void EntityFactory::setup(const CameraRef& camera)
 
 	auto transform = new TransformComponent();
 	transform->setScale(glm::vec3(0.02f));
+<<<<<<< HEAD
 	//transform->setRotation(glm::vec3(0, 0, 0));
+=======
+>>>>>>> origin/master
 	//transform->setScale(glm::vec3(3.f));
 
 	Entity& e = mWorld.createEntity();
