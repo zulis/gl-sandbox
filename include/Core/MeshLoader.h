@@ -150,6 +150,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 			if (mTexturePath == std::string())
 				texturePath = setDefaultTexturePath(fileName);
+			else
+			{
+				if (texturePath.find_last_of("\\/") != texturePath.size() - 1)
+					texturePath += "/";
+			}
 
 			aiString textureFileName;
 
@@ -255,7 +260,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					}
 
 					auto texFileName = getFileName(std::string(textureFileName.C_Str()));
-					meshTexture.fileName = texturePath + "/" + texFileName;
+					meshTexture.fileName = texturePath + texFileName;
 					meshPart.material.textures.push_back(meshTexture);
 
 					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.textureType].c_str(), texFileName.c_str());

@@ -41,12 +41,12 @@ MaterialDefault::~MaterialDefault()
 //=========================================================================
 void MaterialDefault::updateUniforms(unsigned int geometryIndex)
 {
-	if (!bindTexture(TextureType::DiffuseMap, 0, geometryIndex))
+	//if (!bindTexture(TextureType::DiffuseMap, 0, geometryIndex))
 		mDefaultDiffuse->bind(0);
 
-	if (!bindTexture(TextureType::NormalMap, 1, geometryIndex))
+	//if (!bindTexture(TextureType::NormalMap, 1, geometryIndex))
 		mDefaultNormal->bind(1);
 
-	if (!bindTexture(TextureType::SpecularMap, 2, geometryIndex))
+	//if (!bindTexture(TextureType::SpecularMap, 2, geometryIndex))
 		mDefaultSpecular->bind(2);
 }

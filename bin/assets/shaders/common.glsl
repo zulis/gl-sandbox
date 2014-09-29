@@ -1,3 +1,5 @@
+#version 430
+
 in vec3 VertexPosition;
 in vec3 VertexNormal;
 in vec2 VertexTexCoord;
@@ -14,18 +16,18 @@ layout(binding = 0) uniform sampler2D TexDiffuse;
 layout(binding = 1) uniform sampler2D TexNormal;
 layout(binding = 2) uniform sampler2D TexSpecular;
 
-/*uniform*/ struct DirectionalLight
+/*uniform*/ struct LightInfo
 {
 	vec3 direction;
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
-} DirectionalLight1;
+} Light;
 
-/*uniform*/ struct Material
+/*uniform*/ struct MaterialInfo
 {
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
 	float shininess;
-} Material1;
+} Material;

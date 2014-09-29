@@ -1,5 +1,3 @@
-#version 440
-
 #include "common.glsl"
 
 out vec3 LightDir;
@@ -8,10 +6,10 @@ out vec2 TexCoord;
 
 void main()
 {
-	DirectionalLight1.direction = vec3(0.0, 0.0, -1.0);
-	DirectionalLight1.ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
-	DirectionalLight1.diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
-	DirectionalLight1.specular = vec4(1.0, 1.0, 1.0, 1.0);
+	Light.direction = vec3(0.0, 0.0, -1.0);
+	Light.ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	Light.diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	Light.specular = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	// Create a matrix to transform vectors from eye space to tangent space.
 
@@ -49,7 +47,7 @@ void main()
     // space we first transform the light direction vector to eye space and
     // then transform it to tangent space.
 
-	LightDir = vec3(ViewMatrix * vec4(-DirectionalLight1.direction, 0.0f));
+	LightDir = vec3(ViewMatrix * vec4(-Light.direction, 0.0f));
 	LightDir = tbnMatrix * LightDir;
     
     TexCoord = VertexTexCoord;
