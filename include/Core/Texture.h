@@ -128,7 +128,7 @@ Texture::Format::Format()
 	mTarget = GL_TEXTURE_2D;
 	mWrapS = GL_REPEAT;
 	mWrapT = GL_REPEAT;
-	mMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+	mMinFilter = GL_LINEAR;
 	mMagFilter = GL_LINEAR;
 	mMipmapping = true;
 	mFlipped = false;

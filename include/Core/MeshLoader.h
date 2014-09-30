@@ -96,12 +96,6 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 #pragma region geometry
 			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 			{
-				const aiVector3D* vertice = &(mesh->mVertices[i]);
-				const aiVector3D* normal = &(mesh->mNormals[i]);
-				const aiVector3D* tangent = &(mesh->mTangents[i]);
-				const aiVector3D* bitangent = &(mesh->mBitangents[i]);
-				const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
-
 				/*
 				// another example http://www.keithlantz.net/2011/10/tangent-space-normal-mapping-with-glsl/
 				// put the three vectors into my glm::vec3 struct format for doing maths
@@ -127,11 +121,31 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
 				*/
 
-				meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z));
-				meshPart.geometry.normals.push_back(glm::vec3(normal->x, normal->y, normal->z));
-				meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
-				meshPart.geometry.bitangents.push_back(glm::vec3(bitangent->x, bitangent->y, bitangent->z));
-				meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
+				if (mesh->HasPositions())
+				{
+					const aiVector3D* vertice = &(mesh->mVertices[i]);
+					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z));
+				}
+				
+				if (mesh->HasNormals())
+				{
+					const aiVector3D* normal = &(mesh->mNormals[i]);
+					meshPart.geometry.normals.push_back(glm::vec3(normal->x, normal->y, normal->z));
+				}
+				
+				if (mesh->HasTangentsAndBitangents())
+				{
+					const aiVector3D* tangent = &(mesh->mTangents[i]);
+					const aiVector3D* bitangent = &(mesh->mBitangents[i]);
+					meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
+					meshPart.geometry.bitangents.push_back(glm::vec3(bitangent->x, bitangent->y, bitangent->z));
+				}
+				
+				if (mesh->HasTextureCoords(i))
+				{
+					const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
+					meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
+				}
 			}
 
 			for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -216,41 +230,41 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
  						meshTexture.textureType = TextureType::SpecularMap;
  						break;
 
-// 					case aiTextureType_AMBIENT:
+ 					case aiTextureType_AMBIENT:
 // 						meshTexture.type = TextureType::AmbientMap;
-// 						break;
+ 						break;
 
-// 					case aiTextureType_EMISSIVE:
+ 					case aiTextureType_EMISSIVE:
 // 						meshTexture.type = TextureType::SelfIllumination;
-// 						break;
+ 						break;
 
 					case aiTextureType_HEIGHT:
 						meshTexture.textureType = TextureType::NormalMap;
 						break;
 
-// 					case aiTextureType_NORMALS:
+ 					case aiTextureType_NORMALS:
 // 						meshTexture.type = TextureType::Unknown; // ???
-// 						break;
-// 
-// 					case aiTextureType_SHININESS:
+ 						break;
+ 
+ 					case aiTextureType_SHININESS:
 // 						meshTexture.type = TextureType::Glossiness;
-// 						break;
+ 						break;
 
 					case aiTextureType_OPACITY:
 						meshTexture.textureType = TextureType::OpacityMap;
 						break;
 
-// 					case aiTextureType_DISPLACEMENT:
+ 					case aiTextureType_DISPLACEMENT:
 // 						meshTexture.type = TextureType::Displacement;
-// 						break;
-// 
-// 					case aiTextureType_LIGHTMAP:
+ 						break;
+ 
+ 					case aiTextureType_LIGHTMAP:
 // 						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
-// 						break;
-// 
-// 					case aiTextureType_REFLECTION:
+ 						break;
+ 
+ 					case aiTextureType_REFLECTION:
 // 						meshTexture.type = TextureType::Reflection;
-// 						break;
+ 						break;
 
 					default:
 						//meshTexture.type = TextureType::Unknown;

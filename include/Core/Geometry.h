@@ -404,7 +404,7 @@ void Geometry::generateNormals()
 //=========================================================================
 void Geometry::generateTangents()
 {
-	if (hasIndices() && hasNormals())
+	if (hasIndices() && hasNormals() && hasTexCoords())
 	{
 		std::vector<glm::vec3> tan1Accum;
 		std::vector<glm::vec3> tan2Accum;

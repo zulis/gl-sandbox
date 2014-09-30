@@ -93,8 +93,8 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
 	
-	//mesh->loadFromFile("assets/models/box/box.fbx");
-	mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj");
+	mesh->loadFromFile("assets/models/box/box.fbx");
+	//mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj");
 	//mesh->loadFromFile("assets/models/teapot/teapot.obj");
 
 
@@ -103,8 +103,10 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mesh->setFrustumCulling(true);
 	
 
-	auto mat = mesh->getMaterial();
-	mat->addTexture("assets/models/leprechaun/leprechaun_d.png");
+	//auto mat = mesh->getMaterial();
+	//mat->addTexture("assets/models/bunny/ObjectSurface_Color.png", TextureType::DiffuseMap, 0);
+	//mat->addTexture("assets/models/bunny/ObjectSurface_Color.png", TextureType::DiffuseMap, 1);
+	//mat->addTexture("assets/models/leprechaun/leprechaun_d.png");
 	//mat->addTexture("assets/models/leprechaun/leprechaun_n.png", TextureType::NormalMap);
 	//mat->addTexture("assets/models/leprechaun/leprechaun_s.png", TextureType::SpecularMap);
 	
@@ -113,7 +115,7 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mat->setGeomMaterials(mesh->getGeomMaterial());
 
 	auto transform = new TransformComponent();
-	transform->setScale(glm::vec3(0.02f));
+	//transform->setScale(glm::vec3(0.02f));
 	//transform->setScale(glm::vec3(3.f));
 
 	Entity& e = mWorld.createEntity();
