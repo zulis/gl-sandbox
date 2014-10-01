@@ -38,3 +38,8 @@ uniform LightInfo Lights[8];
 	vec4 specular;
 	float shininess;
 } Material;
+
+//Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
+//Material.diffuse = vec4(0.7, 0.7, 0.7, 1.0);
+//Material.specular = vec4(0.5, 0.5, 0.5, 1.0);
+//Material.shininess = 60.0;

@@ -114,9 +114,9 @@ void Main::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
 	else if (keyEvent.isDown(KEY_D))
 		mCamera->move(Camera::RIGHT);
 
-	if (keyEvent.isDown(KEY_Q))
+	if (keyEvent.isDown(KEY_E))
 		mCamera->move(Camera::UP);
-	else if (keyEvent.isDown(KEY_Z))
+	else if (keyEvent.isDown(KEY_Q))
 		mCamera->move(Camera::DOWN);
 
 	if (mouseEvent.getWheel() != 0)
@@ -155,9 +155,9 @@ void Main::update(float elapsedTime)
 //=========================================================================
 void Main::draw()
 {
-	//gl::enableCullFace(gl::CullFaceType::Back);
+	gl::enableCullFace(gl::CullFaceType::Back);
 	mEntityFactory->draw();
-	//gl::disableCullFace();
+	gl::disableCullFace();
 
 	//gl::enableCullFace(gl::CullFaceType::Back);
 	//mMesh->draw(mCamera);

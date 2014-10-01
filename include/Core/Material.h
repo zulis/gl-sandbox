@@ -102,7 +102,7 @@ private:
 	//glm::vec3 mMaterialKs { glm::vec4(0.0f) };
 	//float mMaterialShininess { 0.0f };
 
-	//std::vector<Light> mLights;
+	std::vector<Light> mLights;
 	unsigned int mLightIndex{ 0 };
 };
 
@@ -127,7 +127,15 @@ Shader* Material::getShader()
 void Material::bind()
 {
 	if (mShader)
+	{
 		mShader->bind();
+
+		unsigned int lightIndex = 0;
+		for each (auto light in mLights)
+		{
+			//light.updateUniforms(mShader, lightIndex++);
+		}
+	}
 }
 
 //=========================================================================
@@ -146,17 +154,20 @@ mGeometriesMaterials = geomMaterials;
 //=========================================================================
 void Material::addTexture(const std::string& fileName, const TextureType& textureType, unsigned int geometryIndex)
 {
-	MaterialTexture matTexture;
-	matTexture.geometryIndex = geometryIndex;
-	matTexture.textureType = textureType;
-	matTexture.texture = Texture::create(fileName);
+	if (textureType != TextureType::Unknown)
+	{
+		MaterialTexture matTexture;
+		matTexture.geometryIndex = geometryIndex;
+		matTexture.textureType = textureType;
+		matTexture.texture = Texture::create(fileName);
 
-	auto it = std::find(mTextures.begin(), mTextures.end(), matTexture);
+		auto it = std::find(mTextures.begin(), mTextures.end(), matTexture);
 
-	if (it != mTextures.end())
-		mTextures.erase(it);
+		if (it != mTextures.end())
+			mTextures.erase(it);
 
-	mTextures.push_back(matTexture);
+		mTextures.push_back(matTexture);
+	}
 }
 
 //=========================================================================
@@ -282,6 +293,7 @@ void Material::addLight(const Light& light)
 {
 	light.updateUniforms(mShader, mLightIndex);
 	mLightIndex++;
+	//mLights.push_back(light);
 }
 
 //=========================================================================

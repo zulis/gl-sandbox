@@ -17,7 +17,7 @@ public:
 	glm::vec3& getScale();
 
 private:
-	const float mDiff = 100.0f;
+	//const float mDiff = 100.0f;
 	glm::vec3 mPosition;
 	glm::vec3 mRotation;
 	glm::vec3 mScale;
@@ -39,7 +39,7 @@ TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation, g
 //=========================================================================
 void TransformComponent::setPosition(glm::vec3 position)
 {
-	mPosition = position * mDiff;
+	mPosition = position; // *mDiff;
 	mNeedUpdate = true;
 }
 

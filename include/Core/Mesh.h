@@ -48,7 +48,7 @@ private:
 
 	void updateUniforms(const Camera& camera);
 	void draw(const Camera& camera);
-	void draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera);
+	void draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera);
 	void setupMaterial();
 
 };
@@ -219,7 +219,7 @@ void Mesh::updateUniforms(const Camera& camera)
 //=========================================================================
 void Mesh::draw(const Camera& camera)
 {
-	unsigned int index = 0;
+	unsigned int geometryIndex = 0;
 
 	for each (auto geometry in mGeometries)
 	{
@@ -230,20 +230,20 @@ void Mesh::draw(const Camera& camera)
 
 			if (notCulled)
 			{
-				draw(geometry, index, camera);
+				draw(geometry, geometryIndex, camera);
 			}
 		}
 		else
 		{
-			draw(geometry, index, camera);
+			draw(geometry, geometryIndex, camera);
 		}
 
-		index++;
+		geometryIndex++;
 	}
 }
 
 //=========================================================================
-void Mesh::draw(const GeometryRef& geometry, const unsigned int index, const Camera& camera)
+void Mesh::draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera)
 {
 // 	Material::ShaderValues shaderValues;
 // 	shaderValues.projection = camera.getProjectionMatrix();
@@ -253,7 +253,7 @@ void Mesh::draw(const GeometryRef& geometry, const unsigned int index, const Cam
 
 	mMaterial->bind();
 	updateUniforms(camera);
-	mMaterial->updateUniforms(index);
+	mMaterial->updateUniforms(geometryIndex);
 	//mMaterial->updateUniforms(index);
 	geometry->draw(*mMaterial->getShader());
 	mMaterial->unbind();

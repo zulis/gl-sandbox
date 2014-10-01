@@ -29,7 +29,6 @@ private:
 	MeshLoader& operator = (const MeshLoader&);
 	std::string mTexturePath;
 
-
 	std::string getFileName(std::string& pathName) const;
 	std::string setDefaultTexturePath(std::string pathName) const;
 };
@@ -67,14 +66,6 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 	}
 	else
 	{
-		// Doesn't work?
-		if (scaleFactor != 1.0f)
-		{
-			aiMatrix4x4 scaling;
-			aiMatrix4x4::Scaling(aiVector3D(scaleFactor), scaling);
-			const_cast<aiMatrix4x4&>(scene->mRootNode->mTransformation) = scaling * scene->mRootNode->mTransformation;
-		}
-
 		logNote("Mesh loaded: %s", fileName.c_str());
 		logNote("  Submeshes  : %i", scene->mNumMeshes);
 		logNote("  Animations : %i", scene->mNumAnimations);
@@ -123,8 +114,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 				if (mesh->HasPositions())
 				{
+					//struct aiVector3D tmp = mesh->mVertices[t];
+					//aiTransformVecByMatrix4(&tmp, trafo);
+
 					const aiVector3D* vertice = &(mesh->mVertices[i]);
-					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z));
+					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z) * scaleFactor);
 				}
 
 				if (mesh->HasNormals())
@@ -217,6 +211,9 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 					}
 
+					// Set as default
+					meshTexture.textureType = TextureType::Unknown;
+
 					switch ((aiTextureType)m)
 					{
 					case aiTextureType_DIFFUSE:
@@ -252,7 +249,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						break;
 
 					case aiTextureType_DISPLACEMENT:
-						// 						meshTexture.type = TextureType::Displacement;
+						meshTexture.textureType = TextureType::HeightMap;
 						break;
 
 					case aiTextureType_LIGHTMAP:

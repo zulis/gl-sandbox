@@ -133,7 +133,7 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex) con
 	if (shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mSpecular);
 
-	shader->unbind();
+	//shader->unbind();
 }
 
 //=========================================================================

@@ -27,7 +27,7 @@ MaterialDefaultRef DefaultMaterial::create()
 }
 
 //=========================================================================
-DefaultMaterial::DefaultMaterial() : Material("assets/shaders/defaultMaterial")
+DefaultMaterial::DefaultMaterial() : Material("assets/shaders/textured"/*"assets/shaders/defaultMaterial"*/)
 {
 	mDefaultDiffuse = Texture::create(/*Color::white()*/"assets/textures/default/default_d.png");
 	mDefaultNormal = Texture::create(/*Color::normal()*/"assets/textures/default/default_n.png");
