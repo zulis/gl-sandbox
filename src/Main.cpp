@@ -37,9 +37,9 @@ private:
 
 	//MeshRef mMesh;
 	//MaterialPhongRef mMaterial;
-	FontRef mFont;
-	QuadRef mQuad;
-	QuadRef mGameOverQuad;
+	//FontRef mFont;
+	//QuadRef mQuad;
+	//QuadRef mGameOverQuad;
 	float mRotation{ 0.0f };
 
 	void calculateMouseCenterPosition();
@@ -64,9 +64,9 @@ void Main::setup()
 	mEntityFactory = EntityFactory::create();
 	mEntityFactory->setup(mCamera);
 
-	mFont = Font::create("assets/ui/verdana.ttf", 20);
-	mQuad = Quad::create("assets/textures/misc/256x256a.png", 128, 128);
-	mGameOverQuad = Quad::create("assets/ui/gameover.png");
+	//mFont = Font::create("assets/ui/verdana.ttf", 20);
+	//mQuad = Quad::create("assets/textures/misc/256x256a.png", 128, 128);
+	//mGameOverQuad = Quad::create("assets/ui/gameover.png");
 
 	// TESTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*mMaterial = MaterialPhong::create();
@@ -172,7 +172,7 @@ void Main::draw()
 
 	//mQuad->setRotation(mRotation);
 	//mQuad->draw(Quad::Position::CENTER);
-	mQuad->draw(Quad::Position::BOTTOMRIGHT, -10, -10);
+	//mQuad->draw(Quad::Position::BOTTOMRIGHT, -10, -10);
 	//mGameOverQuad->draw(Quad::CENTER);
 	//gl::disableAlphaBlending();
 }

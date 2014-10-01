@@ -6,14 +6,14 @@ out vec2 TexCoord;
 
 void main()
 {
-	Light.direction = vec3(0.0, 0.0, -1.0);
-	Light.ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
-	Light.diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
-	Light.specular = vec4(1.0, 1.0, 1.0, 1.0);
+	//Lights[0].position = normalize(-vec3(0.0, 0.0, 5.0));
+	//Lights[0].ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	//Lights[0].diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
+	//Lights[0].specular = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	// Create a matrix to transform vectors from eye space to tangent space.
 
-	vec3 n = normalize(NormalMatrix * VertexNormal);
+	vec3 n = normalize(NormalMatrix * VerNormalMap);
     vec3 t = normalize(NormalMatrix * VertexTangent.xyz);
     vec3 b = cross(n, t) * VertexTangent.w;
     
@@ -47,7 +47,9 @@ void main()
     // space we first transform the light direction vector to eye space and
     // then transform it to tangent space.
 
-	LightDir = vec3(ViewMatrix * vec4(-Light.direction, 0.0f));
+	//LightDir = vec3(ViewMatrix * vec4(-Lights[0].position, 0.0f));
+	LightDir = vec3(ViewMatrix * -(normalize(-Lights[0].position)));
+	
 	LightDir = tbnMatrix * LightDir;
     
     TexCoord = VertexTexCoord;

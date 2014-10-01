@@ -8,6 +8,8 @@
 #include "Core/MouseEvent.h"
 #include "Core/Mesh.h"
 //#include "Core/MaterialPhong.h"
+#include "Core/DirectionalLight.h"
+#include "Core/SpotLight.h"
 
 #include "Components/MeshRenderComponent.h"
 #include "Components/TransformComponent.h"
@@ -102,10 +104,18 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj");
 	//mesh->setFrustumCulling(true);
 	
+	
+	DirectionalLight light;
+	light.setPosition(glm::vec3(0, 0, 5));
 
-	//auto mat = mesh->getMaterial();
-	//mat->addTexture("assets/models/bunny/ObjectSurface_Color.png", TextureType::DiffuseMap, 0);
-	//mat->addTexture("assets/models/bunny/ObjectSurface_Color.png", TextureType::DiffuseMap, 1);
+	auto mat = mesh->getMaterial();
+	//mat->addTexture("assets/models/box/box_d.png", TextureType::DiffuseMap, 0);
+	//mat->addTexture("assets/models/box/box_n.png", TextureType::NormalMap, 0);
+	mat->addTexture("assets/models/box/box_h.png", TextureType::HeightMap, 0);
+	//mat->addTexture("assets/models/box/box_s.png", TextureType::SpecularMap, 0);
+
+	mat->addLight(light);
+	
 	//mat->addTexture("assets/models/leprechaun/leprechaun_d.png");
 	//mat->addTexture("assets/models/leprechaun/leprechaun_n.png", TextureType::NormalMap);
 	//mat->addTexture("assets/models/leprechaun/leprechaun_s.png", TextureType::SpecularMap);

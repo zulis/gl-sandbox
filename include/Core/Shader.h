@@ -11,6 +11,7 @@
 #include "Core/ShaderConstants.h"
 #include "Core/Math.h"
 #include "Core/Log.h"
+#include "Core/StringUtils.h"
 
 typedef std::shared_ptr<class Shader> ShaderRef;
 
@@ -251,17 +252,13 @@ std::string Shader::readSource(std::string& path)
 	while (std::getline(source, line))
 	{
 		curLine++;
-		if (line.find(search, 0) != std::string::npos)
+		if (StringUtils::startsWith(line, search))
 		{
 			// Extract file name
-			line = line.substr(line.find('"') + 1);
-			line = line.erase(line.find('"'), line.length());
+			line = StringUtils::extract(line, '"');
 
 			// Extract path name
-			const size_t idx = path.find_last_of("\\/") + 1;
-
-			if (std::string::npos != idx)
-				path.erase(idx, path.length() - idx);
+			path = StringUtils::cutTail(path, "\\/");
 
 			// Include file content
 			ss << readSource(path + line);

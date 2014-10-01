@@ -260,6 +260,7 @@
     <ClInclude Include="..\include\Core\Color.h" />
     <ClInclude Include="..\include\Core\Cube.h" />
     <ClInclude Include="..\include\Core\Defines.h" />
+    <ClInclude Include="..\include\Core\DirectionalLight.h" />
     <ClInclude Include="..\include\Core\Font.h" />
     <ClInclude Include="..\include\Core\Game.h" />
     <ClInclude Include="..\include\Core\Geometry.h" />
@@ -271,7 +272,7 @@
     <ClInclude Include="..\include\Core\Light.h" />
     <ClInclude Include="..\include\Core\Log.h" />
     <ClInclude Include="..\include\Core\Material.h" />
-    <ClInclude Include="..\include\Core\MaterialDefault.h" />
+    <ClInclude Include="..\include\Core\DefaultMaterial.h" />
     <ClInclude Include="..\include\Core\Math.h" />
     <ClInclude Include="..\include\Core\Mesh.h" />
     <ClInclude Include="..\include\Core\MeshData.h" />
@@ -282,8 +283,10 @@
     <ClInclude Include="..\include\Core\ResourceManager.h" />
     <ClInclude Include="..\include\Core\Shader.h" />
     <ClInclude Include="..\include\Core\ShaderConstants.h" />
+    <ClInclude Include="..\include\Core\SpotLight.h" />
     <ClInclude Include="..\include\Core\State.h" />
     <ClInclude Include="..\include\Core\StateManager.h" />
+    <ClInclude Include="..\include\Core\StringUtils.h" />
     <ClInclude Include="..\include\Core\Texture.h" />
     <ClInclude Include="..\include\Core\TextureType.h" />
     <ClInclude Include="..\include\Core\Time.h" />

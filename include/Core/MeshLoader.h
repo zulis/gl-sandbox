@@ -126,13 +126,13 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					const aiVector3D* vertice = &(mesh->mVertices[i]);
 					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z));
 				}
-				
+
 				if (mesh->HasNormals())
 				{
 					const aiVector3D* normal = &(mesh->mNormals[i]);
 					meshPart.geometry.normals.push_back(glm::vec3(normal->x, normal->y, normal->z));
 				}
-				
+
 				if (mesh->HasTangentsAndBitangents())
 				{
 					const aiVector3D* tangent = &(mesh->mTangents[i]);
@@ -140,12 +140,9 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
 					meshPart.geometry.bitangents.push_back(glm::vec3(bitangent->x, bitangent->y, bitangent->z));
 				}
-				
-				if (mesh->HasTextureCoords(i))
-				{
-					const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
-					meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
-				}
+
+				const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
+				meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
 			}
 
 			for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -226,45 +223,45 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 						meshTexture.textureType = TextureType::DiffuseMap;
 						break;
 
- 					case aiTextureType_SPECULAR:
- 						meshTexture.textureType = TextureType::SpecularMap;
- 						break;
+					case aiTextureType_SPECULAR:
+						meshTexture.textureType = TextureType::SpecularMap;
+						break;
 
- 					case aiTextureType_AMBIENT:
-// 						meshTexture.type = TextureType::AmbientMap;
- 						break;
+					case aiTextureType_AMBIENT:
+						// 						meshTexture.type = TextureType::AmbientMap;
+						break;
 
- 					case aiTextureType_EMISSIVE:
-// 						meshTexture.type = TextureType::SelfIllumination;
- 						break;
+					case aiTextureType_EMISSIVE:
+						// 						meshTexture.type = TextureType::SelfIllumination;
+						break;
 
 					case aiTextureType_HEIGHT:
 						meshTexture.textureType = TextureType::NormalMap;
 						break;
 
- 					case aiTextureType_NORMALS:
-// 						meshTexture.type = TextureType::Unknown; // ???
- 						break;
- 
- 					case aiTextureType_SHININESS:
-// 						meshTexture.type = TextureType::Glossiness;
- 						break;
+					case aiTextureType_NORMALS:
+						// 						meshTexture.type = TextureType::Unknown; // ???
+						break;
+
+					case aiTextureType_SHININESS:
+						// 						meshTexture.type = TextureType::Glossiness;
+						break;
 
 					case aiTextureType_OPACITY:
 						meshTexture.textureType = TextureType::OpacityMap;
 						break;
 
- 					case aiTextureType_DISPLACEMENT:
-// 						meshTexture.type = TextureType::Displacement;
- 						break;
- 
- 					case aiTextureType_LIGHTMAP:
-// 						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
- 						break;
- 
- 					case aiTextureType_REFLECTION:
-// 						meshTexture.type = TextureType::Reflection;
- 						break;
+					case aiTextureType_DISPLACEMENT:
+						// 						meshTexture.type = TextureType::Displacement;
+						break;
+
+					case aiTextureType_LIGHTMAP:
+						// 						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
+						break;
+
+					case aiTextureType_REFLECTION:
+						// 						meshTexture.type = TextureType::Reflection;
+						break;
 
 					default:
 						//meshTexture.type = TextureType::Unknown;

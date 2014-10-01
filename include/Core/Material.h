@@ -5,7 +5,7 @@
 #include <string>
 #include "Core/Shader.h"
 #include "Core/Texture.h"
-//#include "Core/Light.h"
+#include "Core/Light.h"
 #include "Core/TextureType.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
@@ -44,6 +44,7 @@ public:
 
 	Shader* getShader();
 	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
+	void addLight(const Light& light);
 
 	virtual void bind();
 	virtual void unbind();
@@ -86,7 +87,7 @@ private:
 	//virtual void setDiffuseColor(float r, float g, float b);
 	//virtual void setSpecularColor(float r, float g, float b);
 	//virtual void setShininess(float shininess);
-	//virtual void addLight(const Light& light);
+
 
 	std::vector<MaterialTexture> mTextures;
 
@@ -102,6 +103,7 @@ private:
 	//float mMaterialShininess { 0.0f };
 
 	//std::vector<Light> mLights;
+	unsigned int mLightIndex{ 0 };
 };
 
 //=========================================================================
@@ -195,11 +197,36 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 	if (it != mTextures.end())
 	{
 		(*it).texture->bind(textureunit);
+
+		switch (textureType)
+		{
+		case TextureType::DiffuseMap:
+			if (mShader->hasUniform(ShaderConstants::DiffuseMapIsUsed))
+				mShader->setUniform(ShaderConstants::DiffuseMapIsUsed, true);
+			break;
+		case TextureType::NormalMap:
+			if (mShader->hasUniform(ShaderConstants::NormalMapIsUsed))
+				mShader->setUniform(ShaderConstants::NormalMapIsUsed, true);
+			break;
+		case TextureType::SpecularMap:
+			if (mShader->hasUniform(ShaderConstants::SpecularMapIsUsed))
+				mShader->setUniform(ShaderConstants::SpecularMapIsUsed, true);
+			break;
+		case TextureType::HeightMap:
+			if (mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
+				mShader->setUniform(ShaderConstants::HeightMapIsUsed, true);
+			break;
+		case TextureType::OpacityMap:
+			if (mShader->hasUniform(ShaderConstants::OpacityMapIsUsed))
+				mShader->setUniform(ShaderConstants::OpacityMapIsUsed, true);
+			break;
+		}
+
 		return true;
 	}
 
 	return false;
-	
+
 	/*
 	GeometryMaterial geomMaterial;
 	geomMaterial.geometryIndex = geometryIndex;
@@ -208,18 +235,18 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 
 	if (it1 != mGeometriesMaterials.end())
 	{
-		geomMaterial = (*it1);
+	geomMaterial = (*it1);
 
-		GeometryTexture textureInfo;
-		textureInfo.textureType = textureType;
+	GeometryTexture textureInfo;
+	textureInfo.textureType = textureType;
 
-		auto it2 = std::find(geomMaterial.textures.begin(), geomMaterial.textures.end(), textureInfo);
+	auto it2 = std::find(geomMaterial.textures.begin(), geomMaterial.textures.end(), textureInfo);
 
-		if (it2 != geomMaterial.textures.end())
-		{
-			(*it2).texture->bind(textureunit);
-			return true;
-		}
+	if (it2 != geomMaterial.textures.end())
+	{
+	(*it2).texture->bind(textureunit);
+	return true;
+	}
 	}
 
 	return false;
@@ -251,10 +278,11 @@ mMaterialShininess = shininess;
 }*/
 
 //=========================================================================
-/*void Material::addLight(const Light& light)
+void Material::addLight(const Light& light)
 {
-mLights.push_back(light);
-}*/
+	light.updateUniforms(mShader, mLightIndex);
+	mLightIndex++;
+}
 
 //=========================================================================
 /*void Material::updateUniforms(const ShaderValues& shaderValues)

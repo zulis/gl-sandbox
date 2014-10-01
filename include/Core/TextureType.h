@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-enum class TextureType
+enum TextureType
 {
 	//AmbientMap,
 	DiffuseMap,
@@ -18,6 +18,7 @@ enum class TextureType
 	//Refraction,
 	//Displacement,
 	//Unknown
+	HeightMap
 };
 
 std::map<TextureType, std::string> TextureTypeName =
@@ -35,4 +36,5 @@ std::map<TextureType, std::string> TextureTypeName =
 	//{ TextureType::Refraction, "Refraction" },
 	//{ TextureType::Displacement, "Displacement" },
 	//{ TextureType::Unknown, "Unknown" },
+	{ TextureType::HeightMap, "HeightMap" },
 };

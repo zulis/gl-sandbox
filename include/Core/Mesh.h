@@ -11,7 +11,7 @@
 #include "Core/Material.h"
 #include "Core/Texture.h"
 #include "Core/AABB.h"
-#include "Core/MaterialDefault.h"
+#include "Core/DefaultMaterial.h"
 
 typedef std::shared_ptr<class Mesh> MeshRef;
 
@@ -88,7 +88,7 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 	mMeshLoader->setTexturePath(mTexturePath);
 	mMeshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
 
-	mMaterial = MaterialDefault::create();
+	mMaterial = DefaultMaterial::create();
 	setupMaterial();
 
 	auto minFloat = std::numeric_limits<float>::min();

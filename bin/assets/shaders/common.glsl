@@ -1,7 +1,7 @@
 #version 430
 
 in vec3 VertexPosition;
-in vec3 VertexNormal;
+in vec3 VerNormalMap;
 in vec2 VertexTexCoord;
 in vec4 VertexTangent;
 
@@ -12,17 +12,24 @@ uniform mat4 ModelViewMatrix;
 uniform mat4 MVP;
 uniform mat3 NormalMatrix;
 
-layout(binding = 0) uniform sampler2D TexDiffuse;
-layout(binding = 1) uniform sampler2D TexNormal;
-layout(binding = 2) uniform sampler2D TexSpecular;
+layout(binding = 0) uniform sampler2D DiffuseMap;
+layout(binding = 1) uniform sampler2D NormalMap;
+layout(binding = 2) uniform sampler2D HeightMap;
+layout(binding = 3) uniform sampler2D SpecularMap;
 
-/*uniform*/ struct LightInfo
+uniform bool DiffuseMapIsUsed;
+uniform bool NormalMapIsUsed;
+uniform bool HeightMapIsUsed;
+uniform bool SpecularMapIsUsed;
+
+struct LightInfo
 {
-	vec3 direction;
+	vec4 position;
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
-} Light;
+};
+uniform LightInfo Lights[8];
 
 /*uniform*/ struct MaterialInfo
 {

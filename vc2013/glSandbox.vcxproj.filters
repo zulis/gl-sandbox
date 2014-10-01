@@ -187,9 +187,6 @@
     <ClInclude Include="..\include\Core\MeshData.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\MaterialDefault.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Log.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
@@ -201,6 +198,18 @@
     </ClInclude>
     <ClInclude Include="..\include\Systems\MeshRenderSystem.h">
       <Filter>Include\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\DirectionalLight.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\SpotLight.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\StringUtils.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\DefaultMaterial.h">
+      <Filter>Include\Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
