@@ -92,7 +92,7 @@ void EntityFactory::setup(const CameraRef& camera)
 
 	auto mesh = Mesh::create();
 	mesh->setFrustumCulling(true);
-	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
+	mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
 	
@@ -101,10 +101,10 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mesh->loadFromFile("assets/models/teapot/teapot.obj");
 
 
-	mesh->setTexturePath("assets/models/sponza/textures");
-	mesh->loadFromFile("assets/models/sponza/sponza.obj", 0.05f);
+	//mesh->setTexturePath("assets/models/sponza/textures");
+	//mesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	
-	DirectionalLight light;
+	SpotLight light;
 	light.setPosition(glm::vec3(0, 0, 5));
 
 	auto mat = mesh->getMaterial();

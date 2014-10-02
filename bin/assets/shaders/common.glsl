@@ -1,7 +1,7 @@
 #version 430
 
 in vec3 VertexPosition;
-in vec3 VerNormalMap;
+in vec3 VertexNormal;
 in vec2 VertexTexCoord;
 in vec4 VertexTangent;
 
@@ -33,15 +33,18 @@ struct LightInfo
 };
 uniform LightInfo Lights[8];
 
-/*uniform*/ struct MaterialInfo
+struct MaterialInfo
 {
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
 	float shininess;
-} Material;
+};
+uniform MaterialInfo Material;
 
-//Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
-//Material.diffuse = vec4(0.7, 0.7, 0.7, 1.0);
-//Material.specular = vec4(0.5, 0.5, 0.5, 1.0);
-//Material.shininess = 60.0;
+/*
+Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
+Material.diffuse = vec4(0.7, 0.7, 0.7, 1.0);
+Material.specular = vec4(0.5, 0.5, 0.5, 1.0);
+Material.shininess = 60.0;
+*/

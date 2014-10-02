@@ -47,10 +47,10 @@ Light::Light(const LightType& lightType)
 	switch (lightType)
 	{
 	case LightType::Point:
-		mPosition.w = 0.0f;
+		mPosition.w = 1.0f;
 		break;
 	case LightType::Directional:
-		mPosition.w = 1.0f;
+		mPosition.w = 0.0f;
 		break;
 	}
 }

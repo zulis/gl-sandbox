@@ -36,8 +36,18 @@ vec3 ads( vec4 position, vec3 norm )
 }
 */
 
+vec3 vertexPos, normal, s;
+out float i;
+
 void main()
 {
+	normal = normalize( NormalMatrix * VertexNormal );
+    vertexPos = vec3( ModelViewMatrix * vec4(VertexPosition,1.0) );
+ 
+    s = normalize( Lights[0].position.xyz - vertexPos );
+    // The diffuse shading equation
+    i = dot( s, normal );
+ 
 	gl_Position = MVP * vec4(VertexPosition, 1.0);
 	TexCoord = VertexTexCoord;
 	

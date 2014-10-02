@@ -36,7 +36,7 @@ class Mesh : public Transform3D
 private:
 	MeshLoaderRef mMeshLoader;
 	std::vector<GeometryRef> mGeometries;
-	std::string mTexturePath { std::string() };
+	std::string mTexturePath/* { std::string() }*/;
 	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 	AABB mAABB;
 	std::map<GeometryRef, AABB> mAABBMap;
