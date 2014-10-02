@@ -5,7 +5,7 @@ out vec2 TexCoord;
 
 //uniform vec4 LightPosition;
 //uniform vec3 LightIntensity;
-vec3 LightIntensity = vec3(1.0);
+//vec3 LightIntensity = vec3(1.0);
 
 //uniform vec3 Kd;            // Diffuse reflectivity
 //uniform vec3 Ka;            // Ambient reflectivity

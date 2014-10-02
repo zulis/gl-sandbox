@@ -199,6 +199,8 @@ mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess == -1
 //=========================================================================
 bool Material::bindTexture(const TextureType& textureType, unsigned int textureunit, unsigned int geometryIndex)
 {
+	auto bindResult = false;
+
 	MaterialTexture mt;
 	mt.geometryIndex = geometryIndex;
 	mt.textureType = textureType;
@@ -207,61 +209,35 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 
 	if (it != mTextures.end())
 	{
+		bindResult = true;
 		(*it).texture->bind(textureunit);
-
-		switch (textureType)
-		{
-		case TextureType::DiffuseMap:
-			if (mShader->hasUniform(ShaderConstants::DiffuseMapIsUsed))
-				mShader->setUniform(ShaderConstants::DiffuseMapIsUsed, true);
-			break;
-		case TextureType::NormalMap:
-			if (mShader->hasUniform(ShaderConstants::NormalMapIsUsed))
-				mShader->setUniform(ShaderConstants::NormalMapIsUsed, true);
-			break;
-		case TextureType::SpecularMap:
-			if (mShader->hasUniform(ShaderConstants::SpecularMapIsUsed))
-				mShader->setUniform(ShaderConstants::SpecularMapIsUsed, true);
-			break;
-		case TextureType::HeightMap:
-			if (mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
-				mShader->setUniform(ShaderConstants::HeightMapIsUsed, true);
-			break;
-		case TextureType::OpacityMap:
-			if (mShader->hasUniform(ShaderConstants::OpacityMapIsUsed))
-				mShader->setUniform(ShaderConstants::OpacityMapIsUsed, true);
-			break;
-		}
-
-		return true;
 	}
 
-	return false;
-
-	/*
-	GeometryMaterial geomMaterial;
-	geomMaterial.geometryIndex = geometryIndex;
-
-	auto it1 = std::find(mGeometriesMaterials.begin(), mGeometriesMaterials.end(), geomMaterial);
-
-	if (it1 != mGeometriesMaterials.end())
+	switch (textureType)
 	{
-	geomMaterial = (*it1);
-
-	GeometryTexture textureInfo;
-	textureInfo.textureType = textureType;
-
-	auto it2 = std::find(geomMaterial.textures.begin(), geomMaterial.textures.end(), textureInfo);
-
-	if (it2 != geomMaterial.textures.end())
-	{
-	(*it2).texture->bind(textureunit);
-	return true;
+	case TextureType::DiffuseMap:
+		if (mShader->hasUniform(ShaderConstants::DiffuseMapIsUsed))
+			mShader->setUniform(ShaderConstants::DiffuseMapIsUsed, bindResult);
+		break;
+	case TextureType::NormalMap:
+		if (mShader->hasUniform(ShaderConstants::NormalMapIsUsed))
+			mShader->setUniform(ShaderConstants::NormalMapIsUsed, bindResult);
+		break;
+	case TextureType::SpecularMap:
+		if (mShader->hasUniform(ShaderConstants::SpecularMapIsUsed))
+			mShader->setUniform(ShaderConstants::SpecularMapIsUsed, bindResult);
+		break;
+	case TextureType::HeightMap:
+		if (mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
+			mShader->setUniform(ShaderConstants::HeightMapIsUsed, bindResult);
+		break;
+	case TextureType::OpacityMap:
+		if (mShader->hasUniform(ShaderConstants::OpacityMapIsUsed))
+			mShader->setUniform(ShaderConstants::OpacityMapIsUsed, bindResult);
+		break;
 	}
-	}
 
-	return false;
-	*/
+	return bindResult;
 }
 
 //=========================================================================

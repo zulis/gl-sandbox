@@ -54,4 +54,6 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 
 	if (!bindTexture(TextureType::SpecularMap, 3, geometryIndex))
 		mDefaultSpecular->bind(3);
+
+	bindTexture(TextureType::OpacityMap, 4, geometryIndex);
 }

@@ -15,7 +15,7 @@
 namespace gl
 {
 
-inline enum CullFaceType
+enum CullFaceType
 {
 	Back,
 	Front

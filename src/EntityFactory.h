@@ -91,6 +91,7 @@ void EntityFactory::setup(const CameraRef& camera)
 
 
 	auto mesh = Mesh::create();
+	mesh->setFrustumCulling(true);
 	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
@@ -102,8 +103,6 @@ void EntityFactory::setup(const CameraRef& camera)
 
 	mesh->setTexturePath("assets/models/sponza/textures");
 	mesh->loadFromFile("assets/models/sponza/sponza.obj", 0.05f);
-	//mesh->setFrustumCulling(true);
-	
 	
 	DirectionalLight light;
 	light.setPosition(glm::vec3(0, 0, 5));
@@ -113,6 +112,9 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mat->addTexture("assets/models/box/box_n.png", TextureType::NormalMap, 0);
 	//mat->addTexture("assets/models/box/box_h.png", TextureType::HeightMap, 0);
 	//mat->addTexture("assets/models/box/box_s.png", TextureType::SpecularMap, 0);
+
+	//mat->addTexture("assets/models/sponza/textures/vase_plant.png", TextureType::DiffuseMap, 0);
+	//mat->addTexture("assets/textures/misc/opacity.png", TextureType::OpacityMap, 0);
 
 	mat->addLight(light);
 	
