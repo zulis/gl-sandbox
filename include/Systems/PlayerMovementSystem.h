@@ -17,9 +17,9 @@ private:
 	ComponentMapper<KeyboardComponent> mKeyboardMapper;
 	ComponentMapper<VelocityComponent> mVelocityMapper;
 	ComponentMapper<TransformComponent> mTransformMapper;
-	float mPlayerMoveSpeed{ 0.05f };
+	float mPlayerMoveSpeed{ 0.5f };
 	//float mPlayerRotateSpeed{ 3.0f };
-	float mPlayerRotateSpeed{ 1.0f };
+	float mPlayerRotateSpeed{ 30.0f };
 	float mPlayerDragFactor{ mPlayerMoveSpeed * 20 };
 
 

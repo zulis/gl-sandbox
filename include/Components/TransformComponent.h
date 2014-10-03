@@ -10,7 +10,7 @@ public:
 	void setPosition(glm::vec3 position);
 	void setRotation(glm::vec3 rotation);
 	void setScale(glm::vec3 scale);
-	glm::mat4 getMatrix();
+	//glm::mat4 getMatrix();
 
 	glm::vec3& getPosition();
 	glm::vec3& getRotation();
@@ -21,11 +21,11 @@ private:
 	glm::vec3 mPosition;
 	glm::vec3 mRotation;
 	glm::vec3 mScale;
-	glm::mat4 mMatrix;
-	bool mNeedUpdate;
+	//glm::mat4 mMatrix;
+	//bool mNeedUpdate;
 
 private:
-	void updateMatrix();
+	//void updateMatrix();
 };
 
 //=========================================================================
@@ -40,45 +40,45 @@ TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation, g
 void TransformComponent::setPosition(glm::vec3 position)
 {
 	mPosition = position; // *mDiff;
-	mNeedUpdate = true;
+	//mNeedUpdate = true;
 }
 
 //=========================================================================
 void TransformComponent::setRotation(glm::vec3 rotation)
 {
 	mRotation = rotation;
-	mNeedUpdate = true;
+	//mNeedUpdate = true;
 }
 
 //=========================================================================
 void TransformComponent::setScale(glm::vec3 scale)
 {
 	mScale = scale;
-	mNeedUpdate = true;
+	//mNeedUpdate = true;
 }
 
 //=========================================================================
-void TransformComponent::updateMatrix()
-{
-	// In GLM the angle must be in degrees here, so convert it.
-	//quat q = angleAxis(degrees(m_rotation),  RotationAxis);
-
-	glm::mat4 translation = glm::translate(glm::mat4(), mPosition);
-	glm::mat4 rotation = glm::eulerAngleYXZ(mRotation.y, mRotation.x, mRotation.z);
-	glm::mat4 scale = glm::scale(glm::mat4(), mScale);
-	mMatrix = translation * rotation * scale;
-
-	mNeedUpdate = false;
-}
+// void TransformComponent::updateMatrix()
+// {
+// 	// In GLM the angle must be in degrees here, so convert it.
+// 	//quat q = angleAxis(degrees(m_rotation),  RotationAxis);
+// 
+// 	glm::mat4 translation = glm::translate(glm::mat4(), mPosition);
+// 	glm::mat4 rotation = glm::eulerAngleYXZ(mRotation.y, mRotation.x, mRotation.z);
+// 	glm::mat4 scale = glm::scale(glm::mat4(), mScale);
+// 	mMatrix = translation * rotation * scale;
+// 
+// 	mNeedUpdate = false;
+// }
 
 //=========================================================================
-glm::mat4 TransformComponent::getMatrix()
-{
-	if(mNeedUpdate)
-		updateMatrix();
-
-	return mMatrix;
-}
+// glm::mat4 TransformComponent::getMatrix()
+// {
+// 	if(mNeedUpdate)
+// 		updateMatrix();
+// 
+// 	return mMatrix;
+// }
 
 //=========================================================================
 glm::vec3& TransformComponent::getPosition()

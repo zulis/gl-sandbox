@@ -45,7 +45,9 @@ void MeshRenderSystem::processEntity(Entity& e)
 // 		printf("culled\n");
 // 	}
 
-	renderable->setMatrix(transformComp->getMatrix());
+	renderable->setPosition(transformComp->getPosition());
+	renderable->setRotation(transformComp->getRotation());
+	renderable->setScale(transformComp->getScale());
 	//renderable->update(world->getDelta());
 	renderable->draw(camera);
 }

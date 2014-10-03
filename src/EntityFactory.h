@@ -92,11 +92,11 @@ void EntityFactory::setup(const CameraRef& camera)
 
 	auto mesh = Mesh::create();
 	mesh->setFrustumCulling(true);
-	mesh->loadFromFile("assets/models/misc/sphere.fbx");
+	//mesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mesh->loadFromFile("assets/models/ship/ship.fbx");
 	
-	//mesh->loadFromFile("assets/models/box/box.fbx");
+	mesh->loadFromFile("assets/models/box/box.fbx");
 	//mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
 	//mesh->loadFromFile("assets/models/teapot/teapot.obj");
 
@@ -126,14 +126,10 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mesh->setMaterial(mat);
 	//mat->setGeomMaterials(mesh->getGeomMaterial());
 
-	auto transform = new TransformComponent();
-	//transform->setScale(glm::vec3(0.02f));
-	//transform->setScale(glm::vec3(3.f));
-
 	Entity& e = mWorld.createEntity();
 	e.setGroup("static");
 	//e.addComponent(transform);
-	e.addComponent(transform);
+	e.addComponent(new TransformComponent);
 	e.addComponent(new VelocityComponent);
 	e.addComponent(new KeyboardComponent);
 	e.addComponent(new MeshRenderComponent(mesh, mCamera));

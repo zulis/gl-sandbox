@@ -8,11 +8,6 @@ out vec4 FragColor;
 
 void main()
 {
-	//Lights[0].position = normalize(-vec3(0.0, 0.0, 5.0));
-	//Lights[0].ambient = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
-	//Lights[0].diffuse = vec4(1.0, 244.0 / 255.0, 214.0 / 255.0, 1.0);
-	//Lights[0].specular = vec4(1.0, 1.0, 1.0, 1.0);
-	
 	Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
 	Material.diffuse = vec4(0.7, 0.7, 0.7, 1.0);
 	Material.specular = vec4(0.5, 0.5, 0.5, 1.0);

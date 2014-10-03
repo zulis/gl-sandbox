@@ -3,7 +3,8 @@
 in vec3 VertexPosition;
 in vec3 VertexNormal;
 in vec2 VertexTexCoord;
-in vec4 VertexTangent;
+in vec3 VertexTangent;
+in vec3 VertexBitangent;
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ViewMatrix;
@@ -40,7 +41,7 @@ struct MaterialInfo
 	vec4 specular;
 	float shininess;
 };
-uniform MaterialInfo Material;
+MaterialInfo Material;
 
 /*
 Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
