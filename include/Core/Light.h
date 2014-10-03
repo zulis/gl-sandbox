@@ -46,11 +46,11 @@ Light::Light(const LightType& lightType)
 
 	switch (lightType)
 	{
-	case LightType::Point:
-		mPosition.w = 1.0f;
-		break;
 	case LightType::Directional:
 		mPosition.w = 0.0f;
+		break;
+	default:
+		mPosition.w = 1.0f;
 		break;
 	}
 }
@@ -116,6 +116,9 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex) con
 	std::string uniformName;
 
 	shader->bind();
+
+	if (shader->hasUniform(ShaderConstants::MaxLights))
+		shader->setUniform(ShaderConstants::MaxLights, lightIndex);
 
 	uniformName = createUniformName(ShaderConstants::LightPosition, lightIndex);
 	if (shader->hasUniform(uniformName))

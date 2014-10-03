@@ -25,6 +25,8 @@ uniform bool HeightMapIsUsed;
 uniform bool SpecularMapIsUsed;
 uniform bool OpacityMapIsUsed;
 
+uniform int MaxLights;
+
 struct LightInfo
 {
 	vec4 position;
@@ -41,11 +43,9 @@ struct MaterialInfo
 	vec4 specular;
 	float shininess;
 };
-MaterialInfo Material;
-
-/*
-Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
-Material.diffuse = vec4(0.7, 0.7, 0.7, 1.0);
-Material.specular = vec4(0.5, 0.5, 0.5, 1.0);
-Material.shininess = 60.0;
-*/
+uniform MaterialInfo Material = MaterialInfo(
+	vec4(0.3, 0.3, 0.3, 1.0),
+	vec4(0.7, 0.7, 0.7, 1.0),
+	vec4(0.5, 0.5, 0.5, 1.0),
+	60.0
+);
