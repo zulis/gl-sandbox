@@ -2,15 +2,26 @@
 
 #include "Core/Light.h"
 
+typedef std::shared_ptr<class SpotLight> SpotLightRef;
+
 class SpotLight : public Light
 {
-	public:
-		SpotLight();
-		virtual ~SpotLight();
+public:
+	static SpotLightRef create();
+	virtual ~SpotLight();
+
+private:
+	SpotLight();
 };
 
 //=========================================================================
-SpotLight::SpotLight() : Light(LightType::Point)
+SpotLightRef SpotLight::create()
+{
+	return SpotLightRef(new SpotLight);
+}
+
+//=========================================================================
+SpotLight::SpotLight() : Light(LightType::Spot)
 {
 }
 

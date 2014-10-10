@@ -7,6 +7,7 @@
 #include "Core/Texture.h"
 #include "Core/Light.h"
 #include "Core/TextureType.h"
+#include "Core/Color.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
 
@@ -14,37 +15,14 @@ typedef std::shared_ptr<class Material> MaterialRef;
 class Material
 {
 public:
-	/*struct GeometryTexture
-	{
-	TextureType textureType;
-	TextureRef texture;
-	std::string fileName;
-
-	bool operator==(const GeometryTexture& t) const
-	{
-	return t.textureType == textureType;
-	}
-	};
-
-	struct GeometryMaterial
-	{
-	unsigned int geometryIndex;
-	glm::vec3 Kd { glm::vec3(0.8f, 0.8f, 0.8f) };
-	glm::vec3 Ka { glm::vec3(0.8f, 0.8f, 0.8f) };
-	glm::vec3 Ks { glm::vec3(0.1f, 0.1f, 0.1f) };
-	float Shininess { 0.5f };
-
-	std::vector<GeometryTexture> textures;
-
-	bool operator==(const GeometryMaterial& gm) const
-	{
-	return gm.geometryIndex == geometryIndex;
-	}
-	};*/
-
 	Shader* getShader();
 	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addLight(const Light& light);
+
+	void setAmbientColor(const Color& color);
+	void setDiffuseColor(const Color& color);
+	void setSpecularColor(const Color& color);
+	void setShininess(float shininess);
 
 	virtual void bind();
 	virtual void unbind();
@@ -83,10 +61,7 @@ private:
 
 	//void bindGeomMaterial(unsigned int geometryIndex);
 	//bool bindTexture(const TextureType& textureType, unsigned int textureunit = 0, unsigned int geometryIndex = 0);
-	//virtual void setAmbientColor(float r, float g, float b);
-	//virtual void setDiffuseColor(float r, float g, float b);
-	//virtual void setSpecularColor(float r, float g, float b);
-	//virtual void setShininess(float shininess);
+
 
 
 	std::vector<MaterialTexture> mTextures;
@@ -97,10 +72,10 @@ private:
 
 	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 
-	//glm::vec3 mMaterialKa{ glm::vec4(0.0f) };
-	//glm::vec3 mMaterialKd { glm::vec4(0.0f) };
-	//glm::vec3 mMaterialKs { glm::vec4(0.0f) };
-	//float mMaterialShininess { 0.0f };
+	Color mMaterialAmbient{ Color(0.3, 0.3, 0.3, 1.0) };
+	Color mMaterialDiffuse{ Color(0.7, 0.7, 0.7, 1.0) };
+	Color mMaterialSpecular{ Color(0.5, 0.5, 0.5, 1.0) };
+	float mMaterialShininess{ 60.0f };
 
 	std::vector<Light> mLights;
 	unsigned int mLightIndex{ 0 };
@@ -130,11 +105,21 @@ void Material::bind()
 	{
 		mShader->bind();
 
-		unsigned int lightIndex = 0;
-		for each (auto light in mLights)
-		{
-			//light.updateUniforms(mShader, lightIndex++);
-		}
+		// Set Material
+		if (mShader->hasUniform(ShaderConstants::MaterialAmbient))
+			mShader->setUniform(ShaderConstants::MaterialAmbient, mMaterialAmbient);
+		if (mShader->hasUniform(ShaderConstants::MaterialDiffuse))
+			mShader->setUniform(ShaderConstants::MaterialDiffuse, mMaterialDiffuse);
+		if (mShader->hasUniform(ShaderConstants::MaterialSpecular))
+			mShader->setUniform(ShaderConstants::MaterialSpecular, mMaterialSpecular);
+		if (mShader->hasUniform(ShaderConstants::MaterialShininess))
+			mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess);
+
+ 		unsigned int lightIndex = 0;
+ 		for(auto light : mLights)
+ 		{
+ 			light.updateUniforms(mShader, lightIndex++);
+ 		}
 	}
 }
 
@@ -241,35 +226,33 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 }
 
 //=========================================================================
-/*void Material::setAmbientColor(float r, float g, float b)
+void Material::setAmbientColor(const Color& color)
 {
-mMaterialKa = glm::vec3(r, g, b);
-}*/
+	mMaterialAmbient = color;
+}
 
 //=========================================================================
-/*void Material::setDiffuseColor(float r, float g, float b)
+void Material::setDiffuseColor(const Color& color)
 {
-mMaterialKd = glm::vec3(r, g, b);
-}*/
+	mMaterialDiffuse = color;
+}
 
 //=========================================================================
-/*void Material::setSpecularColor(float r, float g, float b)
+void Material::setSpecularColor(const Color& color)
 {
-mMaterialKs = glm::vec3(r, g, b);
-}*/
+	mMaterialSpecular = color;
+}
 
 //=========================================================================
-/*void Material::setShininess(float shininess)
+void Material::setShininess(float shininess)
 {
-mMaterialShininess = shininess;
-}*/
+	mMaterialShininess = shininess;
+}
 
 //=========================================================================
 void Material::addLight(const Light& light)
 {
-	light.updateUniforms(mShader, mLightIndex);
-	mLightIndex++;
-	//mLights.push_back(light);
+	mLights.push_back(light);
 }
 
 //=========================================================================

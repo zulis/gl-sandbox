@@ -11,6 +11,7 @@
 #include "Core/ShaderConstants.h"
 #include "Core/Math.h"
 #include "Core/Log.h"
+#include "Core/Color.h"
 #include "Core/StringUtils.h"
 
 typedef std::shared_ptr<class Shader> ShaderRef;
@@ -46,6 +47,7 @@ public:
 	void setUniform(const std::string& name, bool b) const;
 	void setUniform(const std::string& name, const glm::vec4* vec4, int count) const;
 	void setUniform(const std::string& name, const glm::vec4 vec4) const;
+	void setUniform(const std::string& name, const Color& color) const;
 
 	GLuint getAttribute(const std::string& name) const;
 	GLuint getUniform(const std::string& name) const;
@@ -449,6 +451,12 @@ void Shader::setUniform(const std::string& name, const glm::mat4& mat4, bool tra
 void Shader::setUniform(const std::string& name, bool b) const
 {
 	glUniform1i(getUniform(name), b ? 1 : 0);
+}
+
+//=========================================================================
+void Shader::setUniform(const std::string& name, const Color& color) const
+{
+	setUniform(name, color.r, color.g, color.b, color.a);
 }
 
 //=========================================================================

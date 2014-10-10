@@ -1,18 +1,19 @@
 #include "common.glsl"
 
-in vec3 LightDir;
-in vec3 ViewDir;
+//in vec3 LightDir;
+//in vec3 ViewDir;
 in vec2 TexCoord;
+
+smooth in vec4 VIEW_POSITION;
+noperspective in vec3 VIEW_NORMAL;
 
 out vec4 FragColor;
 
 void main()
 {
-	Material.ambient = vec4(0.3, 0.3, 0.3, 1.0);
-	Material.diffuse = vec4(0.7, 0.7, 0.7, 1.0);
-	Material.specular = vec4(0.5, 0.5, 0.5, 1.0);
-	Material.shininess = 60.0;
+	FragColor = vec4(1.0);
 
+/*
 	vec3 L = normalize(LightDir);
 	vec3 N = normalize(texture(NormalMap, TexCoord.st).xyz * 2.0 - 1.0);
 	vec3 V = normalize(ViewDir);
@@ -27,5 +28,6 @@ void main()
 	vec4 texel = texture(DiffuseMap, TexCoord);
 	float gloss = texture(SpecularMap, TexCoord).r;
 		
-    FragColor = (ambient + diffuse + (gloss * specular)) * texel;
+	FragColor = (ambient + diffuse + (gloss * specular)) * texel;
+*/
 }

@@ -21,6 +21,12 @@
     <Filter Include="Include\Systems">
       <UniqueIdentifier>{c8626aca-02f9-4163-933d-918a66f5f02e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\Core\Material">
+      <UniqueIdentifier>{67e19c8f-44d2-4384-a9a0-7808cf377672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Core\Light">
+      <UniqueIdentifier>{d31b3343-7dcf-46c5-85bb-9a1a3b713152}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\external\src\artemis\Component.cpp">
@@ -130,13 +136,7 @@
     <ClInclude Include="..\include\Core\Mesh.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Material.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Texture.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\Light.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Time.h">
@@ -199,17 +199,26 @@
     <ClInclude Include="..\include\Systems\MeshRenderSystem.h">
       <Filter>Include\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\DirectionalLight.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\SpotLight.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\StringUtils.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\DefaultMaterial.h">
-      <Filter>Include\Core</Filter>
+      <Filter>Include\Core\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Material.h">
+      <Filter>Include\Core\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\DirectionalLight.h">
+      <Filter>Include\Core\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\SpotLight.h">
+      <Filter>Include\Core\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\PointLight.h">
+      <Filter>Include\Core\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Light.h">
+      <Filter>Include\Core\Light</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

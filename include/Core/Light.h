@@ -1,12 +1,14 @@
 #pragma once
 
+#include <memory>
 #include "Core/Math.h"
-#include "COre/Shader.h"
+#include "Core/Shader.h"
 
 enum class LightType
 {
 	Point,
-	Directional
+	Directional,
+	Spot
 };
 
 class Light
@@ -27,15 +29,29 @@ public:
 	void setSpecular(const glm::vec4& specular);
 	const glm::vec4& getSpecular() const;
 
-	void updateUniforms(const ShaderRef& shader, unsigned int lightIndex) const;
+	void setAttenuation(const glm::vec2& attenuation);
+	const glm::vec2& getAttenuation() const;
+
+	void setCutoff(float cutoff);
+	float getCutoff();
+
+	void setExponent(float exponent);
+	float getExponent();
+
+
+	void updateUniforms(const ShaderRef& shader, unsigned int lightIndex);
 
 private:
+	//unsigned int mLightIndex;
 	LightType mLightType;
 	glm::vec4 mPosition{ glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) };
 	glm::vec4 mAmbient{ glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
 	glm::vec4 mDiffuse{ glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
 	glm::vec4 mSpecular{ glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
-
+	glm::vec2 mAttenuation{ glm::vec2(0.0, 1.0) };
+	float mCutoff{ 0.0f };
+	float mExponent{ 0.0f };
+	
 	const std::string createUniformName(const std::string& uniformName, unsigned int lightIndex) const;
 };
 
@@ -111,11 +127,48 @@ const glm::vec4& Light::getSpecular() const
 }
 
 //=========================================================================
-void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex) const
+void Light::setAttenuation(const glm::vec2& attenuation)
+{
+	mAttenuation = attenuation;
+}
+
+//=========================================================================
+const glm::vec2& Light::getAttenuation() const
+{
+	return mAttenuation;
+}
+
+//=========================================================================
+void Light::setCutoff(float cutoff)
+{
+	mCutoff = cutoff;
+}
+
+//=========================================================================
+float Light::getCutoff()
+{
+	return mCutoff;
+}
+
+//=========================================================================
+void Light::setExponent(float exponent)
+{
+	mExponent = exponent;
+}
+
+//=========================================================================
+float Light::getExponent()
+{
+	return mExponent;
+}
+
+//=========================================================================
+void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex)
 {
 	std::string uniformName;
 
-	shader->bind();
+	if (shader->hasUniform(ShaderConstants::TotalLights))
+		shader->setUniform(ShaderConstants::TotalLights, lightIndex + 1);
 
 	uniformName = createUniformName(ShaderConstants::LightPosition, lightIndex);
 	if (shader->hasUniform(uniformName))
@@ -133,7 +186,17 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex) con
 	if (shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mSpecular);
 
-	//shader->unbind();
+	uniformName = createUniformName(ShaderConstants::LightAttenuation, lightIndex);
+	if (shader->hasUniform(uniformName))
+		shader->setUniform(uniformName, mAttenuation);
+
+	uniformName = createUniformName(ShaderConstants::LightCutoff, lightIndex);
+	if (shader->hasUniform(uniformName))
+		shader->setUniform(uniformName, mCutoff);
+
+	uniformName = createUniformName(ShaderConstants::LightExponent, lightIndex);
+	if (shader->hasUniform(uniformName))
+		shader->setUniform(uniformName, mExponent);
 }
 
 //=========================================================================

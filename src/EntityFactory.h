@@ -8,6 +8,7 @@
 #include "Core/MouseEvent.h"
 #include "Core/Mesh.h"
 //#include "Core/MaterialPhong.h"
+#include "Core/PointLight.h"
 #include "Core/DirectionalLight.h"
 #include "Core/SpotLight.h"
 
@@ -104,8 +105,8 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mesh->setTexturePath("assets/models/sponza/textures");
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	
-	SpotLight light;
-	light.setPosition(glm::vec3(0, 0, 5));
+	auto light = PointLight::create();
+	light->setPosition(glm::vec3(0, 0, 5));
 
 	auto mat = mesh->getMaterial();
 	//mat->addTexture("assets/models/box/box_d.png", TextureType::DiffuseMap, 0);
@@ -116,7 +117,7 @@ void EntityFactory::setup(const CameraRef& camera)
 	//mat->addTexture("assets/models/sponza/textures/vase_plant.png", TextureType::DiffuseMap, 0);
 	//mat->addTexture("assets/textures/misc/opacity.png", TextureType::OpacityMap, 0);
 
-	mat->addLight(light);
+	mat->addLight(*light);
 	
 	//mat->addTexture("assets/models/leprechaun/leprechaun_d.png");
 	//mat->addTexture("assets/models/leprechaun/leprechaun_n.png", TextureType::NormalMap);
