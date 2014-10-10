@@ -115,6 +115,10 @@ void Material::bind()
 		if (mShader->hasUniform(ShaderConstants::MaterialShininess))
 			mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess);
 
+		// Update lights
+		if (mShader->hasUniform(ShaderConstants::TotalLights))
+			mShader->setUniform(ShaderConstants::TotalLights, mLights.size());
+
  		unsigned int lightIndex = 0;
  		for(auto light : mLights)
  		{

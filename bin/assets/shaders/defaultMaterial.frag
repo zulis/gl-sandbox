@@ -11,7 +11,6 @@ out vec4 FragColor;
 
 void main()
 {
-<<<<<<< HEAD
 	FragColor = vec4(1.0);
 
 /*

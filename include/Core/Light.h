@@ -167,9 +167,6 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex)
 {
 	std::string uniformName;
 
-	if (shader->hasUniform(ShaderConstants::TotalLights))
-		shader->setUniform(ShaderConstants::TotalLights, lightIndex + 1);
-
 	if (shader->hasUniform(ShaderConstants::MaxLights))
 		shader->setUniform(ShaderConstants::MaxLights, lightIndex);
 
