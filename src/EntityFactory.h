@@ -99,14 +99,18 @@ void EntityFactory::setup(const CameraRef& camera)
 	
 	mesh->loadFromFile("assets/models/box/box.fbx");
 	//mesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
-	//mesh->loadFromFile("assets/models/teapot/teapot.obj");
-
 
 	//mesh->setTexturePath("assets/models/sponza/textures");
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	
+<<<<<<< HEAD
 	auto light = PointLight::create();
 	light->setPosition(glm::vec3(0, 0, 5));
+=======
+	SpotLight light;
+	//DirectionalLight light;
+	light.setPosition(glm::vec3(0, 0, 5));
+>>>>>>> origin/master
 
 	auto mat = mesh->getMaterial();
 	//mat->addTexture("assets/models/box/box_d.png", TextureType::DiffuseMap, 0);

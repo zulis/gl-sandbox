@@ -27,11 +27,11 @@ void main()
 	// All vertex shaders should write the transformed homogeneous clip space
 	// vertex position into the gl_Position variables.
 
-	mat4 modelViewMatrix = ViewMatrix * ModelMatrix;
-    mat4 mvpMatrix = ProjectionMatrix * modelViewMatrix;
-    vec4 pos = vec4(VertexPosition.x, VertexPosition.y, VertexPosition.z, 1.0);
+	//mat4 modelViewMatrix = ViewMatrix * ModelMatrix;
+    //mat4 mvpMatrix = ProjectionMatrix * modelViewMatrix;
+    //vec4 pos = vec4(VertexPosition.x, VertexPosition.y, VertexPosition.z, 1.0);
     
-    gl_Position = mvpMatrix * pos;
+    gl_Position = MVP * vec4(VertexPosition, 1.0);
     
 	// Calculate the view direction in eye space. In eye space space the camera
 	// position is the origin. The eye space view direction is simply the
@@ -39,7 +39,7 @@ void main()
 	// space. Once we have the eye space view direction vector we transform it
 	// to tangent space.
     
-    pos = modelViewMatrix * pos;
+    vec4 pos = ModelViewMatrix * vec4(VertexPosition, 1.0);
 	ViewDir = -(pos.xyz / pos.w);
 	ViewDir = tbnMatrix * ViewDir;
         
@@ -53,8 +53,18 @@ void main()
 	// original
 	//LightDir = vec3(ViewMatrix * vec4(-DirectionalLight1.direction, 0.0f));
 	
-	//LightDir = vec3(ViewMatrix * Lights[0].position);
-	LightDir = vec3(ViewMatrix * -(normalize(-Lights[0].position)));
+	//LightDir = vec3(ViewMatrix * vec4(-Lights[0].position.xyz, 0.0f));
+	
+	if (Lights[MaxLights].position.w == 0.0) // Directional?
+		LightDir = normalize(vec3(Lights[MaxLights].position));
+    else
+	{
+		//vec4 eyePosition = ModelViewMatrix * vec4(VertexPosition, 1.0);
+		//LightDir = normalize( vec3(Lights[0].position - eyePosition) );
+		LightDir = vec3(ViewMatrix * vec4(Lights[MaxLights].position.xyz, 0.0f));
+	}
+	//LightDir = vec3(ViewMatrix * -normalize(Lights[0].position)); // Spot
+	//LightDir = vec3(ViewMatrix * normalize(-Lights[0].position)); // Directional
 	
 	LightDir = tbnMatrix * LightDir;
     
