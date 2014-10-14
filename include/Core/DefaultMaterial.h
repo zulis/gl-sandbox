@@ -29,11 +29,15 @@ MaterialDefaultRef DefaultMaterial::create()
 //=========================================================================
 DefaultMaterial::DefaultMaterial() : Material(/*"assets/shaders/textured"*/"assets/shaders/defaultMaterial")
 {
-	//mDefaultDiffuse = Texture::create("assets/textures/default/default_d.png");
-	mDefaultDiffuse = Texture::create(Color::white());
+	mDefaultDiffuse = Texture::create("assets/textures/default/default_d.png");
+	//mDefaultNormal = Texture::create("assets/textures/default/default_n.png");
+	mDefaultSpecular = Texture::create("assets/textures/default/default_s.png");
+
+	//mDefaultDiffuse = Texture::create(Color::white());
 	mDefaultNormal = Texture::create(Color::normal());
 	mDefaultHeight = Texture::create(Color::white());
-	mDefaultSpecular = Texture::create(Color::white());
+	//mDefaultSpecular = Texture::create(Color::white());
+	
 }
 
 //=========================================================================
@@ -55,6 +59,6 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 
 	if (!bindTexture(TextureType::SpecularMap, 3, geometryIndex))
 		mDefaultSpecular->bind(3);
-
+		
 	bindTexture(TextureType::OpacityMap, 4, geometryIndex);
 }

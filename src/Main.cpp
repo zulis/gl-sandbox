@@ -11,6 +11,9 @@
 //#include "Core/MaterialPhong.h"
 #include "Core/Font.h"
 #include "Core/Quad.h"
+#include "Core/PointLight.h"
+#include "Core/DirectionalLight.h"
+#include "Core/SpotLight.h"
 
 class Main : public State
 {
@@ -35,7 +38,7 @@ private:
 	Image* mIconImage;
 	ImageManager mImageMng;
 
-	//MeshRef mMesh;
+	MeshRef mMesh;
 	//MaterialPhongRef mMaterial;
 	//FontRef mFont;
 	//QuadRef mQuad;
@@ -69,23 +72,43 @@ void Main::setup()
 	//mGameOverQuad = Quad::create("assets/ui/gameover.png");
 
 	// TESTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*mMaterial = MaterialPhong::create();
-	mMaterial->setAmbientColor(0.1f, 0.1f, 0.1f);
-	mMaterial->setSpecularColor(0.2f, 0.2f, 0.2f);
-	mMaterial->setShininess(1.0f);
+	
+	mMesh = Mesh::create();
+	mMesh->setFrustumCulling(true);
+	//mMesh->loadFromFile("assets/models/box/box.fbx");
+	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
+	mMesh->loadFromFile("assets/models/misc/sphere.fbx");
+	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
+	//mMesh->setTexturePath("assets/models/sponza/textures");
+	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
+	auto mat = mMesh->getMaterial();
 
-	mMesh = Mesh::create("assets/models/imrod/imrod.fbx");
-	mMesh->setMaterial(mMaterial);
-	mMesh->setScale(10);
-	mMesh->setRotationX(-90);
+	auto light = DirectionalLight::create();
+	light->setPosition(glm::vec3(0, 0, 5));
+	//light->setAmbient(Color::white());
+	//light->setDiffuse(Color::white());
+	//light->setSpecular(Color::black());
+	//light->setAttenuation(glm::vec2(100, 1000));
+	mat->addLight(*light);
 
-	mMaterial->setGeomMaterials(mMesh->getGeomMaterial());
 
-	Light light;
-	light.position = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
-	light.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	mMaterial->addLight(light);*/
+	/*light = PointLight::create();
+	light->setPosition(glm::vec3(0, 5, 5));
+	light->setAmbient(Color::green());
+	light->setDiffuse(Color::green());
+	light->setSpecular(Color::black());
+	mat->addLight(*light);
+
+	light = PointLight::create();
+	light->setPosition(glm::vec3(5, 5, 5));
+	light->setAmbient(Color::blue());
+	light->setDiffuse(Color::blue());
+	light->setSpecular(Color::black());
+	mat->addLight(*light);*/
+
+	//mMesh->setScale(10);
+	//mMesh->setRotationX(-90);
 }
 
 //=========================================================================
@@ -148,20 +171,22 @@ void Main::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
 //=========================================================================
 void Main::update(float elapsedTime)
 {
-	mEntityFactory->update(elapsedTime);
-	//mMesh->setRotationY(mRotateY * elapsedTime * 10.f);
+	//mEntityFactory->update(elapsedTime);
+	mMesh->setRotationY(mRotateY * elapsedTime * 10.f);
 }
 
 //=========================================================================
 void Main::draw()
 {
+	/*
 	gl::enableCullFace(gl::CullFaceType::Back);
 	mEntityFactory->draw();
 	gl::disableCullFace();
+	*/
 
-	//gl::enableCullFace(gl::CullFaceType::Back);
-	//mMesh->draw(mCamera);
-	//gl::disableCullFace();
+	gl::enableCullFace(gl::CullFaceType::Back);
+	mMesh->draw(mCamera);
+	gl::disableCullFace();
 
 	//gl::enable2D();
 	//gl::enableAlphaBlending();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "Core/Color.h"
 #include "Core/Math.h"
 #include "Core/Shader.h"
 
@@ -21,12 +22,15 @@ public:
 	const glm::vec4& getPosition() const;
 
 	void setAmbient(const glm::vec4& ambient);
+	void setAmbient(const Color& color);
 	const glm::vec4& getAmbient() const;
 
 	void setDiffuse(const glm::vec4& diffuse);
+	void setDiffuse(const Color& color);
 	const glm::vec4& getDiffuse() const;
 
 	void setSpecular(const glm::vec4& specular);
+	void setSpecular(const Color& color);
 	const glm::vec4& getSpecular() const;
 
 	void setAttenuation(const glm::vec2& attenuation);
@@ -38,7 +42,6 @@ public:
 	void setExponent(float exponent);
 	float getExponent();
 
-
 	void updateUniforms(const ShaderRef& shader, unsigned int lightIndex);
 
 private:
@@ -48,7 +51,7 @@ private:
 	glm::vec4 mAmbient{ glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
 	glm::vec4 mDiffuse{ glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
 	glm::vec4 mSpecular{ glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
-	glm::vec2 mAttenuation{ glm::vec2(0.0, 1.0) };
+	glm::vec2 mAttenuation{ glm::vec2(0.0, 100.0) };
 	float mCutoff{ 0.0f };
 	float mExponent{ 0.0f };
 	
@@ -97,6 +100,12 @@ void Light::setAmbient(const glm::vec4& ambient)
 }
 
 //=========================================================================
+void Light::setAmbient(const Color& color)
+{
+	mAmbient = glm::vec4(color.r, color.g, color.b, color.a);
+}
+
+//=========================================================================
 const glm::vec4& Light::getAmbient() const
 {
 	return mAmbient;
@@ -109,6 +118,12 @@ void Light::setDiffuse(const glm::vec4& diffuse)
 }
 
 //=========================================================================
+void Light::setDiffuse(const Color& color)
+{
+	mDiffuse = glm::vec4(color.r, color.g, color.b, color.a);
+}
+
+//=========================================================================
 const glm::vec4& Light::getDiffuse() const
 {
 	return mDiffuse;
@@ -118,6 +133,12 @@ const glm::vec4& Light::getDiffuse() const
 void Light::setSpecular(const glm::vec4& specular)
 {
 	mSpecular = specular;
+}
+
+//=========================================================================
+void Light::setSpecular(const Color& color)
+{
+	mSpecular = glm::vec4(color.r, color.g, color.b, color.a);
 }
 
 //=========================================================================
@@ -141,6 +162,7 @@ const glm::vec2& Light::getAttenuation() const
 //=========================================================================
 void Light::setCutoff(float cutoff)
 {
+	//mCutoff = glm::cos(cutoffAngle);
 	mCutoff = cutoff;
 }
 
@@ -166,9 +188,6 @@ float Light::getExponent()
 void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex)
 {
 	std::string uniformName;
-
-	if (shader->hasUniform(ShaderConstants::MaxLights))
-		shader->setUniform(ShaderConstants::MaxLights, lightIndex);
 
 	uniformName = createUniformName(ShaderConstants::LightPosition, lightIndex);
 	if (shader->hasUniform(uniformName))

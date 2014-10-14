@@ -24,7 +24,6 @@ public:
 	static const std::string MaterialSpecular;
 	static const std::string MaterialShininess;
 	// LIGHT
-	static const std::string MaxLights;
 	static const std::string LightPosition;
 	static const std::string LightAmbient;
 	static const std::string LightDiffuse;
@@ -66,7 +65,6 @@ const std::string ShaderConstants::MaterialDiffuse = std::string("Material.diffu
 const std::string ShaderConstants::MaterialSpecular = std::string("Material.specular");
 const std::string ShaderConstants::MaterialShininess = std::string("Material.shininess");
 // LIGHT
-const std::string ShaderConstants::MaxLights = std::string("MaxLights");
 const std::string ShaderConstants::LightPosition = std::string("Lights[#].position");
 const std::string ShaderConstants::LightAmbient = std::string("Lights[#].ambient");
 const std::string ShaderConstants::LightDiffuse = std::string("Lights[#].diffuse");
