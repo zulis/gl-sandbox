@@ -75,19 +75,20 @@ void Main::setup()
 	
 	mMesh = Mesh::create();
 	mMesh->setFrustumCulling(true);
-	//mMesh->loadFromFile("assets/models/box/box.fbx");
+	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
+	mMesh->loadFromFile("assets/models/box/box.fbx");
 	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
-	mMesh->loadFromFile("assets/models/misc/sphere.fbx");
+	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	auto mat = mMesh->getMaterial();
 
-	auto light = DirectionalLight::create();
+	auto light = PointLight::create();
 	light->setPosition(glm::vec3(0, 0, 5));
 	//light->setAmbient(Color::white());
 	//light->setDiffuse(Color::white());
-	//light->setSpecular(Color::black());
+	//light->setSpecular(Color::white());
 	//light->setAttenuation(glm::vec2(100, 1000));
 	mat->addLight(*light);
 
@@ -184,9 +185,9 @@ void Main::draw()
 	gl::disableCullFace();
 	*/
 
-	gl::enableCullFace(gl::CullFaceType::Back);
+	//gl::enableCullFace(gl::CullFaceType::Back);
 	mMesh->draw(mCamera);
-	gl::disableCullFace();
+	//gl::disableCullFace();
 
 	//gl::enable2D();
 	//gl::enableAlphaBlending();

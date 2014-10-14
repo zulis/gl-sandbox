@@ -8,7 +8,7 @@ smooth in vec4 VIEW_POSITION;
 noperspective in vec3 VIEW_NORMAL;
 
 struct LIGHT_SOURCE_ATTRIBUTES {
-	vec4 ambient, diffuse, specular; 	
+	vec3 ambient, diffuse, specular; 	
 	vec4 view_position;	// in view space
 	vec2 attenuation; // x = start, y = end
 	
@@ -19,7 +19,7 @@ struct LIGHT_SOURCE_ATTRIBUTES {
 
 struct SURFACE_ATTRIBUTES {
 //	supplied by the application:
-	vec4 ambient, diffuse, specular;
+	vec3 ambient, diffuse, specular;
 	float shininess;
 	
 //	supplied by the vertex shader:
@@ -28,7 +28,7 @@ struct SURFACE_ATTRIBUTES {
 };
 
 struct LIGHTING_RESULTS {
-	vec4 ambient, diffuse, specular;
+	vec3 ambient, diffuse, specular;
 };
 
 out vec4 FRAG_COLOR;
@@ -133,9 +133,9 @@ void main()
 
 	//	init surface properties:
 	SURFACE_ATTRIBUTES surface;
-	surface.ambient = Material.ambient;
-	surface.diffuse = Material.diffuse;
-	surface.specular = Material.specular;
+	surface.ambient = Material.ambient.xyz;
+	surface.diffuse = Material.diffuse.xyz;
+	surface.specular = Material.specular.xyz;
 	surface.shininess = Material.shininess;
 	surface.view_position = VIEW_POSITION;
 	surface.view_normal = VIEW_NORMAL;
@@ -143,18 +143,18 @@ void main()
 	
 //	init results accumulator:
 	LIGHTING_RESULTS results;
-	results.ambient = vec4(0.0);
-	results.diffuse = vec4(0.0);
-	results.specular = vec4(0.0);
+	results.ambient = vec3(0.0);
+	results.diffuse = vec3(0.0);
+	results.specular = vec3(0.0);
 
 //	accumulate results:
 	for (int i = 0; i < TotalLights; ++i) {
 
 		LIGHT_SOURCE_ATTRIBUTES LIGHT_SOURCE;
-		LIGHT_SOURCE.ambient = Lights[i].ambient;
-		LIGHT_SOURCE.diffuse = Lights[i].diffuse;
-		LIGHT_SOURCE.specular = Lights[i].specular;
-		LIGHT_SOURCE.view_position = ModelViewMatrix * Lights[i].position;
+		LIGHT_SOURCE.ambient = Lights[i].ambient.xyz;
+		LIGHT_SOURCE.diffuse = Lights[i].diffuse.xyz;
+		LIGHT_SOURCE.specular = Lights[i].specular.xyz;
+		LIGHT_SOURCE.view_position = ViewMatrix * Lights[i].position;
 		LIGHT_SOURCE.attenuation = Lights[i].attenuation;
 		//////////////////////////////////////////////////////////
 		LIGHT_SOURCE.spot_view_direction = -Lights[i].position.xyz; // ???
@@ -172,17 +172,38 @@ void main()
 		}
 	}
 	
-	vec4 texel = vec4(1.0);
-	//if(DiffuseMapIsUsed)
-		texel = texture(DiffuseMap, TexCoord);
+	float alpha = 1.0;
 	
-	float gloss = 1.0;
-	//if(SpecularMapIsUsed)
-		gloss = texture(SpecularMap, TexCoord).r;
+	vec3 ambient = results.ambient;
+	if(DiffuseMapIsUsed)
+	{
+		ambient *= texture(DiffuseMap, TexCoord).rgb;
+		//ambient = clamp(ambient, 0.0, 1.0);
+	}
 	
-	//FRAG_COLOR = (results.ambient + results.diffuse + (results.specular * gloss)) * texel;
+	vec3 diffuse = results.diffuse;
+	if(DiffuseMapIsUsed)
+	{
+		diffuse *= texture(DiffuseMap, TexCoord).rgb;
+		//diffuse = clamp(diffuse, 0.0, 1.0);
+		alpha = texture(DiffuseMap, TexCoord).a;
+	}
 	
-	FRAG_COLOR = results.ambient + results.diffuse + results.specular;
+	vec3 specular = results.specular;
+	if(SpecularMapIsUsed)
+	{
+		specular *= texture(SpecularMap, TexCoord).rgb;
+		//specular = clamp(specular, 0.0, 1.0);
+	}
+	
+	// final color
+	vec4 color = vec4(ambient + diffuse + specular, alpha);
+	
+	// final color (after gamma correction)
+    //vec3 gamma = vec3(1.0/2.2);
+    //FRAG_COLOR = vec4(pow(color.xyz, gamma), alpha);
+	
+	FRAG_COLOR = color;
 }
 
 /*
