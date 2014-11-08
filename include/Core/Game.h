@@ -44,7 +44,7 @@ Game::~Game()
 //=========================================================================
 bool Game::initialise()
 {
-	Window::create(1280, 720, false, std::string());
+	Window::create(640, 480, false, std::string());
 	Window::setResizeCallback(std::bind(&Game::resize, this, _1, _2));
 	Window::setKeyDownCallback(std::bind(&Game::keyDown, this, _1, _2));
 	Window::setMouseDownCallback(std::bind(&Game::mouseDown, this, _1, _2));
@@ -52,7 +52,7 @@ bool Game::initialise()
 	Window::setMouseWheelCallback(std::bind(&Game::mouseWheel, this, _1));
 
 	// Init OPENGL
-	if(ogl_LoadFunctions() == ogl_LOAD_FAILED)
+	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 	{
 		Window::showMessageBox("OpenGL initialization failed.");
 		return false;
@@ -73,7 +73,7 @@ bool Game::initialise()
 template<class T>
 void Game::run()
 {
-	if(initialise())
+	if (initialise())
 	{
 		StateManager::setState<T>();
 		StateManager::resize(Window::getWidth(), Window::getHeight());
@@ -85,7 +85,7 @@ void Game::run()
 
 		auto totalTime = 0;
 
-		while(!StateManager::shouldQuit() && !Window::isClosed())
+		while (!StateManager::shouldQuit() && !Window::isClosed())
 		{
 			bool render = false;           // Whether or not the game needs to be rerendered.
 
@@ -98,7 +98,7 @@ void Game::run()
 
 			// The engine displays profiling statistics after every second because it needs to display them at some point.
 			// The choice of once per second is arbitrary, and can be changed as needed.
-			if(frameCounter >= 1.0)
+			if (frameCounter >= 1.0)
 			{
 				double totalTime = ((1000.0 * frameCounter) / ((double)frames));
 				double totalMeasuredTime = 0.0;
@@ -120,11 +120,11 @@ void Game::run()
 			}
 
 			//The engine works on a fixed update system, where each update is 1/frameRate seconds of time.
-			//Because of this, there can be a situation where there is, for instance, a fixed update of 16ms,
+			//Because of this, there can be a situation where there is, for instance, a fixed update of 16ms, 
 			//but 20ms of actual time has passed. To ensure all time is accounted for, all passed time is
 			//stored in unprocessedTime, and then the engine processes as much time as it can. Any
 			//unaccounted time can then be processed later, since it will remain stored in unprocessedTime.
-			while(unprocessedTime > mFrameTime)
+			while (unprocessedTime > mFrameTime)
 			{
 				//windowUpdateTimer.StartInvocation();
 
@@ -136,7 +136,7 @@ void Game::run()
 
 				//Input must be processed here because the window may have found new
 				//input events from the OS when it updated. Since inputs can trigger
-				//new game actions, the game also needs to be updated immediately
+				//new game actions, the game also needs to be updated immediately 
 				//afterwards.
 				//m_game->ProcessInput(m_window->GetInput(), (float)m_frameTime);
 				Window::update();
@@ -153,7 +153,7 @@ void Game::run()
 				unprocessedTime -= mFrameTime;
 			}
 
-			if(render)
+			if (render)
 			{
 				//m_game->Render(m_renderingEngine);
 

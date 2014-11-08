@@ -74,7 +74,7 @@ class Geometry
 		GLuint mVaoHandle;
 		GLuint mVboHandle[6];
 
-		void storeVBO(const Shader& shader);
+		void prepare(const Shader& shader);
 };
 
 //=========================================================================
@@ -250,7 +250,7 @@ bool Geometry::hasBitangents() const
 }
 
 //=========================================================================
-void Geometry::storeVBO(const Shader& shader)
+void Geometry::prepare(const Shader& shader)
 {
 	if (!hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
 		generateNormals();
@@ -321,7 +321,7 @@ void Geometry::storeVBO(const Shader& shader)
 void Geometry::draw(const Shader& shader)
 {
 	if(!mIsReady)
-		storeVBO(shader);
+		prepare(shader);
 
 	glBindVertexArray(mVaoHandle);
 

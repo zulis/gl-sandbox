@@ -1,5 +1,7 @@
 #include "common.glsl"
 
+//out vec3 LightDir;
+//out vec3 ViewDir;
 out vec2 TexCoord;
 
 smooth out vec4 VIEW_POSITION;
