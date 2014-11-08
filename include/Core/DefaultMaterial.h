@@ -61,7 +61,9 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 	{
 		addTexture(mDefaultDiffuseName, TextureType::DiffuseMap, geometryIndex);
 		bindTexture(TextureType::DiffuseMap, 0, geometryIndex);
+
 		//mDefaultDiffuse->bind(0);
+		//getShader()->setUniform(ShaderConstants::DiffuseMap, true);
 	}
 		
 
@@ -77,10 +79,11 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 
 	if (!bindTexture(TextureType::SpecularMap, 3, geometryIndex))
 	{
-		//addTexture(mDefaultSpecularName, TextureType::SpecularMap, geometryIndex);
-		//bindTexture(TextureType::SpecularMap, 3, geometryIndex);
-		mDefaultSpecular->bind(3);
-		getShader()->setUniform(ShaderConstants::SpecularMapIsUsed, true);
+		addTexture(mDefaultSpecularName, TextureType::SpecularMap, geometryIndex);
+		bindTexture(TextureType::SpecularMap, 3, geometryIndex);
+
+		//mDefaultSpecular->bind(3);
+		//getShader()->setUniform(ShaderConstants::SpecularMapIsUsed, true);
 	}
 		
 		

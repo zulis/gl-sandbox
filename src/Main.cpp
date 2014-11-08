@@ -52,7 +52,7 @@ private:
 //=========================================================================
 void Main::setup()
 {
-	Window::setSize(800, 600);
+	Window::setSize(1280, 720);
 
 	mCamera = Camera::create();
 	mCamera->setPosition(0, 0, 2);
@@ -76,8 +76,8 @@ void Main::setup()
 	mMesh = Mesh::create();
 	mMesh->setFrustumCulling(true);
 	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
-	mMesh->loadFromFile("assets/models/box/box.fbx");
-	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
+	//mMesh->loadFromFile("assets/models/box/box.fbx");
+	mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");

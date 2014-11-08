@@ -1,7 +1,5 @@
 #include "common.glsl"
 
-//in vec3 LightDir;
-//in vec3 ViewDir;
 in vec2 TexCoord;
 
 smooth in vec4 VIEW_POSITION;
@@ -36,13 +34,11 @@ out vec4 FRAG_COLOR;
 void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 	inout LIGHTING_RESULTS results) {
 //	get direction to light:
-	vec3 light_direction = light.view_position.xyz - 
-            surface.view_position.xyz;
+	vec3 light_direction = light.view_position.xyz - surface.view_position.xyz;
 
 //	compute attenuation factor:
 	float light_distance = length(light_direction);
-	float attenuation = smoothstep(light.attenuation.y, 
-            light.attenuation.x, light_distance);
+	float attenuation = smoothstep(light.attenuation.y, light.attenuation.x, light_distance);
 	
 	light_direction = normalize(light_direction);
 	
@@ -130,6 +126,14 @@ void main()
 {
 	if(OpacityMapIsUsed && texture(OpacityMap, TexCoord).r == 0.0)
 		discard;
+	
+	vec3 normal = VIEW_NORMAL;
+	if(NormalMapIsUsed)
+	{
+		normal = (normalize(2.0 * texture(NormalMap, TexCoord) - 1.0)).xyz;
+		
+		
+	}
 
 	//	init surface properties:
 	SURFACE_ATTRIBUTES surface;
@@ -138,7 +142,7 @@ void main()
 	surface.specular = Material.specular.xyz;
 	surface.shininess = Material.shininess;
 	surface.view_position = VIEW_POSITION;
-	surface.view_normal = VIEW_NORMAL;
+	surface.view_normal = normal;
 
 	
 //	init results accumulator:
@@ -161,6 +165,9 @@ void main()
 		LIGHT_SOURCE.spot_cutoff = cos(Lights[i].cutoff);
 		LIGHT_SOURCE.spot_exponent = Lights[i].exponent;
 		
+		point(surface, LIGHT_SOURCE, results);
+		
+		/*
 		if (LIGHT_SOURCE.view_position.w != 0.0) { // w = 1; local
 			if (LIGHT_SOURCE.spot_exponent != 0.0) { // spot light
 				spot(surface, LIGHT_SOURCE, results);
@@ -170,6 +177,7 @@ void main()
 		} else { // w = 0; directional
 			directional(surface, LIGHT_SOURCE, results);
 		}
+		*/
 	}
 	
 	float alpha = 1.0;
@@ -180,7 +188,7 @@ void main()
 		ambient *= texture(DiffuseMap, TexCoord).rgb;
 		//ambient = clamp(ambient, 0.0, 1.0);
 	}
-	
+		
 	vec3 diffuse = results.diffuse;
 	if(DiffuseMapIsUsed)
 	{
@@ -201,7 +209,7 @@ void main()
 	
 	// final color (after gamma correction)
     //vec3 gamma = vec3(1.0/2.2);
-    //FRAG_COLOR = vec4(pow(color.xyz, gamma), alpha);
+    //color = vec4(pow(color.xyz, gamma), alpha);
 	
 	FRAG_COLOR = color;
 }
