@@ -7,26 +7,26 @@
 
 class AABB
 {
-	public:
-		AABB();
-		AABB(const glm::vec3& aMin, const glm::vec3& aMax);
-		~AABB();
+public:
+	AABB();
+	AABB(const glm::vec3& aMin, const glm::vec3& aMax);
+	~AABB();
 
-		glm::vec3 getCenter() const;
-		glm::vec3 getSize() const;
-		glm::vec3 getPositive(const glm::vec3 &normal) const;
-		glm::vec3 getNegative(const glm::vec3 &normal) const;
-		const glm::vec3& getMin() const; 
-		const glm::vec3& getMax() const;
+	glm::vec3 getCenter() const;
+	glm::vec3 getSize() const;
+	glm::vec3 getPositive(const glm::vec3& normal) const;
+	glm::vec3 getNegative(const glm::vec3& normal) const;
+	const glm::vec3& getMin() const;
+	const glm::vec3& getMax() const;
 
-		AABB transformed(const glm::mat4& matrix) const;
-		void draw();
+	AABB transformed(const glm::mat4& matrix) const;
+	void draw();
 
-	private:
-		glm::vec3 mExtents[2];
-		glm::vec3 mVertices[8];
+private:
+	glm::vec3 mExtents[2];
+	glm::vec3 mVertices[8];
 
-		inline glm::vec3 transformPointAffine(const glm::mat4& m, const glm::vec3& rhs) const;
+	inline glm::vec3 transformPointAffine(const glm::mat4& m, const glm::vec3& rhs) const;
 };
 
 //=========================================================================
@@ -77,7 +77,7 @@ AABB AABB::transformed(const glm::mat4& matrix) const
 {
 	glm::vec3 verts[8];
 
-	for (unsigned int i = 0; i < 8; i++)
+	for(unsigned int i = 0; i < 8; i++)
 		verts[i] = transformPointAffine(matrix, mVertices[i]);
 
 	glm::vec3 min = verts[0];
@@ -108,36 +108,36 @@ glm::vec3 AABB::transformPointAffine(const glm::mat4& m, const glm::vec3& rhs) c
 }
 
 //=========================================================================
-glm::vec3 AABB::getPositive(const glm::vec3 &normal) const
+glm::vec3 AABB::getPositive(const glm::vec3& normal) const
 {
 	glm::vec3 result = getMin();
 	glm::vec3 size = getSize();
 
-	if (normal.x > 0)
+	if(normal.x > 0)
 		result.x += size.x;
 
-	if (normal.y > 0)
+	if(normal.y > 0)
 		result.y += size.y;
 
-	if (normal.z > 0)
+	if(normal.z > 0)
 		result.z += size.z;
 
 	return(result);
 }
 
 //=========================================================================
-glm::vec3 AABB::getNegative(const glm::vec3 &normal) const
+glm::vec3 AABB::getNegative(const glm::vec3& normal) const
 {
 	glm::vec3 result = getMin();
 	glm::vec3 size = getSize();
 
-	if (normal.x < 0)
+	if(normal.x < 0)
 		result.x += size.x;
 
-	if (normal.y < 0)
+	if(normal.y < 0)
 		result.y += size.y;
 
-	if (normal.z < 0)
+	if(normal.z < 0)
 		result.z += size.z;
 
 	return(result);

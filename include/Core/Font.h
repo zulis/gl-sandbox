@@ -38,10 +38,10 @@ FontRef Font::create(const std::string& fileName, int size)
 //=========================================================================
 Font::Font(const std::string& fileName, int size)
 {
-	if (TTF_Init())
+	if(TTF_Init())
 		printf("Error initializing font: %s", TTF_GetError());
 
-	if (!(mFont = TTF_OpenFont(fileName.c_str(), size)))
+	if(!(mFont = TTF_OpenFont(fileName.c_str(), size)))
 		printf("Error loading font: %s", TTF_GetError());
 
 	TTF_SetFontStyle(mFont, TTF_STYLE_NORMAL);
@@ -90,7 +90,7 @@ Font::Font(const std::string& fileName, int size)
 //=========================================================================
 Font::~Font()
 {
-	if (mFont)
+	if(mFont)
 		TTF_CloseFont(mFont);
 }
 
@@ -118,14 +118,14 @@ void Font::print(const std::string& text, unsigned int x, unsigned int y, Color 
 
 	mShader->bind();
 	mShader->setUniform("MVP", mvp);
-	
+
 
 	//glBindVertexArray(m_vao);
 	//glDrawArrays(GL_TRIANGLES, 0, 6);
 	mGeometry->draw(*mShader.get());
 	//glBindVertexArray(0);
-	
-	
+
+
 	mShader->unbind();
 
 	mTexture->unbind();

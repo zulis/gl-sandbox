@@ -4,18 +4,18 @@
 
 class Plane
 {
-	public:
-		Plane();
-		Plane(const glm::vec3& normal, const glm::vec3& p);
-		virtual ~Plane();
+public:
+	Plane();
+	Plane(const glm::vec3& normal, const glm::vec3& p);
+	virtual ~Plane();
 
-		static Plane fromPoints(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3);
-		float getDistance(const glm::vec3& p) const;
+	static Plane fromPoints(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3);
+	float getDistance(const glm::vec3& p) const;
 
-		glm::vec3 n;
-		float d;
+	glm::vec3 n;
+	float d;
 
-	private:
+private:
 
 };
 

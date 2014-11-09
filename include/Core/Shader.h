@@ -86,13 +86,13 @@ Shader::~Shader()
 {
 	unbind();
 
-	if (mVertexShaderID > 0)
+	if(mVertexShaderID > 0)
 		glDeleteShader(mVertexShaderID);
 
-	if (mFragmentShaderID > 0)
+	if(mFragmentShaderID > 0)
 		glDeleteShader(mFragmentShaderID);
 
-	if (mProgramID > 0)
+	if(mProgramID > 0)
 		glDeleteProgram(mProgramID);
 
 	mAttributeMap.clear();
@@ -107,7 +107,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 	// Load the fragment shader and compile
 	std::string fragmentSource = readSource(fileName + ".frag");
-	const char *source = fragmentSource.c_str();
+	const char* source = fragmentSource.c_str();
 	mFragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(mFragmentShaderID, 1, &source, NULL);
 	glCompileShader(mFragmentShaderID);
@@ -140,14 +140,14 @@ void Shader::loadFromFile(const std::string& fileName)
 	// Error checking
 	glGetProgramiv(mProgramID, GL_LINK_STATUS, (GLint*)&mIsLoaded);
 
-	if (!mIsLoaded)
+	if(!mIsLoaded)
 	{
 		GLchar tempErrorLog[ERROR_BUFSIZE];
 		GLsizei length;
 
 		glGetShaderInfoLog(mFragmentShaderID, ERROR_BUFSIZE, &length, tempErrorLog);
 
-		if (length > 0)
+		if(length > 0)
 		{
 			mErrors += "Fragment shader errors:\n";
 			mErrors += std::string(tempErrorLog, length) + "\n";
@@ -155,7 +155,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		glGetShaderInfoLog(mVertexShaderID, ERROR_BUFSIZE, &length, tempErrorLog);
 
-		if (length > 0)
+		if(length > 0)
 		{
 			mErrors += "Vertex shader errors:\n";
 			mErrors += std::string(tempErrorLog, length) + "\n";
@@ -163,7 +163,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		glGetProgramInfoLog(mProgramID, ERROR_BUFSIZE, &length, tempErrorLog);
 
-		if (length > 0)
+		if(length > 0)
 		{
 			mErrors += "Linker errors:\n";
 			mErrors += std::string(tempErrorLog, length) + "\n";
@@ -183,7 +183,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		GLchar* ubuf = (char*)malloc(maxUlen + 1);
 
-		for (int i = 0; i < maxUniforms; i++)
+		for(int i = 0; i < maxUniforms; i++)
 		{
 			int size;
 			GLenum type;
@@ -201,7 +201,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		GLchar* abuf = (char*)malloc(maxAlen + 1);
 
-		for (int i = 0; i < maxAttributes; i++)
+		for(int i = 0; i < maxAttributes; i++)
 		{
 			int size;
 			GLenum type;
@@ -251,10 +251,10 @@ std::string Shader::readSource(std::string& path)
 	std::stringstream  ss;
 
 	unsigned int curLine = 0;
-	while (std::getline(source, line))
+	while(std::getline(source, line))
 	{
 		curLine++;
-		if (StringUtils::startsWith(line, search))
+		if(StringUtils::startsWith(line, search))
 		{
 			// Extract file name
 			line = StringUtils::extract(line, '"');
@@ -317,7 +317,7 @@ void Shader::dumpShaderInfo(const std::string& fileName)
 	logNote("\n");
 	logNote("Uniforms:\n");
 
-	for (std::map<std::string, GLuint>::iterator i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
+	for(std::map<std::string, GLuint>::iterator i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
 	{
 		logNote("  %s -> %d\n", i->first.c_str(), i->second);
 	}
@@ -325,7 +325,7 @@ void Shader::dumpShaderInfo(const std::string& fileName)
 	logNote("\n");
 	logNote("Attributes:\n");
 
-	for (std::map<std::string, GLuint>::iterator i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
+	for(std::map<std::string, GLuint>::iterator i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
 	{
 		logNote("  %s -> %d\n", i->first.c_str(), i->second);
 	}
@@ -462,7 +462,7 @@ void Shader::setUniform(const std::string& name, const Color& color) const
 //=========================================================================
 GLuint Shader::getAttribute(const std::string& name) const
 {
-	if (hasAttribute(name))
+	if(hasAttribute(name))
 		return mAttributeMap.find(name)->second;
 	else
 	{
@@ -474,7 +474,7 @@ GLuint Shader::getAttribute(const std::string& name) const
 //=========================================================================
 GLuint Shader::getUniform(const std::string& name) const
 {
-	if (hasUniform(name))
+	if(hasUniform(name))
 		return mUniformMap.find(name)->second;
 	else
 	{
@@ -488,7 +488,7 @@ bool Shader::hasAttribute(const std::string& name) const
 {
 	auto it = mAttributeMap.find(name);
 
-	if (it == mAttributeMap.end())
+	if(it == mAttributeMap.end())
 		return false;
 	else
 		return true;
@@ -499,7 +499,7 @@ bool Shader::hasUniform(const std::string& name) const
 {
 	auto it = mUniformMap.find(name);
 
-	if (it == mUniformMap.end())
+	if(it == mUniformMap.end())
 		return false;
 	else
 		return true;

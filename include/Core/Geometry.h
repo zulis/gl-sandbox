@@ -12,69 +12,69 @@ typedef std::shared_ptr<class Geometry> GeometryRef;
 
 class Geometry
 {
-	public:
-		enum DrawType
-		{
-			TRIANGLES = 0x0004, // GL_TRIANGLES
-			TRIANGLESTRIP = 0x0005, // GL_TRIANGLE_STRIP
-			TRIANGLEFAN = 0x0006, // GL_TRIANGLE_FAN
-			QUADS = 0x0007, // GL_QUADS
-			POINTS = 0x0000, // GL_POINTS
-			LINE = 0x0001, // GL_LINE
-			LINELOOP = 0x0002, // GL_LINE_LOOP
-			POLYGON = 0x0009 // GL_POLYGON
-		};
+public:
+	enum DrawType
+	{
+		TRIANGLES = 0x0004, // GL_TRIANGLES
+		TRIANGLESTRIP = 0x0005, // GL_TRIANGLE_STRIP
+		TRIANGLEFAN = 0x0006, // GL_TRIANGLE_FAN
+		QUADS = 0x0007, // GL_QUADS
+		POINTS = 0x0000, // GL_POINTS
+		LINE = 0x0001, // GL_LINE
+		LINELOOP = 0x0002, // GL_LINE_LOOP
+		POLYGON = 0x0009 // GL_POLYGON
+	};
 
-		static GeometryRef create();
-		static GeometryRef create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
-		Geometry();
-		Geometry(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
-		virtual ~Geometry();
+	static GeometryRef create();
+	static GeometryRef create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
+	Geometry();
+	Geometry(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
+	virtual ~Geometry();
 
-		void setVertices(std::vector<glm::vec3> vertices);
-		void setVertices(std::vector<glm::vec2> vertices);
-		void setIndices(std::vector<unsigned int> indices);
-		void setTexCoords(std::vector<glm::vec2> texCoords);
-		void setNormals(std::vector<glm::vec3> normals);
-		void setTangents(std::vector<glm::vec3> tangents);
-		void setBitangents(std::vector<glm::vec3> bitangents);
-		void setDrawType(DrawType drawType);
+	void setVertices(std::vector<glm::vec3> vertices);
+	void setVertices(std::vector<glm::vec2> vertices);
+	void setIndices(std::vector<unsigned int> indices);
+	void setTexCoords(std::vector<glm::vec2> texCoords);
+	void setNormals(std::vector<glm::vec3> normals);
+	void setTangents(std::vector<glm::vec3> tangents);
+	void setBitangents(std::vector<glm::vec3> bitangents);
+	void setDrawType(DrawType drawType);
 
-		const std::vector<glm::vec3> getVertices() const;
-		const std::vector<unsigned int> getIndices() const;
-		const std::vector<glm::vec2> getTexCoords() const;
-		const std::vector<glm::vec3> getNormals() const;
-		const std::vector<glm::vec3> getTangents() const;
-		const std::vector<glm::vec3> getBitangents() const;
+	const std::vector<glm::vec3> getVertices() const;
+	const std::vector<unsigned int> getIndices() const;
+	const std::vector<glm::vec2> getTexCoords() const;
+	const std::vector<glm::vec3> getNormals() const;
+	const std::vector<glm::vec3> getTangents() const;
+	const std::vector<glm::vec3> getBitangents() const;
 
-		unsigned int getDrawType() const;
+	unsigned int getDrawType() const;
 
-		bool hasIndices() const;
-		bool hasTexCoords() const;
-		bool hasNormals() const;
-		bool hasTangents() const;
-		bool hasBitangents() const;
+	bool hasIndices() const;
+	bool hasTexCoords() const;
+	bool hasNormals() const;
+	bool hasTangents() const;
+	bool hasBitangents() const;
 
-		void draw(const Shader& shader);
+	void draw(const Shader& shader);
 
-		const AABB getAABB() const;
+	const AABB getAABB() const;
 
-		void generateNormals();
-		void generateTangents();
+	void generateNormals();
+	void generateTangents();
 
-	private:
-		DrawType mDrawType { DrawType::TRIANGLES };
-		std::vector<glm::vec3> mVertices;
-		std::vector<unsigned int> mIndices;
-		std::vector<glm::vec2> mTexCoords;
-		std::vector<glm::vec3> mNormals;
-		std::vector<glm::vec3> mTangents;
-		std::vector<glm::vec3> mBitangents;
-		bool mIsReady { false };
-		GLuint mVaoHandle;
-		GLuint mVboHandle[6];
+private:
+	DrawType mDrawType { DrawType::TRIANGLES };
+	std::vector<glm::vec3> mVertices;
+	std::vector<unsigned int> mIndices;
+	std::vector<glm::vec2> mTexCoords;
+	std::vector<glm::vec3> mNormals;
+	std::vector<glm::vec3> mTangents;
+	std::vector<glm::vec3> mBitangents;
+	bool mIsReady { false };
+	GLuint mVaoHandle;
+	GLuint mVboHandle[6];
 
-		void prepare(const Shader& shader);
+	void prepare(const Shader& shader);
 };
 
 //=========================================================================
@@ -133,7 +133,7 @@ void Geometry::setVertices(std::vector<glm::vec2> vertices)
 {
 	std::vector<glm::vec3> result;
 
-	for each (auto v in vertices)
+	for each(auto v in vertices)
 	{
 		result.push_back(glm::vec3(v.x, v.y, 0.0f));
 	}
@@ -252,10 +252,10 @@ bool Geometry::hasBitangents() const
 //=========================================================================
 void Geometry::prepare(const Shader& shader)
 {
-	if (!hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
+	if(!hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
 		generateNormals();
 
-	if (!hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
+	if(!hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
 		generateTangents();
 
 	GLuint locVertices = shader.getAttribute(ShaderConstants::VertexPosition);
@@ -270,7 +270,7 @@ void Geometry::prepare(const Shader& shader)
 	glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
 	glEnableVertexAttribArray(locVertices);
 
-	if (hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
+	if(hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
 	{
 		GLuint locNormals = shader.getAttribute(ShaderConstants::VertexNormal);
 		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[1]);
@@ -279,7 +279,7 @@ void Geometry::prepare(const Shader& shader)
 		glEnableVertexAttribArray(locNormals);
 	}
 
-	if (hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
+	if(hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
 	{
 		GLuint locTangents = shader.getAttribute(ShaderConstants::VertexTangent);
 		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[2]);
@@ -288,7 +288,7 @@ void Geometry::prepare(const Shader& shader)
 		glEnableVertexAttribArray(locTangents);
 	}
 
-	if (hasBitangents() && shader.hasAttribute(ShaderConstants::VertexBitangent))
+	if(hasBitangents() && shader.hasAttribute(ShaderConstants::VertexBitangent))
 	{
 		GLuint locBitangents = shader.getAttribute(ShaderConstants::VertexBitangent);
 		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[3]);
@@ -297,7 +297,7 @@ void Geometry::prepare(const Shader& shader)
 		glEnableVertexAttribArray(locBitangents);
 	}
 
-	if (hasTexCoords() && shader.hasAttribute(ShaderConstants::VertexTexCoord))
+	if(hasTexCoords() && shader.hasAttribute(ShaderConstants::VertexTexCoord))
 	{
 		GLuint locTexCoords = shader.getAttribute(ShaderConstants::VertexTexCoord);
 		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[4]);
@@ -306,7 +306,7 @@ void Geometry::prepare(const Shader& shader)
 		glEnableVertexAttribArray(locTexCoords);
 	}
 
-	if (mIndices.size() > 0)
+	if(mIndices.size() > 0)
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVboHandle[5]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(unsigned int), &mIndices[0], GL_STATIC_DRAW);
@@ -325,7 +325,7 @@ void Geometry::draw(const Shader& shader)
 
 	glBindVertexArray(mVaoHandle);
 
-	if (mIndices.size() > 0)
+	if(mIndices.size() > 0)
 	{
 		glDrawElements(mDrawType, mIndices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, ((GLubyte*)NULL + (0)));
 	}
@@ -404,12 +404,12 @@ void Geometry::generateNormals()
 //=========================================================================
 void Geometry::generateTangents()
 {
-	if (hasIndices() && hasNormals() && hasTexCoords())
+	if(hasIndices() && hasNormals() && hasTexCoords())
 	{
 		std::vector<glm::vec3> tan1Accum;
 		std::vector<glm::vec3> tan2Accum;
 
-		for (unsigned int i = 0; i < mVertices.size(); i++)
+		for(unsigned int i = 0; i < mVertices.size(); i++)
 		{
 			tan1Accum.push_back(glm::vec3(0.0f));
 			tan2Accum.push_back(glm::vec3(0.0f));
@@ -417,7 +417,7 @@ void Geometry::generateTangents()
 		}
 
 		// Compute the tangent vector
-		for (unsigned int i = 0; i < mIndices.size(); i += 3)
+		for(unsigned int i = 0; i < mIndices.size(); i += 3)
 		{
 			const glm::vec3& p1 = mVertices[mIndices[i]];
 			const glm::vec3& p2 = mVertices[mIndices[i + 1]];
@@ -433,11 +433,11 @@ void Geometry::generateTangents()
 			float t1 = tc2.y - tc1.y, t2 = tc3.y - tc1.y;
 			float r = 1.0f / (s1 * t2 - s2 * t1);
 			glm::vec3 tan1((t2*q1.x - t1*q2.x) * r,
-				(t2*q1.y - t1*q2.y) * r,
-				(t2*q1.z - t1*q2.z) * r);
+			               (t2*q1.y - t1*q2.y) * r,
+			               (t2*q1.z - t1*q2.z) * r);
 			glm::vec3 tan2((s1*q2.x - s2*q1.x) * r,
-				(s1*q2.y - s2*q1.y) * r,
-				(s1*q2.z - s2*q1.z) * r);
+			               (s1*q2.y - s2*q1.y) * r,
+			               (s1*q2.z - s2*q1.z) * r);
 			tan1Accum[mIndices[i]] += tan1;
 			tan1Accum[mIndices[i + 1]] += tan1;
 			tan1Accum[mIndices[i + 2]] += tan1;
@@ -446,7 +446,7 @@ void Geometry::generateTangents()
 			tan2Accum[mIndices[i + 2]] += tan2;
 		}
 
-		for (unsigned int i = 0; i < mVertices.size(); ++i)
+		for(unsigned int i = 0; i < mVertices.size(); ++i)
 		{
 			const glm::vec3& n = mNormals[i];
 			glm::vec3& t1 = tan1Accum[i];

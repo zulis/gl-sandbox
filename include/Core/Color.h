@@ -4,26 +4,26 @@
 
 class Color
 {
-	public:
-		Color();
-		Color(float r, float g, float b, float a = 1.0f);
+public:
+	Color();
+	Color(float r, float g, float b, float a = 1.0f);
 
-		float r, g, b, a;
+	float r, g, b, a;
 
-		static Color black();
-		static Color gray(float value);
-		static Color red();
-		static Color green();
-		static Color blue();
-		static Color white();
-		static Color pink();
-		static Color normal();
+	static Color black();
+	static Color gray(float value);
+	static Color red();
+	static Color green();
+	static Color blue();
+	static Color white();
+	static Color pink();
+	static Color normal();
 
-		operator Color* ();
-		operator const Color* () const;
+	operator Color* ();
+	operator const Color* () const;
 
-		glm::vec3 rgb() const;
-		glm::vec4 rgba() const;
+	glm::vec3 rgb() const;
+	glm::vec4 rgba() const;
 
 };
 

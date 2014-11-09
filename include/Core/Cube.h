@@ -10,25 +10,25 @@ typedef std::shared_ptr<class Cube> CubeRef;
 
 class Cube : public Drawable, public Transform3D
 {
-	public:
-		static CubeRef create(float size = 1.0f, bool stroked = false);
-		static CubeRef create(AABB aabb);
+public:
+	static CubeRef create(float size = 1.0f, bool stroked = false);
+	static CubeRef create(AABB aabb);
 
-		Cube(float size = 1.0f, bool stroked = false);
-		Cube(AABB aabb);
-		~Cube();
+	Cube(float size = 1.0f, bool stroked = false);
+	Cube(AABB aabb);
+	~Cube();
 
-		void draw(const CameraRef& camera);
+	void draw(const CameraRef& camera);
 
-	protected:
-		virtual void setGeometry(std::vector<GeometryRef>* geometries);
+protected:
+	virtual void setGeometry(std::vector<GeometryRef>* geometries);
 
-	private:
-		std::vector<glm::vec3> mVertices;
-		std::vector<unsigned int> mIndices;
-		std::vector<glm::vec2> mTexCoords;
-		std::vector<glm::vec3> mNormals;
-		Geometry::DrawType mDrawType { Geometry::DrawType::TRIANGLES };
+private:
+	std::vector<glm::vec3> mVertices;
+	std::vector<unsigned int> mIndices;
+	std::vector<glm::vec2> mTexCoords;
+	std::vector<glm::vec3> mNormals;
+	Geometry::DrawType mDrawType { Geometry::DrawType::TRIANGLES };
 
 };
 

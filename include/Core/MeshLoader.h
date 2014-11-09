@@ -55,12 +55,12 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 	MeshData result;
 
 	unsigned int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs |
-		aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes | aiProcess_SortByPType | aiProcess_TransformUVCoords;
+	                     aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes | aiProcess_SortByPType | aiProcess_TransformUVCoords;
 
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(fileName.c_str(), flags);
 
-	if (!scene)
+	if(!scene)
 	{
 		logError("Could not load mesh: %s", fileName.c_str());
 	}
@@ -74,7 +74,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 		const aiVector3D zero3D(0.0f, 0.0f, 0.0f);
 
-		for (unsigned int n = 0; n < scene->mNumMeshes; n++)
+		for(unsigned int n = 0; n < scene->mNumMeshes; n++)
 		{
 			const aiMesh* mesh = scene->mMeshes[n];
 			const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -84,8 +84,8 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 			MeshPart meshPart;
 
-#pragma region geometry
-			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+			#pragma region geometry
+			for(unsigned int i = 0; i < mesh->mNumVertices; i++)
 			{
 				/*
 				// another example http://www.keithlantz.net/2011/10/tangent-space-normal-mapping-with-glsl/
@@ -112,7 +112,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
 				*/
 
-				if (mesh->HasPositions())
+				if(mesh->HasPositions())
 				{
 					//struct aiVector3D tmp = mesh->mVertices[t];
 					//aiTransformVecByMatrix4(&tmp, trafo);
@@ -121,13 +121,13 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z) * scaleFactor);
 				}
 
-				if (mesh->HasNormals())
+				if(mesh->HasNormals())
 				{
 					const aiVector3D* normal = &(mesh->mNormals[i]);
 					meshPart.geometry.normals.push_back(glm::vec3(normal->x, normal->y, normal->z));
 				}
 
-				if (mesh->HasTangentsAndBitangents())
+				if(mesh->HasTangentsAndBitangents())
 				{
 					const aiVector3D* tangent = &(mesh->mTangents[i]);
 					const aiVector3D* bitangent = &(mesh->mBitangents[i]);
@@ -139,7 +139,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
 			}
 
-			for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+			for(unsigned int i = 0; i < mesh->mNumFaces; i++)
 			{
 				const aiFace& face = mesh->mFaces[i];
 				assert(face.mNumIndices == 3);
@@ -148,31 +148,31 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				meshPart.geometry.indices.push_back(face.mIndices[1]);
 				meshPart.geometry.indices.push_back(face.mIndices[2]);
 			}
-#pragma endregion geometry
+			#pragma endregion geometry
 
-#pragma region materials
+			#pragma region materials
 			std::string texturePath = mTexturePath;
 
-			if (mTexturePath == std::string())
+			if(mTexturePath == std::string())
 				texturePath = setDefaultTexturePath(fileName);
 			else
 			{
-				if (texturePath.find_last_of("\\/") != texturePath.size() - 1)
+				if(texturePath.find_last_of("\\/") != texturePath.size() - 1)
 					texturePath += "/";
 			}
 
 			aiString textureFileName;
 
 			aiColor4D ambientColor;
-			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambientColor))
+			if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambientColor))
 				meshPart.material.ambient = Color(ambientColor.r, ambientColor.g, ambientColor.b, ambientColor.a);
 
 			aiColor4D diffuseColor;
-			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuseColor))
+			if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuseColor))
 				meshPart.material.diffuse = Color(diffuseColor.r, diffuseColor.g, diffuseColor.b, diffuseColor.a);
 
 			aiColor4D specularColor;
-			if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specularColor))
+			if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specularColor))
 				meshPart.material.specular = Color(specularColor.r, specularColor.g, specularColor.b, specularColor.a);
 
 			/*aiColor4D emissiveColor;
@@ -199,14 +199,14 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			//logNote("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
 			logNote("  mesh[%i] [Material.shininess]   : %.3f", n, meshPart.material.shininess);
 
-			for (unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
+			for(unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
 			{
 				unsigned int index = 0;
 				MeshTexture meshTexture;
 
-				while (true)
+				while(true)
 				{
-					if (AI_SUCCESS != aiGetMaterialTexture(material, (aiTextureType)m, index, &textureFileName, NULL, NULL, NULL, NULL))
+					if(AI_SUCCESS != aiGetMaterialTexture(material, (aiTextureType)m, index, &textureFileName, NULL, NULL, NULL, NULL))
 					{
 						break;
 					}
@@ -214,57 +214,57 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					// Set as default
 					meshTexture.textureType = TextureType::Unknown;
 
-					switch ((aiTextureType)m)
+					switch((aiTextureType)m)
 					{
-					case aiTextureType_DIFFUSE:
-						meshTexture.textureType = TextureType::DiffuseMap;
-						break;
+						case aiTextureType_DIFFUSE:
+							meshTexture.textureType = TextureType::DiffuseMap;
+							break;
 
-					case aiTextureType_SPECULAR:
-						meshTexture.textureType = TextureType::SpecularMap;
-						break;
+						case aiTextureType_SPECULAR:
+							meshTexture.textureType = TextureType::SpecularMap;
+							break;
 
-					case aiTextureType_AMBIENT:
-						// 						meshTexture.type = TextureType::AmbientMap;
-						break;
+						case aiTextureType_AMBIENT:
+							// 						meshTexture.type = TextureType::AmbientMap;
+							break;
 
-					case aiTextureType_EMISSIVE:
-						// 						meshTexture.type = TextureType::SelfIllumination;
-						break;
+						case aiTextureType_EMISSIVE:
+							// 						meshTexture.type = TextureType::SelfIllumination;
+							break;
 
-					case aiTextureType_HEIGHT:
-						meshTexture.textureType = TextureType::NormalMap;
-						break;
+						case aiTextureType_HEIGHT:
+							meshTexture.textureType = TextureType::NormalMap;
+							break;
 
-					case aiTextureType_NORMALS:
-						// 						meshTexture.type = TextureType::Unknown; // ???
-						break;
+						case aiTextureType_NORMALS:
+							// 						meshTexture.type = TextureType::Unknown; // ???
+							break;
 
-					case aiTextureType_SHININESS:
-						// 						meshTexture.type = TextureType::Glossiness;
-						break;
+						case aiTextureType_SHININESS:
+							// 						meshTexture.type = TextureType::Glossiness;
+							break;
 
-					case aiTextureType_OPACITY:
-						meshTexture.textureType = TextureType::OpacityMap;
-						break;
+						case aiTextureType_OPACITY:
+							meshTexture.textureType = TextureType::OpacityMap;
+							break;
 
-					case aiTextureType_DISPLACEMENT:
-						meshTexture.textureType = TextureType::HeightMap;
-						break;
+						case aiTextureType_DISPLACEMENT:
+							meshTexture.textureType = TextureType::HeightMap;
+							break;
 
-					case aiTextureType_LIGHTMAP:
-						// 						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
-						break;
+						case aiTextureType_LIGHTMAP:
+							// 						meshTexture.type = TextureType::Unknown; // ??? DAE shows as AmbientColor
+							break;
 
-					case aiTextureType_REFLECTION:
-						// 						meshTexture.type = TextureType::Reflection;
-						break;
+						case aiTextureType_REFLECTION:
+							// 						meshTexture.type = TextureType::Reflection;
+							break;
 
-					default:
-						//meshTexture.type = TextureType::Unknown;
-						++index;
-						continue;
-						break;
+						default:
+							//meshTexture.type = TextureType::Unknown;
+							++index;
+							continue;
+							break;
 					}
 
 					auto texFileName = getFileName(std::string(textureFileName.C_Str()));
@@ -277,7 +277,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				}
 			}
 
-#pragma endregion materials
+			#pragma endregion materials
 
 			result.push_back(meshPart);
 		}
@@ -293,7 +293,7 @@ std::string MeshLoader::getFileName(std::string& pathName) const
 {
 	const size_t idx = pathName.find_last_of("\\/");
 
-	if (std::string::npos != idx)
+	if(std::string::npos != idx)
 		pathName.erase(0, idx + 1);
 
 	return pathName;
@@ -304,7 +304,7 @@ std::string MeshLoader::setDefaultTexturePath(std::string pathName) const
 {
 	const size_t idx = pathName.find_last_of("\\/");
 
-	if (std::string::npos != idx)
+	if(std::string::npos != idx)
 		pathName.erase(idx + 1, pathName.length() - idx - 1);
 
 	return pathName;

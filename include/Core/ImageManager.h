@@ -5,14 +5,14 @@
 
 class ImageManager : public ResourceManager<Image>
 {
-	public:
-		static ImageManager* get();
+public:
+	static ImageManager* get();
 
-	private:
-		static ImageManager mInstance;
+private:
+	static ImageManager mInstance;
 
-	private:
-		virtual Image* loadFromFile(const std::string& fileName);
+private:
+	virtual Image* loadFromFile(const std::string& fileName);
 
 };
 

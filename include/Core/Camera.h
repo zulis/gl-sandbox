@@ -9,61 +9,61 @@ typedef std::shared_ptr<class Camera> CameraRef;
 
 class Camera
 {
-	public:
-		static CameraRef create();
+public:
+	static CameraRef create();
 
-		Camera();
-		virtual ~Camera();
+	Camera();
+	virtual ~Camera();
 
-		void setPosition(glm::vec3 position);
-		void setPosition(float x, float y, float z);
-		void setLookAt(glm::vec3 lookAt);
-		void setLookAt(float x, float y, float z);
-		void setAspectRatio(float ratio);
-		void setPerspective(float fov, float aspectRatio, float nearPlane, float farPlane);
-		void setRotateSpeed(float speed);
-		void setStrafeSpeed(float speed);
-		void setNearClip(float nearClip);
-		void setFarClip(float farClip);
+	void setPosition(glm::vec3 position);
+	void setPosition(float x, float y, float z);
+	void setLookAt(glm::vec3 lookAt);
+	void setLookAt(float x, float y, float z);
+	void setAspectRatio(float ratio);
+	void setPerspective(float fov, float aspectRatio, float nearPlane, float farPlane);
+	void setRotateSpeed(float speed);
+	void setStrafeSpeed(float speed);
+	void setNearClip(float nearClip);
+	void setFarClip(float farClip);
 
-		glm::vec3 getPosition() const;
-		glm::mat4 getViewMatrix() const;
-		glm::mat4 getProjectionMatrix() const;
-		glm::vec3 getRight() const;
-		glm::vec3 getUp() const;
-		float getFarClip() const;
-		float getNearClip() const;
+	glm::vec3 getPosition() const;
+	glm::mat4 getViewMatrix() const;
+	glm::mat4 getProjectionMatrix() const;
+	glm::vec3 getRight() const;
+	glm::vec3 getUp() const;
+	float getFarClip() const;
+	float getNearClip() const;
 
-		void rotate(float x, float y);
+	void rotate(float x, float y);
 
-		enum MovementType { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
+	enum MovementType { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
 
-		void move(MovementType movement);
+	void move(MovementType movement);
 
-		bool intersects(const AABB& aabb) const;
-		bool contains(const AABB& aabb) const;
+	bool intersects(const AABB& aabb) const;
+	bool contains(const AABB& aabb) const;
 
-	private:
-		glm::vec3 mPosition;
-		glm::vec3 mLookAt;
-		glm::vec3 mUp{ glm::vec3(0.0f, 1.0f, 0.0f) };
-		glm::vec3 mRight;
-		glm::vec3 mDirection;
-		glm::mat4 mView;
-		glm::mat4 mProjection;
-		float mRotateSpeed { 0.005f };
-		float mStrafeSpeed { 5.0f };
-		float mFov;
-		float mAspectRatio;
-		float mNearClip { 0.1f };
-		float mFarClip { 10000.0f };
+private:
+	glm::vec3 mPosition;
+	glm::vec3 mLookAt;
+	glm::vec3 mUp { glm::vec3(0.0f, 1.0f, 0.0f) };
+	glm::vec3 mRight;
+	glm::vec3 mDirection;
+	glm::mat4 mView;
+	glm::mat4 mProjection;
+	float mRotateSpeed { 0.005f };
+	float mStrafeSpeed { 5.0f };
+	float mFov;
+	float mAspectRatio;
+	float mNearClip { 0.1f };
+	float mFarClip { 10000.0f };
 
-		float mHorizontalAngle { 3.14f };
-		float mVerticalAngle { 0.0f };
+	float mHorizontalAngle { 3.14f };
+	float mVerticalAngle { 0.0f };
 
-		Plane planes[6];
+	Plane planes[6];
 
-		void update();
+	void update();
 };
 
 //=========================================================================

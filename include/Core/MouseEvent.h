@@ -7,28 +7,28 @@ typedef std::unique_ptr<class MouseEvent> MouseEventRef;
 
 class MouseEvent
 {
-	public:
-		MouseEvent();
-		virtual ~MouseEvent();
+public:
+	MouseEvent();
+	virtual ~MouseEvent();
 
-		int getX() const;
-		int getY() const;
-		int getChangeX() const;
-		int getChangeY() const;
-		int getWheel() const;
-		bool isDown(int button) const;
-		bool isUp(int button) const;
-		void setButtonStatus(int button, bool isDown);
-		void setPositionStatus(int x, int y, int changeX, int changeY);
-		void setWheelStatus(int x);
+	int getX() const;
+	int getY() const;
+	int getChangeX() const;
+	int getChangeY() const;
+	int getWheel() const;
+	bool isDown(int button) const;
+	bool isUp(int button) const;
+	void setButtonStatus(int button, bool isDown);
+	void setPositionStatus(int x, int y, int changeX, int changeY);
+	void setWheelStatus(int x);
 
-	private:
-		std::map<int, bool> mButtonTable;
-		int mX;
-		int mY;
-		int mChangeX;
-		int mChangeY;
-		int mWheel { 0 };
+private:
+	std::map<int, bool> mButtonTable;
+	int mX;
+	int mY;
+	int mChangeX;
+	int mChangeY;
+	int mWheel { 0 };
 };
 
 //=========================================================================

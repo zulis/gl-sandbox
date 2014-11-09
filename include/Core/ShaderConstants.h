@@ -44,6 +44,10 @@ public:
 	static const std::string SpecularMapIsUsed;
 	static const std::string HeightMapIsUsed;
 	static const std::string OpacityMapIsUsed;
+	// UV
+	static const std::string TilingU;
+	static const std::string TilingV;
+	static const std::string TilingUV;
 };
 
 // VERTEX
@@ -85,3 +89,7 @@ const std::string ShaderConstants::NormalMapIsUsed = std::string("NormalMapIsUse
 const std::string ShaderConstants::SpecularMapIsUsed = std::string("SpecularMapIsUsed");
 const std::string ShaderConstants::HeightMapIsUsed = std::string("HeightMapIsUsed");
 const std::string ShaderConstants::OpacityMapIsUsed = std::string("OpacityMapIsUsed");
+// UV
+const std::string ShaderConstants::TilingU = std::string("TilingU");
+const std::string ShaderConstants::TilingV = std::string("TilingV");
+const std::string ShaderConstants::TilingUV = std::string("TilingUV");

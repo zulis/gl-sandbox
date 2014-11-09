@@ -6,22 +6,22 @@
 template<class T>
 class ResourceManager
 {
-	public:
-		typedef std::pair<std::string, T*> Resource;
-		typedef std::map<std::string, T*> ResourceMap;
+public:
+	typedef std::pair<std::string, T*> Resource;
+	typedef std::map<std::string, T*> ResourceMap;
 
-		ResourceManager();
-		virtual ~ResourceManager();
-		T* getResource(const std::string& fileName);
-		void releaseResource(const std::string& fileName);
-		void releaseAllResources();
+	ResourceManager();
+	virtual ~ResourceManager();
+	T* getResource(const std::string& fileName);
+	void releaseResource(const std::string& fileName);
+	void releaseAllResources();
 
-	protected:
-		virtual T* loadFromFile(const std::string& fileName) = 0;
+protected:
+	virtual T* loadFromFile(const std::string& fileName) = 0;
 
-	private:
-		ResourceMap mResource;
-		T* find(const std::string& fileName);
+private:
+	ResourceMap mResource;
+	T* find(const std::string& fileName);
 };
 
 //=========================================================================

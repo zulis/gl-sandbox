@@ -205,7 +205,7 @@ void Texture::getTexture(const std::string& fileName, const Format& format)
 
 	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
 
-	if (it != mTextureCollection->end())
+	if(it != mTextureCollection->end())
 	{
 		(*it).increaseRef();
 		mTextureID = (*it).textureID;
@@ -216,7 +216,7 @@ void Texture::getTexture(const std::string& fileName, const Format& format)
 	{
 		mImage = mImageMng.get()->getResource(fileName);
 
-		if (mFormat.mFlipped)
+		if(mFormat.mFlipped)
 			mImage->flipVertical();
 
 		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
@@ -241,7 +241,7 @@ void Texture::getTexture(const Color& color, const Format& format)
 
 	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
 
-	if (it != mTextureCollection->end())
+	if(it != mTextureCollection->end())
 	{
 		(*it).increaseRef();
 		mTextureID = (*it).textureID;
@@ -252,7 +252,7 @@ void Texture::getTexture(const Color& color, const Format& format)
 	{
 		mImage = new Image(color);
 
-		if (mFormat.mFlipped)
+		if(mFormat.mFlipped)
 			mImage->flipVertical();
 
 		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
@@ -278,7 +278,7 @@ std::string Texture::colorToString(const Color& color)
 void Texture::loadFromRaw(const int format, const int width, const int height, const unsigned char* pixels)
 {
 	// http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
-	
+
 	mWidth = width;
 	mHeight = height;
 
@@ -306,7 +306,7 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLint)anisotropy);
 
 	glBindTexture(mFormat.mTarget, 0);
-	
+
 	/*
 	if (mFormat.mMipmapping)
 	{

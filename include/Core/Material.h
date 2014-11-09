@@ -24,6 +24,10 @@ public:
 	void setSpecularColor(const Color& color);
 	void setShininess(float shininess);
 
+	void setTilingU(float value);
+	void setTilingV(float value);
+	void setTilingUV(float value);
+
 	virtual void bind();
 	virtual void unbind();
 	virtual void updateUniforms(unsigned int geometryIndex) {}
@@ -72,13 +76,16 @@ private:
 
 	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 
-	Color mMaterialAmbient{ Color(0.3, 0.3, 0.3, 1.0) };
-	Color mMaterialDiffuse{ Color(0.7, 0.7, 0.7, 1.0) };
-	Color mMaterialSpecular{ Color(0.5, 0.5, 0.5, 1.0) };
-	float mMaterialShininess{ 60.0f };
+	Color mMaterialAmbient { Color(0.3, 0.3, 0.3, 1.0) };
+	Color mMaterialDiffuse { Color(0.7, 0.7, 0.7, 1.0) };
+	Color mMaterialSpecular { Color(0.5, 0.5, 0.5, 1.0) };
+	float mMaterialShininess { 60.0f };
+
+	float mTilingU { 1.0 };
+	float mTilingV { 1.0 };
 
 	std::vector<Light> mLights;
-	unsigned int mLightIndex{ 0 };
+	unsigned int mLightIndex { 0 };
 };
 
 //=========================================================================
@@ -101,36 +108,43 @@ Shader* Material::getShader()
 //=========================================================================
 void Material::bind()
 {
-	if (mShader)
+	if(mShader)
 	{
 		mShader->bind();
 
 		// Set Material
-		if (mShader->hasUniform(ShaderConstants::MaterialAmbient))
+		if(mShader->hasUniform(ShaderConstants::MaterialAmbient))
 			mShader->setUniform(ShaderConstants::MaterialAmbient, mMaterialAmbient);
-		if (mShader->hasUniform(ShaderConstants::MaterialDiffuse))
+		if(mShader->hasUniform(ShaderConstants::MaterialDiffuse))
 			mShader->setUniform(ShaderConstants::MaterialDiffuse, mMaterialDiffuse);
-		if (mShader->hasUniform(ShaderConstants::MaterialSpecular))
+		if(mShader->hasUniform(ShaderConstants::MaterialSpecular))
 			mShader->setUniform(ShaderConstants::MaterialSpecular, mMaterialSpecular);
-		if (mShader->hasUniform(ShaderConstants::MaterialShininess))
+		if(mShader->hasUniform(ShaderConstants::MaterialShininess))
 			mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess);
 
+		if(mShader->hasUniform(ShaderConstants::TilingU))
+			mShader->setUniform(ShaderConstants::TilingU, mTilingU);
+		if(mShader->hasUniform(ShaderConstants::TilingV))
+			mShader->setUniform(ShaderConstants::TilingV, mTilingV);
+		if(mShader->hasUniform(ShaderConstants::TilingUV))
+			mShader->setUniform(ShaderConstants::TilingUV, glm::vec2(mTilingU, mTilingV));
+
 		// Update lights
-		if (mShader->hasUniform(ShaderConstants::TotalLights))
+		if(mShader->hasUniform(ShaderConstants::TotalLights))
 			mShader->setUniform(ShaderConstants::TotalLights, mLights.size());
 
- 		unsigned int lightIndex = 0;
- 		for(auto light : mLights)
- 		{
- 			light.updateUniforms(mShader, lightIndex++);
- 		}
+		unsigned int lightIndex = 0;
+		for(auto light : mLights)
+		{
+			light.updateUniforms(mShader, lightIndex++);
+		}
 	}
 }
 
 //=========================================================================
 void Material::unbind()
 {
-	if (mShader)
+	if(mShader)
 		mShader->unbind();
 }
 
@@ -143,7 +157,7 @@ mGeometriesMaterials = geomMaterials;
 //=========================================================================
 void Material::addTexture(const std::string& fileName, const TextureType& textureType, unsigned int geometryIndex)
 {
-	if (textureType != TextureType::Unknown)
+	if(textureType != TextureType::Unknown)
 	{
 		MaterialTexture matTexture;
 		matTexture.geometryIndex = geometryIndex;
@@ -152,7 +166,7 @@ void Material::addTexture(const std::string& fileName, const TextureType& textur
 
 		auto it = std::find(mTextures.begin(), mTextures.end(), matTexture);
 
-		if (it != mTextures.end())
+		if(it != mTextures.end())
 			mTextures.erase(it);
 
 		mTextures.push_back(matTexture);
@@ -196,34 +210,34 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 
 	auto it = std::find(mTextures.begin(), mTextures.end(), mt);
 
-	if (it != mTextures.end())
+	if(it != mTextures.end())
 	{
 		bindResult = true;
 		(*it).texture->bind(textureunit);
 	}
 
-	switch (textureType)
+	switch(textureType)
 	{
-	case TextureType::DiffuseMap:
-		if (mShader->hasUniform(ShaderConstants::DiffuseMapIsUsed))
-			mShader->setUniform(ShaderConstants::DiffuseMapIsUsed, bindResult);
-		break;
-	case TextureType::NormalMap:
-		if (mShader->hasUniform(ShaderConstants::NormalMapIsUsed))
-			mShader->setUniform(ShaderConstants::NormalMapIsUsed, bindResult);
-		break;
-	case TextureType::SpecularMap:
-		if (mShader->hasUniform(ShaderConstants::SpecularMapIsUsed))
-			mShader->setUniform(ShaderConstants::SpecularMapIsUsed, bindResult);
-		break;
-	case TextureType::HeightMap:
-		if (mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
-			mShader->setUniform(ShaderConstants::HeightMapIsUsed, bindResult);
-		break;
-	case TextureType::OpacityMap:
-		if (mShader->hasUniform(ShaderConstants::OpacityMapIsUsed))
-			mShader->setUniform(ShaderConstants::OpacityMapIsUsed, bindResult);
-		break;
+		case TextureType::DiffuseMap:
+			if(mShader->hasUniform(ShaderConstants::DiffuseMapIsUsed))
+				mShader->setUniform(ShaderConstants::DiffuseMapIsUsed, bindResult);
+			break;
+		case TextureType::NormalMap:
+			if(mShader->hasUniform(ShaderConstants::NormalMapIsUsed))
+				mShader->setUniform(ShaderConstants::NormalMapIsUsed, bindResult);
+			break;
+		case TextureType::SpecularMap:
+			if(mShader->hasUniform(ShaderConstants::SpecularMapIsUsed))
+				mShader->setUniform(ShaderConstants::SpecularMapIsUsed, bindResult);
+			break;
+		case TextureType::HeightMap:
+			if(mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
+				mShader->setUniform(ShaderConstants::HeightMapIsUsed, bindResult);
+			break;
+		case TextureType::OpacityMap:
+			if(mShader->hasUniform(ShaderConstants::OpacityMapIsUsed))
+				mShader->setUniform(ShaderConstants::OpacityMapIsUsed, bindResult);
+			break;
 	}
 
 	return bindResult;
@@ -257,6 +271,25 @@ void Material::setShininess(float shininess)
 void Material::addLight(const Light& light)
 {
 	mLights.push_back(light);
+}
+
+//=========================================================================
+void Material::setTilingU(float value)
+{
+	mTilingU = value;
+}
+
+//=========================================================================
+void Material::setTilingV(float value)
+{
+	mTilingV = value;
+}
+
+//=========================================================================
+void Material::setTilingUV(float value)
+{
+	setTilingU(value);
+	setTilingV(value);
 }
 
 //=========================================================================

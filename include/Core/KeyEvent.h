@@ -12,7 +12,7 @@ public:
 
 	struct LastKey
 	{
-		int key{ KEY_NONE };
+		int key { KEY_NONE };
 		bool isDown {false};
 	};
 

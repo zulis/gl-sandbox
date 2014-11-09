@@ -57,7 +57,7 @@ Image::~Image()
 	FreeImage_DeInitialise();
 #endif
 
-	if (mPixels)
+	if(mPixels)
 		delete[] mPixels;
 }
 
@@ -80,27 +80,27 @@ void Image::loadFromFile(const std::string& fileName)
 	fif = FreeImage_GetFileType(fileName.c_str(), 0);
 
 	// If still unknown, try to guess the file format from the file extension
-	if (fif == FIF_UNKNOWN)
+	if(fif == FIF_UNKNOWN)
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 
 	// If still unknown, return failure
-	if (fif == FIF_UNKNOWN)
+	if(fif == FIF_UNKNOWN)
 		generateCheckImage();
 	else
 	{
 		// Check that the plugin has reading capabilities and load the file
-		if (FreeImage_FIFSupportsReading(fif))
+		if(FreeImage_FIFSupportsReading(fif))
 			bitmap = FreeImage_Load(fif, fileName.c_str());
 
 		// If the image failed to load, return failure
-		if (!bitmap)
+		if(!bitmap)
 			generateCheckImage();
 		else
 		{
 			mBpp = FreeImage_GetBPP(bitmap);
 
-			// Convert, or may crash on Texture->loadFromRaw 
-			if (mBpp != 32)
+			// Convert, or may crash on Texture->loadFromRaw
+			if(mBpp != 32)
 			{
 				bitmap = FreeImage_ConvertTo32Bits(bitmap);
 				mBpp = 32;
@@ -137,7 +137,7 @@ void Image::loadFromFile(const std::string& fileName)
 			BYTE* bits = FreeImage_GetBits(bitmap);
 
 			// If this somehow one of these failed (they shouldn't), return failure
-			if ((bits == 0) || (mWidth == 0) || (mHeight == 0))
+			if((bits == 0) || (mWidth == 0) || (mHeight == 0))
 			{
 				logError("Could not load texture: %s", fileName.c_str());
 				generateCheckImage();
@@ -171,9 +171,9 @@ void Image::generateCheckImage()
 
 	unsigned int i, j, c;
 
-	for (i = 0; i < mWidth; i++)
+	for(i = 0; i < mWidth; i++)
 	{
-		for (j = 0; j < mHeight; j++)
+		for(j = 0; j < mHeight; j++)
 		{
 			c = (((i & 0x8) == 0) ^ ((j & 0x8)) == 0) * 255;
 			checkImage[i][j][0] = (GLubyte)c;
@@ -254,7 +254,7 @@ void Image::flipVertical()
 	FIBITMAP* bitmap = FreeImage_ConvertFromRawBits(mPixels, mWidth, mHeight, mWidth * mChannels, mBpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, TRUE);
 	FreeImage_FlipVertical(bitmap);
 
-	if (mPixels)
+	if(mPixels)
 		delete[] mPixels;
 
 	mPixels = new unsigned char[mWidth * mHeight * mChannels];
@@ -268,7 +268,7 @@ void Image::flipHorizontal()
 	FIBITMAP* bitmap = FreeImage_ConvertFromRawBits(mPixels, mWidth, mHeight, mWidth * mChannels, mBpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, TRUE);
 	FreeImage_FlipHorizontal(bitmap);
 
-	if (mPixels)
+	if(mPixels)
 		delete[] mPixels;
 
 	mPixels = new unsigned char[mWidth * mHeight * mChannels];

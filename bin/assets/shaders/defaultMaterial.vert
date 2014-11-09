@@ -11,6 +11,6 @@ void main()
 {
 	VIEW_NORMAL = NormalMatrix * VertexNormal;
 	VIEW_POSITION = ModelViewMatrix * vec4(VertexPosition, 1.0);
-	TexCoord = VertexTexCoord;
+	TexCoord = VertexTexCoord * TilingUV;
 	gl_Position = MVP * vec4(VertexPosition, 1.0);
 }

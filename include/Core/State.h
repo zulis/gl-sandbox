@@ -8,31 +8,31 @@ typedef std::shared_ptr<class State> StateRef;
 
 class State
 {
-		friend class Game;
-		friend class StateManager;
-	public:
-		virtual void setup() {};
-		virtual void cleanup() {};
-		virtual void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent) {};
-		virtual void update(float elapsedTime) {};
-		virtual void draw() {};
-		virtual void resize(int width, int height) {};
+	friend class Game;
+	friend class StateManager;
+public:
+	virtual void setup() {};
+	virtual void cleanup() {};
+	virtual void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent) {};
+	virtual void update(float elapsedTime) {};
+	virtual void draw() {};
+	virtual void resize(int width, int height) {};
 
-		void quit();
+	void quit();
 
-	private:
-		bool mShouldQuit;
-		KeyEventRef mKeyEvent;
-		MouseEventRef mMouseEvent;
+private:
+	bool mShouldQuit;
+	KeyEventRef mKeyEvent;
+	MouseEventRef mMouseEvent;
 
-	private:
-		template<class T>
-		static StateRef create();
-		void emitInput();
-		void setKeyStatus(int key, bool isDown);
-		void setMouseButonStatus(int button, bool isDown);
-		void setMousePositionStatus(int x, int y, int changeX, int changeY);
-		void setMouseWheelStatus(int x);
+private:
+	template<class T>
+	static StateRef create();
+	void emitInput();
+	void setKeyStatus(int key, bool isDown);
+	void setMouseButonStatus(int button, bool isDown);
+	void setMousePositionStatus(int x, int y, int changeX, int changeY);
+	void setMouseWheelStatus(int x);
 };
 
 //=========================================================================

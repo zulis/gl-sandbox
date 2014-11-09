@@ -17,21 +17,21 @@ typedef std::shared_ptr<class Mesh> MeshRef;
 
 class Mesh : public Transform3D
 {
-	public:
-		static MeshRef create();
-		Mesh();
-		virtual ~Mesh();
+public:
+	static MeshRef create();
+	Mesh();
+	virtual ~Mesh();
 
-		void loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
-		void draw(const CameraRef& camera);
-		
-		//const std::vector<Material::GeometryMaterial>& getGeomMaterial();
-		void setTexturePath(const std::string& texturePath);
+	void loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
+	void draw(const CameraRef& camera);
 
-		AABB getAABB() const;
-		void setFrustumCulling(bool isOn);
-		void setMaterial(const MaterialRef& material);
-		const MaterialRef& getMaterial() const;
+	//const std::vector<Material::GeometryMaterial>& getGeomMaterial();
+	void setTexturePath(const std::string& texturePath);
+
+	AABB getAABB() const;
+	void setFrustumCulling(bool isOn);
+	void setMaterial(const MaterialRef& material);
+	const MaterialRef& getMaterial() const;
 
 private:
 	MeshLoaderRef mMeshLoader;
@@ -40,7 +40,7 @@ private:
 	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 	AABB mAABB;
 	std::map<GeometryRef, AABB> mAABBMap;
-	bool mCullingIsOn{ false };
+	bool mCullingIsOn { false };
 	MaterialRef mMaterial;
 	//std::string getFileName(std::string& pathName);
 	//void parseNode(const aiNode* node);
@@ -72,17 +72,17 @@ Mesh::~Mesh()
 //=========================================================================
 void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 {
-/*
-// 	if (mTexturePath == std::string())
-// 	{
-// 		mTexturePath = fileName;
-// 
-// 		const size_t idx = mTexturePath.find_last_of("\\/");
-// 
-// 		if (std::string::npos != idx)
-// 			mTexturePath.erase(idx, mTexturePath.length() - idx);
-// 	}
-*/
+	/*
+	// 	if (mTexturePath == std::string())
+	// 	{
+	// 		mTexturePath = fileName;
+	//
+	// 		const size_t idx = mTexturePath.find_last_of("\\/");
+	//
+	// 		if (std::string::npos != idx)
+	// 			mTexturePath.erase(idx, mTexturePath.length() - idx);
+	// 	}
+	*/
 
 	mMeshLoader = MeshLoader::create();
 	mMeshLoader->setTexturePath(mTexturePath);
@@ -96,7 +96,7 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 	glm::vec3 min(maxFloat);
 	glm::vec3 max(minFloat);
 
-	for each (MeshPart meshPart in mMeshData)
+	for each(MeshPart meshPart in mMeshData)
 	{
 		auto geometry = GeometryRef(new Geometry);
 		geometry->setDrawType(Geometry::TRIANGLES);
@@ -111,22 +111,22 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 		AABB aabb = geometry->getAABB();
 		mAABBMap[geometry] = aabb;
 
-		if (aabb.getMax().x > max.x)
+		if(aabb.getMax().x > max.x)
 			max.x = aabb.getMax().x;
 
-		if (aabb.getMin().x < min.x)
+		if(aabb.getMin().x < min.x)
 			min.x = aabb.getMin().x;
 
-		if (aabb.getMax().y > max.y)
+		if(aabb.getMax().y > max.y)
 			max.y = aabb.getMax().y;
 
-		if (aabb.getMin().y < min.y)
+		if(aabb.getMin().y < min.y)
 			min.y = aabb.getMin().y;
 
-		if (aabb.getMax().z > max.z)
+		if(aabb.getMax().z > max.z)
 			max.z = aabb.getMax().z;
 
-		if (aabb.getMin().z < min.z)
+		if(aabb.getMin().z < min.z)
 			min.z = aabb.getMin().z;
 	}
 
@@ -150,7 +150,7 @@ void Mesh::setTexturePath(const std::string& texturePath)
 // {
 // 	Texture::Format format;
 // 	format.setFlipped(true);
-// 
+//
 // 	for(auto& gm : mGeometriesMaterials)
 // 	{
 // 		for(auto& t : gm.textures)
@@ -159,7 +159,7 @@ void Mesh::setTexturePath(const std::string& texturePath)
 // 			t.texture = Texture::create(t.fileName, format);
 // 		}
 // 	}
-// 
+//
 // 	return mGeometriesMaterials;
 // }
 
@@ -194,22 +194,22 @@ void Mesh::updateUniforms(const Camera& camera)
 {
 	const Shader* shader = mMaterial->getShader();
 
-	if (shader->hasUniform(ShaderConstants::ProjectionMatrix))
+	if(shader->hasUniform(ShaderConstants::ProjectionMatrix))
 		shader->setUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
 
-	if (shader->hasUniform(ShaderConstants::ViewMatrix))
+	if(shader->hasUniform(ShaderConstants::ViewMatrix))
 		shader->setUniform(ShaderConstants::ViewMatrix, camera.getViewMatrix());
 
-	if (shader->hasUniform(ShaderConstants::ModelMatrix))
+	if(shader->hasUniform(ShaderConstants::ModelMatrix))
 		shader->setUniform(ShaderConstants::ModelMatrix, getMatrix());
 
-	if (shader->hasUniform(ShaderConstants::ModelViewMatrix))
+	if(shader->hasUniform(ShaderConstants::ModelViewMatrix))
 		shader->setUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * getMatrix());
 
-	if (shader->hasUniform(ShaderConstants::MVP))
+	if(shader->hasUniform(ShaderConstants::MVP))
 		shader->setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
 
-	if (shader->hasUniform(ShaderConstants::NormalMatrix))
+	if(shader->hasUniform(ShaderConstants::NormalMatrix))
 	{
 		auto mv = camera.getViewMatrix() * getMatrix();
 		shader->setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
@@ -221,14 +221,14 @@ void Mesh::draw(const Camera& camera)
 {
 	unsigned int geometryIndex = 0;
 
-	for each (auto geometry in mGeometries)
+	for each(auto geometry in mGeometries)
 	{
-		if (mCullingIsOn)
+		if(mCullingIsOn)
 		{
 			auto aabb = mAABBMap[geometry].transformed(getMatrix());
 			auto notCulled = camera.intersects(aabb);
 
-			if (notCulled)
+			if(notCulled)
 			{
 				draw(geometry, geometryIndex, camera);
 			}
@@ -262,13 +262,13 @@ void Mesh::draw(const GeometryRef& geometry, const unsigned int geometryIndex, c
 //=========================================================================
 void Mesh::setupMaterial()
 {
-	if (mMaterial)
+	if(mMaterial)
 	{
 		unsigned int geometryIndex = 0;
 
-		for each (MeshPart meshPart in mMeshData)
+		for each(MeshPart meshPart in mMeshData)
 		{
-			for each (auto meshTexture in meshPart.material.textures)
+			for each(auto meshTexture in meshPart.material.textures)
 			{
 				mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
 			}

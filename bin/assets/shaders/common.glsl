@@ -24,6 +24,9 @@ uniform bool NormalMapIsUsed;
 uniform bool HeightMapIsUsed;
 uniform bool SpecularMapIsUsed;
 uniform bool OpacityMapIsUsed;
+uniform float TilingU = 1.0;
+uniform float TilingV = 1.0;
+uniform vec2 TilingUV = vec2(1.0);
 
 struct LightSource
 {

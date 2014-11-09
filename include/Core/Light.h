@@ -7,9 +7,9 @@
 
 enum class LightType
 {
-	Point,
-	Directional,
-	Spot
+    Point,
+    Directional,
+    Spot
 };
 
 class Light
@@ -29,6 +29,9 @@ public:
 	void setDiffuse(const Color& color);
 	const glm::vec4& getDiffuse() const;
 
+	void setDiffuseAndAmbient(const glm::vec4& color);
+	void setDiffuseAndAmbient(const Color& color);
+
 	void setSpecular(const glm::vec4& specular);
 	void setSpecular(const Color& color);
 	const glm::vec4& getSpecular() const;
@@ -47,14 +50,14 @@ public:
 private:
 	//unsigned int mLightIndex;
 	LightType mLightType;
-	glm::vec4 mPosition{ glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) };
-	glm::vec4 mAmbient{ glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
-	glm::vec4 mDiffuse{ glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
-	glm::vec4 mSpecular{ glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
-	glm::vec2 mAttenuation{ glm::vec2(0.0, 100.0) };
-	float mCutoff{ 0.0f };
-	float mExponent{ 0.0f };
-	
+	glm::vec4 mPosition { glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) };
+	glm::vec4 mAmbient { glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
+	glm::vec4 mDiffuse { glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
+	glm::vec4 mSpecular { glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
+	glm::vec2 mAttenuation { glm::vec2(0.0, 100.0) };
+	float mCutoff { 0.0f };
+	float mExponent { 0.0f };
+
 	const std::string createUniformName(const std::string& uniformName, unsigned int lightIndex) const;
 };
 
@@ -63,14 +66,14 @@ Light::Light(const LightType& lightType)
 {
 	mLightType = lightType;
 
-	switch (lightType)
+	switch(lightType)
 	{
-	case LightType::Directional:
-		mPosition.w = 0.0f;
-		break;
-	default:
-		mPosition.w = 1.0f;
-		break;
+		case LightType::Directional:
+			mPosition.w = 0.0f;
+			break;
+		default:
+			mPosition.w = 1.0f;
+			break;
 	}
 }
 
@@ -127,6 +130,20 @@ void Light::setDiffuse(const Color& color)
 const glm::vec4& Light::getDiffuse() const
 {
 	return mDiffuse;
+}
+
+//=========================================================================
+void Light::setDiffuseAndAmbient(const glm::vec4& color)
+{
+	setDiffuse(color);
+	setAmbient(color);
+}
+
+//=========================================================================
+void Light::setDiffuseAndAmbient(const Color& color)
+{
+	setDiffuse(color);
+	setAmbient(color);
 }
 
 //=========================================================================
@@ -190,31 +207,31 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex)
 	std::string uniformName;
 
 	uniformName = createUniformName(ShaderConstants::LightPosition, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mPosition);
 
 	uniformName = createUniformName(ShaderConstants::LightAmbient, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mAmbient);
 
 	uniformName = createUniformName(ShaderConstants::LightDiffuse, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mDiffuse);
 
 	uniformName = createUniformName(ShaderConstants::LightSpecular, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mSpecular);
 
 	uniformName = createUniformName(ShaderConstants::LightAttenuation, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mAttenuation);
 
 	uniformName = createUniformName(ShaderConstants::LightCutoff, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mCutoff);
 
 	uniformName = createUniformName(ShaderConstants::LightExponent, lightIndex);
-	if (shader->hasUniform(uniformName))
+	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mExponent);
 }
 
@@ -224,3 +241,5 @@ const std::string Light::createUniformName(const std::string& uniformName, unsig
 	std::string str = uniformName;
 	return str.replace(str.find('#'), 1, std::to_string(lightIndex));
 }
+
+

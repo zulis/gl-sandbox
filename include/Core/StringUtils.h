@@ -58,7 +58,7 @@ std::string StringUtils::cutTail(const std::string& s, const std::string& cutAt)
 	std::string result = s;
 	const size_t idx = result.find_last_of(cutAt) + 1;
 
-	if (std::string::npos != idx)
+	if(std::string::npos != idx)
 		result.erase(idx, result.length() - idx);
 
 	return result;

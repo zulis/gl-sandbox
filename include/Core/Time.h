@@ -4,11 +4,11 @@
 
 class Time
 {
-	public:
-		static double getTime();
+public:
+	static double getTime();
 
-	private:
-		static std::chrono::system_clock::time_point mEpoch;
+private:
+	static std::chrono::system_clock::time_point mEpoch;
 };
 
 std::chrono::system_clock::time_point Time::mEpoch = std::chrono::high_resolution_clock::now();

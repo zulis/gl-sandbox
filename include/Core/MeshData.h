@@ -25,10 +25,10 @@ struct MeshTexture
 	std::string fileName;
 	//GLuint textureID;
 
- 	bool operator==(const MeshTexture& t) const
- 	{
- 		return t.textureType == textureType;
- 	}
+	bool operator==(const MeshTexture& t) const
+	{
+		return t.textureType == textureType;
+	}
 };
 
 struct MeshMaterial
@@ -45,9 +45,9 @@ struct MeshMaterial
 // 	{
 // 		MeshTexture mt;
 // 		mt.type = type;
-// 
+//
 // 		auto it = std::find(textures.begin(), textures.end(), mt);
-//  
+//
 // 		if (it != textures.end())
 // 			return (*it).texture;
 // 		else

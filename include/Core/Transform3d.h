@@ -1,39 +1,37 @@
 #pragma once
 
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
 #include <Core/Math.h>
 
 class Transform3D
 {
-	public:
-		Transform3D(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
+public:
+	Transform3D(const glm::vec3& position = glm::vec3(0.0f), const glm::vec3& rotation = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f));
 
-		void setPosition(float x, float y, float z);
-		void setRotation(float x, float y, float z);
-		void setScale(float x, float y, float z);
-		void setPosition(glm::vec3 position);
-		void setRotation(glm::vec3 rotation);
-		void setRotationX(float x);
-		void setRotationY(float Y);
-		void setRotationZ(float z);
-		void setScale(float scale);
-		void setScale(glm::vec3 scale);
-		glm::mat4 getMatrix();
-		void setMatrix(glm::mat4 matrix);
+	void setPosition(float x, float y, float z);
+	void setRotation(float x, float y, float z);
+	void setScale(float x, float y, float z);
+	void setPosition(const glm::vec3& position);
+	void setRotation(const glm::vec3& rotation);
+	void setRotationX(float x);
+	void setRotationY(float Y);
+	void setRotationZ(float z);
+	void setScale(float scale);
+	void setScale(const glm::vec3& scale);
+	const glm::mat4 getMatrix() const;
+	void setMatrix(const glm::mat4& matrix);
 
-		glm::vec3 getPosition() const;
+	const glm::vec3 getPosition() const;
 
-	private:
-		void updateMatrix();
-		glm::vec3 mPosition;
-		glm::vec3 mRotation;
-		glm::vec3 mScale;
-		glm::mat4 mMatrix;
+private:
+	void updateMatrix();
+	glm::vec3 mPosition;
+	glm::vec3 mRotation;
+	glm::vec3 mScale;
+	glm::mat4 mMatrix;
 };
 
 //=========================================================================
-Transform3D::Transform3D(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+Transform3D::Transform3D(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
 {
 	mPosition = position;
 	mRotation = rotation;
@@ -78,14 +76,14 @@ void Transform3D::setScale(float x, float y, float z)
 }
 
 //=========================================================================
-void Transform3D::setPosition(glm::vec3 position)
+void Transform3D::setPosition(const  glm::vec3& position)
 {
 	mPosition = position;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setRotation(glm::vec3 rotation)
+void Transform3D::setRotation(const glm::vec3& rotation)
 {
 	mRotation = rotation;
 	updateMatrix();
@@ -98,7 +96,7 @@ void Transform3D::setScale(float scale)
 }
 
 //=========================================================================
-void Transform3D::setScale(glm::vec3 scale)
+void Transform3D::setScale(const glm::vec3& scale)
 {
 	mScale = scale;
 	updateMatrix();
@@ -116,19 +114,19 @@ void Transform3D::updateMatrix()
 }
 
 //=========================================================================
-glm::mat4 Transform3D::getMatrix()
+const glm::mat4 Transform3D::getMatrix() const
 {
 	return mMatrix;
 }
 
 //=========================================================================
-void Transform3D::setMatrix(glm::mat4 matrix)
+void Transform3D::setMatrix(const glm::mat4& matrix)
 {
 	mMatrix = matrix;
 }
 
 //=========================================================================
-glm::vec3 Transform3D::getPosition() const
+const glm::vec3 Transform3D::getPosition() const
 {
 	return glm::vec3(mMatrix[3][0], mMatrix[3][1], mMatrix[3][2]);
 }
