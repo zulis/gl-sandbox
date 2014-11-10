@@ -188,6 +188,7 @@
     <ClInclude Include="..\include\Core\Cube.h" />
     <ClInclude Include="..\include\Core\Defines.h" />
     <ClInclude Include="..\include\Core\DirectionalLight.h" />
+    <ClInclude Include="..\include\Core\FileMonitor.h" />
     <ClInclude Include="..\include\Core\Font.h" />
     <ClInclude Include="..\include\Core\Game.h" />
     <ClInclude Include="..\include\Core\Geometry.h" />

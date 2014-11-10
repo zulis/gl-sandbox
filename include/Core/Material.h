@@ -8,6 +8,7 @@
 #include "Core/Light.h"
 #include "Core/TextureType.h"
 #include "Core/Color.h"
+#include "Core/FileMonitor.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
 
@@ -66,7 +67,7 @@ private:
 	//void bindGeomMaterial(unsigned int geometryIndex);
 	//bool bindTexture(const TextureType& textureType, unsigned int textureunit = 0, unsigned int geometryIndex = 0);
 
-
+	void reloadShader();
 
 	std::vector<MaterialTexture> mTextures;
 
@@ -86,12 +87,17 @@ private:
 
 	std::vector<Light> mLights;
 	unsigned int mLightIndex { 0 };
+
+	std::string mShaderFileName;
 };
 
 //=========================================================================
 Material::Material(const std::string& fileName)
 {
+	mShaderFileName = fileName;
 	mShader = Shader::create(fileName);
+	FileMonitor::create(fileName + ".frag", std::bind(&Material::reloadShader, this));
+	FileMonitor::create(fileName + ".vert", std::bind(&Material::reloadShader, this));
 }
 
 //=========================================================================
@@ -290,6 +296,15 @@ void Material::setTilingUV(float value)
 {
 	setTilingU(value);
 	setTilingV(value);
+}
+
+//=========================================================================
+void Material::reloadShader()
+{
+	logNote("Reloading shader: ", mShaderFileName.c_str());
+
+	//mShader.reset();
+	//mShader = Shader::create(mShaderFileName);
 }
 
 //=========================================================================

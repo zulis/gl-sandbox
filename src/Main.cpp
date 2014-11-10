@@ -9,12 +9,12 @@
 #include "EntityFactory.h"
 
 #include "Core/Mesh.h"
-//#include "Core/MaterialPhong.h"
 #include "Core/Font.h"
 #include "Core/Quad.h"
 #include "Core/PointLight.h"
 #include "Core/DirectionalLight.h"
 #include "Core/SpotLight.h"
+#include "Core/FileMonitor.h"
 
 class Main : public State
 {
@@ -43,7 +43,7 @@ private:
 	MeshRef mMesh;
 	//MaterialPhongRef mMaterial;
 	FontRef mFont;
-	//QuadRef mQuad;
+	QuadRef mQuad;
 	//QuadRef mGameOverQuad;
 
 	void calculateMouseCenterPosition();
@@ -56,11 +56,12 @@ private:
 //=========================================================================
 void Main::setup()
 {
-	Window::setSize(1280, 720);
+	//Window::setSize(1280, 720);
+	Window::setSize(800, 600);
 
 	mCamera = Camera::create();
-	mCamera->setPosition(0, 0, 2);
-	mCamera->setLookAt(0, 0, 0);
+	mCamera->setPosition(0, 0.75, 2);
+	mCamera->setLookAt(0, 0.75, 0);
 	mCamera->setRotateSpeed(0.002f);
 	mCamera->setStrafeSpeed(mStrafeSpeed);
 
@@ -71,25 +72,27 @@ void Main::setup()
 	mEntityFactory = EntityFactory::create();
 	mEntityFactory->setup(mCamera);
 
-	mFont = Font::create("assets/ui/verdana.ttf", 20);
-	//mQuad = Quad::create("assets/textures/misc/256x256a.png", 128, 128);
+	//mFont = Font::create("assets/ui/verdana.ttf", 20);
+	mQuad = Quad::create("assets/models/leprechaun/copyright.png");
 	//mGameOverQuad = Quad::create("assets/ui/gameover.png");
 
 	// TESTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	mMesh = Mesh::create();
 	mMesh->setFrustumCulling(true);
+	
 	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
-	//mMesh->setPosition(0, -15, 0);
-	mMesh->loadFromFile("assets/models/box/box.fbx");
-	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
+	//mMesh->getMaterial()->setTilingUV(500);
+
+	//mMesh->loadFromFile("assets/models/box/box.fbx");
+	mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
-	auto mat = mMesh->getMaterial();
+	auto material = mMesh->getMaterial();
 
-	//mat->setTilingUV(100);
+	
 
 	auto light = PointLight::create();
 	light->setPosition(glm::vec3(0, 0, 5));
@@ -97,7 +100,7 @@ void Main::setup()
 	//light->setDiffuse(Color::white());
 	//light->setSpecular(Color::white());
 	//light->setAttenuation(glm::vec2(100, 1000));
-	mat->addLight(*light);
+	material->addLight(*light);
 
 
 
@@ -260,7 +263,7 @@ void Main::draw()
 
 	//mQuad->setRotation(mRotation);
 	//mQuad->draw(Quad::Position::CENTER);
-	//mQuad->draw(Quad::Position::BOTTOMRIGHT, -10, -10);
+	mQuad->draw(Quad::Position::BOTTOMRIGHT, -10, -10);
 	//mGameOverQuad->draw(Quad::CENTER);
 	//gl::disableAlphaBlending();
 }

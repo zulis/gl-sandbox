@@ -65,7 +65,7 @@ private:
 	std::string mErrors;
 
 	void loadFromFile(const std::string& fileName);
-	std::string/*std::vector<char>*/ readSource(std::string& path);
+	std::string readSource(std::string& path);
 	void dumpShaderInfo(const std::string& fileName);
 };
 
@@ -102,21 +102,12 @@ Shader::~Shader()
 //=========================================================================
 void Shader::loadFromFile(const std::string& fileName)
 {
-	//const GLchar* source[1];
-	//int length = 0;
-
 	// Load the fragment shader and compile
 	std::string fragmentSource = readSource(fileName + ".frag");
 	const char* source = fragmentSource.c_str();
 	mFragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(mFragmentShaderID, 1, &source, NULL);
 	glCompileShader(mFragmentShaderID);
-	/*std::vector<char> fragmentSource = readSource(fileName + ".frag");
-	source[0] = &fragmentSource.front();
-	length = fragmentSource.size()-1;
-	mFragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(mFragmentShaderID, 1, source, &length);
-	glCompileShader(mFragmentShaderID);*/
 
 	// Load the vertex shader and compile
 	std::string vertexSource = readSource(fileName + ".vert");
@@ -124,12 +115,6 @@ void Shader::loadFromFile(const std::string& fileName)
 	mVertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(mVertexShaderID, 1, &source, NULL);
 	glCompileShader(mVertexShaderID);
-	/*std::vector<char> vertexSource = readSource(fileName + ".vert");
-	source[0] = &vertexSource.front();
-	length = vertexSource.size()-1;
-	mVertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(mVertexShaderID, 1, source, &length);
-	glCompileShader(mVertexShaderID);*/
 
 	// Create the vertex program
 	mProgramID = glCreateProgram();
@@ -242,7 +227,6 @@ void Shader::loadFromFile(const std::string& fileName)
 }
 
 //=========================================================================
-//std::vector<char> Shader::readSource(const std::string& path)
 std::string Shader::readSource(std::string& path)
 {
 	std::ifstream source(path);
@@ -270,38 +254,6 @@ std::string Shader::readSource(std::string& path)
 	}
 
 	return ss.str();
-
-	/*
-	// Open the file
-	std::vector<char> source;
-	std::ifstream in(path.c_str());
-
-	if(in.fail())
-	{
-	logError("Shader file doesn't exist %s\n", path.c_str());
-	source.push_back(0);
-	return source;
-	}
-
-	// Seek to the end of the file to get the size
-	in.seekg(0, std::ios::end);
-	source.reserve((unsigned)(1 + in.tellg()));
-	source.resize((unsigned)in.tellg());
-	in.seekg(0, std::ios::beg);
-
-	if(source.empty())
-	{
-	source.push_back(0);
-	return source;
-	}
-
-	// Now read the whole buffer in one call, and don't
-	// forget to null-terminate the vector with a zero
-	in.read(&source.front(), source.size());
-	source.push_back(0);
-
-	return source;
-	*/
 }
 
 /// <summary>

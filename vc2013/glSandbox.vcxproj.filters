@@ -220,5 +220,8 @@
     <ClInclude Include="..\include\Core\Light.h">
       <Filter>Include\Core\Light</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Core\FileMonitor.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

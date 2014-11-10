@@ -84,6 +84,5 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 		getShader()->setUniform(ShaderConstants::SpecularMapIsUsed, true);
 	}
 
-
 	bindTexture(TextureType::OpacityMap, 4, geometryIndex);
 }
