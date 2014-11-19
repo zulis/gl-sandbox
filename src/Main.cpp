@@ -34,7 +34,7 @@ private:
 	float mRotateH { 0.0f };
 	float mRotateV { 0.0f };
 
-	EntityFactoryRef mEntityFactory;
+	//EntityFactoryRef mEntityFactory;
 
 	CameraRef mCamera;
 	Image* mIconImage;
@@ -69,8 +69,8 @@ void Main::setup()
 	Window::setIcon(mIconImage->getPixels(), mIconImage->getWidth(), mIconImage->getHeight(), mIconImage->getChannels());
 	Window::setCursor(mIconImage->getPixels(), mIconImage->getWidth(), mIconImage->getHeight(), mIconImage->getChannels());
 
-	mEntityFactory = EntityFactory::create();
-	mEntityFactory->setup(mCamera);
+	//mEntityFactory = EntityFactory::create();
+	//mEntityFactory->setup(mCamera);
 
 	//mFont = Font::create("assets/ui/verdana.ttf", 20);
 	mQuad = Quad::create("assets/models/leprechaun/copyright.png");
@@ -79,20 +79,20 @@ void Main::setup()
 	// TESTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	mMesh = Mesh::create();
-	mMesh->setFrustumCulling(true);
+	mMesh->setFrustumCulling(false);
+	//mMesh->setAutoLoadTextures(false);
 	
 	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
 	//mMesh->getMaterial()->setTilingUV(500);
 
-	//mMesh->loadFromFile("assets/models/box/box.fbx");
-	mMesh->loadFromFile("assets/models/leprechaun/leprechaun.obj", 0.02f);
+	mMesh->loadFromFile("assets/models/box/box.fbx");
+	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
+	//mMesh->setRotationX(-90);
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	auto material = mMesh->getMaterial();
-
-	
 
 	auto light = PointLight::create();
 	light->setPosition(glm::vec3(0, 0, 5));
@@ -125,7 +125,7 @@ void Main::setup()
 //=========================================================================
 void Main::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
 {
-	mEntityFactory->input(keyEvent, mouseEvent);
+	//mEntityFactory->input(keyEvent, mouseEvent);
 
 	if(keyEvent.isUp(KEY_ESCAPE))
 		quit();

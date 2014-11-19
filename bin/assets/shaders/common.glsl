@@ -17,12 +17,14 @@ layout(binding = 0) uniform sampler2D DiffuseMap;
 layout(binding = 1) uniform sampler2D NormalMap;
 layout(binding = 2) uniform sampler2D HeightMap;
 layout(binding = 3) uniform sampler2D SpecularMap;
-layout(binding = 4) uniform sampler2D OpacityMap;
+layout(binding = 4) uniform sampler2D EmissiveMap;
+layout(binding = 5) uniform sampler2D OpacityMap;
 
 uniform bool DiffuseMapIsUsed;
 uniform bool NormalMapIsUsed;
 uniform bool HeightMapIsUsed;
 uniform bool SpecularMapIsUsed;
+uniform bool EmissiveMapIsUsed;
 uniform bool OpacityMapIsUsed;
 uniform float TilingU = 1.0;
 uniform float TilingV = 1.0;

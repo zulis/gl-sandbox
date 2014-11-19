@@ -36,13 +36,15 @@ public:
 	// TEXTURE
 	static const std::string DiffuseMap;
 	static const std::string NormalMap;
-	static const std::string SpecularMap;
 	static const std::string HeightMap;
+	static const std::string SpecularMap;
+	static const std::string EmissiveMap;
 	static const std::string OpacityMap;
 	static const std::string DiffuseMapIsUsed;
 	static const std::string NormalMapIsUsed;
-	static const std::string SpecularMapIsUsed;
 	static const std::string HeightMapIsUsed;
+	static const std::string SpecularMapIsUsed;
+	static const std::string EmissiveMapIsUsed;
 	static const std::string OpacityMapIsUsed;
 	// UV
 	static const std::string TilingU;
@@ -81,13 +83,15 @@ const std::string ShaderConstants::TotalLights = std::string("TotalLights");
 // TEXTURE
 const std::string ShaderConstants::DiffuseMap = std::string("DiffuseMap");
 const std::string ShaderConstants::NormalMap = std::string("NormalMap");
-const std::string ShaderConstants::SpecularMap = std::string("SpecularMap");
 const std::string ShaderConstants::HeightMap = std::string("HeightMap");
+const std::string ShaderConstants::SpecularMap = std::string("SpecularMap");
+const std::string ShaderConstants::EmissiveMap = std::string("EmissiveMap");
 const std::string ShaderConstants::OpacityMap = std::string("OpacityMap");
 const std::string ShaderConstants::DiffuseMapIsUsed = std::string("DiffuseMapIsUsed");
 const std::string ShaderConstants::NormalMapIsUsed = std::string("NormalMapIsUsed");
-const std::string ShaderConstants::SpecularMapIsUsed = std::string("SpecularMapIsUsed");
 const std::string ShaderConstants::HeightMapIsUsed = std::string("HeightMapIsUsed");
+const std::string ShaderConstants::SpecularMapIsUsed = std::string("SpecularMapIsUsed");
+const std::string ShaderConstants::EmissiveMapIsUsed = std::string("EmissiveMapIsUsed");
 const std::string ShaderConstants::OpacityMapIsUsed = std::string("OpacityMapIsUsed");
 // UV
 const std::string ShaderConstants::TilingU = std::string("TilingU");

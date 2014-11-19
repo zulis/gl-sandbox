@@ -21,6 +21,8 @@ public:
 	void setMatrix(const glm::mat4& matrix);
 
 	const glm::vec3 getPosition() const;
+	const glm::vec3 getRotation() const;
+	const glm::vec3 getScale() const;
 
 private:
 	void updateMatrix();
@@ -120,13 +122,26 @@ const glm::mat4 Transform3D::getMatrix() const
 }
 
 //=========================================================================
-void Transform3D::setMatrix(const glm::mat4& matrix)
-{
-	mMatrix = matrix;
-}
+ void Transform3D::setMatrix(const glm::mat4& matrix)
+ {
+ 	mMatrix = matrix;
+ }
 
 //=========================================================================
 const glm::vec3 Transform3D::getPosition() const
 {
 	return glm::vec3(mMatrix[3][0], mMatrix[3][1], mMatrix[3][2]);
+}
+
+//=========================================================================
+const glm::vec3 Transform3D::getRotation() const
+{
+	return mRotation;
+}
+
+//=========================================================================
+const glm::vec3 Transform3D::getScale() const
+{
+	//return glm::vec3(mMatrix[0][0], mMatrix[1][1], mMatrix[2][2]);
+	return glm::vec3(glm::length(mMatrix[0]), glm::length(mMatrix[1]), glm::length(mMatrix[2]));
 }

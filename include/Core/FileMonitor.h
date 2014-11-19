@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include <functional>
 #include <string>
+#include <vector>
 #include <chrono>
 #include <future>
 
@@ -10,33 +10,52 @@
 #include <sys/stat.h>
 #include <time.h>
 
-typedef std::shared_ptr<class FileMonitor> FileMonitorRef;
-typedef std::function<void()> FileChangedCallback;
+#include "Core/Observer.h"
 
-class FileMonitor
+typedef std::shared_ptr<class FileMonitor> FileMonitorRef;
+
+struct FileMonitorEvent
+{
+	std::string fileName;
+	FileMonitorEvent(std::string fileName) : fileName(fileName) {}
+};
+
+class FileMonitor : public Dispatcher<FileMonitorEvent>
 {
 public:
-	static FileMonitorRef create(const std::string& fileName, FileChangedCallback callback);
+	static FileMonitorRef create(const std::string& fileName);
+	static FileMonitorRef create(const std::string& fileNameA, const std::string& fileNameB);
+	FileMonitor(const std::string& fileName);
+	FileMonitor(const std::string& fileNameA, const std::string& fileNameB);
 	~FileMonitor();
 
 private:
-	FileMonitor(const std::string& fileName, FileChangedCallback callback);
-	FileMonitor(const FileMonitor&);
-	FileMonitor& operator = (const FileMonitor&);
-
-	void check(const std::string& fileName, FileChangedCallback callback);
+	void check(const std::string& fileName);
 };
 
 //=========================================================================
-FileMonitorRef FileMonitor::create(const std::string& fileName, FileChangedCallback callback)
+FileMonitorRef FileMonitor::create(const std::string& fileName)
 {
-	return FileMonitorRef(new FileMonitor(fileName, callback));
+	return FileMonitorRef(new FileMonitor(fileName));
 }
 
 //=========================================================================
-FileMonitor::FileMonitor(const std::string& fileName, FileChangedCallback callback)
+FileMonitorRef FileMonitor::create(const std::string& fileNameA, const std::string& fileNameB)
 {
-	std::async(std::launch::async, &FileMonitor::check, this, fileName, callback);
+	return FileMonitorRef(new FileMonitor(fileNameA, fileNameB));
+}
+
+//=========================================================================
+FileMonitor::FileMonitor(const std::string& fileName)
+{
+	std::async(std::launch::async, &FileMonitor::check, this, fileName);
+}
+
+//=========================================================================
+FileMonitor::FileMonitor(const std::string& fileNameA, const std::string& fileNameB)
+{
+	std::async(std::launch::async, &FileMonitor::check, this, fileNameA);
+	std::async(std::launch::async, &FileMonitor::check, this, fileNameB);
 }
 
 //=========================================================================
@@ -45,7 +64,7 @@ FileMonitor::~FileMonitor()
 }
 
 //=========================================================================
-void FileMonitor::check(const std::string& fileName, FileChangedCallback callback)
+void FileMonitor::check(const std::string& fileName)
 {
 	struct tm* time, timeOld;
 	struct stat attrib;
@@ -71,8 +90,8 @@ void FileMonitor::check(const std::string& fileName, FileChangedCallback callbac
 			else if(timestamp != timestampOld)
 			{
 				timestampOld = timestamp;
-				callback();
-				break;
+				dispatch(FileMonitorEvent(fileName));
+				//break;
 			}
 		}
 	}

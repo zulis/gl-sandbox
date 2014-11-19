@@ -9,14 +9,16 @@
 #include "Core/TextureType.h"
 #include "Core/Color.h"
 #include "Core/FileMonitor.h"
+#include "Core/Observer.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
 
 //=========================================================================
-class Material
+class Material : public Listener<FileMonitorEvent>
 {
 public:
 	Shader* getShader();
+	void addTexture(const TextureRef& texture, const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addLight(const Light& light);
 
@@ -47,9 +49,9 @@ protected:
 	Material(const std::string& fileName);
 	virtual ~Material();
 	bool bindTexture(const TextureType& textureType, unsigned int textureUnit = 0, unsigned int geometryIndex = 0);
+	virtual void onEvent(FileMonitorEvent& event);
 
 private:
-
 	struct MaterialTexture
 	{
 		unsigned int geometryIndex;
@@ -67,19 +69,19 @@ private:
 	//void bindGeomMaterial(unsigned int geometryIndex);
 	//bool bindTexture(const TextureType& textureType, unsigned int textureunit = 0, unsigned int geometryIndex = 0);
 
-	void reloadShader();
+	bool mReloadShader { false };
 
 	std::vector<MaterialTexture> mTextures;
 
-
+	FileMonitorRef mFileMonitor;
 
 	ShaderRef mShader;
 
 	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 
-	Color mMaterialAmbient { Color(0.3, 0.3, 0.3, 1.0) };
-	Color mMaterialDiffuse { Color(0.7, 0.7, 0.7, 1.0) };
-	Color mMaterialSpecular { Color(0.5, 0.5, 0.5, 1.0) };
+	Color mMaterialAmbient { Color(0.3f, 0.3f, 0.3f, 1.0f) };
+	Color mMaterialDiffuse { Color(0.7f, 0.7f, 0.7f, 1.0f) };
+	Color mMaterialSpecular { Color(0.5f, 0.5f, 0.5f, 1.0f) };
 	float mMaterialShininess { 60.0f };
 
 	float mTilingU { 1.0 };
@@ -96,8 +98,9 @@ Material::Material(const std::string& fileName)
 {
 	mShaderFileName = fileName;
 	mShader = Shader::create(fileName);
-	FileMonitor::create(fileName + ".frag", std::bind(&Material::reloadShader, this));
-	FileMonitor::create(fileName + ".vert", std::bind(&Material::reloadShader, this));
+
+	mFileMonitor = FileMonitor::create(fileName + ".vert", fileName + ".frag");
+	mFileMonitor->registerListener(this);
 }
 
 //=========================================================================
@@ -114,6 +117,13 @@ Shader* Material::getShader()
 //=========================================================================
 void Material::bind()
 {
+	if(mReloadShader)
+	{
+		mShader.reset();
+		mShader = Shader::create(mShaderFileName);
+		mReloadShader = false;
+	}
+
 	if(mShader)
 	{
 		mShader->bind();
@@ -159,6 +169,25 @@ void Material::unbind()
 {
 mGeometriesMaterials = geomMaterials;
 }*/
+
+//=========================================================================
+void Material::addTexture(const TextureRef& texture, const TextureType& textureType, unsigned int geometryIndex)
+{
+	if(textureType != TextureType::Unknown)
+	{
+		MaterialTexture matTexture;
+		matTexture.geometryIndex = geometryIndex;
+		matTexture.textureType = textureType;
+		matTexture.texture = texture;
+
+		auto it = std::find(mTextures.begin(), mTextures.end(), matTexture);
+
+		if(it != mTextures.end())
+			mTextures.erase(it);
+
+		mTextures.push_back(matTexture);
+	}
+}
 
 //=========================================================================
 void Material::addTexture(const std::string& fileName, const TextureType& textureType, unsigned int geometryIndex)
@@ -299,12 +328,11 @@ void Material::setTilingUV(float value)
 }
 
 //=========================================================================
-void Material::reloadShader()
+void Material::onEvent(FileMonitorEvent& event)
 {
-	logNote("Reloading shader: ", mShaderFileName.c_str());
-
-	//mShader.reset();
-	//mShader = Shader::create(mShaderFileName);
+	logNote("File has changed: %s", event.fileName.c_str());
+	logNote("Reloading shader: %s", mShaderFileName.c_str());
+	mReloadShader = true;
 }
 
 //=========================================================================

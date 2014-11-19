@@ -206,6 +206,7 @@
     <ClInclude Include="..\include\Core\MeshData.h" />
     <ClInclude Include="..\include\Core\MeshLoader.h" />
     <ClInclude Include="..\include\Core\MouseEvent.h" />
+    <ClInclude Include="..\include\Core\Observer.h" />
     <ClInclude Include="..\include\Core\PointLight.h" />
     <ClInclude Include="..\include\Core\Quad.h" />
     <ClInclude Include="..\include\Core\Plane.h" />

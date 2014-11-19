@@ -223,5 +223,8 @@
     <ClInclude Include="..\include\Core\FileMonitor.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Core\Observer.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

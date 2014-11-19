@@ -27,6 +27,7 @@ public:
 
 	//const std::vector<Material::GeometryMaterial>& getGeomMaterial();
 	void setTexturePath(const std::string& texturePath);
+	void setAutoLoadTextures(bool value);
 
 	AABB getAABB() const;
 	void setFrustumCulling(bool isOn);
@@ -45,6 +46,7 @@ private:
 	//std::string getFileName(std::string& pathName);
 	//void parseNode(const aiNode* node);
 	MeshData mMeshData;
+	bool mAutoloadTextures{ true };
 
 	void updateUniforms(const Camera& camera);
 	void draw(const Camera& camera);
@@ -89,7 +91,8 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 	mMeshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
 
 	mMaterial = DefaultMaterial::create();
-	setupMaterial();
+	if (mAutoloadTextures)
+		setupMaterial();
 
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
@@ -276,6 +279,12 @@ void Mesh::setupMaterial()
 			geometryIndex++;
 		}
 	}
+}
+
+//=========================================================================
+void Mesh::setAutoLoadTextures(bool value)
+{
+	mAutoloadTextures = value;
 }
 
 

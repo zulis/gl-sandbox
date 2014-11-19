@@ -16,11 +16,13 @@ private:
 	TextureRef mDefaultNormal;
 	TextureRef mDefaultHeight;
 	TextureRef mDefaultSpecular;
+	TextureRef mDefaultEmissive;
+	TextureRef mDefaultOpacity;
 
-	std::string mDefaultDiffuseName;
-	std::string mDefaultNormalName;
-	std::string mDefaultHeightName;
-	std::string mDefaultSpecularName;
+	//std::string mDefaultDiffuseName;
+	//std::string mDefaultNormalName;
+	//std::string mDefaultHeightName;
+	//std::string mDefaultSpecularName;
 
 	virtual void updateUniforms(unsigned int geometryIndex);
 };
@@ -35,18 +37,20 @@ MaterialDefaultRef DefaultMaterial::create()
 DefaultMaterial::DefaultMaterial() : Material(/*"assets/shaders/textured"*/"assets/shaders/defaultMaterial")
 {
 	//mDefaultDiffuseName = "assets/textures/default/default_d.png";
-	mDefaultDiffuseName = "assets/textures/default/UV_mapper.jpg";
-	mDefaultNormalName = "assets/textures/default/default_n.png";
-	mDefaultSpecularName = "assets/textures/default/default_s.png";
+	//mDefaultDiffuseName = "assets/textures/default/UV_mapper.jpg";
+	//mDefaultNormalName = "assets/textures/default/default_n.png";
+	//mDefaultSpecularName = "assets/textures/default/default_s.png";
 
 	//mDefaultDiffuse = Texture::create("assets/textures/default/default_d.png");
 	//mDefaultNormal = Texture::create("assets/textures/default/default_n.png");
 	//mDefaultSpecular = Texture::create("assets/textures/default/default_s.png");
 
 	mDefaultDiffuse = Texture::create(Color::white());
-	//mDefaultNormal = Texture::create(Color::normal());
-	//mDefaultHeight = Texture::create(Color::white());
+	mDefaultNormal = Texture::create(Color::normal());
+	mDefaultHeight = Texture::create(Color::white());
 	mDefaultSpecular = Texture::create(Color::white());
+	mDefaultEmissive = Texture::create(Color::white());
+	mDefaultOpacity = Texture::create(Color::white());
 
 }
 
@@ -60,29 +64,37 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 {
 	if(!bindTexture(TextureType::DiffuseMap, 0, geometryIndex))
 	{
-		addTexture(mDefaultDiffuseName, TextureType::DiffuseMap, geometryIndex);
+		addTexture(mDefaultDiffuse, TextureType::DiffuseMap, geometryIndex);
 		bindTexture(TextureType::DiffuseMap, 0, geometryIndex);
-		//mDefaultDiffuse->bind(0);
 	}
-
 
 	if(!bindTexture(TextureType::NormalMap, 1, geometryIndex))
 	{
-		addTexture(mDefaultNormalName, TextureType::NormalMap, geometryIndex);
+		addTexture(mDefaultNormal, TextureType::NormalMap, geometryIndex);
 		bindTexture(TextureType::NormalMap, 1, geometryIndex);
 	}
-	//mDefaultNormal->bind(1);
 
-	bindTexture(TextureType::HeightMap, 2, geometryIndex);
-	//mDefaultHeight->bind(2);
+	if (!bindTexture(TextureType::HeightMap, 2, geometryIndex))
+	{
+		addTexture(mDefaultHeight, TextureType::HeightMap, geometryIndex);
+		bindTexture(TextureType::HeightMap, 2, geometryIndex);
+	}
 
 	if(!bindTexture(TextureType::SpecularMap, 3, geometryIndex))
 	{
-		//addTexture(mDefaultSpecularName, TextureType::SpecularMap, geometryIndex);
-		//bindTexture(TextureType::SpecularMap, 3, geometryIndex);
-		mDefaultSpecular->bind(3);
-		getShader()->setUniform(ShaderConstants::SpecularMapIsUsed, true);
+		addTexture(mDefaultSpecular, TextureType::SpecularMap, geometryIndex);
+		bindTexture(TextureType::SpecularMap, 3, geometryIndex);
 	}
 
-	bindTexture(TextureType::OpacityMap, 4, geometryIndex);
+	if (!bindTexture(TextureType::EmissiveMap, 4, geometryIndex))
+	{
+		addTexture(mDefaultEmissive, TextureType::EmissiveMap, geometryIndex);
+		bindTexture(TextureType::EmissiveMap, 4, geometryIndex);
+	}
+
+	if (!bindTexture(TextureType::OpacityMap, 5, geometryIndex))
+	{
+		addTexture(mDefaultOpacity, TextureType::OpacityMap, geometryIndex);
+		bindTexture(TextureType::OpacityMap, 5, geometryIndex);
+	}
 }

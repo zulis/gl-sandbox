@@ -18,6 +18,7 @@ enum TextureType
 	//Refraction,
 	//Displacement,
 	HeightMap,
+	EmissiveMap,
 	Unknown
 };
 
@@ -36,5 +37,6 @@ std::map<TextureType, std::string> TextureTypeName =
 	//{ TextureType::Refraction, "Refraction" },
 	//{ TextureType::Displacement, "Displacement" },
 	{ TextureType::HeightMap, "HeightMap" },
+	{ TextureType::EmissiveMap, "EmissiveMap" },
 	{ TextureType::Unknown, "Unknown" },
 };

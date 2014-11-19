@@ -229,7 +229,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 							break;
 
 						case aiTextureType_EMISSIVE:
-							// 						meshTexture.type = TextureType::SelfIllumination;
+							meshTexture.textureType = TextureType::EmissiveMap;
 							break;
 
 						case aiTextureType_HEIGHT:
