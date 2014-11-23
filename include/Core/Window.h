@@ -1,465 +1,302 @@
-﻿#pragma once
+#pragma once
 
-#include <memory>
-#include <functional>
 #include <string>
-#include <map>
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include "Core/Observer.h"
+#include <glm/glm.hpp>
+#include "Core/GL.h"
+#include <glfw/glfw3.h>
+#include "Core/Input.h"
+#include "Core/Log.h"
 
-typedef std::unique_ptr<class Window> WindowRef;
-typedef std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> SDLWindowRef;
-typedef std::function<void(int, int)> ResizeCallback;
-//typedef std::function<void(int, bool)> KeyDownCallback;
-typedef std::function<void(int, bool)> MouseDownCallback;
-typedef std::function<void(int, int, int, int)> MousePositionCallback;
-typedef std::function<void(int)> MouseWheelCallback;
+extern "C" {
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
 
-class Window : public Dispatcher<KeyboardEvent>
+class Input;
+
+enum class WindowMode
 {
-public:
-	enum MessageBoxType
-	{
-		Error,
-		Warning,
-		Info
-	};
-
-	static WindowRef create(int width, int height, bool fullScreen, const std::string& title);
-	~Window();
-	/*static*/ void close();
-	/*static*/ bool isClosed();
-	/*static*/ void update();
-	/*static*/ void swapBuffers();
-	/*static*/ void setFullScreen(bool fullScreen);
-	/*static*/ void setFullScreenDesktop(bool fullScreen);
-	/*static*/ bool isFullScreen();
-	/*static*/ unsigned int getWidth();
-	/*static*/ unsigned int getHeight();
-	/*static*/ void setResizeCallback(ResizeCallback callback);
-	///*static*/ void setKeyDownCallback(KeyDownCallback callback);
-	/*static*/ void setMouseDownCallback(MouseDownCallback callback);
-	/*static*/ void setMousePositionCallback(MousePositionCallback callback);
-	/*static*/ void setMouseWheelCallback(MouseWheelCallback callback);
-	/*static*/ void setTitle(const std::string& title);
-	/*static*/ void setSize(int width, int height);
-	/*static*/ void showMessageBox(const std::string& message, Window::MessageBoxType type = Window::MessageBoxType::Error);
-	/*static*/ void showMouse();
-	/*static*/ void hideMouse();
-	/*static*/ void setMousePosition(int x, int y);
-	/*static*/ void setCursor(const std::string& fileName, unsigned int hotspotX = 0, unsigned int hotspotY = 0);
-	/*static*/ void setCursor(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels, unsigned int hotspotX = 0, unsigned int hotspotY = 0);
-	/*static*/ void setIcon(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels);
-	/*static*/ float getAspectRatio();
-	/*static*/ void sleep(int milliseconds);
-
-private:
-	Window(int width, int height, bool fullScreen, const std::string& title);
-	
-	/*static*/ SDLWindowRef mWindow { SDLWindowRef(nullptr, SDL_DestroyWindow) };
-	/*static*/ SDL_GLContext mContext;
-	/*static*/ bool mIsClosed {false};
-	/*static*/ bool mIsFullScreen {false};
-	/*static*/ unsigned int mWidth {0};
-	/*static*/ unsigned int mHeight {0};
-	/*static*/ int eventFilter(void* userdata, SDL_Event* event);
-	/*static*/ ResizeCallback mResizeCallback;
-	///*static*/ KeyDownCallback mKeyDownCallback;
-	/*static*/ MouseDownCallback mMouseDownCallback;
-	/*static*/ MousePositionCallback mMousePositionCallback;
-	/*static*/ MouseWheelCallback mMouseWheelCallback;
-	/*static*/ void resizeEvent(int width, int height);
-	///*static*/ void keyDownEvent(int key, bool isDown);
-	/*static*/ void mouseDownEvent(int button, bool isDown);
-	/*static*/ void mousePositionEvent(int x, int y, int changeX, int changeY);
-	/*static*/ void mouseWheelEvent(int x);
-
+    Windowed,
+    FullScreen,
+    FullScreenNative
 };
 
-//WindowRef Window::mWindow = WindowRef(nullptr, SDL_DestroyWindow);
-//SDL_GLContext Window::mContext;
-//bool Window::mIsClosed = false;
-//bool Window::mIsFullScreen = false;
-//unsigned int Window::mWidth = 0;
-//unsigned int Window::mHeight = 0;
-//ResizeCallback Window::mResizeCallback = nullptr;
-//KeyDownCallback Window::mKeyDownCallback = nullptr;
-//MouseDownCallback Window::mMouseDownCallback = nullptr;
-//MousePositionCallback Window::mMousePositionCallback = nullptr;
-//MouseWheelCallback Window::mMouseWheelCallback = nullptr;
+class Window
+{
+public:
+	Window(int width, int height, WindowMode mode, const std::string& title);
+	virtual ~Window();
+
+	virtual void resize(unsigned int width, unsigned int height) = 0;
+	virtual void input(Input& input) = 0;
+	virtual void update(double elapsedTime) = 0;
+	virtual void draw() = 0;
+
+	void run();
+	void quit();
+	void setTitle(const std::string& title);
+	const Input& getInput() const;
+	Input& getInput();
+	double getTime() const;
+	const glm::mat4 getOrtho() const;
+	void setMouseVisibility(bool isVisible);
+	//GLFWwindow* getGLFWWindow() const;
+
+private:
+	GLFWwindow* mWindow { nullptr };
+	Input mInput;
+	bool mRunning { true };
+	double mLastTimeStamp { 0.0 };
+	double mTotalTime { 0.0 };
+
+	inline static void errorCallback(int errorCode, const char* description);
+	inline static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	inline static void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod);
+	inline static void cursorPosCallback(GLFWwindow* window, double x, double y);
+	inline static void scrollCallback(GLFWwindow* window, double offsetX, double offsetY);
+	inline static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+};
+
+// Callbacks
+//=========================================================================
+void Window::errorCallback(int errorCode, const char* description)
+{
+	logError(description);
+}
 
 //=========================================================================
-WindowRef Window::create(int width, int height, bool fullScreen, const std::string& title)
+void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	return WindowRef(new Window(width, height, fullScreen, title));
+	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+	bool isDown;
+
+	if(action == GLFW_PRESS)
+		isDown = true;
+	else if(action == GLFW_RELEASE)
+		isDown = false;
+	else
+		// GLFW_REPEAT must be ignored
+		return;
+
+	currentWindow->getInput().setKeyStatus(key, isDown);
 }
 
-// =========================================================================
-Window::Window(int width, int height, bool fullScreen, const std::string& title)
+//=========================================================================
+void Window::mouseButtonCallback(GLFWwindow* window, int button, int state, int mod)
 {
-	mWidth = width;
-	mHeight = height;
-	mIsFullScreen = fullScreen;
+	MouseButton mouseButton;
 
-	if(SDL_Init(SDL_INIT_EVERYTHING) == -1)
-	{
-		showMessageBox("SDL initialization failed.");
-		return;
-	}
+	if(button == GLFW_MOUSE_BUTTON_LEFT)
+		mouseButton = MouseButton::Left;
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+		mouseButton = MouseButton::Right;
+	else if (button == GLFW_MOUSE_BUTTON_MIDDLE)
+		mouseButton = MouseButton::Middle;
+	else
+		return; // Unsupported
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
-	// Setup anti aliasing
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-
-	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN;
-
-	// Create the window
-	mWindow.reset(SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags));
-
-	// Make sure it created ok
-	if(mWindow == nullptr)
-	{
-		showMessageBox("Failed to create window.");
-		return;
-	}
-
-	// Create the context
-	mContext = SDL_GL_CreateContext(mWindow.get());
-
-	// Disable vsync (use 1 to enable)
-	SDL_GL_SetSwapInterval(0);
-
-	// Update window
-	SDL_GL_SwapWindow(mWindow.get());
+	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	currentWindow->getInput().setMouseButtonStatus(mouseButton, state == GLFW_PRESS);
 }
 
-// =========================================================================
+//=========================================================================
+void Window::cursorPosCallback(GLFWwindow* window, double x, double y)
+{
+	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	currentWindow->getInput().setMousePositionStatus(x, y);
+}
+
+//=========================================================================
+void Window::scrollCallback(GLFWwindow* window, double offsetX, double offsetY)
+{
+	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	currentWindow->getInput().setMouseScrollStatus(offsetX, offsetY);
+}
+
+//=========================================================================
+void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	gl::setViewport(width, height);
+	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	currentWindow->resize(width, height);
+}
+
+//=========================================================================
+Window::Window(int width, int height, WindowMode mode, const std::string& title)
+{
+	glfwSetErrorCallback(&errorCallback);
+
+	glfwInit();
+
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+#ifdef _DEBUG
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
+	GLFWmonitor* mon = glfwGetPrimaryMonitor();
+	const GLFWvidmode* vidmode = glfwGetVideoMode(mon);
+
+	if(mode == WindowMode::FullScreenNative)
+	{
+		width = vidmode->width;
+		height = vidmode->height;
+	}
+
+	mWindow = glfwCreateWindow(width, height, title.c_str(), (mode == WindowMode::FullScreen || mode == WindowMode::FullScreenNative) ? mon : NULL, NULL);
+
+	if(!mWindow)
+		exit(1);
+
+	glfwMakeContextCurrent(mWindow);
+	glfwSetWindowPos(mWindow, vidmode->width / 2 - width / 2, vidmode->height / 2 - height / 2);
+	//glfwSetInputMode(mWindow, GLFW_STICKY_KEYS, GL_TRUE);
+	//glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+	glfwSetWindowUserPointer(mWindow, this);
+	glfwSetKeyCallback(mWindow, keyCallback);
+	glfwSetMouseButtonCallback(mWindow, mouseButtonCallback);
+	glfwSetCursorPosCallback(mWindow, cursorPosCallback);
+	glfwSetScrollCallback(mWindow, scrollCallback);
+	glfwSetFramebufferSizeCallback(mWindow, framebufferSizeCallback);
+
+	// Init OpenGL
+	logNote("Initialising OpenGL...");
+
+	if(ogl_LoadFunctions() == ogl_LOAD_FAILED)
+	{
+		logError("OpenGL initialisation failed.");
+		glfwDestroyWindow(mWindow);
+		glfwTerminate();
+		exit(1);
+	}
+
+	// Display some information about the OpenGL version we are running
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* vendor = glGetString(GL_VENDOR);
+	const GLubyte* version = glGetString(GL_VERSION);
+	const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	GLint major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
+
+	logNote("GL Vendor    = %s", vendor);
+	logNote("GL Renderer  = %s", renderer);
+	logNote("GL Version (string)  = %s", version);
+	logNote("GL Version (integer) = %d.%d", major, minor);
+	logNote("GLSL Version = %s", glslVersion);
+}
+
+//=========================================================================
 Window::~Window()
 {
-	close();
-}
-
-// =========================================================================
-void Window::close()
-{
-	SDL_GL_DeleteContext(mContext);
-	SDL_DestroyWindow(mWindow.get());
-	SDL_Quit();
-	mIsClosed = true;
-}
-
-// =========================================================================
-bool Window::isClosed()
-{
-	return mIsClosed;
+	glfwDestroyWindow(mWindow);
+	glfwTerminate();
 }
 
 //=========================================================================
-void Window::update()
+void Window::run()
 {
-	SDL_Event event;
+	glfwSetTime(0.0);
+	mLastTimeStamp = 0.0;
+	mTotalTime = 0.0;
 
-	while(SDL_PollEvent(&event))
+	// Call resize before we start
 	{
-		switch(event.type)
+		int width, height;
+		glfwGetFramebufferSize(mWindow, &width, &height);
+		resize(width, height);
+	}
+
+	double accumulator = 0.0;
+	const double frameTime = 1.0 / 60.0;
+
+	while(!glfwWindowShouldClose(mWindow) && mRunning)
+	{
+		const double timeStamp = glfwGetTime();
+		const double dt = timeStamp - mLastTimeStamp;
+		mLastTimeStamp = timeStamp;
+
+		mTotalTime += dt;
+		accumulator += dt;
+
+		while(mRunning && accumulator >= frameTime)
 		{
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-				//keyDownEvent(event.key.keysym.sym, event.key.type == SDL_KEYDOWN);
-				dispatch(KeyboardEvent(event.key.keysym.sym, event.key.type == SDL_KEYDOWN));
-				break;
+			input(mInput);
+			update(frameTime);
+			accumulator -= frameTime;
 
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-				mouseDownEvent(event.button.button, event.button.type == SDL_MOUSEBUTTONDOWN);
-				break;
-
-			case SDL_MOUSEMOTION:
-				mousePositionEvent(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
-				break;
-
-			case SDL_MOUSEWHEEL:
-				mouseWheelEvent(event.wheel.y);
-				break;
-
-			case SDL_QUIT:
-				close();
-				break;
-
-			case SDL_WINDOWEVENT:
-				switch(event.window.event)
-				{
-					case SDL_WINDOWEVENT_RESIZED:
-						mWidth = event.window.data1;
-						mHeight = event.window.data2;
-						resizeEvent(mWidth, mHeight);
-						break;
-
-					default:
-						break;
-				}
-
-			default:
-				break;
+			// Reset mouse statuses
+			mInput.setMouseScrollStatus(0, 0);
+			mInput.setMouseChangeStatus(0, 0);
+			// Check mouse visibility
+			setMouseVisibility(mInput.isMouseVisible());
 		}
+
+		// Enable 3D rendering & alpha
+		gl::enable3D();
+		gl::enableAlphaBlending();
+
+		draw();
+
+		glfwSwapBuffers(mWindow);
+		glfwPollEvents();
 	}
 }
 
 //=========================================================================
-void Window::swapBuffers()
+void Window::quit()
 {
-	SDL_GL_SwapWindow(mWindow.get());
-}
-
-//=========================================================================
-void Window::setFullScreen(bool fullScreen)
-{
-	mIsFullScreen = fullScreen;
-	SDL_SetWindowFullscreen(mWindow.get(), mIsFullScreen ? SDL_WINDOW_FULLSCREEN : 0);
-}
-
-//=========================================================================
-void Window::setFullScreenDesktop(bool fullScreen)
-{
-	mIsFullScreen = fullScreen;
-	SDL_SetWindowFullscreen(mWindow.get(), mIsFullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-}
-
-//=========================================================================
-bool Window::isFullScreen()
-{
-	return mIsFullScreen;
-}
-
-//=========================================================================
-unsigned int Window::getWidth()
-{
-	return mWidth;
-}
-
-//=========================================================================
-unsigned int Window::getHeight()
-{
-	return mHeight;
-}
-
-//=========================================================================
-void Window::setResizeCallback(ResizeCallback callback)
-{
-	mResizeCallback = callback;
-}
-
-//=========================================================================
-void Window::resizeEvent(int width, int height)
-{
-	mWidth = width;
-	mHeight = height;
-
-	if(mResizeCallback != nullptr)
-		mResizeCallback(width, height);
-}
-
-//=========================================================================
-// void Window::setKeyDownCallback(KeyDownCallback callback)
-// {
-// 	mKeyDownCallback = callback;
-// }
-
-//=========================================================================
-// void Window::keyDownEvent(int key, bool isDown)
-// {
-// 	if(mKeyDownCallback != nullptr)
-// 		mKeyDownCallback(key, isDown);
-// }
-
-//=========================================================================
-void Window::setMouseDownCallback(MouseDownCallback callback)
-{
-	mMouseDownCallback = callback;
-}
-
-//=========================================================================
-void Window::mouseDownEvent(int button, bool isDown)
-{
-	if(mMouseDownCallback != nullptr)
-		mMouseDownCallback(button, isDown);
-}
-
-//=========================================================================
-void Window::setMousePositionCallback(MousePositionCallback callback)
-{
-	mMousePositionCallback = callback;
-}
-
-//=========================================================================
-void Window::mousePositionEvent(int x, int y, int changeX, int changeY)
-{
-	if(mMousePositionCallback != nullptr)
-		mMousePositionCallback(x, y, changeX, changeY);
-}
-
-//=========================================================================
-void Window::setMouseWheelCallback(MouseWheelCallback callback)
-{
-	mMouseWheelCallback = callback;
-}
-
-//=========================================================================
-void Window::mouseWheelEvent(int x)
-{
-	if(mMouseWheelCallback != nullptr)
-		mMouseWheelCallback(x);
+	mRunning = false;
 }
 
 //=========================================================================
 void Window::setTitle(const std::string& title)
 {
-	SDL_SetWindowTitle(mWindow.get(), title.c_str());
+	glfwSetWindowTitle(mWindow, title.c_str());
 }
 
 //=========================================================================
-void Window::setSize(int width, int height)
+const Input& Window::getInput() const
 {
-	SDL_SetWindowSize(mWindow.get(), width, height);
-	SDL_SetWindowPosition(mWindow.get(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-	SDL_GL_SwapWindow(mWindow.get());
-	resizeEvent(width, height);
+	return mInput;
 }
 
 //=========================================================================
-void Window::showMessageBox(const std::string& message, Window::MessageBoxType type)
+Input& Window::getInput()
 {
-	Uint32 flags;
-	const char* title;
-
-	switch(type)
-	{
-		case Window::Error:
-			flags = SDL_MESSAGEBOX_ERROR;
-			title = "Error";
-			break;
-
-		case Window::Warning:
-			flags = SDL_MESSAGEBOX_WARNING;
-			title = "Warning";
-			break;
-
-		case Window::Info:
-			flags = SDL_MESSAGEBOX_INFORMATION;
-			title = "Information";
-			break;
-	}
-
-	SDL_ShowSimpleMessageBox(flags, title, message.c_str(), NULL);
+	return mInput;
 }
 
 //=========================================================================
-void Window::showMouse()
+double Window::getTime() const
 {
-	SDL_ShowCursor(1);
+	return mTotalTime;
 }
 
 //=========================================================================
-void Window::hideMouse()
+const glm::mat4 Window::getOrtho() const
 {
-	SDL_ShowCursor(0);
+	int width;
+	int height;
+	glfwGetFramebufferSize(mWindow, &width, &height);
+	return glm::ortho(0.0f, (float)width, (float)height, (float)0.0f);
 }
 
 //=========================================================================
-void Window::setMousePosition(int x, int y)
+void Window::setMouseVisibility(bool isVisible)
 {
-	SDL_WarpMouseInWindow(mWindow.get(), x, y);
+	glfwSetInputMode(mWindow, GLFW_CURSOR, isVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 
 //=========================================================================
-void Window::setCursor(const std::string& fileName, unsigned int hotspotX, unsigned int hotspotY)
-{
-	SDL_SetCursor(SDL_CreateColorCursor(SDL_LoadBMP(fileName.c_str()), hotspotX, hotspotY));
-}
-
-//=========================================================================
-void Window::setCursor(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels, unsigned int hotspotX, unsigned int hotspotY)
-{
-	uint32_t rmask, gmask, bmask, amask;
-	SDL_Surface* surface;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-
-	if(channels == 4)
-	{
-		surface = SDL_CreateRGBSurface(0, width, height, 32, rmask, gmask, bmask, amask);
-	}
-	else if(channels == 3)
-	{
-		surface = SDL_CreateRGBSurface(0, width, height, 24, rmask, gmask, bmask, 0);
-	}
-
-	memcpy(surface->pixels, pixels, channels * width * height);
-
-	SDL_SetCursor(SDL_CreateColorCursor(surface, hotspotX, hotspotY));
-	SDL_FreeSurface(surface);
-}
-
-//=========================================================================
-void Window::setIcon(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels)
-{
-	uint32_t rmask, gmask, bmask, amask;
-	SDL_Surface* surface;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-
-	if(channels == 4)
-	{
-		surface = SDL_CreateRGBSurface(0, width, height, 32, rmask, gmask, bmask, amask);
-	}
-	else if(channels == 3)
-	{
-		surface = SDL_CreateRGBSurface(0, width, height, 24, rmask, gmask, bmask, 0);
-	}
-
-	memcpy(surface->pixels, pixels, channels * width * height);
-
-	SDL_SetWindowIcon(mWindow.get(), surface);
-	SDL_FreeSurface(surface);
-}
-
-//=========================================================================
-float Window::getAspectRatio()
-{
-	return (float)getWidth() / getHeight();
-}
-
-//=========================================================================
-void Window::sleep(int milliseconds)
-{
-	SDL_Delay(milliseconds);
-}
+// GLFWwindow* Window::getGLFWWindow() const
+// {
+// 	return mWindow;
+// }

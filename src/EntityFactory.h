@@ -4,7 +4,6 @@
 #include <Artemis.h>
 
 #include "Core/Camera.h"
-#include "Core/MouseEvent.h"
 #include "Core/Mesh.h"
 //#include "Core/MaterialPhong.h"
 #include "Core/PointLight.h"

@@ -1,51 +1,56 @@
 #pragma once
 
 #include <map>
-#include <cassert>
 #include <glm/glm.hpp>
+
+enum class MouseButton
+{
+	Left,
+	Right,
+	Middle
+};
 
 class Input
 {
 public:
-	Input();
+	Input() {};
 	virtual ~Input() {};
 
-	void setKey(int key, bool isDown);
+	void setKeyStatus(int key, bool isDown);
 	bool isKeyDown(int key) const;
 	bool isKeyUp(int key) const;
 
-	void setMousePos(int x, int y);
-	void setMouseButton(int button, bool down);
-	void setScroll(double offsetX, double offsetY);
-	glm::ivec2 getMousePosition() const;
+	void setMousePositionStatus(int x, int y);
+	void setMouseChangeStatus(int x, int y);
+	void setMouseButtonStatus(const MouseButton& button, bool down);
+	void setMouseScrollStatus(double x, double y);
+	const glm::ivec2 getMousePosition() const;
 	int getMouseX() const;
 	int getMouseY() const;
-	int getMouseRelX();
-	int getMouseRelY();
-	bool isMouseDown(int button) const;
+	int getMouseChangeX() const;
+	int getMouseChangeY() const;
+	double getMouseScroolX() const;
+	double getMouseScroolY() const;
+	bool isMouseDown(const MouseButton& button) const;
+	void showMouse();
+	void hideMouse();
+	bool isMouseVisible() const;
 
 private:
 	std::map<int, bool> mKeyTable;
 	mutable std::map<int, bool> mPrevKeyTable;
+	std::map<MouseButton, bool> mMouseButtons;
 	int mMouseX {0};
 	int mMouseY { 0 };
-	int mMouseRelX { 0 };
-	int mMouseRelY { 0 };
-	double mMouseOffsetX { 0 };
-	double mMouseOffsetY { 0 };
-	static const int MOUSE_BUTTON_COUNT = 3;
-	bool mMouseButtons[MOUSE_BUTTON_COUNT];
+	int mMouseChangeX { 0 };
+	int mMouseChangeY{ 0 };
+	double mMouseScrollX { 0 };
+	double mMouseScrollY { 0 };
+	bool mMouseIsVisible{ true };
 };
 
 //=========================================================================
-Input::Input()
-{
-	for(int i = 0; i < MOUSE_BUTTON_COUNT; ++i)
-		mMouseButtons[i] = false;
-}
-
-//=========================================================================
-void Input::setKey(int key, bool isDown)
+void Input::setKeyStatus(int key, bool isDown)
 {
 	mPrevKeyTable = mKeyTable;
 	mKeyTable[key] = isDown;
@@ -81,29 +86,36 @@ bool Input::isKeyUp(int key) const
 }
 
 //=========================================================================
-void Input::setMousePos(int x, int y)
+void Input::setMousePositionStatus(int x, int y)
 {
-	mMouseRelX = x - mMouseX;
-	mMouseRelY = y - mMouseY;
+	mMouseChangeX = x - mMouseX;
+	mMouseChangeY = y - mMouseY;
 	mMouseX = x;
 	mMouseY = y;
 }
 
 //=========================================================================
-void Input::setMouseButton(int button, bool down)
+void Input::setMouseChangeStatus(int x, int y)
+{
+	mMouseChangeX = x;
+	mMouseChangeY = y;
+}
+
+//=========================================================================
+void Input::setMouseButtonStatus(const MouseButton& button, bool down)
 {
 	mMouseButtons[button] = down;
 }
 
 //=========================================================================
-void Input::setScroll(double offsetX, double offsetY)
+void Input::setMouseScrollStatus(double x, double y)
 {
-	mMouseOffsetX = offsetX;
-	mMouseOffsetY = offsetY;
+	mMouseScrollX = x;
+	mMouseScrollY = y;
 }
 
 //=========================================================================
-glm::ivec2 Input::getMousePosition() const
+const glm::ivec2 Input::getMousePosition() const
 {
 	return glm::ivec2(mMouseX, mMouseY);
 }
@@ -121,24 +133,54 @@ int Input::getMouseY() const
 }
 
 //=========================================================================
-int Input::getMouseRelX()
+int Input::getMouseChangeX() const
 {
-	int val = mMouseRelX;
-	mMouseRelX = 0;
-	return val;
+	return mMouseChangeX;
 }
 
 //=========================================================================
-int Input::getMouseRelY()
+int Input::getMouseChangeY() const
 {
-	int val = mMouseRelY;
-	mMouseRelY = 0;
-	return val;
+	return mMouseChangeY;
 }
 
 //=========================================================================
-bool Input::isMouseDown(int button) const
+double Input::getMouseScroolX() const
 {
-	assert(button < MOUSE_BUTTON_COUNT);
-	return mMouseButtons[button];
+	return mMouseScrollX;
+}
+
+//=========================================================================
+double Input::getMouseScroolY() const
+{
+	return mMouseScrollY;
+}
+
+//=========================================================================
+bool Input::isMouseDown(const MouseButton& button) const
+{
+	auto it = mMouseButtons.find(button);
+
+	if (it != mMouseButtons.end())
+		return mMouseButtons.at(button);
+	else
+		return false;
+}
+
+//=========================================================================
+void Input::showMouse()
+{
+	mMouseIsVisible = true;
+}
+
+//=========================================================================
+void Input::hideMouse()
+{
+	mMouseIsVisible = false;
+}
+
+//=========================================================================
+bool Input::isMouseVisible() const
+{
+	return mMouseIsVisible;
 }

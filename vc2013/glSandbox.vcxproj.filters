@@ -91,9 +91,6 @@
     <ClInclude Include="..\include\Core\State.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\MouseEvent.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Defines.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
@@ -131,9 +128,6 @@
       <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Texture.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\Time.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Components\VelocityComponent.h">
@@ -226,17 +220,11 @@
     <ClInclude Include="..\include\Core\Input.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Window.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\GLFWBackend.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Include</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="glSandbox.rc" />
+    <ClInclude Include="..\include\Core\Window.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

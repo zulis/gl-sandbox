@@ -7,12 +7,13 @@ class StateManager
 {
 public:
 	template<class T>
-	static State* setState(Window* window);
+	static State* setState();
 	static State* getState();
 	static bool shouldQuit();
-	static void update(float elapsedTime);
+	static void input(Input& input);
+	static void update(double elapsedTime);
 	static void draw();
-	static void resize(unsigned int width, int height);
+	static void resize(unsigned int width, unsigned int height);
 
 private:
 	static StateRef mState;
@@ -22,10 +23,10 @@ StateRef StateManager::mState = nullptr;
 
 //=========================================================================
 template<class T>
-State* StateManager::setState(Window* window)
+State* StateManager::setState()
 {
 	mState.reset();
-	mState = State::create<T>(window);
+	mState = State::create<T>();
 	return getState();
 }
 
@@ -48,29 +49,29 @@ bool StateManager::shouldQuit()
 }
 
 //=========================================================================
-void StateManager::update(float elapsedTime)
+void StateManager::input(Input& input)
+{
+	if (mState)
+		mState->input(input);
+}
+
+//=========================================================================
+void StateManager::update(double elapsedTime)
 {
 	if(mState)
-	{
-		mState->emitInput();
 		mState->update(elapsedTime);
-	}
 }
 
 //=========================================================================
 void StateManager::draw()
 {
 	if(mState)
-	{
 		mState->draw();
-	}
 }
 
 //=========================================================================
-void StateManager::resize(unsigned int width, int height)
+void StateManager::resize(unsigned int width, unsigned int height)
 {
 	if(mState)
-	{
 		mState->resize(width, height);
-	}
 }

@@ -1,47 +1,34 @@
 #pragma once
 
 #include <memory>
-#include "Core/Window.h"
-#include "Core/Events.h"
-#include "Core/MouseEvent.h"
+#include "Core/Defines.h"
+#include "Core/Input.h"
 
 typedef std::shared_ptr<class State> StateRef;
 
-class State //: public Listener<KeyboardEvent>
+class State
 {
-	friend class Game;
+	//friend class Game;
 	friend class StateManager;
 public:
 	virtual void setup() {};
 	virtual void cleanup() {};
-	virtual void input(const KeyboardEvent& keyEvent/*, const MouseEvent& mouseEvent*/) {};
-	virtual void update(float elapsedTime) {};
+	virtual void input(Input& input) {};
+	virtual void update(double elapsedTime) {};
 	virtual void draw() {};
-	virtual void resize(unsigned int width, int height) {};
-
-	//virtual void onEvent(const KeyboardEvent& event) {};
+	virtual void resize(unsigned int width, unsigned int height) {};
 
 	void quit();
-	Window* getWindow() const;
-
-private:
-	bool mShouldQuit;
-	Window* mWindow;
-	MouseEventRef mMouseEvent;
-	KeyboardEventRef mKeyboardEvent;
 
 private:
 	template<class T>
-	static StateRef create(Window* window);
-	void emitInput();
-	void setMouseButonStatus(int button, bool isDown);
-	void setMousePositionStatus(int x, int y, int changeX, int changeY);
-	void setMouseWheelStatus(int x);
+	static StateRef create();
+	bool mShouldQuit;
 };
 
 //=========================================================================
 template<class T>
-StateRef State::create(Window* window)
+StateRef State::create()
 {
 	auto state = StateRef(new T, [](T* ptr)
 	{
@@ -49,9 +36,6 @@ StateRef State::create(Window* window)
 		delete ptr;
 	});
 	state->mShouldQuit = false;
-	state->mWindow = window;
-	state->mKeyboardEvent = KeyboardEventRef(new KeyboardEvent);
-	state->mMouseEvent = MouseEventRef(new MouseEvent);
 	state->setup();
 	return state;
 }
@@ -60,34 +44,4 @@ StateRef State::create(Window* window)
 void State::quit()
 {
 	mShouldQuit = true;
-}
-
-//=========================================================================
-void State::setMouseButonStatus(int button, bool isDown)
-{
-	mMouseEvent->setButtonStatus(button, isDown);
-}
-
-//=========================================================================
-void State::setMousePositionStatus(int x, int y, int changeX, int changeY)
-{
-	mMouseEvent->setPositionStatus(x, y, changeX, changeY);
-}
-
-//=========================================================================
-void State::setMouseWheelStatus(int x)
-{
-	mMouseEvent->setWheelStatus(x);
-}
-
-//=========================================================================
-void State::emitInput()
-{
-	input(*mKeyboardEvent/*, *mMouseEvent*/);
-}
-
-//=========================================================================
-Window* State::getWindow() const
-{
-	return mWindow;
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include "Core/Window.h"
 #include "Core/Shader.h"
 #include "Core/Texture.h"
 #include "COre/Geometry.h"
@@ -28,8 +27,8 @@ public:
 	Quad(const std::string& fileName = std::string(), float width = 0, float height = 0);
 	virtual ~Quad();
 
-	void draw();
-	void draw(Position position, float offsetX = 0.0f, float offsetY = 0.0f);
+	void draw(int windowWidth, int windowHeight);
+	void draw(int windowWidth, int windowHeight, Position position, float offsetX = 0.0f, float offsetY = 0.0f);
 	float getWidth() const;
 	float getHeight() const;
 	void setRotation(float degrees);
@@ -108,9 +107,9 @@ Quad::~Quad()
 }
 
 //=========================================================================
-void Quad::draw()
+void Quad::draw(int windowWidth, int windowHeight)
 {
-	glm::mat4 projection = glm::ortho(0.0f, (float)/*Window::*/getWidth(), (float)/*Window::*/getHeight(), 0.0f);
+	glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
 
 	auto model = mMatrix;
 	//model = glm::translate(model, glm::vec3(mWidth / 2.0f, mHeight / 2.0f, 0.0f));
@@ -130,13 +129,13 @@ void Quad::draw()
 }
 
 //=========================================================================
-void Quad::draw(Position position, float offsetX, float offsetY)
+void Quad::draw(int windowWidth, int windowHeight, Position position, float offsetX, float offsetY)
 {
 	float x = 0.0f;
 	float y = 0.0f;
 
-	auto w = /*Window::*/getWidth();
-	auto h = /*Window::*/getHeight();
+	auto w = windowWidth;
+	auto h = windowHeight;
 
 	switch(position)
 	{
@@ -184,7 +183,7 @@ void Quad::draw(Position position, float offsetX, float offsetY)
 	}
 
 	setPosition(x + offsetX / w, y - offsetY / h);
-	draw();
+	draw(windowWidth, windowHeight);
 }
 
 //=========================================================================

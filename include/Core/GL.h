@@ -72,6 +72,7 @@ inline void disableAlphaBlending()
 inline void enableDepthRead()
 {
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 }
 
 void disableDepthRead()
