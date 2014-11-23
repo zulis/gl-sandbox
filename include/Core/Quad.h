@@ -110,7 +110,7 @@ Quad::~Quad()
 //=========================================================================
 void Quad::draw()
 {
-	glm::mat4 projection = glm::ortho(0.0f, (float)Window::getWidth(), (float)Window::getHeight(), 0.0f);
+	glm::mat4 projection = glm::ortho(0.0f, (float)/*Window::*/getWidth(), (float)/*Window::*/getHeight(), 0.0f);
 
 	auto model = mMatrix;
 	//model = glm::translate(model, glm::vec3(mWidth / 2.0f, mHeight / 2.0f, 0.0f));
@@ -135,8 +135,8 @@ void Quad::draw(Position position, float offsetX, float offsetY)
 	float x = 0.0f;
 	float y = 0.0f;
 
-	auto w = Window::getWidth();
-	auto h = Window::getHeight();
+	auto w = /*Window::*/getWidth();
+	auto h = /*Window::*/getHeight();
 
 	switch(position)
 	{

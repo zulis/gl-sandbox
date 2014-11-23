@@ -14,12 +14,6 @@
 
 typedef std::shared_ptr<class FileMonitor> FileMonitorRef;
 
-struct FileMonitorEvent
-{
-	std::string fileName;
-	FileMonitorEvent(std::string fileName) : fileName(fileName) {}
-};
-
 class FileMonitor : public Dispatcher<FileMonitorEvent>
 {
 public:

@@ -4,7 +4,6 @@
 #include <Artemis.h>
 
 #include "Core/Camera.h"
-#include "Core/KeyEvent.h"
 #include "Core/MouseEvent.h"
 #include "Core/Mesh.h"
 //#include "Core/MaterialPhong.h"
@@ -33,7 +32,7 @@ public:
 	~EntityFactory();
 
 	void setup(const CameraRef& camera);
-	void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent);
+	//void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent);
 	void update(float elapsedTime);
 	void draw();
 
@@ -132,15 +131,15 @@ void EntityFactory::setup(const CameraRef& camera)
 	e.addComponent(new VelocityComponent);
 	e.addComponent(new KeyboardComponent);
 	e.addComponent(new MeshRenderComponent(mesh, mCamera));
-	e.addComponent(new PlayerComponent(KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT));
+	//e.addComponent(new PlayerComponent(KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT));
 	e.refresh();
 }
 
 //=========================================================================
-void EntityFactory::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
-{
-	mKeyboardSystem->setKeyStatus(keyEvent.getLastKey().key, keyEvent.getLastKey().isDown);
-}
+// void EntityFactory::input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent)
+// {
+// 	mKeyboardSystem->setKeyStatus(keyEvent.getLastKey().key, keyEvent.getLastKey().isDown);
+// }
 
 //=========================================================================
 void EntityFactory::update(float elapsedTime)

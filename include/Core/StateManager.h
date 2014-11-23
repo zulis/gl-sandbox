@@ -7,12 +7,12 @@ class StateManager
 {
 public:
 	template<class T>
-	static void setState();
+	static State* setState(Window* window);
 	static State* getState();
 	static bool shouldQuit();
 	static void update(float elapsedTime);
 	static void draw();
-	static void resize(int width, int height);
+	static void resize(unsigned int width, int height);
 
 private:
 	static StateRef mState;
@@ -22,10 +22,11 @@ StateRef StateManager::mState = nullptr;
 
 //=========================================================================
 template<class T>
-void StateManager::setState()
+State* StateManager::setState(Window* window)
 {
 	mState.reset();
-	mState = State::create<T>();
+	mState = State::create<T>(window);
+	return getState();
 }
 
 //=========================================================================
@@ -66,7 +67,7 @@ void StateManager::draw()
 }
 
 //=========================================================================
-void StateManager::resize(int width, int height)
+void StateManager::resize(unsigned int width, int height)
 {
 	if(mState)
 	{

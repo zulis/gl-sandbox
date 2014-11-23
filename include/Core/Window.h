@@ -6,15 +6,17 @@
 #include <map>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include "Core/Observer.h"
 
-typedef std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> WindowRef;
+typedef std::unique_ptr<class Window> WindowRef;
+typedef std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> SDLWindowRef;
 typedef std::function<void(int, int)> ResizeCallback;
-typedef std::function<void(int, bool)> KeyDownCallback;
+//typedef std::function<void(int, bool)> KeyDownCallback;
 typedef std::function<void(int, bool)> MouseDownCallback;
 typedef std::function<void(int, int, int, int)> MousePositionCallback;
 typedef std::function<void(int)> MouseWheelCallback;
 
-class Window
+class Window : public Dispatcher<KeyboardEvent>
 {
 public:
 	enum MessageBoxType
@@ -24,68 +26,77 @@ public:
 		Info
 	};
 
-	static void create(int width, int height, bool fullScreen, const std::string& title);
-	static void close();
-	static bool isClosed();
-	static void update();
-	static void swapBuffers();
-	static void setFullScreen(bool fullScreen);
-	static void setFullScreenDesktop(bool fullScreen);
-	static bool isFullScreen();
-	static unsigned int getWidth();
-	static unsigned int getHeight();
-	static void setResizeCallback(ResizeCallback callback);
-	static void setKeyDownCallback(KeyDownCallback callback);
-	static void setMouseDownCallback(MouseDownCallback callback);
-	static void setMousePositionCallback(MousePositionCallback callback);
-	static void setMouseWheelCallback(MouseWheelCallback callback);
-	static void setTitle(const std::string& title);
-	static void setSize(int width, int height);
-	static void showMessageBox(const std::string& message, Window::MessageBoxType type = Window::MessageBoxType::Error);
-	static void showMouse();
-	static void hideMouse();
-	static void setMousePosition(int x, int y);
-	static void setCursor(const std::string& fileName, unsigned int hotspotX = 0, unsigned int hotspotY = 0);
-	static void setCursor(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels, unsigned int hotspotX = 0, unsigned int hotspotY = 0);
-	static void setIcon(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels);
-	static float getAspectRatio();
-	static void sleep(int milliseconds);
+	static WindowRef create(int width, int height, bool fullScreen, const std::string& title);
+	~Window();
+	/*static*/ void close();
+	/*static*/ bool isClosed();
+	/*static*/ void update();
+	/*static*/ void swapBuffers();
+	/*static*/ void setFullScreen(bool fullScreen);
+	/*static*/ void setFullScreenDesktop(bool fullScreen);
+	/*static*/ bool isFullScreen();
+	/*static*/ unsigned int getWidth();
+	/*static*/ unsigned int getHeight();
+	/*static*/ void setResizeCallback(ResizeCallback callback);
+	///*static*/ void setKeyDownCallback(KeyDownCallback callback);
+	/*static*/ void setMouseDownCallback(MouseDownCallback callback);
+	/*static*/ void setMousePositionCallback(MousePositionCallback callback);
+	/*static*/ void setMouseWheelCallback(MouseWheelCallback callback);
+	/*static*/ void setTitle(const std::string& title);
+	/*static*/ void setSize(int width, int height);
+	/*static*/ void showMessageBox(const std::string& message, Window::MessageBoxType type = Window::MessageBoxType::Error);
+	/*static*/ void showMouse();
+	/*static*/ void hideMouse();
+	/*static*/ void setMousePosition(int x, int y);
+	/*static*/ void setCursor(const std::string& fileName, unsigned int hotspotX = 0, unsigned int hotspotY = 0);
+	/*static*/ void setCursor(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels, unsigned int hotspotX = 0, unsigned int hotspotY = 0);
+	/*static*/ void setIcon(const unsigned char* pixels, unsigned int width, unsigned int height, unsigned int channels);
+	/*static*/ float getAspectRatio();
+	/*static*/ void sleep(int milliseconds);
 
 private:
-	static WindowRef mWindow;
-	static SDL_GLContext mContext;
-	static bool mIsClosed;
-	static bool mIsFullScreen;
-	static unsigned int mWidth;
-	static unsigned int mHeight;
-	static int eventFilter(void* userdata, SDL_Event* event);
-	static ResizeCallback mResizeCallback;
-	static KeyDownCallback mKeyDownCallback;
-	static MouseDownCallback mMouseDownCallback;
-	static MousePositionCallback mMousePositionCallback;
-	static MouseWheelCallback mMouseWheelCallback;
-	static void resizeEvent(int width, int height);
-	static void keyDownEvent(int key, bool isDown);
-	static void mouseDownEvent(int button, bool isDown);
-	static void mousePositionEvent(int x, int y, int changeX, int changeY);
-	static void mouseWheelEvent(int x);
+	Window(int width, int height, bool fullScreen, const std::string& title);
+	
+	/*static*/ SDLWindowRef mWindow { SDLWindowRef(nullptr, SDL_DestroyWindow) };
+	/*static*/ SDL_GLContext mContext;
+	/*static*/ bool mIsClosed {false};
+	/*static*/ bool mIsFullScreen {false};
+	/*static*/ unsigned int mWidth {0};
+	/*static*/ unsigned int mHeight {0};
+	/*static*/ int eventFilter(void* userdata, SDL_Event* event);
+	/*static*/ ResizeCallback mResizeCallback;
+	///*static*/ KeyDownCallback mKeyDownCallback;
+	/*static*/ MouseDownCallback mMouseDownCallback;
+	/*static*/ MousePositionCallback mMousePositionCallback;
+	/*static*/ MouseWheelCallback mMouseWheelCallback;
+	/*static*/ void resizeEvent(int width, int height);
+	///*static*/ void keyDownEvent(int key, bool isDown);
+	/*static*/ void mouseDownEvent(int button, bool isDown);
+	/*static*/ void mousePositionEvent(int x, int y, int changeX, int changeY);
+	/*static*/ void mouseWheelEvent(int x);
 
 };
 
-WindowRef Window::mWindow = WindowRef(nullptr, SDL_DestroyWindow);
-SDL_GLContext Window::mContext;
-bool Window::mIsClosed = false;
-bool Window::mIsFullScreen = false;
-unsigned int Window::mWidth = 0;
-unsigned int Window::mHeight = 0;
-ResizeCallback Window::mResizeCallback = nullptr;
-KeyDownCallback Window::mKeyDownCallback = nullptr;
-MouseDownCallback Window::mMouseDownCallback = nullptr;
-MousePositionCallback Window::mMousePositionCallback = nullptr;
-MouseWheelCallback Window::mMouseWheelCallback = nullptr;
+//WindowRef Window::mWindow = WindowRef(nullptr, SDL_DestroyWindow);
+//SDL_GLContext Window::mContext;
+//bool Window::mIsClosed = false;
+//bool Window::mIsFullScreen = false;
+//unsigned int Window::mWidth = 0;
+//unsigned int Window::mHeight = 0;
+//ResizeCallback Window::mResizeCallback = nullptr;
+//KeyDownCallback Window::mKeyDownCallback = nullptr;
+//MouseDownCallback Window::mMouseDownCallback = nullptr;
+//MousePositionCallback Window::mMousePositionCallback = nullptr;
+//MouseWheelCallback Window::mMouseWheelCallback = nullptr;
 
 //=========================================================================
-void Window::create(int width, int height, bool fullScreen, const std::string& title)
+WindowRef Window::create(int width, int height, bool fullScreen, const std::string& title)
+{
+	return WindowRef(new Window(width, height, fullScreen, title));
+}
+
+// =========================================================================
+Window::Window(int width, int height, bool fullScreen, const std::string& title)
 {
 	mWidth = width;
 	mHeight = height;
@@ -132,6 +143,12 @@ void Window::create(int width, int height, bool fullScreen, const std::string& t
 }
 
 // =========================================================================
+Window::~Window()
+{
+	close();
+}
+
+// =========================================================================
 void Window::close()
 {
 	SDL_GL_DeleteContext(mContext);
@@ -157,7 +174,8 @@ void Window::update()
 		{
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
-				keyDownEvent(event.key.keysym.sym, event.key.type == SDL_KEYDOWN);
+				//keyDownEvent(event.key.keysym.sym, event.key.type == SDL_KEYDOWN);
+				dispatch(KeyboardEvent(event.key.keysym.sym, event.key.type == SDL_KEYDOWN));
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
@@ -251,17 +269,17 @@ void Window::resizeEvent(int width, int height)
 }
 
 //=========================================================================
-void Window::setKeyDownCallback(KeyDownCallback callback)
-{
-	mKeyDownCallback = callback;
-}
+// void Window::setKeyDownCallback(KeyDownCallback callback)
+// {
+// 	mKeyDownCallback = callback;
+// }
 
 //=========================================================================
-void Window::keyDownEvent(int key, bool isDown)
-{
-	if(mKeyDownCallback != nullptr)
-		mKeyDownCallback(key, isDown);
-}
+// void Window::keyDownEvent(int key, bool isDown)
+// {
+// 	if(mKeyDownCallback != nullptr)
+// 		mKeyDownCallback(key, isDown);
+// }
 
 //=========================================================================
 void Window::setMouseDownCallback(MouseDownCallback callback)

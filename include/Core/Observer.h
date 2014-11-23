@@ -1,13 +1,15 @@
 #pragma once
 
 #include <vector>
+#include "Core/Events.h"
 
 template<typename Event>
 class Listener
 {
 public:
 	virtual ~Listener() {};
-	virtual void onEvent(Event& event) = 0;
+	virtual void onEvent(const Event& event) = 0;
+	//virtual void onEvent(Event& event, Dispatcher& sender) {};
 };
 
 template<typename Event>
@@ -44,5 +46,6 @@ void Dispatcher<Event>::dispatch(Event& event)
 	std::for_each(mListeners.begin(), mListeners.end(), [&](Listener<Event>* listener)
 	{
 		listener->onEvent(event);
+		//listener->onEvent(event, *this);
 	});
 }

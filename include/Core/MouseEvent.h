@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <map>
 
 typedef std::unique_ptr<class MouseEvent> MouseEventRef;

@@ -49,7 +49,7 @@ protected:
 	Material(const std::string& fileName);
 	virtual ~Material();
 	bool bindTexture(const TextureType& textureType, unsigned int textureUnit = 0, unsigned int geometryIndex = 0);
-	virtual void onEvent(FileMonitorEvent& event);
+	virtual void onEvent(const FileMonitorEvent& event);
 
 private:
 	struct MaterialTexture
@@ -328,7 +328,7 @@ void Material::setTilingUV(float value)
 }
 
 //=========================================================================
-void Material::onEvent(FileMonitorEvent& event)
+void Material::onEvent(const FileMonitorEvent& event)
 {
 	logNote("File has changed: %s", event.fileName.c_str());
 	logNote("Reloading shader: %s", mShaderFileName.c_str());
