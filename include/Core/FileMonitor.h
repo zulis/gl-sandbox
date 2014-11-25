@@ -60,7 +60,7 @@ FileMonitor::~FileMonitor()
 //=========================================================================
 void FileMonitor::check(const std::string& fileName)
 {
-	struct tm* time, timeOld;
+	struct tm* time;
 	struct stat attrib;
 	time_t timestamp, timestampOld, timestampLocal;
 

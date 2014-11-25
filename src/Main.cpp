@@ -43,7 +43,6 @@ void Main::setup()
 {
 	mCamera = Camera::create();
 	mCamera->setPosition(0, 0.75, 2);
-	mCamera->setLookAt(0, 0.75, 0);
 	mCamera->setRotateSpeed(0.002f);
 	mCamera->setStrafeSpeed(mStrafeSpeed);
 
@@ -54,8 +53,8 @@ void Main::setup()
 	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
 	//mMesh->getMaterial()->setTilingUV(500);
 
-	//mMesh->loadFromFile("assets/models/box/box.fbx");
-	mMesh->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 15);
+	mMesh->loadFromFile("assets/models/box/box.fbx");
+	//mMesh->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 15);
 
 	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
 	//mMesh->setRotationX(-90);
@@ -65,9 +64,9 @@ void Main::setup()
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	auto material = mMesh->getMaterial();
 
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
 
 	auto light = PointLight::create();
 	light->setPosition(glm::vec3(-5, 0, 5));
@@ -87,6 +86,7 @@ void Main::setup()
 	light->setPosition(glm::vec3(5, 0, 5));
 	material->addLight(*light);
 
+	mCamera->setLookAt(mMesh->getAABB().transformed(mMesh->getMatrix()).getCenter());
 
 	mQuad = Quad::create("assets/models/leprechaun/copyright.png");
 }
