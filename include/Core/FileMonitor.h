@@ -10,11 +10,11 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include "Core/Observer.h"
+#include "Core/ListenerSet.h"
 
 typedef std::shared_ptr<class FileMonitor> FileMonitorRef;
 
-class FileMonitor : public Dispatcher<FileMonitorEvent>
+class FileMonitor : public ListenerSet<FileMonitorListener*>
 {
 public:
 	static FileMonitorRef create(const std::string& fileName);
@@ -84,7 +84,7 @@ void FileMonitor::check(const std::string& fileName)
 			else if(timestamp != timestampOld)
 			{
 				timestampOld = timestamp;
-				dispatch(FileMonitorEvent(fileName));
+				notify(&FileMonitorListener::onFileMonitorFileChange, fileName);
 				//break;
 			}
 		}

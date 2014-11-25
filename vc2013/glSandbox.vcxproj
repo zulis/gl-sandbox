@@ -188,13 +188,14 @@
     <ClInclude Include="..\include\Core\Cube.h" />
     <ClInclude Include="..\include\Core\Defines.h" />
     <ClInclude Include="..\include\Core\DirectionalLight.h" />
-    <ClInclude Include="..\include\Core\Events.h" />
+    <ClInclude Include="..\include\Core\Listeners.h" />
     <ClInclude Include="..\include\Core\FileMonitor.h" />
     <ClInclude Include="..\include\Core\Font.h" />
     <ClInclude Include="..\include\Core\Game.h" />
     <ClInclude Include="..\include\Core\Geometry.h" />
     <ClInclude Include="..\include\Core\GL.h" />
     <ClInclude Include="..\include\Core\GLCore44.h" />
+    <ClInclude Include="..\include\Core\ListenerSet.h" />
     <ClInclude Include="..\include\Core\Window.h" />
     <ClInclude Include="..\include\Core\Image.h" />
     <ClInclude Include="..\include\Core\ImageManager.h" />
@@ -207,7 +208,6 @@
     <ClInclude Include="..\include\Core\Mesh.h" />
     <ClInclude Include="..\include\Core\MeshData.h" />
     <ClInclude Include="..\include\Core\MeshLoader.h" />
-    <ClInclude Include="..\include\Core\Observer.h" />
     <ClInclude Include="..\include\Core\PointLight.h" />
     <ClInclude Include="..\include\Core\Quad.h" />
     <ClInclude Include="..\include\Core\Plane.h" />
@@ -226,7 +226,6 @@
     <ClInclude Include="..\include\Systems\PlayerMovementSystem.h" />
     <ClInclude Include="..\include\Systems\MeshRenderSystem.h" />
     <ClInclude Include="..\src\EntityFactory.h" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

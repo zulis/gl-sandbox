@@ -211,19 +211,16 @@
     <ClInclude Include="..\include\Core\FileMonitor.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Core\Observer.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\Events.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Input.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Core\Window.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\ListenerSet.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\Listeners.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
   </ItemGroup>

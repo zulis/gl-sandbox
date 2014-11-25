@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #pragma region assimp
 #include <cimport.h>
 #include <Importer.hpp>
@@ -271,7 +273,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					meshTexture.fileName = texturePath + texFileName;
 					meshPart.material.textures.push_back(meshTexture);
 
-					logNote("  mesh[%i] [Texture.%s] : %s", n, TextureTypeName[meshTexture.textureType].c_str(), texFileName.c_str());
+					std::string logInfoText = "  mesh[" + std::to_string(n) + "] [Texture." + TextureTypeName[meshTexture.textureType] + "]";
+					std::stringstream ss;
+					ss << std::setiosflags(std::ios_base::left) << std::setw(33) << logInfoText << ": %s";
+					logInfoText = ss.str();
+					logNote(logInfoText.c_str(), texFileName.c_str());
 
 					++index;
 				}

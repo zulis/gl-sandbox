@@ -59,6 +59,7 @@ void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 		vec3 view_direction = normalize(surface.view_position.xyz);
 		vec3 reflection = reflect(light_direction, surface.view_normal);
 		float specular = max(0.0, dot(reflection, view_direction));
+		
 		results.specular += surface.specular * light.specular *
                     pow(specular, surface.shininess) * attenuation;
 	}
@@ -148,8 +149,8 @@ void main()
 	results.specular = vec3(0.0);
 
 //	accumulate results:
-	for (int i = 0; i < TotalLights; ++i) {
-
+	for (int i = 0; i < TotalLights; ++i)
+	{
 		LIGHT_SOURCE_ATTRIBUTES LIGHT_SOURCE;
 		LIGHT_SOURCE.ambient = Lights[i].ambient.xyz;
 		LIGHT_SOURCE.diffuse = Lights[i].diffuse.xyz;
@@ -172,20 +173,20 @@ void main()
 		}
 	}
 	
+	results.specular = clamp(results.specular, 0.0, 1.0);
+	
 	float alpha = 1.0;
 	
 	vec3 ambient = results.ambient;
 	if(DiffuseMapIsUsed)
 	{
 		ambient *= texture(DiffuseMap, TexCoord).rgb;
-		//ambient = clamp(ambient, 0.0, 1.0);
 	}
 	
 	vec3 diffuse = results.diffuse;
 	if(DiffuseMapIsUsed)
 	{
 		diffuse *= texture(DiffuseMap, TexCoord).rgb;
-		//diffuse = clamp(diffuse, 0.0, 1.0);
 		alpha = texture(DiffuseMap, TexCoord).a;
 	}
 	
@@ -193,7 +194,6 @@ void main()
 	if(SpecularMapIsUsed)
 	{
 		specular *= texture(SpecularMap, TexCoord).rgb;
-		//specular = clamp(specular, 0.0, 1.0);
 	}
 	
 	// final color

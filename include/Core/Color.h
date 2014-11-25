@@ -15,6 +15,7 @@ public:
 	static Color red();
 	static Color green();
 	static Color blue();
+	static Color yellow();
 	static Color white();
 	static Color pink();
 	static Color normal();
@@ -73,6 +74,12 @@ Color Color::green()
 Color Color::blue()
 {
 	return Color(0, 0, 1);
+}
+
+//=========================================================================
+Color Color::yellow()
+{
+	return Color(1, 1, 0);
 }
 
 //=========================================================================

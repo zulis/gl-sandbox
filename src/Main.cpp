@@ -64,12 +64,23 @@ void Main::setup()
 	auto material = mMesh->getMaterial();
 
 	auto light = PointLight::create();
-	light->setPosition(glm::vec3(0, 0, 5));
-	//light->setAmbient(Color::white());
-	//light->setDiffuse(Color::white());
+	light->setPosition(glm::vec3(-5, 0, 5));
+	light->setAmbient(Color::red());
+	light->setDiffuse(Color::red());
 	//light->setSpecular(Color::white());
 	//light->setAttenuation(glm::vec2(100, 1000));
 	material->addLight(*light);
+
+	light->setAmbient(Color::green());
+	light->setDiffuse(Color::green());
+	light->setPosition(glm::vec3(0, 0, 5));
+	material->addLight(*light);
+
+	light->setAmbient(Color::blue());
+	light->setDiffuse(Color::blue());
+	light->setPosition(glm::vec3(5, 0, 5));
+	material->addLight(*light);
+
 
 	mQuad = Quad::create("assets/models/leprechaun/copyright.png");
 }

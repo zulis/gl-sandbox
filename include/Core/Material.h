@@ -9,12 +9,12 @@
 #include "Core/TextureType.h"
 #include "Core/Color.h"
 #include "Core/FileMonitor.h"
-#include "Core/Observer.h"
+#include "Core/Listeners.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
 
 //=========================================================================
-class Material : public Listener<FileMonitorEvent>
+class Material : public FileMonitorListener
 {
 public:
 	Shader* getShader();
@@ -49,7 +49,7 @@ protected:
 	Material(const std::string& fileName);
 	virtual ~Material();
 	bool bindTexture(const TextureType& textureType, unsigned int textureUnit = 0, unsigned int geometryIndex = 0);
-	virtual void onEvent(const FileMonitorEvent& event);
+	virtual void onFileMonitorFileChange(const std::string& fileName);
 
 private:
 	struct MaterialTexture
@@ -100,7 +100,7 @@ Material::Material(const std::string& fileName)
 	mShader = Shader::create(fileName);
 
 	mFileMonitor = FileMonitor::create(fileName + ".vert", fileName + ".frag");
-	mFileMonitor->registerListener(this);
+	mFileMonitor->addListener(this);
 }
 
 //=========================================================================
@@ -328,11 +328,13 @@ void Material::setTilingUV(float value)
 }
 
 //=========================================================================
-void Material::onEvent(const FileMonitorEvent& event)
+void Material::onFileMonitorFileChange(const std::string& fileName)
 {
-	logNote("File has changed: %s", event.fileName.c_str());
+	logNote("File has changed: %s", fileName.c_str());
 	logNote("Reloading shader: %s", mShaderFileName.c_str());
 	mReloadShader = true;
+
+	auto aaa = Shader::create(mShaderFileName);
 }
 
 //=========================================================================
