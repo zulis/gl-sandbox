@@ -140,7 +140,6 @@ void main()
 	surface.shininess = Material.shininess;
 	surface.view_position = VIEW_POSITION;
 	surface.view_normal = VIEW_NORMAL;
-
 	
 //	init results accumulator:
 	LIGHTING_RESULTS results;
@@ -176,34 +175,35 @@ void main()
 	results.specular = clamp(results.specular, 0.0, 1.0);
 	
 	float alpha = 1.0;
+	vec3 ambient = surface.ambient;
+	vec3 diffuse = surface.diffuse;
+	vec3 specular = vec3(0.0);
 	
-	vec3 ambient = results.ambient;
+	if(TotalLights > 0)
+	{
+		ambient = results.ambient;
+		diffuse = results.diffuse;
+		specular = results.specular;
+	}
+	
 	if(DiffuseMapIsUsed)
 	{
 		ambient *= texture(DiffuseMap, TexCoord).rgb;
 	}
 	
-	vec3 diffuse = results.diffuse;
 	if(DiffuseMapIsUsed)
 	{
 		diffuse *= texture(DiffuseMap, TexCoord).rgb;
 		alpha = texture(DiffuseMap, TexCoord).a;
 	}
 	
-	vec3 specular = results.specular;
 	if(SpecularMapIsUsed)
 	{
 		specular *= texture(SpecularMap, TexCoord).rgb;
 	}
 	
 	// final color
-	vec4 color = vec4(ambient + diffuse + specular, alpha);
-	
-	// final color (after gamma correction)
-    //vec3 gamma = vec3(1.0/2.2);
-    //FRAG_COLOR = vec4(pow(color.xyz, gamma), alpha);
-	
-	FRAG_COLOR = color;
+	FRAG_COLOR = vec4(ambient + diffuse + specular, alpha);
 }
 
 /*

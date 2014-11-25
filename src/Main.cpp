@@ -54,7 +54,9 @@ void Main::setup()
 	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
 	//mMesh->getMaterial()->setTilingUV(500);
 
-	mMesh->loadFromFile("assets/models/box/box.fbx");
+	//mMesh->loadFromFile("assets/models/box/box.fbx");
+	mMesh->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 15);
+
 	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
 	//mMesh->setRotationX(-90);
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
@@ -62,6 +64,10 @@ void Main::setup()
 	//mMesh->setTexturePath("assets/models/sponza/textures");
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	auto material = mMesh->getMaterial();
+
+	material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
+	material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
+	material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
 
 	auto light = PointLight::create();
 	light->setPosition(glm::vec3(-5, 0, 5));
@@ -125,8 +131,8 @@ void Main::input(Input& input)
 
 	if(input.isMouseDown(MouseButton::Left))
 	{
-		mCurrentMouseX = input.getMouseX() + input.getMouseChangeX() * 2;
-		mCurrentMouseY = input.getMouseY() + input.getMouseChangeY() * 2;
+		mCurrentMouseX = input.getMouseX() + input.getMouseChangeX();
+		mCurrentMouseY = input.getMouseY() + input.getMouseChangeY();
 		mLastMouseX = input.getMouseX();
 		mLastMouseY = input.getMouseY();
 	}
@@ -195,8 +201,8 @@ void Main::resize(unsigned int width, unsigned int height)
 //=========================================================================
 glm::vec3 Main::getArcballVector(int x, int y)
 {
-	glm::vec3 P = glm::vec3(1.0*x / mWindowWidth * 2 - 1.0,
-	                        1.0*y / mWindowHeight * 2 - 1.0,
+	glm::vec3 P = glm::vec3(1.0 * x / mWindowWidth * 2 - 1.0,
+	                        1.0 * y / mWindowHeight * 2 - 1.0,
 	                        0);
 	P.y = -P.y;
 	float OP_squared = P.x * P.x + P.y * P.y;
