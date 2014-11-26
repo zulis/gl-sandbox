@@ -138,6 +138,12 @@ void main()
 	surface.diffuse = Material.diffuse.xyz;
 	surface.specular = Material.specular.xyz;
 	surface.shininess = Material.shininess;
+	
+	//surface.ambient = vec3(0);
+	//surface.diffuse = vec3(1);
+	//surface.specular = vec3(1);
+	//surface.shininess = 128.0;
+		
 	surface.view_position = VIEW_POSITION;
 	surface.view_normal = VIEW_NORMAL;
 	
@@ -189,10 +195,6 @@ void main()
 	if(DiffuseMapIsUsed)
 	{
 		ambient *= texture(DiffuseMap, TexCoord).rgb;
-	}
-	
-	if(DiffuseMapIsUsed)
-	{
 		diffuse *= texture(DiffuseMap, TexCoord).rgb;
 		alpha = texture(DiffuseMap, TexCoord).a;
 	}
