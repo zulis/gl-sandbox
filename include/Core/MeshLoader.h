@@ -89,36 +89,8 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			#pragma region geometry
 			for(unsigned int i = 0; i < mesh->mNumVertices; i++)
 			{
-				/*
-				// another example http://www.keithlantz.net/2011/10/tangent-space-normal-mapping-with-glsl/
-				// put the three vectors into my glm::vec3 struct format for doing maths
-				glm::vec3 t(tangent->x, tangent->y, tangent->z);
-				glm::vec3 n(normal->x, normal->y, normal->z);
-				glm::vec3 b(bitangent->x, bitangent->y, bitangent->z);
-
-				// orthogonalize and normalize the tangent so we can use it in something
-				// approximating a T,N,B inverse matrix
-				glm::vec3 ti = glm::normalize(t - n * glm::dot(n, t));
-
-				// get determinant of T,B,N 3x3 matrix by dot*cross method
-				float det = (glm::dot(glm::cross(n, t), b));
-
-				if (det < 0.0f)
-				{
-				det = -1.0f;
-				}
-				else
-				{
-				det = 1.0f;
-				}
-				meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
-				*/
-
 				if(mesh->HasPositions())
 				{
-					//struct aiVector3D tmp = mesh->mVertices[t];
-					//aiTransformVecByMatrix4(&tmp, trafo);
-
 					const aiVector3D* vertice = &(mesh->mVertices[i]);
 					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z) * scaleFactor);
 				}
@@ -133,8 +105,29 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 				{
 					const aiVector3D* tangent = &(mesh->mTangents[i]);
 					const aiVector3D* bitangent = &(mesh->mBitangents[i]);
-					meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
+					const aiVector3D* normal = &(mesh->mNormals[i]);
+
+					//meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
 					meshPart.geometry.bitangents.push_back(glm::vec3(bitangent->x, bitangent->y, bitangent->z));
+
+					// Put the three vectors into my glm::vec3 struct format for doing maths
+					glm::vec3 t(tangent->x, tangent->y, tangent->z);
+					glm::vec3 n(normal->x, normal->y, normal->z);
+					glm::vec3 b(bitangent->x, bitangent->y, bitangent->z);
+
+					// Orthogonalize and normalize the tangent so we can use it in something
+					// approximating a T, N, B inverse matrix
+					glm::vec3 ti = glm::normalize(t - n * glm::dot(n, t));
+
+					// Get determinant of T, B, N 3x3 matrix by dot * cross method
+					float det = (glm::dot(glm::cross(n, t), b));
+
+					if (det < 0.0f)
+						det = -1.0f;
+					else
+						det = 1.0f;
+					
+					meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
 				}
 
 				const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;

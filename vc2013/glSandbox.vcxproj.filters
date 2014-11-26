@@ -27,6 +27,9 @@
     <Filter Include="Include\Core\Light">
       <UniqueIdentifier>{d31b3343-7dcf-46c5-85bb-9a1a3b713152}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\Shaders">
+      <UniqueIdentifier>{b16e1dfe-4304-46a2-9c4d-46900a927377}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\external\src\artemis\Component.cpp">
@@ -223,5 +226,16 @@
     <ClInclude Include="..\include\Core\Listeners.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\assets\shaders\common.glsl">
+      <Filter>Include\Shaders</Filter>
+    </None>
+    <None Include="..\bin\assets\shaders\defaultMaterial.frag">
+      <Filter>Include\Shaders</Filter>
+    </None>
+    <None Include="..\bin\assets\shaders\defaultMaterial.vert">
+      <Filter>Include\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
