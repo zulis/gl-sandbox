@@ -14,7 +14,7 @@ struct MeshGeometry
 	std::vector<unsigned int> indices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texCoords;
-	std::vector<glm::vec3> tangents;
+	std::vector<glm::vec4> tangents;
 	std::vector<glm::vec3> bitangents;
 };
 

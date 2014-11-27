@@ -4,8 +4,14 @@
 //in vec3 ViewDir;
 in vec2 TexCoord;
 
-smooth in vec4 VIEW_POSITION;
+smooth in vec3 VIEW_POSITION;
 noperspective in vec3 VIEW_NORMAL;
+in mat3 TBN;
+
+//in vec3 vPosition;
+//in vec3 vNormal;
+//in vec3 vTangent;
+//in vec3 vBitangent;
 
 struct LIGHT_SOURCE_ATTRIBUTES {
 	vec3 ambient, diffuse, specular; 	
@@ -23,7 +29,7 @@ struct SURFACE_ATTRIBUTES {
 	float shininess;
 	
 //	supplied by the vertex shader:
-	vec4 view_position;
+	vec3 view_position;
 	vec3 view_normal;
 };
 
@@ -33,11 +39,87 @@ struct LIGHTING_RESULTS {
 
 out vec4 FRAG_COLOR;
 
+/*
+	vec3 L = normalize(LightDir);
+	vec3 N = normalize(texture(NormalMap, TexCoord.st).xyz * 2.0 - 1.0);
+	vec3 V = normalize(ViewDir);
+	vec3 R = normalize(-reflect(L, N));
+
+	float nDotL = max(0.0, dot(N, L));
+	float rDotV = max(0.0, dot(R, V));
+	
+	vec4 ambient = Lights[MaxLights].ambient * Material.ambient;
+	vec4 diffuse = Lights[MaxLights].diffuse * Material.diffuse * nDotL;
+	vec4 specular = Lights[MaxLights].specular * Material.specular * pow(rDotV, Material.shininess);
+	vec4 texel = texture(DiffuseMap, TexCoord);
+	float gloss = texture(SpecularMap, TexCoord).r;
+		
+	FragColor = (ambient + diffuse + (gloss * specular)) * texel;
+*/
+
+/*
+void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light, inout LIGHTING_RESULTS results)
+{
+	//vec3 LightDir = normalize(TBN * (light.view_position.xyz - surface.view_position));
+	vec3 light_direction = normalize(TBN * (light.view_position.xyz - surface.view_position));
+	vec3 view_direction = TBN * normalize(-surface.view_position);
+
+	vec3 norm = 2.0 * texture(NormalMap, TexCoord).xyz - 1.0;
+	vec3 r = reflect(-light_direction, norm);
+	results.ambient += surface.ambient * light.ambient; // * attenuation;
+	float sDotN = max(dot(light_direction, norm), 0.0);
+	results.diffuse += (surface.diffuse * light.diffuse * attenuation) * sDotN;;
+	
+	vec3 spec = vec3(0.0);
+    if( sDotN > 0.0 )
+        results.specular += surface.specular * light.specular *
+               pow( max( dot(r, view_direction), 0.0 ), surface.shininess);
+}
+*/
+
+void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light, inout LIGHTING_RESULTS results)
+{
+	// Get direction to light.
+	vec3 light_direction;
+	if(NormalMapIsUsed)
+		light_direction = normalize(TBN * (light.view_position.xyz - surface.view_position));
+	else
+		light_direction = light.view_position.xyz - surface.view_position;
+
+	// Compute attenuation factor.
+	float light_distance = length(light_direction);
+	float attenuation = smoothstep(light.attenuation.y, light.attenuation.x, light_distance);
+	
+	light_direction = normalize(light_direction);
+	
+	// Accumulate ambient.
+	results.ambient += surface.ambient * light.ambient * attenuation;
+	
+	// Accumulate diffuse.
+	float n_dot_l = max(0.0, dot(surface.view_normal, light_direction));
+	results.diffuse += (surface.diffuse * light.diffuse * attenuation) * n_dot_l;
+	
+	// If fragment is illuminated accumulate specular.
+	if (n_dot_l > 0.0)
+	{
+		vec3 view_direction;
+		if(NormalMapIsUsed)
+			view_direction = TBN * normalize(-surface.view_position);
+		else
+			view_direction = normalize(surface.view_position);
+		vec3 reflection = reflect(light_direction, surface.view_normal);
+		float specular = max(0.0, dot(reflection, view_direction));
+		
+		results.specular += surface.specular * light.specular *
+                    pow(specular, surface.shininess) * attenuation;
+	}
+}
+
+/*
 void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 	inout LIGHTING_RESULTS results) {
 //	get direction to light:
-	vec3 light_direction = light.view_position.xyz - 
-            surface.view_position.xyz;
+	vec3 light_direction = light.view_position.xyz - surface.view_position;
 
 //	compute attenuation factor:
 	float light_distance = length(light_direction);
@@ -56,7 +138,7 @@ void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 	
 	if (n_dot_l > 0.0) { // if fragment is illuminated
 	//	accumulate specular:
-		vec3 view_direction = normalize(surface.view_position.xyz);
+		vec3 view_direction = normalize(surface.view_position);
 		vec3 reflection = reflect(light_direction, surface.view_normal);
 		float specular = max(0.0, dot(reflection, view_direction));
 		
@@ -64,12 +146,13 @@ void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
                     pow(specular, surface.shininess) * attenuation;
 	}
 }
+*/
 
 void spot(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 	inout LIGHTING_RESULTS results) {
 //	get direction to light:
 	vec3 light_direction = light.view_position.xyz -
-            surface.view_position.xyz;
+            surface.view_position;
 	float spot_dot_l = dot(normalize(light.spot_view_direction), 
 		normalize(-light_direction));
 	
@@ -95,7 +178,7 @@ void spot(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 			
 		if (n_dot_l > 0.0) { // if fragment is illuminated
 		//	accumulate specular:
-			vec3 view_direction = normalize(surface.view_position.xyz);
+			vec3 view_direction = normalize(surface.view_position);
 			vec3 reflection = reflect(light_direction,
                             surface.view_normal);		
 			float specular = max(0.0, dot(reflection, view_direction));
@@ -119,7 +202,7 @@ void directional(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light
 	
 	if (n_dot_l > 0.0) { // if fragment is illuminated
 	//	accumulate specular:
-		vec3 view_direction = normalize(surface.view_position.xyz);
+		vec3 view_direction = normalize(surface.view_position);
 		vec3 reflection = reflect(light_direction, surface.view_normal);
 		float specular = max(0.0, dot(reflection, view_direction));
 		results.specular += surface.specular * light.specular *
@@ -131,7 +214,7 @@ void main()
 {
 	if(OpacityMapIsUsed && texture(OpacityMap, TexCoord).r == 0.0)
 		discard;
-
+		
 	//	init surface properties:
 	SURFACE_ATTRIBUTES surface;
 	surface.ambient = Material.ambient.xyz;
@@ -139,7 +222,11 @@ void main()
 	surface.specular = Material.specular.xyz;
 	surface.shininess = Material.shininess;
 	surface.view_position = VIEW_POSITION;
-	surface.view_normal = VIEW_NORMAL;
+	
+	if(NormalMapIsUsed)
+		surface.view_normal = 2.0 * texture(NormalMap, TexCoord).xyz - 1.0;
+	else	
+		surface.view_normal = VIEW_NORMAL;
 	
 //	init results accumulator:
 	LIGHTING_RESULTS results;
@@ -205,26 +292,3 @@ void main()
 	// final color
 	FRAG_COLOR = vec4(ambient + diffuse + specular, alpha);
 }
-
-/*
-=======
-	if(OpacityMapIsUsed && texture(OpacityMap, TexCoord).r == 0.0)
-		discard;
-		
->>>>>>> origin/master
-	vec3 L = normalize(LightDir);
-	vec3 N = normalize(texture(NormalMap, TexCoord.st).xyz * 2.0 - 1.0);
-	vec3 V = normalize(ViewDir);
-	vec3 R = normalize(-reflect(L, N));
-
-	float nDotL = max(0.0, dot(N, L));
-	float rDotV = max(0.0, dot(R, V));
-	
-	vec4 ambient = Lights[MaxLights].ambient * Material.ambient;
-	vec4 diffuse = Lights[MaxLights].diffuse * Material.diffuse * nDotL;
-	vec4 specular = Lights[MaxLights].specular * Material.specular * pow(rDotV, Material.shininess);
-	vec4 texel = texture(DiffuseMap, TexCoord);
-	float gloss = texture(SpecularMap, TexCoord).r;
-		
-	FragColor = (ambient + diffuse + (gloss * specular)) * texel;
-*/
