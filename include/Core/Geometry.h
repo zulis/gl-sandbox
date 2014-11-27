@@ -36,7 +36,7 @@ public:
 	void setIndices(std::vector<unsigned int> indices);
 	void setTexCoords(std::vector<glm::vec2> texCoords);
 	void setNormals(std::vector<glm::vec3> normals);
-	void setTangents(std::vector<glm::vec4> tangents);
+	void setTangents(std::vector<glm::vec3> tangents);
 	void setBitangents(std::vector<glm::vec3> bitangents);
 	void setDrawType(DrawType drawType);
 
@@ -44,7 +44,7 @@ public:
 	const std::vector<unsigned int> getIndices() const;
 	const std::vector<glm::vec2> getTexCoords() const;
 	const std::vector<glm::vec3> getNormals() const;
-	const std::vector<glm::vec4> getTangents() const;
+	const std::vector<glm::vec3> getTangents() const;
 	const std::vector<glm::vec3> getBitangents() const;
 
 	unsigned int getDrawType() const;
@@ -68,7 +68,7 @@ private:
 	std::vector<unsigned int> mIndices;
 	std::vector<glm::vec2> mTexCoords;
 	std::vector<glm::vec3> mNormals;
-	std::vector<glm::vec4> mTangents;
+	std::vector<glm::vec3> mTangents;
 	std::vector<glm::vec3> mBitangents;
 	bool mIsReady { false };
 	GLuint mVaoHandle;
@@ -160,7 +160,7 @@ void Geometry::setNormals(std::vector<glm::vec3> normals)
 }
 
 //=========================================================================
-void Geometry::setTangents(std::vector<glm::vec4> tangents)
+void Geometry::setTangents(std::vector<glm::vec3> tangents)
 {
 	mTangents = tangents;
 }
@@ -202,7 +202,7 @@ const std::vector<glm::vec3> Geometry::getNormals() const
 }
 
 //=========================================================================
-const std::vector<glm::vec4> Geometry::getTangents() const
+const std::vector<glm::vec3> Geometry::getTangents() const
 {
 	return mTangents;
 }
@@ -283,8 +283,8 @@ void Geometry::prepare(const Shader& shader)
 	{
 		GLuint locTangents = shader.getAttribute(ShaderConstants::VertexTangent);
 		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[2]);
-		glBufferData(GL_ARRAY_BUFFER, mTangents.size() * 4 * sizeof(float), &mTangents[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(locTangents, 4, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+		glBufferData(GL_ARRAY_BUFFER, mTangents.size() * 3 * sizeof(float), &mTangents[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(locTangents, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
 		glEnableVertexAttribArray(locTangents);
 	}
 
@@ -413,7 +413,7 @@ void Geometry::generateTangents()
 		{
 			tan1Accum.push_back(glm::vec3(0.0f));
 			tan2Accum.push_back(glm::vec3(0.0f));
-			mTangents.push_back(glm::vec4(0.0f));
+			mTangents.push_back(glm::vec3(0.0f));
 		}
 
 		// Compute the tangent vector
@@ -453,10 +453,10 @@ void Geometry::generateTangents()
 			glm::vec3& t2 = tan2Accum[i];
 
 			// Gram-Schmidt orthogonalize
-			//mTangents[i] = glm::vec3(glm::normalize(t1 - (glm::dot(n, t1) * n)));
-			mTangents[i] = glm::vec4(glm::normalize(t1 - (glm::dot(n, t1) * n)), 0.0f);
+			mTangents[i] = glm::vec3(glm::normalize(t1 - (glm::dot(n, t1) * n)));
+			//mTangents[i] = glm::vec4(glm::normalize(t1 - (glm::dot(n, t1) * n)), 0.0f);
 			// Store handedness in w
-			mTangents[i].w = (glm::dot(glm::cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
+			//mTangents[i].w = (glm::dot(glm::cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
 		}
 
 		tan1Accum.clear();

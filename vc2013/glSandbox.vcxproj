@@ -227,11 +227,6 @@
     <ClInclude Include="..\include\Systems\MeshRenderSystem.h" />
     <ClInclude Include="..\src\EntityFactory.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\bin\assets\shaders\common.glsl" />
-    <None Include="..\bin\assets\shaders\defaultMaterial.frag" />
-    <None Include="..\bin\assets\shaders\defaultMaterial.vert" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

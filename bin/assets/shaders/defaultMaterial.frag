@@ -34,46 +34,15 @@ struct LIGHTING_RESULTS {
 out vec4 FRAG_COLOR;
 
 void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
-	inout LIGHTING_RESULTS results)
-{
-	vec3 norm = normalize( NormalMatrix * VertexNormal );
-    vec3 tang = normalize( NormalMatrix * vec3(VertexTangent) );
-    vec3 binormal = normalize( cross( norm, tang ) ) * VertexTangent.w;
-
-    mat3 toObjectLocal = mat3(
-        tang.x, binormal.x, norm.x,
-        tang.y, binormal.y, norm.y,
-        tang.z, binormal.z, norm.z ) ;
-
-	if(NormalMapIsUsed)
-		surface.view_normal = (2.0 * texture(NormalMap, TexCoord) - 1.0).xyz;
-
-	vec3 light_direction = light.view_position.xyz - surface.view_position.xyz;
-	light_direction = normalize(light_direction); // ?
-	
-	//vec3 pos = vec3( ModelViewMatrix * vec4(VertexPosition,1.0) );
-    //light_direction = normalize( toObjectLocal * (light.view_position.xyz - pos));
-	
-    vec3 r = reflect(-light_direction, surface.view_normal);
-    results.ambient += surface.ambient * light.ambient ;
-    float sDotN = max( dot(light_direction, surface.view_normal), 0.0 );
-    results.diffuse += surface.diffuse * light.diffuse * sDotN;
-
-    vec3 spec = vec3(0.0);
-    if( sDotN > 0.0 ) {
-		vec3 view_direction = toObjectLocal * normalize(-surface.view_position.xyz);
-        spec = surface.specular * light.specular *
-               pow( max( dot(r, view_direction), 0.0 ), surface.shininess);
-	}
-
-    results.specular += spec;
-/*
+	inout LIGHTING_RESULTS results) {
 //	get direction to light:
-	vec3 light_direction = light.view_position.xyz - surface.view_position.xyz;
-	
+	vec3 light_direction = light.view_position.xyz - 
+            surface.view_position.xyz;
+
 //	compute attenuation factor:
 	float light_distance = length(light_direction);
-	float attenuation = smoothstep(light.attenuation.y, light.attenuation.x, light_distance);
+	float attenuation = smoothstep(light.attenuation.y, 
+            light.attenuation.x, light_distance);
 	
 	light_direction = normalize(light_direction);
 	
@@ -94,7 +63,6 @@ void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 		results.specular += surface.specular * light.specular *
                     pow(specular, surface.shininess) * attenuation;
 	}
-*/	
 }
 
 void spot(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
@@ -163,7 +131,7 @@ void main()
 {
 	if(OpacityMapIsUsed && texture(OpacityMap, TexCoord).r == 0.0)
 		discard;
-	
+
 	//	init surface properties:
 	SURFACE_ATTRIBUTES surface;
 	surface.ambient = Material.ambient.xyz;

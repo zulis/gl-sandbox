@@ -3,7 +3,7 @@
 in vec3 VertexPosition;
 in vec3 VertexNormal;
 in vec2 VertexTexCoord;
-in vec4 VertexTangent;
+in vec3 VertexTangent;
 in vec3 VertexBitangent;
 
 uniform mat4 ProjectionMatrix;
