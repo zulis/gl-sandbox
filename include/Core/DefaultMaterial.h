@@ -14,10 +14,10 @@ public:
 private:
 	TextureRef mDefaultDiffuse;
 	//TextureRef mDefaultNormal;
-	TextureRef mDefaultHeight;
+	//TextureRef mDefaultHeight;
 	//TextureRef mDefaultSpecular;
 	//TextureRef mDefaultEmissive;
-	TextureRef mDefaultOpacity;
+	//TextureRef mDefaultOpacity;
 
 	//std::string mDefaultDiffuseName;
 	//std::string mDefaultNormalName;
@@ -47,10 +47,10 @@ DefaultMaterial::DefaultMaterial() : Material(/*"assets/shaders/textured"*/"asse
 
 	mDefaultDiffuse = Texture::create(Color::white());
 	//mDefaultNormal = Texture::create(Color::normal());
-	mDefaultHeight = Texture::create(Color::white());
+	//mDefaultHeight = Texture::create(Color::white());
 	//mDefaultSpecular = Texture::create(Color::white());
 	//mDefaultEmissive = Texture::create(Color::white());
-	mDefaultOpacity = Texture::create(Color::white());
+	//mDefaultOpacity = Texture::create(Color::white());
 
 }
 
@@ -69,19 +69,8 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 	}
 
 	bindTexture(TextureType::NormalMap, 1, geometryIndex);
-
-	if (!bindTexture(TextureType::HeightMap, 2, geometryIndex))
-	{
-		addTexture(mDefaultHeight, TextureType::HeightMap, geometryIndex);
-		bindTexture(TextureType::HeightMap, 2, geometryIndex);
-	}
-
+	bindTexture(TextureType::HeightMap, 2, geometryIndex);
 	bindTexture(TextureType::SpecularMap, 3, geometryIndex);
 	bindTexture(TextureType::EmissiveMap, 4, geometryIndex);
-
-	if (!bindTexture(TextureType::OpacityMap, 5, geometryIndex))
-	{
-		addTexture(mDefaultOpacity, TextureType::OpacityMap, geometryIndex);
-		bindTexture(TextureType::OpacityMap, 5, geometryIndex);
-	}
+	bindTexture(TextureType::OpacityMap, 5, geometryIndex);
 }

@@ -54,11 +54,11 @@ void Main::setup()
 	//mMesh->loadFromFile("assets/models/plane/plane.fbx");
 	//mMesh->getMaterial()->setTilingUV(500);
 
-	//mMesh->loadFromFile("assets/models/box/box.fbx");
+	mMesh->loadFromFile("assets/models/box/box.fbx");
 	//mMesh->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 6);
 
-	mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
-	mMesh->setRotationX(-90);
+	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
+	//mMesh->setRotationX(-90);
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");
