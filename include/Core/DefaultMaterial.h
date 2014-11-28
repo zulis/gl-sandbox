@@ -13,10 +13,10 @@ public:
 
 private:
 	TextureRef mDefaultDiffuse;
-	TextureRef mDefaultNormal;
+	//TextureRef mDefaultNormal;
 	TextureRef mDefaultHeight;
-	TextureRef mDefaultSpecular;
-	TextureRef mDefaultEmissive;
+	//TextureRef mDefaultSpecular;
+	//TextureRef mDefaultEmissive;
 	TextureRef mDefaultOpacity;
 
 	//std::string mDefaultDiffuseName;
@@ -46,10 +46,10 @@ DefaultMaterial::DefaultMaterial() : Material(/*"assets/shaders/textured"*/"asse
 	//mDefaultSpecular = Texture::create("assets/textures/default/default_s.png");
 
 	mDefaultDiffuse = Texture::create(Color::white());
-	mDefaultNormal = Texture::create(Color::normal());
+	//mDefaultNormal = Texture::create(Color::normal());
 	mDefaultHeight = Texture::create(Color::white());
-	mDefaultSpecular = Texture::create(Color::white());
-	mDefaultEmissive = Texture::create(Color::white());
+	//mDefaultSpecular = Texture::create(Color::white());
+	//mDefaultEmissive = Texture::create(Color::white());
 	mDefaultOpacity = Texture::create(Color::white());
 
 }
@@ -68,11 +68,7 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 		bindTexture(TextureType::DiffuseMap, 0, geometryIndex);
 	}
 
-	if(!bindTexture(TextureType::NormalMap, 1, geometryIndex))
-	{
-		addTexture(mDefaultNormal, TextureType::NormalMap, geometryIndex);
-		bindTexture(TextureType::NormalMap, 1, geometryIndex);
-	}
+	bindTexture(TextureType::NormalMap, 1, geometryIndex);
 
 	if (!bindTexture(TextureType::HeightMap, 2, geometryIndex))
 	{
@@ -80,17 +76,8 @@ void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 		bindTexture(TextureType::HeightMap, 2, geometryIndex);
 	}
 
-	if(!bindTexture(TextureType::SpecularMap, 3, geometryIndex))
-	{
-		addTexture(mDefaultSpecular, TextureType::SpecularMap, geometryIndex);
-		bindTexture(TextureType::SpecularMap, 3, geometryIndex);
-	}
-
-	if (!bindTexture(TextureType::EmissiveMap, 4, geometryIndex))
-	{
-		addTexture(mDefaultEmissive, TextureType::EmissiveMap, geometryIndex);
-		bindTexture(TextureType::EmissiveMap, 4, geometryIndex);
-	}
+	bindTexture(TextureType::SpecularMap, 3, geometryIndex);
+	bindTexture(TextureType::EmissiveMap, 4, geometryIndex);
 
 	if (!bindTexture(TextureType::OpacityMap, 5, geometryIndex))
 	{

@@ -34,6 +34,7 @@ private:
 	int mWindowWidth;
 	int mWindowHeight;
 	int mLastMouseX, mLastMouseY, mCurrentMouseX, mCurrentMouseY;
+	float mRotation { 0.0f };
 
 	glm::vec3 getArcballVector(int x, int y);
 };
@@ -54,20 +55,34 @@ void Main::setup()
 	//mMesh->getMaterial()->setTilingUV(500);
 
 	//mMesh->loadFromFile("assets/models/box/box.fbx");
-	mMesh->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 6);
+	//mMesh->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 6);
 
-	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
-	//mMesh->setRotationX(-90);
+	mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f);
+	mMesh->setRotationX(-90);
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	auto material = mMesh->getMaterial();
 
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
 
+	auto light = PointLight::create();
+	//auto light = DirectionalLight::create();
+	light->setPosition(glm::vec3(0, 0, 5));
+	light->setAmbient(Color::white());
+	light->setDiffuse(Color::white());
+	light->setSpecular(Color::white());
+	material->addLight(*light);
+
+	material->setAmbientColor(Color(0.3f, 0.3f, 0.3f, 1.0f));
+	material->setDiffuseColor(Color(0.7f, 0.7f, 0.7f, 1.0f));
+	material->setSpecularColor(Color(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setShininess(60.0f);
+
+	/*
 	auto light = PointLight::create();
 	light->setPosition(glm::vec3(-5, 0, 5));
 	light->setAmbient(Color::red());
@@ -85,10 +100,11 @@ void Main::setup()
 	light->setDiffuse(Color::blue());
 	light->setPosition(glm::vec3(5, 0, 5));
 	material->addLight(*light);
+	*/
 
 	auto aabb = mMesh->getAABB().transformed(mMesh->getMatrix());
 	auto camPosition = mCamera->getPosition();
-	camPosition.y = aabb.getCenter().y + aabb.getSize().y / 4.0f;
+	camPosition.y = aabb.getCenter().y /*+ aabb.getSize().y / 4.0f*/;
 	mCamera->setPosition(camPosition);
 	mCamera->setLookAt(aabb.getCenter());
 
@@ -155,6 +171,8 @@ void Main::input(Input& input)
 //=========================================================================
 void Main::update(double elapsedTime)
 {
+	mRotation += 10.0f * elapsedTime;
+
 	if(mCurrentMouseX != mLastMouseX || mCurrentMouseY != mLastMouseY)
 	{
 		glm::vec3 va = getArcballVector(mLastMouseX, mLastMouseY);
@@ -167,6 +185,8 @@ void Main::update(double elapsedTime)
 		mLastMouseX = mCurrentMouseX;
 		mLastMouseY = mCurrentMouseY;
 	}
+
+	//mMesh->setRotationZ(mRotation);
 }
 
 //=========================================================================
@@ -187,8 +207,8 @@ void Main::draw()
 	//mFont->print("This is a test...", 10, 10);
 
 	//mQuad->setRotation(mRotation);
-	//mQuad->draw(Quad::Position::CENTER);
-	mQuad->draw(mWindowWidth, mWindowHeight, Quad::Position::BOTTOMRIGHT, -10, -10);
+	//mQuad->draw(mWindowWidth, mWindowHeight, Quad::Position::BOTTOMRIGHT, -10, -10);
+	//mQuad->draw(mWindowWidth, mWindowHeight, Quad::Position::CENTER);
 	//mGameOverQuad->draw(Quad::CENTER);
 	//gl::disableAlphaBlending();
 }
@@ -210,10 +230,12 @@ glm::vec3 Main::getArcballVector(int x, int y)
 	                        0);
 	P.y = -P.y;
 	float OP_squared = P.x * P.x + P.y * P.y;
+
 	if(OP_squared <= 1 * 1)
 		P.z = sqrt(1 * 1 - OP_squared);  // Pythagore
 	else
 		P = glm::normalize(P);  // nearest point
+
 	return P;
 }
 

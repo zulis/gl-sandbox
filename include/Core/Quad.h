@@ -110,13 +110,7 @@ Quad::~Quad()
 void Quad::draw(int windowWidth, int windowHeight)
 {
 	glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
-
-	auto model = mMatrix;
-	//model = glm::translate(model, glm::vec3(mWidth / 2.0f, mHeight / 2.0f, 0.0f));
-	//model = glm::rotate(model, mRotation, glm::vec3(0.0f, 0.0f, 1.0f));
-	//model = glm::translate(model, glm::vec3(-mWidth / 2.0f, -mHeight / 2.0f, 0.0f));
-
-	auto mvp = model * glm::mat4(1.0f) * projection;
+	auto mvp = mMatrix * glm::mat4(1.0f) * projection;
 
 	mShader->bind();
 	mTexture->bind();
@@ -201,7 +195,7 @@ float Quad::getHeight() const
 //=========================================================================
 void Quad::setRotation(float degrees)
 {
-	mRotation = degrees; // glm::radians(degrees);
+	mRotation = degrees;
 	updateMatrix();
 }
 
@@ -215,8 +209,8 @@ void Quad::setPosition(float x, float y)
 //=========================================================================
 void Quad::updateMatrix()
 {
-	mMatrix = glm::mat4(1.0f);
-	mMatrix = glm::translate(mMatrix, glm::vec3(mPosition.x, mPosition.y, 0.0f));
+ 	mMatrix = glm::mat4(1.0f);
 	mMatrix = glm::rotate(mMatrix, mRotation, glm::vec3(0.0f, 0.0f, 1.0f));
-	mMatrix = glm::scale(mMatrix, glm::vec3(mScale.x, mScale.y, 0.0f));
+ 	mMatrix = glm::translate(mMatrix, glm::vec3(mPosition.x, mPosition.y, 0.0f));
+ 	mMatrix = glm::scale(mMatrix, glm::vec3(mScale.x, mScale.y, 0.0f));
 }

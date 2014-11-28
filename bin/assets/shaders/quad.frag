@@ -1,6 +1,4 @@
-#version 330 core
-
-precision highp float;
+#include "common.glsl"
 
 in vec2 TexCoord;
 out vec4 FragColor;

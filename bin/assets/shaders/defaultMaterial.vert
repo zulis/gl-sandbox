@@ -1,26 +1,27 @@
 #include "common.glsl"
 
-//out vec3 LightDir;
-//out vec3 ViewDir;
 out vec2 TexCoord;
-
-smooth out vec3 VIEW_POSITION;
-noperspective out vec3 VIEW_NORMAL;
+out vec3 ViewPosition;
+out vec3 ViewNormal;
 out mat3 TBN;
 
 void main()
 {
-	VIEW_NORMAL = NormalMatrix * VertexNormal;
-	VIEW_POSITION = vec3(ModelViewMatrix * vec4(VertexPosition, 1.0));
+	vec4 position = vec4(VertexPosition, 1.0);
+	ViewNormal = NormalMatrix * VertexNormal;
+	ViewPosition = vec3(ModelViewMatrix * position);
 	TexCoord = VertexTexCoord * TilingUV;
-	gl_Position = MVP * vec4(VertexPosition, 1.0);
+	gl_Position = MVP * position;
 	
-	vec3 norm = normalize(NormalMatrix * VertexNormal);
-    vec3 tang = normalize(NormalMatrix * vec3(VertexTangent));
-	vec3 binormal = normalize(cross(norm, tang)) * VertexTangent.w;
+	if(NormalMapIsUsed)
+	{
+		vec3 n = normalize(NormalMatrix * VertexNormal);
+		vec3 t = normalize(NormalMatrix * vec3(VertexTangent));
+		vec3 b = normalize(cross(n, t)) * VertexTangent.w;
 	
-	TBN = mat3(
-        tang.x, binormal.x, norm.x,
-        tang.y, binormal.y, norm.y,
-        tang.z, binormal.z, norm.z ) ;
+		TBN = mat3(
+			t.x, b.x, n.x,
+			t.y, b.y, n.y,
+			t.z, b.z, n.z );
+	}
 }

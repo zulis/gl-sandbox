@@ -261,13 +261,17 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 			if(mShader->hasUniform(ShaderConstants::NormalMapIsUsed))
 				mShader->setUniform(ShaderConstants::NormalMapIsUsed, bindResult);
 			break;
+		case TextureType::HeightMap:
+			if (mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
+				mShader->setUniform(ShaderConstants::HeightMapIsUsed, bindResult);
+			break;
 		case TextureType::SpecularMap:
 			if(mShader->hasUniform(ShaderConstants::SpecularMapIsUsed))
 				mShader->setUniform(ShaderConstants::SpecularMapIsUsed, bindResult);
 			break;
-		case TextureType::HeightMap:
-			if(mShader->hasUniform(ShaderConstants::HeightMapIsUsed))
-				mShader->setUniform(ShaderConstants::HeightMapIsUsed, bindResult);
+		case TextureType::EmissiveMap:
+			if (mShader->hasUniform(ShaderConstants::EmissiveMapIsUsed))
+				mShader->setUniform(ShaderConstants::EmissiveMapIsUsed, bindResult);
 			break;
 		case TextureType::OpacityMap:
 			if(mShader->hasUniform(ShaderConstants::OpacityMapIsUsed))

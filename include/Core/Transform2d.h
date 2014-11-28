@@ -97,7 +97,7 @@ void Transform2D::setMatrix(const glm::mat4& matrix)
 }
 
 //=========================================================================
-const glm::vec2& Transform2D::getPosition() const
+const glm::vec2 Transform2D::getPosition() const
 {
 	return glm::vec2(mMatrix[3][0], mMatrix[3][1]);
 }
