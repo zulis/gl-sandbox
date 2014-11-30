@@ -21,6 +21,7 @@ public:
 	void addTexture(const TextureRef& texture, const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addLight(const Light& light);
+	Light& getLight(unsigned int index);
 
 	void setAmbientColor(const Color& color);
 	void setDiffuseColor(const Color& color);
@@ -310,6 +311,12 @@ void Material::setShininess(float shininess)
 void Material::addLight(const Light& light)
 {
 	mLights.push_back(light);
+}
+
+//=========================================================================
+Light& Material::getLight(unsigned int index)
+{
+	return mLights.at(index);
 }
 
 //=========================================================================

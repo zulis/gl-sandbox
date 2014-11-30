@@ -1,38 +1,18 @@
 #include "common.glsl"
 
-in vec2 TexCoord;
-in vec3 ViewPosition;
-in vec3 ViewNormal;
-in mat3 TBN;
-
-/*
-struct LIGHT_SOURCE_ATTRIBUTES {
-	vec3 ambient, diffuse, specular; 	
-	vec4 view_position;	// in view space
-	vec2 attenuation; // x = start, y = end
-	
-	vec3 spot_viewDir; // in view space
-	float spot_cutoff; // cosine of the cutoff angle
-	float spot_exponent;
-};
-*/
-
-/*
-struct SURFACE_ATTRIBUTES {
-//	supplied by the application:
-	vec3 ambient, diffuse, specular;
-	float shininess;
-	
-//	supplied by the vertex shader:
-	vec3 view_position;
-	vec3 view_normal;
-};
-*/
+in vec4 vVertex;
+in vec3 vNormal;
+in vec2 vTexCoord;
+in mat3 mTBN;
+in mat4 mViewMatrix;
 
 struct Results
 {
-	vec4 ambient, diffuse, specular;
+	vec3 ambient, diffuse, specular;
 };
+
+vec3 normal;
+//vec3 ViewPosition;
 
 out vec4 FragColor;
 
@@ -53,14 +33,14 @@ void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 	results.ambient += surface.ambient * light.ambient * attenuation;
 	
 //	accumulate diffuse:
-	float nDotL = max(0.0, dot(ViewNormal, lightDir));
+	float nDotL = max(0.0, dot(vNormal, lightDir));
 	results.diffuse += (surface.diffuse * light.diffuse * attenuation)
             * nDotL;
 	
 	if (nDotL > 0.0) { // if fragment is illuminated
 	//	accumulate specular:
 		vec3 viewDir = normalize(ViewPosition);
-		vec3 reflection = reflect(lightDir, ViewNormal);
+		vec3 reflection = reflect(lightDir, vNormal);
 		float specular = max(0.0, dot(reflection, viewDir));
 		
 		results.specular += surface.specular * light.specular *
@@ -72,8 +52,14 @@ void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
 void point(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource light, inout Results results)
 {
 	// Get direction to light.
+	vec3 lightDir;
+	
 	vec3 lightPosition = vec3(ViewMatrix * light.position);
-	vec3 lightDir = TBN * (lightPosition - viewPosition);
+	
+	if(NormalMapIsUsed)
+		lightDir = normalize(mTBN * (lightPosition - viewPosition));
+	else
+		lightDir = lightPosition - viewPosition;
 
 	// Compute attenuation factor.
 	float light_distance = length(lightDir);
@@ -82,20 +68,24 @@ void point(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource lig
 	lightDir = normalize(lightDir);
 	
 	// Accumulate ambient.
-	results.ambient += surface.ambient * light.ambient * attenuation;
+	results.ambient += surface.ambient.xyz * light.ambient.xyz * attenuation;
 	
 	// Accumulate diffuse.
 	float nDotL = max(0.0, dot(normal, lightDir));
-	results.diffuse += (surface.diffuse * light.diffuse * attenuation) * nDotL;
+	results.diffuse += (surface.diffuse.xyz * light.diffuse.xyz * attenuation) * nDotL;
 	
 	// If fragment is illuminated accumulate specular.
 	if (nDotL > 0.0)
 	{
-		vec3 viewDir = normalize(TBN * viewPosition);
+		vec3 viewDir;
+		if(NormalMapIsUsed)
+			viewDir = normalize(mTBN * viewPosition);
+		else
+			viewDir = normalize(viewPosition);
 		vec3 reflection = reflect(lightDir, normal);
 		float specular = max(0.0, dot(reflection, viewDir));
 		
-		results.specular += surface.specular * light.specular * pow(specular, surface.shininess) * attenuation;
+		results.specular += surface.specular.xyz * light.specular.xyz * pow(specular, surface.shininess) * attenuation;
 	}
 }
 
@@ -108,14 +98,14 @@ void directional(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSour
 	results.ambient += surface.ambient * light.ambient;
 	
 	// Accumulate diffuse.
-	float nDotL = max(0.0, dot(ViewNormal, lightDir));
+	float nDotL = max(0.0, dot(vNormal, lightDir));
 	results.diffuse += (surface.diffuse * light.diffuse) * nDotL;
 	
 	// If fragment is illuminated accumulate specular.
 	if (nDotL > 0.0)
 	{
 		vec3 viewDir = normalize(ViewPosition);
-		vec3 reflection = reflect(lightDir, ViewNormal);
+		vec3 reflection = reflect(lightDir, vNormal);
 		float specular = max(0.0, dot(reflection, viewDir));
 		results.specular += surface.specular * light.specular * pow(specular, surface.shininess);
 	}
@@ -144,14 +134,14 @@ void spot(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource ligh
 		attenuation *= pow(spot_dot_l, light.spot_exponent);
 	
 		// Accumulate diffuse.
-		float nDotL = max(0.0, dot(ViewNormal, lightDir));
+		float nDotL = max(0.0, dot(vNormal, lightDir));
 		results.diffuse += (surface.diffuse * light.diffuse * attenuation) * nDotL;
 		
 		// If fragment is illuminated accumulate specular.
 		if (nDotL > 0.0)
 		{ 
 			vec3 viewDir = normalize(ViewPosition);
-			vec3 reflection = reflect(lightDir, ViewNormal);		
+			vec3 reflection = reflect(lightDir, vNormal);		
 			float specular = max(0.0, dot(reflection, viewDir));
 			results.specular += surface.specular * light.specular * pow(specular, surface.shininess) * attenuation;
 		}
@@ -161,66 +151,100 @@ void spot(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource ligh
 
 void main()
 {
-	if(OpacityMapIsUsed && texture(OpacityMap, TexCoord).r == 0.0)
+	if(OpacityMapIsUsed && texture(OpacityMap, vTexCoord).r == 0.0)
 		discard;
+		
+	// fetch the normal from the normal map
+	vec3 vMappedNormal = texture(NormalMap, vTexCoord.st).rgb * 2.0 - 1.0;
 	
-	vec3 normal;
+	// modify it using the normal & tangents from the 3D mesh (normal mapping)
+	vec3 vSurfaceNormal = NormalMapIsUsed ? normalize(mTBN * vMappedNormal) : vNormal;
 	
+	// apply each of our light sources
+	vec4 vDiffuseColor	= EmissiveMapIsUsed ? texture(EmissiveMap, vTexCoord.st) : vec4(0, 0, 0, 1);
+	vec4 vSpecularColor	= vec4(0, 0, 0, 1);
+
+	vec3 vToCamera = normalize(-vVertex.xyz);
+	
+	float alpha = 1.0;
+	
+	for (int i = 0; i < TotalLights; ++i)
+	{
+		vec3 lightPosition = vec3(mViewMatrix * Lights[i].position);
+		
+		// calculate view space light vectors
+		vec3 vToLight = normalize(lightPosition /*Lights[i].position.xyz*/ - vVertex.xyz); 
+		vec3 vReflect = normalize(-reflect(vToLight, vSurfaceNormal));
+		
+		// calculate diffuse term
+		float fDiffuse = max(dot(vSurfaceNormal, vToLight), 0.0);
+		fDiffuse = clamp(fDiffuse, 0.1, 1.0);
+		
+		// calculate specular term
+		float fSpecularPower = 100.0;
+		float fSpecular = pow(max(dot(vReflect, vToCamera), 0.0), fSpecularPower);
+		fSpecular = clamp(fSpecular, 0.0, 1.0);
+		
+		// calculate final colors
+		if(DiffuseMapIsUsed)
+		{
+			vDiffuseColor += texture(DiffuseMap, vTexCoord.st) * Lights[i].diffuse * fDiffuse;
+			alpha = texture(DiffuseMap, vTexCoord.st).a;
+		}
+		else
+			vDiffuseColor += Lights[i].diffuse * fDiffuse;
+		
+		if(SpecularMapIsUsed)
+			vSpecularColor += texture(SpecularMap, vTexCoord.st) * Lights[i].specular * fSpecular;
+		else
+			vSpecularColor += Lights[i].specular * fSpecular; 		
+	}
+	
+	FragColor.rgb = (vDiffuseColor + vSpecularColor).rgb;
+	FragColor.a = alpha;
+	
+
+/*
+	if(OpacityMapIsUsed && texture(OpacityMap, vTexCoord).r == 0.0)
+		discard;
+		
 	if(NormalMapIsUsed && TotalLights > 0)
-		normal = normalize(texture(NormalMap, TexCoord).rgb * 2.0 - 1.0);
+	{
+		normal = normalize(texture(NormalMap, vTexCoord).rgb * 2.0 - 1.0);
+		//normal = texture(NormalMap, vTexCoord).rgb * 2.0 - 1.0;
+		//normal = normalize(mTBN * normal);
+		
+	}
 	else	
-		normal = ViewNormal;
+		normal = vNormal;
 	
 //	init results accumulator:
 	Results results;
-	results.ambient = vec4(0.0);
-	results.diffuse = vec4(0.0);
-	results.specular = vec4(0.0);
+	results.ambient = vec3(0.0);
+	results.diffuse = vec3(0.0);
+	results.specular = vec3(0.0);
 
 //	accumulate results:
 	for (int i = 0; i < TotalLights; ++i)
 	{
 		if (Lights[i].position.w != 0.0) { // w = 1; local
 			if (Lights[i].exponent != 0.0) { // spot light
-				spot(normal, ViewPosition, Material, Lights[i], results);
+				spot(normal, vVertex.xyz, Material, Lights[i], results);
 			} else { // point light
-				point(normal, ViewPosition, Material, Lights[i], results);
+				point(normal, vVertex.xyz, Material, Lights[i], results);
 			}
 		} else { // w = 0; directional
-			directional(normal, ViewPosition, Material, Lights[i], results);
+			directional(normal, vVertex.xyz, Material, Lights[i], results);
 		}				
 	}
-	/*for (int i = 0; i < TotalLights; ++i)
-	{
-		LIGHT_SOURCE_ATTRIBUTES LIGHT_SOURCE;
-		LIGHT_SOURCE.ambient = Lights[i].ambient.xyz;
-		LIGHT_SOURCE.diffuse = Lights[i].diffuse.xyz;
-		LIGHT_SOURCE.specular = Lights[i].specular.xyz;
-		LIGHT_SOURCE.view_position = ViewMatrix * Lights[i].position;
-		LIGHT_SOURCE.attenuation = Lights[i].attenuation;
-		//////////////////////////////////////////////////////////
-		LIGHT_SOURCE.spot_viewDir = -Lights[i].position.xyz; // ???
-		LIGHT_SOURCE.spot_cutoff = cos(Lights[i].cutoff);
-		LIGHT_SOURCE.spot_exponent = Lights[i].exponent;
-		
-		if (LIGHT_SOURCE.view_position.w != 0.0) { // w = 1; local
-			if (LIGHT_SOURCE.spot_exponent != 0.0) { // spot light
-				spot(surface, LIGHT_SOURCE, results);
-			} else { // point light
-				point(surface, LIGHT_SOURCE, results);
-			}
-		} else { // w = 0; directional
-			directional(surface, LIGHT_SOURCE, results);
-		}
-	}*/
 	
-	//results.specular = clamp(results.specular, 0.0, 1.0);
+	results.specular = clamp(results.specular, 0.0, 1.0);
 	
 	float alpha = 1.0;
-	vec4 ambient = Material.ambient;
-	vec4 diffuse = Material.diffuse;
-	vec4 specular = vec4(0.0);
-	vec4 emissive = vec4(0.0);
+	vec3 ambient = Material.ambient.xyz;
+	vec3 diffuse = Material.diffuse.xyz;
+	vec3 specular = vec3(0.0);
+	vec3 emissive = vec3(0.0);
 	
 	if(TotalLights > 0)
 	{
@@ -231,21 +255,26 @@ void main()
 	
 	if(DiffuseMapIsUsed)
 	{
-		ambient *= texture(DiffuseMap, TexCoord);
-		diffuse *= texture(DiffuseMap, TexCoord);
-		alpha = texture(DiffuseMap, TexCoord).a;
+		ambient *= texture(DiffuseMap, vTexCoord).rgb;
+	}
+	
+	if(DiffuseMapIsUsed)
+	{
+		diffuse *= texture(DiffuseMap, vTexCoord).rgb;
+		alpha = texture(DiffuseMap, vTexCoord).a;
 	}
 	
 	if(EmissiveMapIsUsed)
 	{
-		emissive = texture(EmissiveMap, TexCoord);
+		emissive = texture(EmissiveMap, vTexCoord).rgb;
 	}
 	
 	if(SpecularMapIsUsed)
 	{
-		specular *= texture(SpecularMap, TexCoord);
+		specular *= texture(SpecularMap, vTexCoord).rgb;
 	}
 	
 	// final color
-	FragColor = vec4(vec3(emissive + ambient + diffuse + specular), alpha);
+	FragColor = vec4(emissive + ambient + diffuse + specular, alpha);
+	*/
 }
