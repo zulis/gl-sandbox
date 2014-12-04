@@ -2,8 +2,8 @@
 
 #include <string>
 #include <FreeImage.h>
-#include "Core/Color.h"
-#include "Core/Log.h"
+#include "core/Color.h"
+#include "core/Log.h"
 
 class Image
 {

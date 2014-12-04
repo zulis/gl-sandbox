@@ -2,9 +2,9 @@
 
 #include <memory>
 #include <string>
-#include "Core/Drawable.h"
-#include "Core/Transform3d.h"
-#include "Core/AABB.h"
+#include "core/Drawable.h"
+#include "core/Transform3d.h"
+#include "core/AABB.h"
 
 typedef std::shared_ptr<class Cube> CubeRef;
 

@@ -3,13 +3,13 @@
 #include <memory>
 #include <algorithm>
 #include <string>
-#include "Core/Shader.h"
-#include "Core/Texture.h"
-#include "Core/Light.h"
-#include "Core/TextureType.h"
-#include "Core/Color.h"
-#include "Core/FileMonitor.h"
-#include "Core/Listeners.h"
+#include "core/Shader.h"
+#include "core/Texture.h"
+#include "core/Light.h"
+#include "core/TextureType.h"
+#include "core/Color.h"
+#include "core/FileMonitor.h"
+#include "core/Listeners.h"
 
 typedef std::shared_ptr<class Material> MaterialRef;
 

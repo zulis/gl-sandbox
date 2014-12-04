@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "Core/Math.h"
-#include "Core/AABB.h"
-#include "Core/Plane.h"
+#include "core/Math.h"
+#include "core/AABB.h"
+#include "core/Plane.h"
 
 typedef std::shared_ptr<class Camera> CameraRef;
 
@@ -88,34 +88,32 @@ Camera::~Camera()
 //=========================================================================
 void Camera::setPosition(glm::vec3 position)
 {
-	setPosition(position.x, position.y, position.z);
+	mPosition = position;
+	update();
 }
 
 //=========================================================================
 void Camera::setPosition(float x, float y, float z)
 {
-	mPosition = glm::vec3(x, y, z);
-	update();
+	setPosition(glm::vec3(x, y, z));
 }
 
 //=========================================================================
-void Camera::setLookAt(glm::vec3 lookAt)
+void Camera::setLookAt(glm::vec3 point)
 {
-	setLookAt(lookAt.x, lookAt.y, lookAt.z);
+	if (point != mPosition)
+	{
+		glm::vec3 direction = glm::normalize(point - mPosition);
+		mVerticalAngle = asinf(direction.y);
+		mHorizontalAngle = atan2f(direction.x, direction.z);
+		update();
+	}
 }
 
 //=========================================================================
 void Camera::setLookAt(float x, float y, float z)
 {
-	glm::vec3 newPosition = glm::vec3(x, y, z);
-
-	if(newPosition != mPosition)
-	{
-		glm::vec3 direction = glm::normalize(newPosition - mPosition);
-		mVerticalAngle = asinf(direction.y);
-		mHorizontalAngle = atan2f(direction.x, direction.z);
-		update();
-	}
+	setLookAt(glm::vec3(x, y, z));
 }
 
 //=========================================================================
@@ -152,7 +150,7 @@ void Camera::update()
 	                 cos(mVerticalAngle) * cos(mHorizontalAngle)
 	             );
 
-	mRight = glm::vec3(sin(mHorizontalAngle - 3.14f / 2.0f), 0, cos(mHorizontalAngle - 3.14f / 2.0f));
+	mRight = glm::vec3(sin(mHorizontalAngle - glm::half_pi<float>()), 0, cos(mHorizontalAngle - glm::half_pi<float>()));
 	mUp = glm::cross(mRight, mDirection);
 
 	mProjection = glm::perspective(mFov, mAspectRatio, mNearClip, mFarClip);

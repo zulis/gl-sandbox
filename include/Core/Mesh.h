@@ -5,13 +5,13 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-#include "Core/MeshLoader.h"
-#include "Core/Geometry.h"
-#include "Core/Transform3d.h"
-#include "Core/Material.h"
-#include "Core/Texture.h"
-#include "Core/AABB.h"
-#include "Core/DefaultMaterial.h"
+#include "core/MeshLoader.h"
+#include "core/Geometry.h"
+#include "core/Transform3d.h"
+#include "core/Material.h"
+#include "core/Texture.h"
+#include "core/AABB.h"
+#include "core/DefaultMaterial.h"
 
 typedef std::shared_ptr<class Mesh> MeshRef;
 

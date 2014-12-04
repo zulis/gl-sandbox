@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Light.h"
+#include "core/Light.h"
 
 typedef std::shared_ptr<class SpotLight> SpotLightRef;
 
@@ -23,6 +23,8 @@ SpotLightRef SpotLight::create()
 //=========================================================================
 SpotLight::SpotLight() : Light(LightType::Spot)
 {
+	setExponent(50.0f);
+	setCutoff(45.0f);
 }
 
 //=========================================================================

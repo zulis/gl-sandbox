@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "Core/Color.h"
-#include "Core/Math.h"
-#include "Core/Shader.h"
+#include "core/Color.h"
+#include "core/Math.h"
+#include "core/Shader.h"
 
 enum class LightType
 {
@@ -19,7 +19,16 @@ public:
 	virtual ~Light();
 
 	void setPosition(const glm::vec3& position);
+	void setPositionX(float x);
+	void setPositionY(float y);
+	void setPositionZ(float z);
 	const glm::vec4& getPosition() const;
+
+	void setLookAt(const glm::vec3& position);
+	void setLookAtX(float x);
+	void setLookAtY(float y);
+	void setLookAtZ(float z);
+	const glm::vec4& getLookAt() const;
 
 	void setAmbient(const glm::vec4& ambient);
 	void setAmbient(const Color& color);
@@ -51,12 +60,13 @@ private:
 	//unsigned int mLightIndex;
 	LightType mLightType;
 	glm::vec4 mPosition { glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) };
+	glm::vec4 mLookAt{ glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) };
 	glm::vec4 mAmbient { glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
 	glm::vec4 mDiffuse { glm::vec4(1.0f, 244.0f / 255.0f, 214.0f / 255.0f, 1.0f) };
 	glm::vec4 mSpecular { glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) };
-	glm::vec2 mAttenuation { glm::vec2(0.0, 100.0) };
-	float mCutoff { 0.0f };
-	float mExponent { 0.0f };
+	glm::vec2 mAttenuation { glm::vec2(0.0, 100.0) }; // Only nonnegative values are accepted.
+	float mCutoff{ 0.0f }; // Only values in the range [0, 90] and the special value 180 are accepted.
+	float mExponent { 0.0f }; // Only values in the range [0, 128] are accepted.
 
 	const std::string createUniformName(const std::string& uniformName, unsigned int lightIndex) const;
 };
@@ -91,9 +101,59 @@ void Light::setPosition(const glm::vec3& position)
 }
 
 //=========================================================================
+void Light::setPositionX(float x)
+{
+	mPosition.x = x;
+}
+
+//=========================================================================
+void Light::setPositionY(float y)
+{
+	mPosition.y = y;
+}
+
+//=========================================================================
+void Light::setPositionZ(float z)
+{
+	mPosition.z = z;
+}
+
+//=========================================================================
 const glm::vec4& Light::getPosition() const
 {
 	return mPosition;
+}
+
+//=========================================================================
+void Light::setLookAt(const glm::vec3& position)
+{
+	mLookAt.x = position.x;
+	mLookAt.y = position.y;
+	mLookAt.z = position.z;
+}
+
+//=========================================================================
+void Light::setLookAtX(float x)
+{
+	mLookAt.x = x;
+}
+
+//=========================================================================
+void Light::setLookAtY(float y)
+{
+	mLookAt.y = y;
+}
+
+//=========================================================================
+void Light::setLookAtZ(float z)
+{
+	mLookAt.z = z;
+}
+
+//=========================================================================
+const glm::vec4& Light::getLookAt() const
+{
+	return mLookAt;
 }
 
 //=========================================================================
@@ -209,6 +269,10 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex)
 	uniformName = createUniformName(ShaderConstants::LightPosition, lightIndex);
 	if(shader->hasUniform(uniformName))
 		shader->setUniform(uniformName, mPosition);
+
+	uniformName = createUniformName(ShaderConstants::LightLookAt, lightIndex);
+	if (shader->hasUniform(uniformName))
+		shader->setUniform(uniformName, mLookAt);
 
 	uniformName = createUniformName(ShaderConstants::LightAmbient, lightIndex);
 	if(shader->hasUniform(uniformName))

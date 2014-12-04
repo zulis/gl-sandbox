@@ -2,10 +2,10 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include "Core/GL.h"
+#include "core/GL.h"
 #include <glfw/glfw3.h>
-#include "Core/Input.h"
-#include "Core/Log.h"
+#include "core/Input.h"
+#include "core/Log.h"
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
@@ -203,10 +203,6 @@ Window::~Window()
 //=========================================================================
 void Window::run()
 {
-	glfwSetTime(0.0);
-	mLastTimeStamp = 0.0;
-	mTotalTime = 0.0;
-
 	// Call resize before we start
 	{
 		int width, height;
@@ -214,6 +210,8 @@ void Window::run()
 		resize(width, height);
 	}
 
+	glfwSetTime(0.0);
+	mLastTimeStamp = 0.0;
 	double accumulator = 0.0;
 	const double frameTime = 1.0 / 60.0;
 
@@ -222,21 +220,19 @@ void Window::run()
 		const double timeStamp = glfwGetTime();
 		const double dt = timeStamp - mLastTimeStamp;
 		mLastTimeStamp = timeStamp;
-
-		mTotalTime += dt;
 		accumulator += dt;
+
+		input(mInput);
+		// Reset mouse statuses
+		mInput.setMouseScrollStatus(0, 0);
+		mInput.setMouseChangeStatus(0, 0);
+		// Check mouse visibility
+		setMouseVisibility(mInput.isMouseVisible());
 
 		while(mRunning && accumulator >= frameTime)
 		{
-			input(mInput);
 			update(frameTime);
 			accumulator -= frameTime;
-
-			// Reset mouse statuses
-			mInput.setMouseScrollStatus(0, 0);
-			mInput.setMouseChangeStatus(0, 0);
-			// Check mouse visibility
-			setMouseVisibility(mInput.isMouseVisible());
 		}
 
 		// Enable 3D rendering & alpha

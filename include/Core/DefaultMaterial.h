@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Material.h"
+#include "core/Material.h"
 
 typedef std::shared_ptr<class DefaultMaterial> MaterialDefaultRef;
 

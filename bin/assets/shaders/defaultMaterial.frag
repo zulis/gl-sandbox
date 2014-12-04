@@ -5,135 +5,125 @@ in vec3 ViewPosition;
 in vec3 ViewNormal;
 in mat3 TBN;
 
-/*
-struct LIGHT_SOURCE_ATTRIBUTES {
-	vec3 ambient, diffuse, specular; 	
-	vec4 view_position;	// in view space
-	vec2 attenuation; // x = start, y = end
-	
-	vec3 spot_viewDir; // in view space
-	float spot_cutoff; // cosine of the cutoff angle
-	float spot_exponent;
-};
-*/
-
-/*
-struct SURFACE_ATTRIBUTES {
-//	supplied by the application:
-	vec3 ambient, diffuse, specular;
-	float shininess;
-	
-//	supplied by the vertex shader:
-	vec3 view_position;
-	vec3 view_normal;
-};
-*/
-
 struct Results
 {
-	vec4 ambient, diffuse, specular;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
 };
 
 out vec4 FragColor;
 
-/*
-void point(in SURFACE_ATTRIBUTES surface, in LIGHT_SOURCE_ATTRIBUTES light,
-	inout Results results) {
-//	get direction to light:
-	vec3 lightDir = light.view_position.xyz - ViewPosition;
-
-//	compute attenuation factor:
-	float light_distance = length(lightDir);
-	float attenuation = smoothstep(light.attenuation.y, 
-            light.attenuation.x, light_distance);
-	
-	lightDir = normalize(lightDir);
-	
-//	accumulate ambient:
-	results.ambient += surface.ambient * light.ambient * attenuation;
-	
-//	accumulate diffuse:
-	float nDotL = max(0.0, dot(ViewNormal, lightDir));
-	results.diffuse += (surface.diffuse * light.diffuse * attenuation)
-            * nDotL;
-	
-	if (nDotL > 0.0) { // if fragment is illuminated
-	//	accumulate specular:
-		vec3 viewDir = normalize(ViewPosition);
-		vec3 reflection = reflect(lightDir, ViewNormal);
-		float specular = max(0.0, dot(reflection, viewDir));
-		
-		results.specular += surface.specular * light.specular *
-                    pow(specular, surface.shininess) * attenuation;
-	}
-}
-*/
-
 void point(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource light, inout Results results)
 {
-	// Get direction to light.
+	// Get light position in view space.
 	vec3 lightPosition = vec3(ViewMatrix * light.position);
-	vec3 lightDir = TBN * (lightPosition - viewPosition);
+	
+	// Get direction to light.
+	vec3 lightDirection = TBN * (lightPosition - viewPosition);
 
 	// Compute attenuation factor.
-	float light_distance = length(lightDir);
+	float light_distance = length(lightDirection);
 	float attenuation = smoothstep(light.attenuation.y, light.attenuation.x, light_distance);
 	
-	lightDir = normalize(lightDir);
+	lightDirection = normalize(lightDirection);
 	
 	// Accumulate ambient.
 	results.ambient += surface.ambient * light.ambient * attenuation;
 	
 	// Accumulate diffuse.
-	float nDotL = max(0.0, dot(normal, lightDir));
+	float nDotL = max(0.0, dot(normal, lightDirection));
 	results.diffuse += (surface.diffuse * light.diffuse * attenuation) * nDotL;
 	
 	// If fragment is illuminated accumulate specular.
 	if (nDotL > 0.0)
 	{
-		vec3 viewDir = normalize(TBN * viewPosition);
-		vec3 reflection = reflect(lightDir, normal);
-		float specular = max(0.0, dot(reflection, viewDir));
+		vec3 viewDirection = normalize(TBN * viewPosition);
+		vec3 reflection = reflect(lightDirection, normal);
+		float specular = max(0.0, dot(reflection, viewDirection));
 		
 		results.specular += surface.specular * light.specular * pow(specular, surface.shininess) * attenuation;
 	}
 }
 
-void directional(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource light, inout Results results) {
-/*	
+void directional(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource light, inout Results results)
+{
+	// Get light position in view space.
+	vec3 lightPosition = vec3(ViewMatrix * light.position);
+	vec3 lightLookAtPosition = vec3(ViewMatrix * light.lookAt);
+	
 	// Get direction to light.
-	vec3 lightDir = normalize(light.view_position.xyz);
+	vec3 lightDirection = normalize(TBN * (lightPosition - lightLookAtPosition));
 
 	// Accumulate ambient.
 	results.ambient += surface.ambient * light.ambient;
 	
 	// Accumulate diffuse.
-	float nDotL = max(0.0, dot(ViewNormal, lightDir));
+	float nDotL = max(0.0, dot(normal, lightDirection));
 	results.diffuse += (surface.diffuse * light.diffuse) * nDotL;
 	
 	// If fragment is illuminated accumulate specular.
 	if (nDotL > 0.0)
 	{
-		vec3 viewDir = normalize(ViewPosition);
-		vec3 reflection = reflect(lightDir, ViewNormal);
-		float specular = max(0.0, dot(reflection, viewDir));
+		vec3 viewDirection = normalize(TBN * viewPosition);
+		vec3 reflection = reflect(lightDirection, normal);
+		float specular = max(0.0, dot(reflection, viewDirection));
+		
 		results.specular += surface.specular * light.specular * pow(specular, surface.shininess);
 	}
-*/	
 }
 
 void spot(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource light, inout Results results)
 {
-/*
+	// Get light position in view space.
+	vec3 lightPosition = vec3(ViewMatrix * light.position);
+	vec3 lightLookAtPosition = vec3(ViewMatrix * light.lookAt);
+	
 	// Get direction to light.
-	vec3 lightDir = light.view_position.xyz - ViewPosition;
-	float spot_dot_l = dot(normalize(light.spot_viewDir), normalize(-lightDir));
+	vec3 lightDirection = TBN * (lightPosition - viewPosition);
+	vec3 spotViewDirection = TBN * (lightLookAtPosition - viewPosition);
+	
+	float sDotL = dot(normalize(spotViewDirection), normalize(-lightDirection));
 	
 	// Compute attenuation factor.
-	float light_distance = length(lightDir);
+	float light_distance = length(lightDirection);
 	float attenuation = smoothstep(light.attenuation.y, light.attenuation.x, light_distance);
 	
-	lightDir = normalize(lightDir);
+	lightDirection = normalize(lightDirection);
+	
+	// Accumulate ambient.
+	results.ambient += surface.ambient * light.ambient * attenuation;
+
+	if (sDotL > 0.0) //light.cutoff)
+	{
+		// Incorporate spot direction into attenuation factor.
+		attenuation *= pow(sDotL, light.exponent);
+		
+		// Accumulate diffuse.
+		float nDotL = max(0.0, dot(normal, lightDirection));
+		results.diffuse += (surface.diffuse * light.diffuse * attenuation) * nDotL;
+		
+		// If fragment is illuminated accumulate specular.
+		if (nDotL > 0.0)
+		{
+			vec3 viewDirection = normalize(TBN * viewPosition);
+			vec3 reflection = reflect(lightDirection, normal);
+			float specular = max(0.0, dot(reflection, viewDirection));
+		
+			results.specular += surface.specular * light.specular * pow(specular, surface.shininess) * attenuation;
+		}
+	}
+	
+/*
+	// Get direction to light.
+	vec3 lightDirection = light.view_position.xyz - ViewPosition;
+	float spot_dot_l = dot(normalize(light.spot_viewDirection), normalize(-lightDirection));
+	
+	// Compute attenuation factor.
+	float light_distance = length(lightDirection);
+	float attenuation = smoothstep(light.attenuation.y, light.attenuation.x, light_distance);
+	
+	lightDirection = normalize(lightDirection);
 	
 	// Accumulate ambient.
 	results.ambient += surface.ambient * light.ambient * attenuation;
@@ -144,15 +134,15 @@ void spot(vec3 normal, vec3 viewPosition, MaterialInfo surface, LightSource ligh
 		attenuation *= pow(spot_dot_l, light.spot_exponent);
 	
 		// Accumulate diffuse.
-		float nDotL = max(0.0, dot(ViewNormal, lightDir));
+		float nDotL = max(0.0, dot(ViewNormal, lightDirection));
 		results.diffuse += (surface.diffuse * light.diffuse * attenuation) * nDotL;
 		
 		// If fragment is illuminated accumulate specular.
 		if (nDotL > 0.0)
 		{ 
-			vec3 viewDir = normalize(ViewPosition);
-			vec3 reflection = reflect(lightDir, ViewNormal);		
-			float specular = max(0.0, dot(reflection, viewDir));
+			vec3 viewDirection = normalize(ViewPosition);
+			vec3 reflection = reflect(lightDirection, ViewNormal);		
+			float specular = max(0.0, dot(reflection, viewDirection));
 			results.specular += surface.specular * light.specular * pow(specular, surface.shininess) * attenuation;
 		}
 	}
@@ -199,7 +189,7 @@ void main()
 		LIGHT_SOURCE.view_position = ViewMatrix * Lights[i].position;
 		LIGHT_SOURCE.attenuation = Lights[i].attenuation;
 		//////////////////////////////////////////////////////////
-		LIGHT_SOURCE.spot_viewDir = -Lights[i].position.xyz; // ???
+		LIGHT_SOURCE.spot_viewDirection = -Lights[i].position.xyz; // ???
 		LIGHT_SOURCE.spot_cutoff = cos(Lights[i].cutoff);
 		LIGHT_SOURCE.spot_exponent = Lights[i].exponent;
 		

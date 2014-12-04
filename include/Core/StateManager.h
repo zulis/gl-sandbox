@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "Core/State.h"
+#include "core/State.h"
 
 class StateManager
 {

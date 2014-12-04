@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Light.h"
+#include "core/Light.h"
 
 typedef std::shared_ptr<class DirectionalLight> DirectionalLightRef;
 

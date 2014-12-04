@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<ProgramSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <BackColor>
+    <R>211</R>
+    <G>211</G>
+    <B>211</B>
+  </BackColor>
+  <UseAdvanceTexturing>true</UseAdvanceTexturing>
+  <VSync>true</VSync>
+  <TextureNormalSuffix>_n</TextureNormalSuffix>
+  <TextureSpecularSuffix>_s</TextureSpecularSuffix>
+  <TextureHeightSuffix>_h</TextureHeightSuffix>
+  <Antialiasing>None</Antialiasing>
+  <Shadows>true</Shadows>
+  <CameraMoveSpeed>0.5</CameraMoveSpeed>
+  <CameraMouseSpeed>0.05</CameraMouseSpeed>
+  <CameraRunSpeed>3</CameraRunSpeed>
+  <CameraScrollSpeed>0.05</CameraScrollSpeed>
+  <SnapToGrid>true</SnapToGrid>
+  <SnapValue>1</SnapValue>
+  <RotationValue>5</RotationValue>
+  <ScriptEnabled>true</ScriptEnabled>
+  <ScriptLanguage>Lua</ScriptLanguage>
+  <Script />
+  <ScriptFileExtension />
+  <FolderBase>assets</FolderBase>
+  <FolderModels>assets\models</FolderModels>
+  <FolderTextures>assets\textures</FolderTextures>
+  <FolderSounds>assets\sounds</FolderSounds>
+  <FolderLevels>assets\levels</FolderLevels>
+</ProgramSettings>

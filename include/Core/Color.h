@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Core/Math.h"
+#include "core/Math.h"
 
 class Color
 {
 public:
 	Color();
 	Color(float r, float g, float b, float a = 1.0f);
+	Color(glm::vec4 color);
+	Color(glm::vec3 color);
 
 	float r, g, b, a;
 
@@ -44,6 +46,24 @@ Color::Color(float r, float g, float b, float a)
 	this->g = g;
 	this->b = b;
 	this->a = a;
+}
+
+//=========================================================================
+Color::Color(glm::vec4 color)
+{
+	this->r = color.x;
+	this->g = color.y;
+	this->b = color.z;
+	this->a = color.w;
+}
+
+//=========================================================================
+Color::Color(glm::vec3 color)
+{
+	this->r = color.x;
+	this->g = color.y;
+	this->b = color.z;
+	this->a = 1.0f;
 }
 
 //=========================================================================

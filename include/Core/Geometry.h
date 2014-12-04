@@ -4,7 +4,7 @@
 #include <vector>
 #include <limits>
 #include <functional>
-#include "Core/Math.h"
+#include "core/Math.h"
 #include "core/Shader.h"
 #include "core/AABB.h"
 

@@ -3,22 +3,22 @@
 #include <memory>
 #include <Artemis.h>
 
-#include "Core/Camera.h"
-#include "Core/Mesh.h"
-//#include "Core/MaterialPhong.h"
-#include "Core/PointLight.h"
-#include "Core/DirectionalLight.h"
-#include "Core/SpotLight.h"
+#include "core/Camera.h"
+#include "core/Mesh.h"
+//#include "core/MaterialPhong.h"
+#include "core/PointLight.h"
+#include "core/DirectionalLight.h"
+#include "core/SpotLight.h"
 
-#include "Components/MeshRenderComponent.h"
-#include "Components/TransformComponent.h"
-#include "Components/VelocityComponent.h"
-#include "Components/KeyboardComponent.h"
-#include "Components/PlayerComponent.h"
+#include "components/MeshRenderComponent.h"
+#include "components/TransformComponent.h"
+#include "components/VelocityComponent.h"
+#include "components/KeyboardComponent.h"
+#include "components/PlayerComponent.h"
 
-#include "Systems/MeshRenderSystem.h"
-#include "Systems/KeyboardSystem.h"
-#include "Systems/PlayerMovementSystem.h"
+#include "systems/MeshRenderSystem.h"
+#include "systems/KeyboardSystem.h"
+#include "systems/PlayerMovementSystem.h"
 
 typedef std::shared_ptr<class EntityFactory> EntityFactoryRef;
 

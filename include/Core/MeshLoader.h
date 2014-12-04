@@ -10,9 +10,9 @@
 #include <postprocess.h>
 #include <scene.h>
 #pragma endregion assimp
-#include "Core/MeshData.h"
-#include "Core/TextureType.h"
-#include "Core/Log.h"
+#include "core/MeshData.h"
+#include "core/TextureType.h"
+#include "core/Log.h"
 
 typedef std::shared_ptr<class MeshLoader> MeshLoaderRef;
 

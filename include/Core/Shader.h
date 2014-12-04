@@ -7,12 +7,12 @@
 #include <vector>
 #include <map>
 #include <fstream>
-#include "Core/GL.h"
-#include "Core/ShaderConstants.h"
-#include "Core/Math.h"
-#include "Core/Log.h"
-#include "Core/Color.h"
-#include "Core/StringUtils.h"
+#include "core/GL.h"
+#include "core/ShaderConstants.h"
+#include "core/Math.h"
+#include "core/Log.h"
+#include "core/Color.h"
+#include "core/StringUtils.h"
 
 typedef std::shared_ptr<class Shader> ShaderRef;
 

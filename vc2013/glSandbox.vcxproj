@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,7 +110,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +128,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +148,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,9 +174,14 @@
     <ClCompile Include="..\external\src\artemis\SystemManager.cpp" />
     <ClCompile Include="..\external\src\artemis\TagManager.cpp" />
     <ClCompile Include="..\external\src\artemis\World.cpp" />
+    <ClCompile Include="..\external\src\json\json_reader.cpp" />
+    <ClCompile Include="..\external\src\json\json_value.cpp" />
+    <ClCompile Include="..\external\src\json\json_writer.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\external\src\json\json_batchallocator.h" />
+    <ClInclude Include="..\external\src\json\json_tool.h" />
     <ClInclude Include="..\include\Components\KeyboardComponent.h" />
     <ClInclude Include="..\include\Components\PlayerComponent.h" />
     <ClInclude Include="..\include\Components\MeshRenderComponent.h" />
@@ -188,6 +193,7 @@
     <ClInclude Include="..\include\Core\Cube.h" />
     <ClInclude Include="..\include\Core\Defines.h" />
     <ClInclude Include="..\include\Core\DirectionalLight.h" />
+    <ClInclude Include="..\include\Core\Level.h" />
     <ClInclude Include="..\include\Core\Listeners.h" />
     <ClInclude Include="..\include\Core\FileMonitor.h" />
     <ClInclude Include="..\include\Core\Font.h" />
@@ -226,6 +232,13 @@
     <ClInclude Include="..\include\Systems\PlayerMovementSystem.h" />
     <ClInclude Include="..\include\Systems\MeshRenderSystem.h" />
     <ClInclude Include="..\src\EntityFactory.h" />
+    <ClInclude Include="..\src\tests\LoadLevelTest.h" />
+    <ClInclude Include="..\src\tests\Test.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\external\src\json\json_internalarray.inl" />
+    <None Include="..\external\src\json\json_internalmap.inl" />
+    <None Include="..\external\src\json\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

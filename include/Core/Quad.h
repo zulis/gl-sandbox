@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "Core/Shader.h"
-#include "Core/Texture.h"
-#include "COre/Geometry.h"
+#include "core/Shader.h"
+#include "core/Texture.h"
+#include "core/Geometry.h"
 
 typedef std::shared_ptr<class Quad> QuadRef;
 
@@ -27,10 +27,11 @@ public:
 	Quad(const std::string& fileName = std::string(), float width = 0, float height = 0);
 	virtual ~Quad();
 
-	void draw(int windowWidth, int windowHeight);
-	void draw(int windowWidth, int windowHeight, Position position, float offsetX = 0.0f, float offsetY = 0.0f);
+	void draw(unsigned int windowWidth, unsigned int windowHeight);
+	void draw(unsigned int windowWidth, unsigned int windowHeight, Position position, float offsetX = 0.0f, float offsetY = 0.0f);
 	float getWidth() const;
 	float getHeight() const;
+	void setPosition(float x, float y);
 	void setRotation(float degrees);
 
 
@@ -40,6 +41,8 @@ private:
 
 	float mWidth;
 	float mHeight;
+	unsigned int mWindowWidth;
+	unsigned int mWindowHeight;
 	float mRotation { 0.0f };
 	glm::vec2 mPosition;
 	glm::vec2 mScale { glm::vec2(1) };
@@ -48,9 +51,6 @@ private:
 	TextureRef mTexture;
 	GeometryRef mGeometry;
 	glm::mat4 mMatrix { glm::mat4(1.0f) };
-
-	void setPosition(float x, float y);
-	void updateMatrix();
 
 };
 
@@ -107,8 +107,21 @@ Quad::~Quad()
 }
 
 //=========================================================================
-void Quad::draw(int windowWidth, int windowHeight)
+void Quad::draw(unsigned int windowWidth, unsigned int windowHeight)
 {
+	auto halfImageScale = glm::vec2((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight);
+
+	//mPosition.x = -1 + halfImageScale.x + mPosition.x / windowWidth;
+	//mPosition.y = 1 - halfImageScale.y - mPosition.y / windowHeight;
+
+	mMatrix = glm::mat4(1.0f);
+	mMatrix = glm::rotate(mMatrix, mRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+	mMatrix = glm::translate(mMatrix, glm::vec3(1.0, -1.0f, 0.0f));
+
+	//mMatrix = glm::translate(mMatrix, glm::vec3(mPosition.x, mPosition.y, 0.0f));
+	
+	//mMatrix = glm::scale(mMatrix, glm::vec3((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight, 0.0f));
+
 	glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
 	auto mvp = mMatrix * glm::mat4(1.0f) * projection;
 
@@ -123,7 +136,7 @@ void Quad::draw(int windowWidth, int windowHeight)
 }
 
 //=========================================================================
-void Quad::draw(int windowWidth, int windowHeight, Position position, float offsetX, float offsetY)
+void Quad::draw(unsigned int windowWidth, unsigned int windowHeight, Position position, float offsetX, float offsetY)
 {
 	float x = 0.0f;
 	float y = 0.0f;
@@ -131,52 +144,58 @@ void Quad::draw(int windowWidth, int windowHeight, Position position, float offs
 	auto w = windowWidth;
 	auto h = windowHeight;
 
+	auto scaleX = (float)mWidth / (float)windowWidth;
+	auto scaleY = (float)mHeight / (float)windowHeight;
+
+	position = LEFT;
+
 	switch(position)
 	{
 		case Position::TOP:
-			x = (w - mWidth) / w;
+			mPosition = glm::vec2(windowWidth - mWidth, 0.0f);
 			break;
 
 		case Position::BOTTOM:
-			x = (w - mWidth) / w;
-			y = -(h - mHeight) / h * 2;
+			mPosition = glm::vec2(windowWidth - mWidth, windowHeight * 2 - mHeight * 2);
 			break;
 
 		case Position::LEFT:
-			y = -(h - mHeight) / h;
+			mPosition = glm::vec2(0.0f, windowHeight - mHeight);
 			break;
 
 		case Position::RIGHT:
-			x = (w - mWidth) / w * 2;
-			y = -(h - mHeight) / h;
+			mPosition = glm::vec2(1, 0);
 			break;
 
 		case Position::TOPLEFT:
+			mPosition = glm::vec2(-1, 1);
 			break;
 
 		case Position::TOPRIGHT:
-			x = (w - mWidth) / w * 2;
+			mPosition = glm::vec2(1, 1);
 			break;
 
 		case Position::BOTTOMLEFT:
-			y = -(h - mHeight) / h * 2;
+			mPosition = glm::vec2(-1, -1);
 			break;
 
 		case Position::BOTTOMRIGHT:
-			x = (w - mWidth) / w * 2;
-			y = -(h - mHeight) / h * 2;
+			mPosition = glm::vec2(1, -1);
 			break;
 
 		case Position::CENTER:
-			x = (w - mWidth) / w;
-			y = -(h - mHeight) / h;
+			//x = (w - mWidth) / w;
+			//y = -(h - mHeight) / h;
 			break;
 
 		default:
 			break;
 	}
 
-	setPosition(x + offsetX / w, y - offsetY / h);
+	//mPosition.x += offsetX / windowWidth;
+	//mPosition.y -= offsetY / windowHeight;
+
+	//setPosition(x + offsetX / w, y - offsetY / h);
 	draw(windowWidth, windowHeight);
 }
 
@@ -196,21 +215,10 @@ float Quad::getHeight() const
 void Quad::setRotation(float degrees)
 {
 	mRotation = degrees;
-	updateMatrix();
 }
 
 //=========================================================================
 void Quad::setPosition(float x, float y)
 {
 	mPosition = glm::vec2(x, y);
-	updateMatrix();
-}
-
-//=========================================================================
-void Quad::updateMatrix()
-{
- 	mMatrix = glm::mat4(1.0f);
-	mMatrix = glm::rotate(mMatrix, mRotation, glm::vec3(0.0f, 0.0f, 1.0f));
- 	mMatrix = glm::translate(mMatrix, glm::vec3(mPosition.x, mPosition.y, 0.0f));
- 	mMatrix = glm::scale(mMatrix, glm::vec3(mScale.x, mScale.y, 0.0f));
 }

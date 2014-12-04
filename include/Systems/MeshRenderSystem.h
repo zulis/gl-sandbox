@@ -2,8 +2,8 @@
 
 #include <functional>
 #include <Artemis.h>
-#include "Components/TransformComponent.h"
-#include "Components/MeshRenderComponent.h"
+#include "components/TransformComponent.h"
+#include "components/MeshRenderComponent.h"
 
 class MeshRenderSystem : public EntityProcessingSystem
 {
@@ -46,7 +46,7 @@ void MeshRenderSystem::processEntity(Entity& e)
 // 	}
 
 	renderable->setPosition(transformComp->getPosition());
-	renderable->setRotation(transformComp->getRotation());
+	renderable->RotateBy(transformComp->getRotation());
 	renderable->setScale(transformComp->getScale());
 	//renderable->update(world->getDelta());
 	renderable->draw(camera);

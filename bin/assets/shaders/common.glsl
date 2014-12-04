@@ -1,4 +1,5 @@
 #version 430
+#pragma optionNV(unroll all)
 
 in vec3 VertexPosition;
 in vec3 VertexNormal;
@@ -36,6 +37,7 @@ struct LightSource
 	vec4 diffuse;
 	vec4 specular;
 	vec4 position;
+	vec4 lookAt; // directional & spot
 	vec2 attenuation; // point & spot
 	float cutoff;     // spot
 	float exponent;   // spot
