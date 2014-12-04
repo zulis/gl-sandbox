@@ -139,15 +139,7 @@ void Transform3D::updateMatrix()
 	glm::mat4 translationMatrix = glm::translate(glm::mat4(), mPosition);
 	glm::mat4 rotationMatrix = glm::toMat4(mRotation);
 	glm::mat4 scaleMatrix = glm::scale(mScale);
-
 	mMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-
-	//mMatrix = glm::mat4(1.0f);
-	//mMatrix = glm::translate(mMatrix, mPosition);
-	//mMatrix = glm::rotate(mMatrix, mRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-	//mMatrix = glm::rotate(mMatrix, mRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-	//mMatrix = glm::rotate(mMatrix, mRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-	//mMatrix = glm::scale(mMatrix, mScale);
 }
 
 //=========================================================================
@@ -169,10 +161,10 @@ const glm::vec3 Transform3D::getPosition() const
 }
 
 //=========================================================================
- const glm::quat Transform3D::getRotation() const
- {
- 	return mRotation;
- }
+const glm::quat Transform3D::getRotation() const
+{
+	return mRotation;
+}
 
 //=========================================================================
 const glm::vec3 Transform3D::getScale() const
@@ -300,7 +292,7 @@ glm::quat Transform3D::rotationBetweenVectors(glm::vec3 start, glm::vec3 dest)
 
 glm::quat Transform3D::lookAt(glm::vec3 direction, glm::vec3 desiredUp)
 {
-	if (glm::length2(direction) < 0.0001f)
+	if(glm::length2(direction) < 0.0001f)
 		return glm::quat();
 
 	// Recompute desiredUp so that it's perpendicular to the direction

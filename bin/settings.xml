@@ -11,7 +11,7 @@
   <TextureSpecularSuffix>_s</TextureSpecularSuffix>
   <TextureHeightSuffix>_h</TextureHeightSuffix>
   <Antialiasing>None</Antialiasing>
-  <Shadows>true</Shadows>
+  <Shadows>false</Shadows>
   <CameraMoveSpeed>0.5</CameraMoveSpeed>
   <CameraMouseSpeed>0.05</CameraMouseSpeed>
   <CameraRunSpeed>3</CameraRunSpeed>
@@ -19,7 +19,7 @@
   <SnapToGrid>true</SnapToGrid>
   <SnapValue>1</SnapValue>
   <RotationValue>5</RotationValue>
-  <ScriptEnabled>true</ScriptEnabled>
+  <ScriptEnabled>false</ScriptEnabled>
   <ScriptLanguage>Lua</ScriptLanguage>
   <Script />
   <ScriptFileExtension />

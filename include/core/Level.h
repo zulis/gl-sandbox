@@ -62,6 +62,7 @@ private:
 	glm::vec3 mCamLookAt{ glm::vec3() };
 	std::string mModelFormat;
 
+	LevelMeshData getMeshData(const Json::Value& data);
 	LevelLightData getPointLightData(const Json::Value& data);
 	LevelLightData getDirectionalLightData(const Json::Value& data);
 };
@@ -111,22 +112,18 @@ void Level::loadFromFile(const std::string& fileName)
 	const Json::Value lights = scene["Lights"];
 	const Json::Value editor = scene["Editor"];
 
-	for(Json::Value::iterator it = objects["Object"].begin(); it != objects["Object"].end(); ++it)
+	if (objects["Object"].isArray())
 	{
-		auto data = (*it);
-		LevelMeshData mesh;
-		mesh.name = data["Name"].asString();
-		mesh.fileName = data["FileName"].asString();
-
-		if (mModelFormat != std::string())
-			mesh.fileName = StringUtils::cutTail(mesh.fileName, ".") + mModelFormat;
-		
-		mesh.textureScale = StringUtils::toVec2(data["ScaleTexture"].asString());
-		mesh.visible = StringUtils::toBool(data["Visible"].asString());
-		mesh.position = StringUtils::toVec3(data["Position"].asString());
-		mesh.rotation = StringUtils::toVec3(data["Rotation"].asString());
-		mesh.scale = StringUtils::toVec3(data["Scale"].asString());
-		levelData.meshList.push_back(mesh);
+		for (Json::Value::iterator it = objects["Object"].begin(); it != objects["Object"].end(); ++it)
+		{
+			auto data = (*it);
+			levelData.meshList.push_back(getMeshData(data));
+		}
+	}
+	else if (objects["Object"].size() > 0)
+	{
+		auto data = objects["Object"];
+		levelData.meshList.push_back(getMeshData(data));
 	}
 
 	if (lights["Directional"].isArray())
@@ -245,6 +242,24 @@ const glm::vec3 Level::getCamPosition() const
 const glm::vec3 Level::getCamLookAt() const
 {
 	return mCamLookAt;
+}
+
+//=========================================================================
+LevelMeshData Level::getMeshData(const Json::Value& data)
+{
+	LevelMeshData meshData;
+	meshData.name = data["Name"].asString();
+	meshData.fileName = data["FileName"].asString();
+
+	if (mModelFormat != std::string())
+		meshData.fileName = StringUtils::cutTail(meshData.fileName, ".") + mModelFormat;
+
+	meshData.textureScale = StringUtils::toVec2(data["ScaleTexture"].asString());
+	meshData.visible = StringUtils::toBool(data["Visible"].asString());
+	meshData.position = StringUtils::toVec3(data["Position"].asString());
+	meshData.rotation = StringUtils::toVec3(data["Rotation"].asString());
+	meshData.scale = StringUtils::toVec3(data["Scale"].asString());
+	return meshData;
 }
 
 //=========================================================================
