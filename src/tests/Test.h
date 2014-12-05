@@ -54,10 +54,10 @@ void Test::setup()
 	//mMesh->setAutoLoadTextures(false);
 
 	
-	mMesh2 = Mesh::create(); mMesh2->loadFromFile("assets/models/plane/plane.fbx"); mMesh2->getMaterial()->setTilingUV(500); mMesh2->setPosition(glm::vec3(0, -15, 0));
+	//mMesh2 = Mesh::create(); mMesh2->loadFromFile("assets/models/plane/plane.fbx"); mMesh2->getMaterial()->setTilingUV(500); mMesh2->setPosition(glm::vec3(0, -15, 0));
 
 	//mMesh->loadFromFile("assets/models/box/box.fbx");
-	mMesh1->loadFromFile("assets/models/leeperrysmith/leeperrysmith.obj", 6);
+	mMesh1->loadFromFile("assets/models/leeperrysmith/leeperrysmith.fbx", 6); mMesh1->setRotationX(-90);
 	//mMesh->loadFromFile("assets/models/leprechaun/leprechaun.fbx", 0.02f); mMesh->setRotationX(-90);
 
 	//mMesh->loadFromFile("assets/models/misc/sphere.fbx");
@@ -66,9 +66,9 @@ void Test::setup()
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	auto material = mMesh1->getMaterial();
 
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
-	material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
 
 	////auto light = PointLight::create();
 	auto light = DirectionalLight::create();

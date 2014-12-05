@@ -180,30 +180,7 @@ void main()
 			directional(normal, ViewPosition, Material, Lights[i], results);
 		}				
 	}
-	/*for (int i = 0; i < TotalLights; ++i)
-	{
-		LIGHT_SOURCE_ATTRIBUTES LIGHT_SOURCE;
-		LIGHT_SOURCE.ambient = Lights[i].ambient.xyz;
-		LIGHT_SOURCE.diffuse = Lights[i].diffuse.xyz;
-		LIGHT_SOURCE.specular = Lights[i].specular.xyz;
-		LIGHT_SOURCE.view_position = ViewMatrix * Lights[i].position;
-		LIGHT_SOURCE.attenuation = Lights[i].attenuation;
-		//////////////////////////////////////////////////////////
-		LIGHT_SOURCE.spot_viewDirection = -Lights[i].position.xyz; // ???
-		LIGHT_SOURCE.spot_cutoff = cos(Lights[i].cutoff);
-		LIGHT_SOURCE.spot_exponent = Lights[i].exponent;
 		
-		if (LIGHT_SOURCE.view_position.w != 0.0) { // w = 1; local
-			if (LIGHT_SOURCE.spot_exponent != 0.0) { // spot light
-				spot(surface, LIGHT_SOURCE, results);
-			} else { // point light
-				point(surface, LIGHT_SOURCE, results);
-			}
-		} else { // w = 0; directional
-			directional(surface, LIGHT_SOURCE, results);
-		}
-	}*/
-	
 	//results.specular = clamp(results.specular, 0.0, 1.0);
 	
 	float alpha = 1.0;

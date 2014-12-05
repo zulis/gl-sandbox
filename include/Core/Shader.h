@@ -72,7 +72,8 @@ private:
 //=========================================================================
 ShaderRef Shader::create(const std::string& fileName)
 {
-	return ShaderRef(new Shader(fileName));
+	//return ShaderRef(new Shader(fileName));
+	return std::make_shared<Shader>(fileName);
 }
 
 //=========================================================================

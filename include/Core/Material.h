@@ -36,16 +36,6 @@ public:
 	virtual void unbind();
 	virtual void updateUniforms(unsigned int geometryIndex) {}
 
-	/*struct ShaderValues
-	{
-	glm::mat4 projection;
-	glm::mat4 view;
-	glm::mat4 model;
-	MeshMaterial meshMaterial;
-	};*/
-
-	//void updateUniforms(const ShaderValues& shaderValues);
-
 protected:
 	Material(const std::string& fileName);
 	virtual ~Material();
@@ -65,11 +55,6 @@ private:
 		}
 	};
 
-	//void setGeomMaterials(const std::vector<Material::GeometryMaterial>& geomMaterials);
-
-	//void bindGeomMaterial(unsigned int geometryIndex);
-	//bool bindTexture(const TextureType& textureType, unsigned int textureunit = 0, unsigned int geometryIndex = 0);
-
 	bool mReloadShader { false };
 
 	std::vector<MaterialTexture> mTextures;
@@ -77,8 +62,6 @@ private:
 	FileMonitorRef mFileMonitor;
 
 	ShaderRef mShader;
-
-	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 
 	Color mMaterialAmbient { Color(0.3f, 0.3f, 0.3f, 1.0f) };
 	Color mMaterialDiffuse { Color(0.7f, 0.7f, 0.7f, 1.0f) };
@@ -166,12 +149,6 @@ void Material::unbind()
 }
 
 //=========================================================================
-/*void Material::setGeomMaterials(const std::vector<Material::GeometryMaterial>& geomMaterials)
-{
-mGeometriesMaterials = geomMaterials;
-}*/
-
-//=========================================================================
 void Material::addTexture(const TextureRef& texture, const TextureType& textureType, unsigned int geometryIndex)
 {
 	if(textureType != TextureType::Unknown)
@@ -208,32 +185,6 @@ void Material::addTexture(const std::string& fileName, const TextureType& textur
 		mTextures.push_back(matTexture);
 	}
 }
-
-//=========================================================================
-/*void Material::bindGeomMaterial(unsigned int geometryIndex)
-{
-GeometryMaterial geomMaterial;
-geomMaterial.geometryIndex = geometryIndex;
-
-auto it = std::find(mGeometriesMaterials.begin(), mGeometriesMaterials.end(), geomMaterial);
-
-if(it != mGeometriesMaterials.end())
-{
-geomMaterial = (*it);
-
-if(mShader->hasUniform(ShaderConstants::MaterialDiffuse))
-mShader->setUniform(ShaderConstants::MaterialDiffuse, mMaterialKd == glm::vec3(-1.0f) ? geomMaterial.Kd : mMaterialKd);
-
-if(mShader->hasUniform(ShaderConstants::MaterialAmbient))
-mShader->setUniform(ShaderConstants::MaterialAmbient, mMaterialKa == glm::vec3(-1.0f) ? geomMaterial.Ka : mMaterialKa);
-
-if(mShader->hasUniform(ShaderConstants::MaterialSpecular))
-mShader->setUniform(ShaderConstants::MaterialSpecular, mMaterialKs == glm::vec3(-1.0f) ? geomMaterial.Ks : mMaterialKs);
-
-if(mShader->hasUniform(ShaderConstants::MaterialShininess))
-mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess == -1.0f ? geomMaterial.Shininess : mMaterialShininess);
-}
-}*/
 
 //=========================================================================
 bool Material::bindTexture(const TextureType& textureType, unsigned int textureunit, unsigned int geometryIndex)
@@ -347,63 +298,3 @@ void Material::onFileMonitorFileChange(const std::string& fileName)
 
 	auto aaa = Shader::create(mShaderFileName);
 }
-
-//=========================================================================
-/*void Material::updateUniforms(const ShaderValues& shaderValues)
-{
-
-
-if (mShader->hasUniform(ShaderConstants::MaterialAmbient))
-mShader->setUniform(ShaderConstants::MaterialAmbient, shaderValues.meshMaterial.ambient.rgba());
-
-if (mShader->hasUniform(ShaderConstants::MaterialDiffuse))
-mShader->setUniform(ShaderConstants::MaterialDiffuse, shaderValues.meshMaterial.diffuse.rgba());
-
-if (mShader->hasUniform(ShaderConstants::MaterialSpecular))
-mShader->setUniform(ShaderConstants::MaterialSpecular, shaderValues.meshMaterial.specular.rgba());
-
-if (mShader->hasUniform(ShaderConstants::MaterialShininess))
-mShader->setUniform(ShaderConstants::MaterialShininess, shaderValues.meshMaterial.shininess);
-
-if (mShader->hasUniform(ShaderConstants::TexDiffuse))
-{
-auto texture = shaderValues.meshMaterial.getTexture(TextureType::DiffuseMap);
-
-if (texture != NULL)
-{
-auto pos = mShader->getUniform(ShaderConstants::TexDiffuse);
-auto texID = (unsigned int)texture->getTextureID();
-
-texture->bind(0);
-mShader->setUniform(ShaderConstants::TexDiffuse, texID);
-}
-}
-
-if (mShader->hasUniform(ShaderConstants::TexNormal))
-{
-auto texture = shaderValues.meshMaterial.getTexture(TextureType::NormalMap);
-
-if (texture != NULL)
-{
-auto pos = mShader->getUniform(ShaderConstants::TexNormal);
-auto texID = (unsigned int)texture->getTextureID();
-
-texture->bind(1);
-mShader->setUniform(ShaderConstants::TexNormal, texID);
-}
-}
-
-if (mShader->hasUniform(ShaderConstants::TexSpecular))
-{
-auto texture = shaderValues.meshMaterial.getTexture(TextureType::SpecularMap);
-
-if (texture != NULL)
-{
-auto pos = mShader->getUniform(ShaderConstants::TexSpecular);
-auto texID = (unsigned int)texture->getTextureID();
-
-texture->bind(2);
-mShader->setUniform(ShaderConstants::TexSpecular, texID);
-}
-}
-}*/

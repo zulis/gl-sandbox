@@ -160,6 +160,9 @@ void Level::loadFromFile(const std::string& fileName)
 
 	for(auto& meshData : levelData.meshList)
 	{
+		if (!meshData.visible)
+			continue;
+
 		meshData.position.z = -meshData.position.z;
 
 		auto mesh = Mesh::create();
@@ -175,6 +178,9 @@ void Level::loadFromFile(const std::string& fileName)
 
 		for(auto& lightData : levelData.lightList)
 		{
+			if (!lightData.visible)
+				continue;
+
 			lightData.position.z = -lightData.position.z;
 
 			switch(lightData.type)

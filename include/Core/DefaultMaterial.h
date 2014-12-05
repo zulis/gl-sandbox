@@ -13,17 +13,6 @@ public:
 
 private:
 	TextureRef mDefaultDiffuse;
-	//TextureRef mDefaultNormal;
-	//TextureRef mDefaultHeight;
-	//TextureRef mDefaultSpecular;
-	//TextureRef mDefaultEmissive;
-	//TextureRef mDefaultOpacity;
-
-	//std::string mDefaultDiffuseName;
-	//std::string mDefaultNormalName;
-	//std::string mDefaultHeightName;
-	//std::string mDefaultSpecularName;
-
 	virtual void updateUniforms(unsigned int geometryIndex);
 };
 
@@ -34,24 +23,9 @@ MaterialDefaultRef DefaultMaterial::create()
 }
 
 //=========================================================================
-DefaultMaterial::DefaultMaterial() : Material(/*"assets/shaders/textured"*/"assets/shaders/defaultMaterial")
+DefaultMaterial::DefaultMaterial() : Material("assets/shaders/defaultMaterial")
 {
-	//mDefaultDiffuseName = "assets/textures/default/default_d.png";
-	//mDefaultDiffuseName = "assets/textures/default/UV_mapper.jpg";
-	//mDefaultNormalName = "assets/textures/default/default_n.png";
-	//mDefaultSpecularName = "assets/textures/default/default_s.png";
-
-	//mDefaultDiffuse = Texture::create("assets/textures/default/default_d.png");
-	//mDefaultNormal = Texture::create("assets/textures/default/default_n.png");
-	//mDefaultSpecular = Texture::create("assets/textures/default/default_s.png");
-
 	mDefaultDiffuse = Texture::create(Color::white());
-	//mDefaultNormal = Texture::create(Color::normal());
-	//mDefaultHeight = Texture::create(Color::white());
-	//mDefaultSpecular = Texture::create(Color::white());
-	//mDefaultEmissive = Texture::create(Color::white());
-	//mDefaultOpacity = Texture::create(Color::white());
-
 }
 
 //=========================================================================

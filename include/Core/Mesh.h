@@ -58,7 +58,8 @@ private:
 //=========================================================================
 MeshRef Mesh::create()
 {
-	return MeshRef(new Mesh);
+	//return MeshRef(new Mesh);
+	return std::make_shared<Mesh>();
 }
 
 //=========================================================================
@@ -74,18 +75,6 @@ Mesh::~Mesh()
 //=========================================================================
 void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 {
-	/*
-	// 	if (mTexturePath == std::string())
-	// 	{
-	// 		mTexturePath = fileName;
-	//
-	// 		const size_t idx = mTexturePath.find_last_of("\\/");
-	//
-	// 		if (std::string::npos != idx)
-	// 			mTexturePath.erase(idx, mTexturePath.length() - idx);
-	// 	}
-	*/
-
 	mMeshLoader = MeshLoader::create();
 	mMeshLoader->setTexturePath(mTexturePath);
 	mMeshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
@@ -101,7 +90,7 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 
 	for each(MeshPart meshPart in mMeshData)
 	{
-		auto geometry = GeometryRef(new Geometry);
+		auto geometry = Geometry::create();
 		geometry->setDrawType(Geometry::TRIANGLES);
 		geometry->setVertices(meshPart.geometry.vertices);
 		geometry->setIndices(meshPart.geometry.indices);
@@ -147,24 +136,6 @@ void Mesh::setTexturePath(const std::string& texturePath)
 {
 	mTexturePath = texturePath;
 }
-
-//=========================================================================
-// const std::vector<Material::GeometryMaterial>& Mesh::getGeomMaterial()
-// {
-// 	Texture::Format format;
-// 	format.setFlipped(true);
-//
-// 	for(auto& gm : mGeometriesMaterials)
-// 	{
-// 		for(auto& t : gm.textures)
-// 		{
-// 			t.fileName = mTexturePath + "/" + t.fileName;
-// 			t.texture = Texture::create(t.fileName, format);
-// 		}
-// 	}
-//
-// 	return mGeometriesMaterials;
-// }
 
 //=========================================================================
 AABB Mesh::getAABB() const
@@ -224,7 +195,7 @@ void Mesh::draw(const Camera& camera)
 {
 	unsigned int geometryIndex = 0;
 
-	for each(auto geometry in mGeometries)
+	for(auto& geometry : mGeometries)
 	{
 		if(mCullingIsOn)
 		{
@@ -248,16 +219,9 @@ void Mesh::draw(const Camera& camera)
 //=========================================================================
 void Mesh::draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera)
 {
-// 	Material::ShaderValues shaderValues;
-// 	shaderValues.projection = camera.getProjectionMatrix();
-// 	shaderValues.view = camera.getViewMatrix();
-// 	shaderValues.model = model;
-// 	shaderValues.meshMaterial = mMeshData[index].material;
-
 	mMaterial->bind();
 	updateUniforms(camera);
 	mMaterial->updateUniforms(geometryIndex);
-	//mMaterial->updateUniforms(index);
 	geometry->draw(*mMaterial->getShader());
 	mMaterial->unbind();
 }
@@ -286,26 +250,3 @@ void Mesh::setAutoLoadTextures(bool value)
 {
 	mAutoloadTextures = value;
 }
-
-
-
-
-
-//=========================================================================
-//void Mesh::draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model)
-//{
-//	mMaterial->bind();
-//
-//	setShaderValues(projection, view, model);
-//
-//	unsigned int geometryIndex = 0;
-//
-//	for each (auto geometry in mGeometries)
-//	{
-//		mMaterial->updateUniforms(geometryIndex);
-//		geometry->draw(*mMaterial->getShader());
-//		geometryIndex++;
-//	}
-//
-//	mMaterial->unbind();
-//}

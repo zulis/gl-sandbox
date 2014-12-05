@@ -9,6 +9,7 @@
 #include "core/AABB.h"
 
 typedef std::shared_ptr<class Geometry> GeometryRef;
+//typedef std::unique_ptr<class Geometry> GeometryRef;
 
 class Geometry
 {
@@ -80,13 +81,17 @@ private:
 //=========================================================================
 GeometryRef Geometry::create()
 {
-	return GeometryRef(new Geometry);
+	//return GeometryRef(new Geometry);
+	return std::make_shared<Geometry>();
+	//return std::make_unique<Geometry>();
 }
 
 //=========================================================================
 GeometryRef Geometry::create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices)
 {
-	return GeometryRef(new Geometry(vertices, indices));
+	//return GeometryRef(new Geometry(vertices, indices));
+	return std::make_shared<Geometry>(vertices, indices);
+	//return std::make_unique<Geometry>(vertices, indices);
 }
 
 //=========================================================================

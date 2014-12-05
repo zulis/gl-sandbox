@@ -107,13 +107,15 @@ std::vector<TextureCollection>* Texture::mTextureCollection = new std::vector<Te
 //=========================================================================
 TextureRef Texture::create(const std::string& fileName, const Format& format)
 {
-	return TextureRef(new Texture(fileName, format));
+	//return TextureRef(new Texture(fileName, format));
+	return std::make_shared<Texture>(fileName, format);
 }
 
 //=========================================================================
 TextureRef Texture::create(const Color& color, const Format& format)
 {
-	return TextureRef(new Texture(color, format));
+	//return TextureRef(new Texture(color, format));
+	return std::make_shared<Texture>(color, format);
 }
 
 //=========================================================================

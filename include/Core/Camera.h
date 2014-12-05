@@ -5,7 +5,8 @@
 #include "core/AABB.h"
 #include "core/Plane.h"
 
-typedef std::shared_ptr<class Camera> CameraRef;
+//typedef std::shared_ptr<class Camera> CameraRef;
+typedef std::unique_ptr<class Camera> CameraRef;
 
 class Camera
 {
