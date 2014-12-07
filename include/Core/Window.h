@@ -23,7 +23,7 @@ enum class WindowMode
 class Window
 {
 public:
-	Window(int width, int height, WindowMode mode, const std::string& title);
+	Window(int width, int height, WindowMode mode);
 	virtual ~Window();
 
 	virtual void resize(unsigned int width, unsigned int height) = 0;
@@ -36,7 +36,6 @@ public:
 	void setTitle(const std::string& title);
 	const Input& getInput() const;
 	Input& getInput();
-	double getTime() const;
 	const glm::mat4 getOrtho() const;
 	void setMouseVisibility(bool isVisible);
 	//GLFWwindow* getGLFWWindow() const;
@@ -45,8 +44,7 @@ private:
 	GLFWwindow* mWindow { nullptr };
 	Input mInput;
 	bool mRunning { true };
-	double mLastTimeStamp { 0.0 };
-	double mTotalTime { 0.0 };
+	std::string mTitle;
 
 	inline static void errorCallback(int errorCode, const char* description);
 	inline static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -122,7 +120,7 @@ void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 }
 
 //=========================================================================
-Window::Window(int width, int height, WindowMode mode, const std::string& title)
+Window::Window(int width, int height, WindowMode mode)
 {
 	glfwSetErrorCallback(&errorCallback);
 
@@ -147,7 +145,7 @@ Window::Window(int width, int height, WindowMode mode, const std::string& title)
 		height = vidmode->height;
 	}
 
-	mWindow = glfwCreateWindow(width, height, title.c_str(), (mode == WindowMode::FullScreen || mode == WindowMode::FullScreenNative) ? mon : NULL, NULL);
+	mWindow = glfwCreateWindow(width, height, "", (mode == WindowMode::FullScreen || mode == WindowMode::FullScreenNative) ? mon : NULL, NULL);
 
 	if(!mWindow)
 		exit(1);
@@ -211,16 +209,19 @@ void Window::run()
 	}
 
 	glfwSetTime(0.0);
-	mLastTimeStamp = 0.0;
+	double lastTimeStamp = 0.0;
 	double accumulator = 0.0;
+	double frameCounter = 0.0;
 	const double frameTime = 1.0 / 60.0;
+	int frames = 0;
 
 	while(!glfwWindowShouldClose(mWindow) && mRunning)
 	{
 		const double timeStamp = glfwGetTime();
-		const double dt = timeStamp - mLastTimeStamp;
-		mLastTimeStamp = timeStamp;
+		const double dt = timeStamp - lastTimeStamp;
+		lastTimeStamp = timeStamp;
 		accumulator += dt;
+		frameCounter += dt;
 
 		input(mInput);
 		// Reset mouse statuses
@@ -228,6 +229,15 @@ void Window::run()
 		mInput.setMouseChangeStatus(0, 0);
 		// Check mouse visibility
 		setMouseVisibility(mInput.isMouseVisible());
+
+		if (frameCounter >= 1.0)
+		{
+			double totalTime = 1000.0 * frameCounter / (double)frames;
+			double fps = 1000.0f / totalTime;
+			glfwSetWindowTitle(mWindow, std::string(mTitle + " [" + std::to_string(fps) + "]").c_str());
+			frames = 0;
+			frameCounter = 0;
+		}
 
 		while(mRunning && accumulator >= frameTime)
 		{
@@ -243,6 +253,7 @@ void Window::run()
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
+		frames++;
 	}
 }
 
@@ -255,6 +266,7 @@ void Window::quit()
 //=========================================================================
 void Window::setTitle(const std::string& title)
 {
+	mTitle = title;
 	glfwSetWindowTitle(mWindow, title.c_str());
 }
 
@@ -268,12 +280,6 @@ const Input& Window::getInput() const
 Input& Window::getInput()
 {
 	return mInput;
-}
-
-//=========================================================================
-double Window::getTime() const
-{
-	return mTotalTime;
 }
 
 //=========================================================================

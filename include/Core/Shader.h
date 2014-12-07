@@ -16,6 +16,49 @@
 
 typedef std::shared_ptr<class Shader> ShaderRef;
 
+class ShaderCollection
+{
+public:
+	typedef std::map<std::string, ShaderRef> ResourceMap;
+
+	static bool find(const std::string& fileName);
+	static void add(const std::string& fileName, ShaderRef shader);
+	static ShaderRef get(const std::string& fileName);
+private:
+	static ResourceMap sShaderList;
+};
+
+ShaderCollection::ResourceMap ShaderCollection::sShaderList;
+
+//=========================================================================
+bool ShaderCollection::find(const std::string& fileName)
+{
+	auto it = sShaderList.find(fileName);
+
+	if (it == sShaderList.end())
+		return false;
+	else
+		return true;
+}
+
+//=========================================================================
+void ShaderCollection::add(const std::string& fileName, ShaderRef shader)
+{
+	if (!find(fileName))
+		sShaderList[fileName] = shader;
+}
+
+//=========================================================================
+ShaderRef ShaderCollection::get(const std::string& fileName)
+{
+	auto it = sShaderList.find(fileName);
+
+	if (it != sShaderList.end())
+		return it->second;
+	else
+		return NULL;
+}
+
 #define ERROR_BUFSIZE 1024
 
 class Shader
@@ -73,7 +116,15 @@ private:
 ShaderRef Shader::create(const std::string& fileName)
 {
 	//return ShaderRef(new Shader(fileName));
-	return std::make_shared<Shader>(fileName);
+
+	if (ShaderCollection::find(fileName))
+		return ShaderCollection::get(fileName);
+	else
+	{
+		auto shader = std::make_shared<Shader>(fileName);
+		ShaderCollection::add(fileName, shader);
+		return shader;
+	}
 }
 
 //=========================================================================

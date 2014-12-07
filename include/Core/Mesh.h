@@ -12,6 +12,7 @@
 #include "core/Texture.h"
 #include "core/AABB.h"
 #include "core/DefaultMaterial.h"
+#include "core/Camera.h"
 
 typedef std::shared_ptr<class Mesh> MeshRef;
 

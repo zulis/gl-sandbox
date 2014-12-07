@@ -61,6 +61,7 @@ private:
 	glm::vec3 mCamPosition{ glm::vec3() };
 	glm::vec3 mCamLookAt{ glm::vec3() };
 	std::string mModelFormat;
+	//MeshManager mMeshManager;
 
 	LevelMeshData getMeshData(const Json::Value& data);
 	LevelLightData getPointLightData(const Json::Value& data);
@@ -166,6 +167,7 @@ void Level::loadFromFile(const std::string& fileName)
 		meshData.position.z = -meshData.position.z;
 
 		auto mesh = Mesh::create();
+		//auto mesh = mMeshManager.get()->getResource(fileName);
 		mesh->setFrustumCulling(true);
 		mesh->loadFromFile(meshData.fileName);
 		mesh->setPosition(meshData.position);

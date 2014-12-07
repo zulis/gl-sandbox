@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <map>
 #pragma region assimp
 #include <cimport.h>
 #include <Importer.hpp>
@@ -13,6 +14,50 @@
 #include "core/MeshData.h"
 #include "core/TextureType.h"
 #include "core/Log.h"
+#include "core/ResourceManager.h"
+
+class MeshDataCollection
+{
+public:
+	typedef std::map<std::string, MeshData> ResourceMap;
+
+	static bool find(const std::string& fileName);
+	static void add(const std::string& fileName, MeshData meshData);
+	static MeshData get(const std::string& fileName);
+private:
+	static ResourceMap sMeshDataList;
+};
+
+MeshDataCollection::ResourceMap MeshDataCollection::sMeshDataList;
+
+//=========================================================================
+bool MeshDataCollection::find(const std::string& fileName)
+{
+	auto it = sMeshDataList.find(fileName);
+
+	if (it == sMeshDataList.end())
+		return false;
+	else
+		return true;
+}
+
+//=========================================================================
+void MeshDataCollection::add(const std::string& fileName, MeshData meshData)
+{
+	if (!find(fileName))
+		sMeshDataList[fileName] = meshData;
+}
+
+//=========================================================================
+MeshData MeshDataCollection::get(const std::string& fileName)
+{
+	auto it = sMeshDataList.find(fileName);
+
+	if (it != sMeshDataList.end())
+		return it->second;
+	else
+		return MeshData();
+}
 
 typedef std::shared_ptr<class MeshLoader> MeshLoaderRef;
 
@@ -56,6 +101,9 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 {
 	MeshData result;
 
+	if (MeshDataCollection::find(fileName))
+		return MeshDataCollection::get(fileName);
+	
 	unsigned int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs |
 	                     aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes | aiProcess_SortByPType | aiProcess_TransformUVCoords;
 
@@ -287,6 +335,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			result.push_back(meshPart);
 		}
 
+		MeshDataCollection::add(fileName, result);
 		return result;
 	}
 

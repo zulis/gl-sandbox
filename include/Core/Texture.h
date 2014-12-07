@@ -93,7 +93,7 @@ private:
 	GLuint mTextureID;
 	Format mFormat;
 	std::string mFileName;
-	static std::vector<TextureCollection>* mTextureCollection;
+	static std::vector<TextureCollection>* sTextureCollection;
 
 	//unsigned char* mPixels;
 	unsigned int mWidth { 0 };
@@ -102,7 +102,7 @@ private:
 
 };
 
-std::vector<TextureCollection>* Texture::mTextureCollection = new std::vector<TextureCollection>();
+std::vector<TextureCollection>* Texture::sTextureCollection = new std::vector<TextureCollection>();
 
 //=========================================================================
 TextureRef Texture::create(const std::string& fileName, const Format& format)
@@ -178,16 +178,16 @@ Texture::~Texture()
 	TextureCollection textureCollection;
 	textureCollection.fileName = mFileName;
 
-	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
+	auto it = std::find(sTextureCollection->begin(), sTextureCollection->end(), textureCollection);
 
-	if(it != mTextureCollection->end())
+	if(it != sTextureCollection->end())
 	{
 		refCount = (*it).decreaseRef();
 	}
 
 	if(refCount == 0)
 	{
-		mTextureCollection->erase(it);
+		sTextureCollection->erase(it);
 
 		if(mTextureID)
 			glDeleteTextures(1, &mTextureID);
@@ -205,9 +205,9 @@ void Texture::getTexture(const std::string& fileName, const Format& format)
 	TextureCollection textureCollection;
 	textureCollection.fileName = fileName;
 
-	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
+	auto it = std::find(sTextureCollection->begin(), sTextureCollection->end(), textureCollection);
 
-	if(it != mTextureCollection->end())
+	if(it != sTextureCollection->end())
 	{
 		(*it).increaseRef();
 		mTextureID = (*it).textureID;
@@ -228,7 +228,7 @@ void Texture::getTexture(const std::string& fileName, const Format& format)
 		textureCollection.height = mImage->getHeight();
 
 		logNote("Texture created: %s", mFileName.c_str());
-		mTextureCollection->push_back(textureCollection);
+		sTextureCollection->push_back(textureCollection);
 	}
 }
 
@@ -241,9 +241,9 @@ void Texture::getTexture(const Color& color, const Format& format)
 	TextureCollection textureCollection;
 	textureCollection.fileName = colorToString(color);
 
-	auto it = std::find(mTextureCollection->begin(), mTextureCollection->end(), textureCollection);
+	auto it = std::find(sTextureCollection->begin(), sTextureCollection->end(), textureCollection);
 
-	if(it != mTextureCollection->end())
+	if(it != sTextureCollection->end())
 	{
 		(*it).increaseRef();
 		mTextureID = (*it).textureID;
@@ -264,7 +264,7 @@ void Texture::getTexture(const Color& color, const Format& format)
 		textureCollection.height = mImage->getHeight();
 
 		logNote("Texture created: %s", mFileName.c_str());
-		mTextureCollection->push_back(textureCollection);
+		sTextureCollection->push_back(textureCollection);
 
 		delete mImage;
 	}

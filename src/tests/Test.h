@@ -70,8 +70,8 @@ void Test::setup()
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
 
-	////auto light = PointLight::create();
-	auto light = DirectionalLight::create();
+	auto light = PointLight::create();
+	//auto light = DirectionalLight::create();
 	//auto light = SpotLight::create();
 	light->setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
 	light->setLookAt(glm::vec3(mLightLookAt));
@@ -184,6 +184,11 @@ void Test::input(Input& input)
 		mLightLookAt.x -= 0.1f;
 	else if (input.isKeyDown(KEY_RIGHT))
 		mLightLookAt.x += 0.1f;
+
+	if (input.isKeyDown(KEY_HOME))
+		mLightLookAt.y += 0.1f;
+	else if (input.isKeyDown(KEY_END))
+		mLightLookAt.y -= 0.1f;
 }
 
 //=========================================================================
@@ -205,8 +210,12 @@ void Test::update(double elapsedTime)
 	}
 
 	//mMesh->setRotationZ(mRotation);
-	mMesh1->getMaterial().get()->getLight(0).setLookAt(mLightLookAt);
+	mMesh1->getMaterial().get()->getLight(0).setPosition(mLightLookAt);
 	mLightMesh->setPosition(mLightLookAt);
+
+	//mMesh1->setLookAt(mCamera->getPosition()); mMesh1->setRotationX(-90);
+	//mMesh1->setRotateTowards(mLightMesh->getRotation(), glm::radians(90.0f) * elapsedTime); //mMesh1->setRotationX(-90);
+	
 }
 
 //=========================================================================

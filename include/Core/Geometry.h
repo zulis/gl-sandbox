@@ -338,6 +338,8 @@ void Geometry::draw(const Shader& shader)
 	{
 		glDrawArrays(mDrawType, 0, mVertices.size());
 	}
+
+	glBindVertexArray(0);
 }
 
 //=========================================================================
