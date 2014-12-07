@@ -11,7 +11,6 @@
 #include "core/Material.h"
 #include "core/Texture.h"
 #include "core/AABB.h"
-#include "core/DefaultMaterial.h"
 #include "core/Camera.h"
 
 typedef std::shared_ptr<class Mesh> MeshRef;
@@ -24,35 +23,34 @@ public:
 	virtual ~Mesh();
 
 	void loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
-	void draw(const CameraRef& camera);
+	void draw(const CameraRef& camera, const Shader& shader);
 
-	//const std::vector<Material::GeometryMaterial>& getGeomMaterial();
 	void setTexturePath(const std::string& texturePath);
 	void setAutoLoadTextures(bool value);
 
 	AABB getAABB() const;
 	void setFrustumCulling(bool isOn);
-	void setMaterial(const MaterialRef& material);
-	const MaterialRef& getMaterial() const;
+
+	void updateUniforms(const Camera& camera, const Shader& shader);
+
+	MeshData getMeshData() const;
+	std::string getFileName() const;
 
 private:
 	MeshLoaderRef mMeshLoader;
 	std::vector<GeometryRef> mGeometries;
 	std::string mTexturePath/* { std::string() }*/;
-	//std::vector<Material::GeometryMaterial> mGeometriesMaterials;
 	AABB mAABB;
 	std::map<GeometryRef, AABB> mAABBMap;
 	bool mCullingIsOn { false };
-	MaterialRef mMaterial;
 	//std::string getFileName(std::string& pathName);
 	//void parseNode(const aiNode* node);
 	MeshData mMeshData;
 	bool mAutoloadTextures{ true };
+	std::string mFileName;
 
-	void updateUniforms(const Camera& camera);
-	void draw(const Camera& camera);
-	void draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera);
-	void setupMaterial();
+	void draw(const Camera& camera, const Shader& shader);
+	void draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera, const Shader& shader);
 
 };
 
@@ -76,13 +74,10 @@ Mesh::~Mesh()
 //=========================================================================
 void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 {
+	mFileName = fileName;
 	mMeshLoader = MeshLoader::create();
 	mMeshLoader->setTexturePath(mTexturePath);
 	mMeshData = mMeshLoader->loadFromFile(fileName, scaleFactor);
-
-	mMaterial = DefaultMaterial::create();
-	if (mAutoloadTextures)
-		setupMaterial();
 
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
@@ -127,9 +122,9 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 }
 
 //=========================================================================
-void Mesh::draw(const CameraRef& camera)
+void Mesh::draw(const CameraRef& camera, const Shader& shader)
 {
-	draw(*camera.get());
+	draw(*camera.get(), shader);
 }
 
 //=========================================================================
@@ -151,48 +146,32 @@ void Mesh::setFrustumCulling(bool isOn)
 }
 
 //=========================================================================
-void Mesh::setMaterial(const MaterialRef& material)
+void Mesh::updateUniforms(const Camera& camera, const Shader& shader)
 {
-	mMaterial.reset();
-	mMaterial = material;
-	setupMaterial();
-}
+	if(shader.hasUniform(ShaderConstants::ProjectionMatrix))
+		shader.setUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
 
-//=========================================================================
-const MaterialRef& Mesh::getMaterial() const
-{
-	return mMaterial;
-}
+	if(shader.hasUniform(ShaderConstants::ViewMatrix))
+		shader.setUniform(ShaderConstants::ViewMatrix, camera.getViewMatrix());
 
-//=========================================================================
-void Mesh::updateUniforms(const Camera& camera)
-{
-	const Shader* shader = mMaterial->getShader();
+	if(shader.hasUniform(ShaderConstants::ModelMatrix))
+		shader.setUniform(ShaderConstants::ModelMatrix, getMatrix());
 
-	if(shader->hasUniform(ShaderConstants::ProjectionMatrix))
-		shader->setUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
+	if(shader.hasUniform(ShaderConstants::ModelViewMatrix))
+		shader.setUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * getMatrix());
 
-	if(shader->hasUniform(ShaderConstants::ViewMatrix))
-		shader->setUniform(ShaderConstants::ViewMatrix, camera.getViewMatrix());
+	if(shader.hasUniform(ShaderConstants::MVP))
+		shader.setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
 
-	if(shader->hasUniform(ShaderConstants::ModelMatrix))
-		shader->setUniform(ShaderConstants::ModelMatrix, getMatrix());
-
-	if(shader->hasUniform(ShaderConstants::ModelViewMatrix))
-		shader->setUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * getMatrix());
-
-	if(shader->hasUniform(ShaderConstants::MVP))
-		shader->setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
-
-	if(shader->hasUniform(ShaderConstants::NormalMatrix))
+	if(shader.hasUniform(ShaderConstants::NormalMatrix))
 	{
 		auto mv = camera.getViewMatrix() * getMatrix();
-		shader->setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
+		shader.setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
 	}
 }
 
 //=========================================================================
-void Mesh::draw(const Camera& camera)
+void Mesh::draw(const Camera& camera, const Shader& shader)
 {
 	unsigned int geometryIndex = 0;
 
@@ -205,12 +184,12 @@ void Mesh::draw(const Camera& camera)
 
 			if(notCulled)
 			{
-				draw(geometry, geometryIndex, camera);
+				draw(geometry, geometryIndex, camera, shader);
 			}
 		}
 		else
 		{
-			draw(geometry, geometryIndex, camera);
+			draw(geometry, geometryIndex, camera, shader);
 		}
 
 		geometryIndex++;
@@ -218,36 +197,26 @@ void Mesh::draw(const Camera& camera)
 }
 
 //=========================================================================
-void Mesh::draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera)
+void Mesh::draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera, const Shader& shader)
 {
-	mMaterial->bind();
-	updateUniforms(camera);
-	mMaterial->updateUniforms(geometryIndex);
-	geometry->draw(*mMaterial->getShader());
-	mMaterial->unbind();
-}
-
-//=========================================================================
-void Mesh::setupMaterial()
-{
-	if(mMaterial)
-	{
-		unsigned int geometryIndex = 0;
-
-		for each(MeshPart meshPart in mMeshData)
-		{
-			for each(auto meshTexture in meshPart.material.textures)
-			{
-				mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
-			}
-
-			geometryIndex++;
-		}
-	}
+	updateUniforms(camera, shader);
+	geometry->draw(shader);
 }
 
 //=========================================================================
 void Mesh::setAutoLoadTextures(bool value)
 {
 	mAutoloadTextures = value;
+}
+
+//=========================================================================
+MeshData Mesh::getMeshData() const
+{
+	return mMeshData;
+}
+
+//=========================================================================
+std::string Mesh::getFileName() const
+{
+	return mFileName;
 }

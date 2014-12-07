@@ -11,9 +11,10 @@ public:
 	DefaultMaterial();
 	virtual ~DefaultMaterial();
 
+	virtual void updateUniforms(unsigned int geometryIndex);
+
 private:
 	TextureRef mDefaultDiffuse;
-	virtual void updateUniforms(unsigned int geometryIndex);
 };
 
 //=========================================================================

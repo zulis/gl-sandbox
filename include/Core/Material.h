@@ -17,7 +17,7 @@ typedef std::shared_ptr<class Material> MaterialRef;
 class Material : public FileMonitorListener
 {
 public:
-	Shader* getShader();
+	Shader& getShader() const;
 	void addTexture(const TextureRef& texture, const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
 	void addLight(const Light& light);
@@ -93,9 +93,9 @@ Material::~Material()
 }
 
 //=========================================================================
-Shader* Material::getShader()
+Shader& Material::getShader() const
 {
-	return mShader.get();
+	return *mShader.get();
 }
 
 //=========================================================================

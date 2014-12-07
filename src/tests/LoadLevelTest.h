@@ -18,8 +18,8 @@ public:
 
 private:
 	CameraRef mCamera;
-	float mStrafeSpeed{ 0.5f };
-	float mStrafeFastSpeed{ 1.0f };
+	float mStrafeSpeed{ 0.2f };
+	float mStrafeFastSpeed{ 0.4f };
 	LevelRef mLevel;
 };
 

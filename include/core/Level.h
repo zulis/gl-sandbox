@@ -11,9 +11,15 @@
 #include "core/Math.h"
 #include "core/Log.h"
 #include "core/StringUtils.h"
+#include "core/DefaultMaterial.h"
 
 struct LevelMeshData
 {
+	bool operator==(const LevelMeshData& m) const
+	{
+		return m.fileName == fileName;
+	}
+
 	std::string name;
 	std::string fileName;
 	glm::ivec2 textureScale;
@@ -58,14 +64,16 @@ public:
 
 private:
 	std::vector<MeshRef> mMeshList;
-	glm::vec3 mCamPosition{ glm::vec3() };
-	glm::vec3 mCamLookAt{ glm::vec3() };
+	glm::vec3 mCamPosition { glm::vec3() };
+	glm::vec3 mCamLookAt { glm::vec3() };
 	std::string mModelFormat;
-	//MeshManager mMeshManager;
+	MaterialDefaultRef mMaterial;
+	LevelData levelData;
 
 	LevelMeshData getMeshData(const Json::Value& data);
 	LevelLightData getPointLightData(const Json::Value& data);
 	LevelLightData getDirectionalLightData(const Json::Value& data);
+	void draw(const CameraRef& camera, const Shader& shader);
 };
 
 //=========================================================================
@@ -77,6 +85,7 @@ LevelRef Level::create()
 //=========================================================================
 Level::Level()
 {
+	mMaterial = DefaultMaterial::create();
 }
 
 //=========================================================================
@@ -106,50 +115,48 @@ void Level::loadFromFile(const std::string& fileName)
 		return;
 	}
 
-	LevelData levelData;
-
 	const Json::Value scene = root["Scene"];
 	const Json::Value objects = scene["Objects"];
 	const Json::Value lights = scene["Lights"];
 	const Json::Value editor = scene["Editor"];
 
-	if (objects["Object"].isArray())
+	if(objects["Object"].isArray())
 	{
-		for (Json::Value::iterator it = objects["Object"].begin(); it != objects["Object"].end(); ++it)
+		for(Json::Value::iterator it = objects["Object"].begin(); it != objects["Object"].end(); ++it)
 		{
 			auto data = (*it);
 			levelData.meshList.push_back(getMeshData(data));
 		}
 	}
-	else if (objects["Object"].size() > 0)
+	else if(objects["Object"].size() > 0)
 	{
 		auto data = objects["Object"];
 		levelData.meshList.push_back(getMeshData(data));
 	}
 
-	if (lights["Directional"].isArray())
+	if(lights["Directional"].isArray())
 	{
-		for (Json::Value::iterator it = lights["Directional"].begin(); it != lights["Directional"].end(); ++it)
+		for(Json::Value::iterator it = lights["Directional"].begin(); it != lights["Directional"].end(); ++it)
 		{
 			auto data = (*it);
 			levelData.lightList.push_back(getDirectionalLightData(data));
 		}
 	}
-	else if (lights["Directional"].size() > 0)
+	else if(lights["Directional"].size() > 0)
 	{
 		auto data = lights["Directional"];
 		levelData.lightList.push_back(getDirectionalLightData(data));
 	}
 
-	if (lights["Point"].isArray())
+	if(lights["Point"].isArray())
 	{
-		for (Json::Value::iterator it = lights["Point"].begin(); it != lights["Point"].end(); ++it)
+		for(Json::Value::iterator it = lights["Point"].begin(); it != lights["Point"].end(); ++it)
 		{
 			auto data = (*it);
 			levelData.lightList.push_back(getPointLightData(data));
 		}
 	}
-	else if (lights["Point"].size() > 0)
+	else if(lights["Point"].size() > 0)
 	{
 		auto data = lights["Point"];
 		levelData.lightList.push_back(getPointLightData(data));
@@ -161,7 +168,7 @@ void Level::loadFromFile(const std::string& fileName)
 
 	for(auto& meshData : levelData.meshList)
 	{
-		if (!meshData.visible)
+		if(!meshData.visible)
 			continue;
 
 		meshData.position.z = -meshData.position.z;
@@ -174,43 +181,55 @@ void Level::loadFromFile(const std::string& fileName)
 		mesh->setRotation(meshData.rotation);
 		mesh->setScale(meshData.scale);
 
-		auto material = mesh->getMaterial();
-		material->setTilingU(meshData.textureScale.x);
-		material->setTilingV(meshData.textureScale.y);
-
-		for(auto& lightData : levelData.lightList)
-		{
-			if (!lightData.visible)
-				continue;
-
-			lightData.position.z = -lightData.position.z;
-
-			switch(lightData.type)
-			{
-				case LightType::Directional:
-					{
-						auto light = DirectionalLight::create();
-						light->setPosition(lightData.position);
-						light->setAmbient(lightData.color);
-						light->setDiffuse(lightData.color);
-						material->addLight(*light);
-						break;
-					}
-
-				case LightType::Point:
-					{
-						auto light = PointLight::create();
-						light->setPosition(lightData.position);
-						light->setAmbient(lightData.color);
-						light->setDiffuse(lightData.color);
-						light->setAttenuation(glm::vec2(0.0f, lightData.radius));
-						material->addLight(*light);
-						break;
-					}
-			}
-		}
+		//auto material = mesh->getMaterial();
+		//material->setTilingU(meshData.textureScale.x);
+		//material->setTilingV(meshData.textureScale.y);
 
 		mMeshList.push_back(mesh);
+
+		unsigned int geometryIndex = 0;
+
+		for each(MeshPart meshPart in mesh->getMeshData())
+		{
+			for each(auto meshTexture in meshPart.material.textures)
+			{
+				mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
+			}
+
+			geometryIndex++;
+		}
+	}
+
+	for (auto& lightData : levelData.lightList)
+	{
+		if (lightData.visible)
+		{
+			lightData.position.z = -lightData.position.z;
+
+			switch (lightData.type)
+			{
+			case LightType::Directional:
+			{
+				auto light = DirectionalLight::create();
+				light->setPosition(lightData.position);
+				light->setAmbient(lightData.color);
+				light->setDiffuse(lightData.color);
+				mMaterial->addLight(*light);
+				break;
+			}
+
+			case LightType::Point:
+			{
+				auto light = PointLight::create();
+				light->setPosition(lightData.position);
+				light->setAmbient(lightData.color);
+				light->setDiffuse(lightData.color);
+				light->setAttenuation(glm::vec2(0.0f, lightData.radius));
+				mMaterial->addLight(*light);
+				break;
+			}
+			}
+		}
 	}
 
 	auto camPosition = StringUtils::toVec3(editor["CamPosition"].asString());
@@ -233,11 +252,33 @@ void Level::update(double elapsedTime)
 void Level::draw(const CameraRef& camera)
 {
 	gl::enableCullFace(gl::CullFaceType::Back);
+	mMaterial->bind();
+	draw(camera, mMaterial->getShader());
+	mMaterial->unbind();
+	gl::disableCullFace();
+}
+
+//=========================================================================
+void Level::draw(const CameraRef& camera, const Shader& shader)
+{
+
 	for(auto& mesh : mMeshList)
 	{
-		mesh->draw(camera);
+		mMaterial->updateUniforms(0);
+
+		/*LevelMeshData lmd;
+		lmd.fileName = mesh->getFileName();
+
+		auto it = std::find(levelData.meshList.begin(), levelData.meshList.end(), lmd);
+
+		if (it != levelData.meshList.end())
+		{
+		mMaterial->setTilingU((*it).textureScale.x);
+		mMaterial->setTilingV((*it).textureScale.y);
+		}*/
+
+		mesh->draw(camera, shader);
 	}
-	gl::disableCullFace();
 }
 
 //=========================================================================
@@ -259,7 +300,7 @@ LevelMeshData Level::getMeshData(const Json::Value& data)
 	meshData.name = data["Name"].asString();
 	meshData.fileName = data["FileName"].asString();
 
-	if (mModelFormat != std::string())
+	if(mModelFormat != std::string())
 		meshData.fileName = StringUtils::cutTail(meshData.fileName, ".") + mModelFormat;
 
 	meshData.textureScale = StringUtils::toVec2(data["ScaleTexture"].asString());
