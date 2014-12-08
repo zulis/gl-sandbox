@@ -9,6 +9,7 @@
 #include "core/DirectionalLight.h"
 #include "core/SpotLight.h"
 #include "core/Quad.h"
+#include "core/DefaultMaterial.h"
 
 class Test : public State
 {
@@ -28,6 +29,7 @@ private:
 	MeshRef mMesh1, mMesh2;
 	MeshRef mLightMesh;
 	QuadRef mQuad;
+	MaterialDefaultRef mMaterial;
 	float mStrafeSpeed { 0.1f };
 	float mStrafeFastSpeed { 0.2f };
 	float mRotateH { 0.0f };
@@ -36,7 +38,7 @@ private:
 	int mWindowHeight;
 	int mLastMouseX, mLastMouseY, mCurrentMouseX, mCurrentMouseY;
 	float mRotation { 0.0f };
-	glm::vec3 mLightLookAt{ glm::vec3(0.0f, 0.0f, 0.0f) };
+	glm::vec3 mLightLookAt{ glm::vec3(0.0f, 0.0f, 1.0f) };
 
 	glm::vec3 getArcballVector(int x, int y);
 };
@@ -48,6 +50,8 @@ void Test::setup()
 	mCamera->setPosition(0, 0.75, 2);
 	mCamera->setRotateSpeed(0.002f);
 	mCamera->setStrafeSpeed(mStrafeSpeed);
+
+	mMaterial = DefaultMaterial::create();
 
 	mMesh1 = Mesh::create();
 	mMesh1->setFrustumCulling(false);
@@ -64,11 +68,23 @@ void Test::setup()
 	//mMesh->loadFromFile("assets/models/rocks/1/rock_01.fbx");
 	//mMesh->setTexturePath("assets/models/sponza/textures");
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
-	auto material = mMesh1->getMaterial();
+	//auto material = mMesh1->getMaterial();
 
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
+
+	unsigned int geometryIndex = 0;
+
+	for each(MeshPart meshPart in mMesh1->getMeshData())
+	{
+		for each(auto meshTexture in meshPart.material.textures)
+		{
+			mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
+		}
+
+		geometryIndex++;
+	}
 
 	auto light = PointLight::create();
 	//auto light = DirectionalLight::create();
@@ -78,12 +94,12 @@ void Test::setup()
 	light->setAmbient(Color::white());
 	light->setDiffuse(Color::white());
 	light->setSpecular(Color::white());
-	material->addLight(*light);
+	mMaterial->addLight(*light);
 
-	material->setAmbientColor(Color(0.3f, 0.3f, 0.3f, 1.0f));
-	material->setDiffuseColor(Color(0.7f, 0.7f, 0.7f, 1.0f));
-	material->setSpecularColor(Color(0.5f, 0.5f, 0.5f, 1.0f));
-	material->setShininess(60.0f);
+	mMaterial->setAmbientColor(Color(0.3f, 0.3f, 0.3f, 1.0f));
+	mMaterial->setDiffuseColor(Color(0.7f, 0.7f, 0.7f, 1.0f));
+	mMaterial->setSpecularColor(Color(0.5f, 0.5f, 0.5f, 1.0f));
+	mMaterial->setShininess(60.0f);
 
 	mLightMesh = Mesh::create();
 	mLightMesh->loadFromFile("assets/models/misc/sphere.fbx");
@@ -210,10 +226,11 @@ void Test::update(double elapsedTime)
 	}
 
 	//mMesh->setRotationZ(mRotation);
-	mMesh1->getMaterial().get()->getLight(0).setPosition(mLightLookAt);
+	mMaterial->getLight(0).setPosition(mLightLookAt);
 	mLightMesh->setPosition(mLightLookAt);
 
 	//mMesh1->setLookAt(mCamera->getPosition()); mMesh1->setRotationX(-90);
+	//mMesh1->setLookAt(mLightMesh->getPosition()); mMesh1->setRotationX(-90);
 	//mMesh1->setRotateTowards(mLightMesh->getRotation(), glm::radians(90.0f) * elapsedTime); //mMesh1->setRotationX(-90);
 	
 }
@@ -227,13 +244,18 @@ void Test::draw()
 	gl::disableCullFace();
 	*/
 
+	mMaterial->bind();
+	mMaterial->updateUniforms(0);
+
 	gl::enableCullFace(gl::CullFaceType::Back);
-	mMesh1->draw(mCamera);
-	mLightMesh->draw(mCamera);
+	mMesh1->draw(mCamera, mMaterial->getShader());
+	mLightMesh->draw(mCamera, mMaterial->getShader());
 	gl::disableCullFace();
 
 	if (mMesh2)
-		mMesh2->draw(mCamera);
+		mMesh2->draw(mCamera, mMaterial->getShader());
+
+	mMaterial->unbind();
 
 	gl::enable2D();
 	//gl::enableAlphaBlending();
