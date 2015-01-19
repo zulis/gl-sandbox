@@ -376,25 +376,33 @@ void Shader::unbind()
 //=========================================================================
 void Shader::setUniform(const std::string& name, int i) const
 {
-	glUniform1i(getUniform(name), i);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform1i(uniform, i);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, unsigned int i) const
 {
-	glUniform1i(getUniform(name), i);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform1i(uniform, i);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, float f) const
 {
-	glUniform1f(getUniform(name), f);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform1f(uniform, f);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, float f1, float f2) const
 {
-	glUniform2f(getUniform(name), f1, f2);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform2f(uniform, f1, f2);
 }
 
 //=========================================================================
@@ -406,13 +414,17 @@ void Shader::setUniform(const std::string& name, const glm::vec2 vec2) const
 //=========================================================================
 void Shader::setUniform(const std::string& name, float f1, float f2, float f3) const
 {
-	glUniform3f(getUniform(name), f1, f2, f3);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform3f(uniform, f1, f2, f3);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, float f1, float f2, float f3, float f4) const
 {
-	glUniform4f(getUniform(name), f1, f2, f3, f4);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform4f(uniform, f1, f2, f3, f4);
 }
 
 //=========================================================================
@@ -430,31 +442,41 @@ void Shader::setUniform(const std::string& name, const glm::vec3& vec3) const
 //=========================================================================
 void Shader::setUniform(const std::string& name, const glm::vec4* vec4, int count) const
 {
-	glUniform4fv(getUniform(name), count, (GLfloat*)vec4);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform4fv(uniform, count, (GLfloat*)vec4);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, const glm::vec4 vec4) const
 {
-	glUniform4fv(getUniform(name), 1, (GLfloat*)&vec4);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform4fv(uniform, 1, (GLfloat*)&vec4);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, const glm::mat3& mat3, bool transpose) const
 {
-	glUniformMatrix3fv(getUniform(name), 1, transpose ? GL_TRUE : GL_FALSE, &mat3[0][0]);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniformMatrix3fv(uniform, 1, transpose ? GL_TRUE : GL_FALSE, &mat3[0][0]);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, const glm::mat4& mat4, bool transpose) const
 {
-	glUniformMatrix4fv(getUniform(name), 1, transpose ? GL_TRUE : GL_FALSE, &mat4[0][0]);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniformMatrix4fv(uniform, 1, transpose ? GL_TRUE : GL_FALSE, &mat4[0][0]);
 }
 
 //=========================================================================
 void Shader::setUniform(const std::string& name, bool b) const
 {
-	glUniform1i(getUniform(name), b ? 1 : 0);
+	auto uniform = getUniform(name);
+	if (uniform != -1)
+		glUniform1i(uniform, b ? 1 : 0);
 }
 
 //=========================================================================
@@ -472,8 +494,8 @@ GLuint Shader::getAttribute(const std::string& name) const
 		return it->second;
 	else
 	{
-		logError("Attribute '%s' not found\n", name.c_str());
-		return NULL;
+		//logError("Attribute '%s' not found\n", name.c_str());
+		return -1;
 	}
 }
 
@@ -486,8 +508,8 @@ GLuint Shader::getUniform(const std::string& name) const
 		return it->second;
 	else
 	{
-		logError("Uniform '%s' not found\n", name.c_str());
-		return NULL;
+		//logError("Uniform '%s' not found\n", name.c_str());
+		return -1;
 	}
 }
 

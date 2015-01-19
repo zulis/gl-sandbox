@@ -144,26 +144,14 @@ void Mesh::setFrustumCulling(bool isOn)
 //=========================================================================
 void Mesh::updateUniforms(const Camera& camera, const Shader& shader)
 {
-	if(shader.hasUniform(ShaderConstants::ProjectionMatrix))
-		shader.setUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
+	shader.setUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
+	shader.setUniform(ShaderConstants::ViewMatrix, camera.getViewMatrix());
+	shader.setUniform(ShaderConstants::ModelMatrix, getMatrix());
+	shader.setUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * getMatrix());
+	shader.setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
 
-	if(shader.hasUniform(ShaderConstants::ViewMatrix))
-		shader.setUniform(ShaderConstants::ViewMatrix, camera.getViewMatrix());
-
-	if(shader.hasUniform(ShaderConstants::ModelMatrix))
-		shader.setUniform(ShaderConstants::ModelMatrix, getMatrix());
-
-	if(shader.hasUniform(ShaderConstants::ModelViewMatrix))
-		shader.setUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * getMatrix());
-
-	if(shader.hasUniform(ShaderConstants::MVP))
-		shader.setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
-
-	if(shader.hasUniform(ShaderConstants::NormalMatrix))
-	{
-		auto mv = camera.getViewMatrix() * getMatrix();
-		shader.setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
-	}
+	auto mv = camera.getViewMatrix() * getMatrix();
+	shader.setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
 }
 
 //=========================================================================

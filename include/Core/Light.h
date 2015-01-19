@@ -267,36 +267,28 @@ void Light::updateUniforms(const ShaderRef& shader, unsigned int lightIndex)
 	std::string uniformName;
 
 	uniformName = createUniformName(ShaderConstants::LightPosition, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mPosition);
+	shader->setUniform(uniformName, mPosition);
 
 	uniformName = createUniformName(ShaderConstants::LightLookAt, lightIndex);
-	if (shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mLookAt);
+	shader->setUniform(uniformName, mLookAt);
 
 	uniformName = createUniformName(ShaderConstants::LightAmbient, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mAmbient);
+	shader->setUniform(uniformName, mAmbient);
 
 	uniformName = createUniformName(ShaderConstants::LightDiffuse, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mDiffuse);
+	shader->setUniform(uniformName, mDiffuse);
 
 	uniformName = createUniformName(ShaderConstants::LightSpecular, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mSpecular);
+	shader->setUniform(uniformName, mSpecular);
 
 	uniformName = createUniformName(ShaderConstants::LightAttenuation, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mAttenuation);
+	shader->setUniform(uniformName, mAttenuation);
 
 	uniformName = createUniformName(ShaderConstants::LightCutoff, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mCutoff);
+	shader->setUniform(uniformName, mCutoff);
 
 	uniformName = createUniformName(ShaderConstants::LightExponent, lightIndex);
-	if(shader->hasUniform(uniformName))
-		shader->setUniform(uniformName, mExponent);
+	shader->setUniform(uniformName, mExponent);
 }
 
 //=========================================================================
