@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <map>
+#include <unordered_map>
 #pragma region assimp
 #include <cimport.h>
 #include <Importer.hpp>
@@ -19,7 +19,7 @@
 class MeshDataCollection
 {
 public:
-	typedef std::map<std::string, MeshData> ResourceMap;
+	typedef std::unordered_map<std::string, MeshData> ResourceMap;
 
 	static bool find(const std::string& fileName);
 	static void add(const std::string& fileName, MeshData meshData);

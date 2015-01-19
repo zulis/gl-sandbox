@@ -1,14 +1,14 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <unordered_map>
 
 template<class T>
 class ResourceManager
 {
 public:
 	typedef std::pair<std::string, T*> Resource;
-	typedef std::map<std::string, T*> ResourceMap;
+	typedef std::unordered_map<std::string, T*> ResourceMap;
 
 	ResourceManager();
 	virtual ~ResourceManager();

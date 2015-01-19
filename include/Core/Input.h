@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <glm/glm.hpp>
 
 enum class MouseButton
@@ -37,9 +37,9 @@ public:
 	bool isMouseVisible() const;
 
 private:
-	std::map<int, bool> mKeyTable;
-	mutable std::map<int, bool> mPrevKeyTable;
-	std::map<MouseButton, bool> mMouseButtons;
+	std::unordered_map<int, bool> mKeyTable;
+	mutable std::unordered_map<int, bool> mPrevKeyTable;
+	std::unordered_map<MouseButton, bool> mMouseButtons;
 	int mMouseX {0};
 	int mMouseY { 0 };
 	int mMouseChangeX { 0 };

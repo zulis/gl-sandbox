@@ -11,7 +11,7 @@ public:
 
 private:
 	ComponentMapper<KeyboardComponent> mKeyboardMapper;
-	std::map<int, bool> mKeys;
+	std::unordered_map<int, bool> mKeys;
 
 private:
 	virtual void initialize();

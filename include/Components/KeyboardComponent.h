@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <Artemis.h>
 
 class KeyboardComponent : public Component
@@ -9,11 +9,11 @@ public:
 	KeyboardComponent();
 	virtual ~KeyboardComponent();
 
-	void setKeyStatus(std::map<int, bool> keys);
+	void setKeyStatus(std::unordered_map<int, bool> keys);
 	bool isPressed(int key);
 
 private:
-	std::map<int, bool> mKeys;
+	std::unordered_map<int, bool> mKeys;
 };
 
 //=========================================================================
@@ -28,7 +28,7 @@ KeyboardComponent::~KeyboardComponent()
 }
 
 //=========================================================================
-void KeyboardComponent::setKeyStatus(std::map<int, bool> keys)
+void KeyboardComponent::setKeyStatus(std::unordered_map<int, bool> keys)
 {
 	mKeys = keys;
 }

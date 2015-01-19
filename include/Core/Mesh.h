@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 #include "core/MeshLoader.h"
 #include "core/Geometry.h"
@@ -41,7 +41,7 @@ private:
 	std::vector<GeometryRef> mGeometries;
 	std::string mTexturePath;
 	AABB mAABB;
-	std::map<int, AABB> mAABBMap;
+	std::unordered_map<int, AABB> mAABBMap;
 	bool mCullingIsOn { false };
 	//std::string getFileName(std::string& pathName);
 	//void parseNode(const aiNode* node);

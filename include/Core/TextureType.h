@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <unordered_map>
 
 enum TextureType
 {
@@ -22,7 +22,7 @@ enum TextureType
 	Unknown
 };
 
-std::map<TextureType, std::string> TextureTypeName =
+std::unordered_map<TextureType, std::string> TextureTypeName =
 {
 	//{ TextureType::AmbientMap, "AmbientMap" },
 	{ TextureType::DiffuseMap, "DiffuseMap" },

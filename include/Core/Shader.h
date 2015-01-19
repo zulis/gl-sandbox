@@ -5,7 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <fstream>
 #include "core/GL.h"
 #include "core/ShaderConstants.h"
@@ -19,7 +19,7 @@ typedef std::shared_ptr<class Shader> ShaderRef;
 class ShaderCollection
 {
 public:
-	typedef std::map<std::string, ShaderRef> ResourceMap;
+	typedef std::unordered_map<std::string, ShaderRef> ResourceMap;
 
 	static bool find(const std::string& fileName);
 	static void add(const std::string& fileName, ShaderRef shader);
@@ -99,8 +99,8 @@ public:
 	bool hasUniform(const std::string& name) const;
 
 private:
-	std::map<const std::string, GLuint> mAttributeMap;
-	std::map<const std::string, GLuint> mUniformMap;
+	std::unordered_map<std::string, GLuint> mAttributeMap;
+	std::unordered_map<std::string, GLuint> mUniformMap;
 	GLuint mVertexShaderID;
 	GLuint mFragmentShaderID;
 	GLuint mProgramID;
@@ -321,7 +321,7 @@ void Shader::dumpShaderInfo(const std::string& fileName)
 	logNote("\n");
 	logNote("Uniforms:\n");
 
-	for(std::map<std::string, GLuint>::iterator i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
+	for(auto i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
 	{
 		logNote("  %s -> %d\n", i->first.c_str(), i->second);
 	}
@@ -329,7 +329,7 @@ void Shader::dumpShaderInfo(const std::string& fileName)
 	logNote("\n");
 	logNote("Attributes:\n");
 
-	for(std::map<std::string, GLuint>::iterator i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
+	for(auto i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
 	{
 		logNote("  %s -> %d\n", i->first.c_str(), i->second);
 	}
