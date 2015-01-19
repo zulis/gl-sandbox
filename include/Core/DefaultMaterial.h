@@ -2,14 +2,14 @@
 
 #include "core/Material.h"
 
-typedef std::shared_ptr<class DefaultMaterial> MaterialDefaultRef;
+typedef std::unique_ptr<class DefaultMaterial> MaterialDefaultRef;
 
-class DefaultMaterial : public Material
+class DefaultMaterial final : public Material
 {
 public:
 	static MaterialDefaultRef create();
 	DefaultMaterial();
-	virtual ~DefaultMaterial();
+	~DefaultMaterial() {};
 
 	virtual void updateUniforms(unsigned int geometryIndex);
 
@@ -20,18 +20,14 @@ private:
 //=========================================================================
 MaterialDefaultRef DefaultMaterial::create()
 {
-	return MaterialDefaultRef(new DefaultMaterial);
+	//return MaterialDefaultRef(new DefaultMaterial);
+	return std::make_unique<DefaultMaterial>();
 }
 
 //=========================================================================
 DefaultMaterial::DefaultMaterial() : Material("assets/shaders/defaultMaterial")
 {
 	mDefaultDiffuse = Texture::create(Color::white());
-}
-
-//=========================================================================
-DefaultMaterial::~DefaultMaterial()
-{
 }
 
 //=========================================================================

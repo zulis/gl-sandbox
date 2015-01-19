@@ -57,13 +57,13 @@ public:
 	void setModelFormat(const std::string& modelFormat);
 	void loadFromFile(const std::string& fileName);
 	void update(double elapsedTime);
-	void draw(const CameraRef& camera);
+	void draw(const CameraPtr& camera);
 
 	const glm::vec3 getCamPosition() const;
 	const glm::vec3 getCamLookAt() const;
 
 private:
-	std::vector<MeshRef> mMeshList;
+	std::vector<MeshPtr> mMeshList;
 	glm::vec3 mCamPosition { glm::vec3() };
 	glm::vec3 mCamLookAt { glm::vec3() };
 	std::string mModelFormat;
@@ -73,7 +73,7 @@ private:
 	LevelMeshData getMeshData(const Json::Value& data);
 	LevelLightData getPointLightData(const Json::Value& data);
 	LevelLightData getDirectionalLightData(const Json::Value& data);
-	void draw(const CameraRef& camera, const Shader& shader);
+	void draw(const CameraPtr& camera, const Shader& shader);
 };
 
 //=========================================================================
@@ -185,19 +185,19 @@ void Level::loadFromFile(const std::string& fileName)
 		//material->setTilingU(meshData.textureScale.x);
 		//material->setTilingV(meshData.textureScale.y);
 
-		mMeshList.push_back(mesh);
-
 		unsigned int geometryIndex = 0;
 
-		for each(MeshPart meshPart in mesh->getMeshData())
+		for(auto& meshPart : mesh->getMeshData())
 		{
-			for each(auto meshTexture in meshPart.material.textures)
+			for(auto& meshTexture : meshPart.material.textures)
 			{
 				mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
 			}
 
 			geometryIndex++;
 		}
+
+		mMeshList.push_back(std::move(mesh));
 	}
 
 	for (auto& lightData : levelData.lightList)
@@ -249,7 +249,7 @@ void Level::update(double elapsedTime)
 }
 
 //=========================================================================
-void Level::draw(const CameraRef& camera)
+void Level::draw(const CameraPtr& camera)
 {
 	gl::enableCullFace(gl::CullFaceType::Back);
 	mMaterial->bind();
@@ -259,7 +259,7 @@ void Level::draw(const CameraRef& camera)
 }
 
 //=========================================================================
-void Level::draw(const CameraRef& camera, const Shader& shader)
+void Level::draw(const CameraPtr& camera, const Shader& shader)
 {
 
 	for(auto& mesh : mMeshList)

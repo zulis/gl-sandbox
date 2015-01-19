@@ -2,22 +2,20 @@
 
 #include "core/Light.h"
 
-typedef std::shared_ptr<class SpotLight> SpotLightRef;
+typedef std::unique_ptr<class SpotLight> SpotLightRef;
 
-class SpotLight : public Light
+class SpotLight final : public Light
 {
 public:
 	static SpotLightRef create();
-	virtual ~SpotLight();
-
-private:
 	SpotLight();
+	~SpotLight() {};
 };
 
 //=========================================================================
 SpotLightRef SpotLight::create()
 {
-	return SpotLightRef(new SpotLight);
+	return std::make_unique<SpotLight>();
 }
 
 //=========================================================================
@@ -25,9 +23,4 @@ SpotLight::SpotLight() : Light(LightType::Spot)
 {
 	setExponent(50.0f);
 	setCutoff(45.0f);
-}
-
-//=========================================================================
-SpotLight::~SpotLight()
-{
 }

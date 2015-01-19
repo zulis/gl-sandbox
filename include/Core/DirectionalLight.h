@@ -2,30 +2,23 @@
 
 #include "core/Light.h"
 
-typedef std::shared_ptr<class DirectionalLight> DirectionalLightRef;
+typedef std::unique_ptr<class DirectionalLight> DirectionalLightRef;
 
-class DirectionalLight : public Light
+class DirectionalLight final : public Light
 {
 public:
 	static DirectionalLightRef create();
-	virtual ~DirectionalLight();
-
-private:
 	DirectionalLight();
+	~DirectionalLight() {};
 };
 
 //=========================================================================
 DirectionalLightRef DirectionalLight::create()
 {
-	return DirectionalLightRef(new DirectionalLight);
+	return std::make_unique<DirectionalLight>();
 }
 
 //=========================================================================
 DirectionalLight::DirectionalLight() : Light(LightType::Directional)
-{
-}
-
-//=========================================================================
-DirectionalLight::~DirectionalLight()
 {
 }

@@ -156,6 +156,9 @@ Window::Window(int width, int height, WindowMode mode)
 	//glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
+	// VSync: 0 - off, 1 - on
+	glfwSwapInterval(1);
+
 	glfwSetWindowUserPointer(mWindow, this);
 	glfwSetKeyCallback(mWindow, keyCallback);
 	glfwSetMouseButtonCallback(mWindow, mouseButtonCallback);

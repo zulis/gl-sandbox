@@ -11,7 +11,7 @@
 #include "core/FileMonitor.h"
 #include "core/Listeners.h"
 
-typedef std::shared_ptr<class Material> MaterialRef;
+typedef std::unique_ptr<class Material> MaterialRef;
 
 //=========================================================================
 class Material : public FileMonitorListener

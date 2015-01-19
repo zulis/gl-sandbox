@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 #include <Artemis.h>
 #include "core/Mesh.h"
 #include "core/Camera.h"
@@ -8,33 +9,33 @@
 class MeshRenderComponent : public Component
 {
 public:
-	MeshRenderComponent(MeshRef mesh, CameraRef camera);
-	MeshRef getMesh() const;
-	CameraRef getCamera() const;
+	MeshRenderComponent(MeshPtr mesh, CameraPtr camera);
+	const Mesh& getMesh() const;
+	const Camera& getCamera() const;
 	bool isCulled(const Camera& camera);
 
 private:
-	MeshRef mMesh;
-	CameraRef mCamera;
+	MeshPtr mMesh;
+	CameraPtr mCamera;
 };
 
 //=========================================================================
-MeshRenderComponent::MeshRenderComponent(MeshRef mesh, CameraRef camera)
+MeshRenderComponent::MeshRenderComponent(MeshPtr mesh, CameraPtr camera)
 {
-	mMesh = mesh;
-	mCamera = camera;
+	mMesh = std::move(mesh);
+	mCamera = std::move(camera);
 }
 
 //=========================================================================
-MeshRef MeshRenderComponent::getMesh() const
+const Mesh& MeshRenderComponent::getMesh() const
 {
-	return mMesh;
+	return *mMesh;
 }
 
 //=========================================================================
-CameraRef MeshRenderComponent::getCamera() const
+const Camera& MeshRenderComponent::getCamera() const
 {
-	return mCamera;
+	return *mCamera;
 }
 
 //=========================================================================

@@ -13,17 +13,17 @@
 #include "core/AABB.h"
 #include "core/Camera.h"
 
-typedef std::shared_ptr<class Mesh> MeshRef;
+typedef std::unique_ptr<class Mesh> MeshPtr;
 
-class Mesh : public Transform3D
+class Mesh final : public Transform3D
 {
 public:
-	static MeshRef create();
-	Mesh();
-	virtual ~Mesh();
+	static MeshPtr create();
+	Mesh() {};
+	~Mesh() {};
 
 	void loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
-	void draw(const CameraRef& camera, const Shader& shader);
+	void draw(const CameraPtr& camera, const Shader& shader);
 
 	void setTexturePath(const std::string& texturePath);
 	void setAutoLoadTextures(bool value);
@@ -39,9 +39,9 @@ public:
 private:
 	MeshLoaderRef mMeshLoader;
 	std::vector<GeometryRef> mGeometries;
-	std::string mTexturePath/* { std::string() }*/;
+	std::string mTexturePath;
 	AABB mAABB;
-	std::map<GeometryRef, AABB> mAABBMap;
+	std::map<int, AABB> mAABBMap;
 	bool mCullingIsOn { false };
 	//std::string getFileName(std::string& pathName);
 	//void parseNode(const aiNode* node);
@@ -49,26 +49,18 @@ private:
 	bool mAutoloadTextures{ true };
 	std::string mFileName;
 
+	Mesh(const Mesh&) = delete;
+	Mesh& operator=(const Mesh&) = delete;
 	void draw(const Camera& camera, const Shader& shader);
 	void draw(const GeometryRef& geometry, const unsigned int geometryIndex, const Camera& camera, const Shader& shader);
 
 };
 
 //=========================================================================
-MeshRef Mesh::create()
+MeshPtr Mesh::create()
 {
 	//return MeshRef(new Mesh);
-	return std::make_shared<Mesh>();
-}
-
-//=========================================================================
-Mesh::Mesh()
-{
-}
-
-//=========================================================================
-Mesh::~Mesh()
-{
+	return std::make_unique<Mesh>();
 }
 
 //=========================================================================
@@ -84,7 +76,9 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 	glm::vec3 min(maxFloat);
 	glm::vec3 max(minFloat);
 
-	for each(MeshPart meshPart in mMeshData)
+	unsigned int geometryIndex = 0;
+
+	for(auto& meshPart : mMeshData)
 	{
 		auto geometry = Geometry::create();
 		geometry->setDrawType(Geometry::TRIANGLES);
@@ -94,10 +88,10 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 		geometry->setTangents(meshPart.geometry.tangents);
 		geometry->setBitangents(meshPart.geometry.bitangents);
 		geometry->setTexCoords(meshPart.geometry.texCoords);
-		mGeometries.push_back(geometry);
-
 		AABB aabb = geometry->getAABB();
-		mAABBMap[geometry] = aabb;
+		mGeometries.push_back(std::move(geometry));
+
+		mAABBMap[geometryIndex] = aabb;
 
 		if(aabb.getMax().x > max.x)
 			max.x = aabb.getMax().x;
@@ -116,13 +110,15 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 
 		if(aabb.getMin().z < min.z)
 			min.z = aabb.getMin().z;
+
+		geometryIndex++;
 	}
 
 	mAABB = AABB(min, max);
 }
 
 //=========================================================================
-void Mesh::draw(const CameraRef& camera, const Shader& shader)
+void Mesh::draw(const CameraPtr& camera, const Shader& shader)
 {
 	draw(*camera.get(), shader);
 }
@@ -179,7 +175,7 @@ void Mesh::draw(const Camera& camera, const Shader& shader)
 	{
 		if(mCullingIsOn)
 		{
-			auto aabb = mAABBMap[geometry].transformed(getMatrix());
+			auto aabb = mAABBMap[geometryIndex].transformed(getMatrix());
 			auto notCulled = camera.intersects(aabb);
 
 			if(notCulled)

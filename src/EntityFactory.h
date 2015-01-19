@@ -30,13 +30,13 @@ public:
 	EntityFactory();
 	~EntityFactory();
 
-	void setup(const CameraRef& camera);
+	void setup(const CameraPtr& camera);
 	//void input(const KeyEvent& keyEvent, const MouseEvent& mouseEvent);
 	void update(float elapsedTime);
 	void draw();
 
 private:
-	CameraRef mCamera;
+	CameraPtr mCamera;
 	World mWorld;
 	SystemManager* mSm;
 	EntityManager* mEm;
@@ -65,7 +65,7 @@ EntityFactory::~EntityFactory()
 }
 
 //=========================================================================
-void EntityFactory::setup(const CameraRef& camera)
+void EntityFactory::setup(const CameraPtr& camera)
 {
 	mCamera = camera;
 

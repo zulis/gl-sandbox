@@ -8,10 +8,9 @@
 #include "core/Shader.h"
 #include "core/AABB.h"
 
-typedef std::shared_ptr<class Geometry> GeometryRef;
-//typedef std::unique_ptr<class Geometry> GeometryRef;
+typedef std::unique_ptr<class Geometry> GeometryRef;
 
-class Geometry
+class Geometry final
 {
 public:
 	enum DrawType
@@ -28,9 +27,9 @@ public:
 
 	static GeometryRef create();
 	static GeometryRef create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
-	Geometry();
+	Geometry() {};
 	Geometry(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
-	virtual ~Geometry();
+	~Geometry();
 
 	void setVertices(std::vector<glm::vec3> vertices);
 	void setVertices(std::vector<glm::vec2> vertices);
@@ -47,6 +46,7 @@ public:
 	const std::vector<glm::vec3> getNormals() const;
 	const std::vector<glm::vec4> getTangents() const;
 	const std::vector<glm::vec3> getBitangents() const;
+	const AABB getAABB() const;
 
 	unsigned int getDrawType() const;
 
@@ -57,11 +57,6 @@ public:
 	bool hasBitangents() const;
 
 	void draw(const Shader& shader);
-
-	const AABB getAABB() const;
-
-	void generateNormals();
-	void generateTangents();
 
 private:
 	DrawType mDrawType { DrawType::TRIANGLES };
@@ -75,28 +70,23 @@ private:
 	GLuint mVaoHandle;
 	GLuint mVboHandle[6];
 
+	Geometry(const Geometry&) = delete;
+	Geometry& operator=(const Geometry&) = delete;
 	void prepare(const Shader& shader);
+	void generateNormals();
+	void generateTangents();
 };
 
 //=========================================================================
 GeometryRef Geometry::create()
 {
-	//return GeometryRef(new Geometry);
-	return std::make_shared<Geometry>();
-	//return std::make_unique<Geometry>();
+	return std::make_unique<Geometry>();
 }
 
 //=========================================================================
 GeometryRef Geometry::create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices)
 {
-	//return GeometryRef(new Geometry(vertices, indices));
-	return std::make_shared<Geometry>(vertices, indices);
-	//return std::make_unique<Geometry>(vertices, indices);
-}
-
-//=========================================================================
-Geometry::Geometry()
-{
+	return std::make_unique<Geometry>(vertices, indices);
 }
 
 //=========================================================================
@@ -118,10 +108,10 @@ Geometry::~Geometry()
 
 	if(mIsReady)
 	{
+		glBindVertexArray(0);
+
 		for(auto& hande : mVboHandle)
-		{
 			glDeleteBuffers(1, &hande);
-		}
 
 		glDeleteVertexArrays(1, &mVaoHandle);
 	}
@@ -138,7 +128,7 @@ void Geometry::setVertices(std::vector<glm::vec2> vertices)
 {
 	std::vector<glm::vec3> result;
 
-	for each(auto v in vertices)
+	for(auto& v : vertices)
 	{
 		result.push_back(glm::vec3(v.x, v.y, 0.0f));
 	}

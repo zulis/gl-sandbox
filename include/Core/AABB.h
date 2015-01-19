@@ -2,16 +2,16 @@
 
 #include "core/Math.h"
 
-enum class AABBIntersectionType
-{
-    Inside,
-    Intersect,
-    Outside
-};
-
 class AABB
 {
 public:
+	enum IntersectionType
+	{
+		Inside,
+		Intersect,
+		Outside
+	};
+
 	AABB();
 	AABB(const glm::vec3& aMin, const glm::vec3& aMax);
 	~AABB() {};
@@ -28,7 +28,7 @@ public:
 	AABB transformed(const glm::mat4& matrix) const;
 	void extend(float value);
 	void extend(const glm::vec3& point);
-	AABBIntersectionType intersect(const AABB& other) const;
+	AABB::IntersectionType intersect(const AABB& other) const;
 	bool overlaps(const AABB& other) const;
 
 private:
@@ -166,19 +166,19 @@ void AABB::extend(const glm::vec3& point)
 }
 
 //=========================================================================
-AABBIntersectionType AABB::intersect(const AABB& other) const
+AABB::IntersectionType AABB::intersect(const AABB& other) const
 {
 	if((mMax.x < other.mMin.x) || (mMin.x > other.mMax.x) ||
 	        (mMax.y < other.mMin.y) || (mMin.y > other.mMax.y) ||
 	        (mMax.z < other.mMin.z) || (mMin.z > other.mMax.z))
-		return AABBIntersectionType::Outside;
+		return IntersectionType::Outside;
 
 	if((mMin.x <= other.mMin.x) && (mMax.x >= other.mMax.x) &&
 	        (mMin.y <= other.mMin.y) && (mMax.y >= other.mMax.y) &&
 	        (mMin.z <= other.mMin.z) && (mMax.z >= other.mMax.z))
-		return AABBIntersectionType::Inside;
+		return IntersectionType::Inside;
 
-	return AABBIntersectionType::Intersect;
+	return IntersectionType::Intersect;
 }
 
 //=========================================================================

@@ -25,9 +25,9 @@ public:
 	virtual void resize(unsigned int width, unsigned int height);
 
 private:
-	CameraRef mCamera;
-	MeshRef mMesh1, mMesh2;
-	MeshRef mLightMesh;
+	CameraPtr mCamera;
+	MeshPtr mMesh1, mMesh2;
+	MeshPtr mLightMesh;
 	QuadRef mQuad;
 	MaterialDefaultRef mMaterial;
 	float mStrafeSpeed { 0.1f };
@@ -76,9 +76,9 @@ void Test::setup()
 
 	unsigned int geometryIndex = 0;
 
-	for each(MeshPart meshPart in mMesh1->getMeshData())
+	for(auto& meshPart : mMesh1->getMeshData())
 	{
-		for each(auto meshTexture in meshPart.material.textures)
+		for(auto& meshTexture : meshPart.material.textures)
 		{
 			mMaterial->addTexture(meshTexture.fileName, meshTexture.textureType, geometryIndex);
 		}

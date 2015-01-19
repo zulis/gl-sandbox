@@ -17,7 +17,7 @@ public:
 	virtual void resize(unsigned int width, unsigned int height);
 
 private:
-	CameraRef mCamera;
+	CameraPtr mCamera;
 	float mStrafeSpeed{ 0.2f };
 	float mStrafeFastSpeed{ 0.4f };
 	LevelRef mLevel;

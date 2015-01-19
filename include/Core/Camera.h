@@ -6,12 +6,12 @@
 #include "core/Plane.h"
 
 //typedef std::shared_ptr<class Camera> CameraRef;
-typedef std::unique_ptr<class Camera> CameraRef;
+typedef std::unique_ptr<class Camera> CameraPtr;
 
 class Camera
 {
 public:
-	static CameraRef create();
+	static CameraPtr create();
 
 	Camera();
 	virtual ~Camera();
@@ -68,9 +68,10 @@ private:
 };
 
 //=========================================================================
-CameraRef Camera::create()
+CameraPtr Camera::create()
 {
-	return CameraRef(new Camera);
+	//return CameraRef(new Camera);
+	return std::make_unique<Camera>();
 }
 
 //=========================================================================
