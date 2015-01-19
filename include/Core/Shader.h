@@ -466,8 +466,10 @@ void Shader::setUniform(const std::string& name, const Color& color) const
 //=========================================================================
 GLuint Shader::getAttribute(const std::string& name) const
 {
-	if(hasAttribute(name))
-		return mAttributeMap.find(name)->second;
+	auto it = mAttributeMap.find(name);
+
+	if (it != mAttributeMap.end())
+		return it->second;
 	else
 	{
 		logError("Attribute '%s' not found\n", name.c_str());
@@ -478,8 +480,10 @@ GLuint Shader::getAttribute(const std::string& name) const
 //=========================================================================
 GLuint Shader::getUniform(const std::string& name) const
 {
-	if(hasUniform(name))
-		return mUniformMap.find(name)->second;
+	auto it = mUniformMap.find(name);
+
+	if (it != mUniformMap.end())
+		return it->second;
 	else
 	{
 		logError("Uniform '%s' not found\n", name.c_str());
