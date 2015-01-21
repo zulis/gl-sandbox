@@ -89,7 +89,7 @@ public:
 	void setUniform(const std::string& name, const glm::mat4& mat4, bool transpose = false) const;
 	void setUniform(const std::string& name, bool b) const;
 	void setUniform(const std::string& name, const glm::vec4* vec4, int count) const;
-	void setUniform(const std::string& name, const glm::vec4 vec4) const;
+	void setUniform(const std::string& name, const glm::vec4& vec4) const;
 	void setUniform(const std::string& name, const Color& color) const;
 
 	GLuint getAttribute(const std::string& name) const;
@@ -448,7 +448,7 @@ void Shader::setUniform(const std::string& name, const glm::vec4* vec4, int coun
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::vec4 vec4) const
+void Shader::setUniform(const std::string& name, const glm::vec4& vec4) const
 {
 	auto uniform = getUniform(name);
 	if (uniform != -1)

@@ -155,7 +155,7 @@ void Camera::update()
 	mRight = glm::vec3(sin(mHorizontalAngle - glm::half_pi<float>()), 0, cos(mHorizontalAngle - glm::half_pi<float>()));
 	mUp = glm::cross(mRight, mDirection);
 
-	mProjection = glm::perspective(mFov, mAspectRatio, mNearClip, mFarClip);
+	mProjection = glm::perspective(glm::radians(mFov), mAspectRatio, mNearClip, mFarClip);
 	mView = glm::lookAt(mPosition, mPosition + mDirection, mUp);
 
 	// Calculate frustum planes

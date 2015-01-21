@@ -15,14 +15,14 @@ class Geometry final
 public:
 	enum DrawType
 	{
-		TRIANGLES = 0x0004, // GL_TRIANGLES
+		TRIANGLES = 0x0004,     // GL_TRIANGLES
 		TRIANGLESTRIP = 0x0005, // GL_TRIANGLE_STRIP
-		TRIANGLEFAN = 0x0006, // GL_TRIANGLE_FAN
-		QUADS = 0x0007, // GL_QUADS
-		POINTS = 0x0000, // GL_POINTS
-		LINE = 0x0001, // GL_LINE
-		LINELOOP = 0x0002, // GL_LINE_LOOP
-		POLYGON = 0x0009 // GL_POLYGON
+		TRIANGLEFAN = 0x0006,   // GL_TRIANGLE_FAN
+		QUADS = 0x0007,         // GL_QUADS
+		POINTS = 0x0000,        // GL_POINTS
+		LINE = 0x0001,          // GL_LINE
+		LINELOOP = 0x0002,      // GL_LINE_LOOP
+		POLYGON = 0x0009        // GL_POLYGON
 	};
 
 	static GeometryRef create();

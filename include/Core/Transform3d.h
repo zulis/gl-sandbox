@@ -45,7 +45,7 @@ private:
 Transform3D::Transform3D(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
 {
 	mPosition = position;
-	mRotation = glm::toQuat(glm::orientate3(rotation));
+	mRotation = glm::toQuat(glm::orientate3(glm::radians(rotation)));
 	mScale = scale;
 	updateMatrix();
 }
@@ -114,6 +114,7 @@ void Transform3D::setRotation(const glm::vec3& rotation)
 {
 	auto rot = glm::radians(rotation);
 	mRotation = glm::quat(rot);
+	//mRotation = glm::toQuat(glm::orientate3(glm::radians(rotation)));
 	updateMatrix();
 }
 

@@ -2,9 +2,7 @@
 
 #include <cmath>
 
+#define GLM_FORCE_PURE // 0.9.6.1 bug 
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtx/norm.hpp>

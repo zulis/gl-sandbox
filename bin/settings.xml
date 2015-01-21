@@ -18,7 +18,7 @@
   <CameraScrollSpeed>0.05</CameraScrollSpeed>
   <SnapToGrid>true</SnapToGrid>
   <SnapValue>1</SnapValue>
-  <RotationValue>5</RotationValue>
+  <RotationValue>15</RotationValue>
   <ScriptEnabled>false</ScriptEnabled>
   <ScriptLanguage>Lua</ScriptLanguage>
   <Script />

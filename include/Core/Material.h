@@ -122,7 +122,7 @@ void Material::bind()
 		mShader->setUniform(ShaderConstants::TilingUV, glm::vec2(mTilingU, mTilingV));
 
 		// Update lights
-		mShader->setUniform(ShaderConstants::TotalLights, mLights.size());
+		mShader->setUniform(ShaderConstants::TotalLights, static_cast<int>(mLights.size()));
 
 		unsigned int lightIndex = 0;
 

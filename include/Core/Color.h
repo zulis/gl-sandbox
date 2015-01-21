@@ -7,8 +7,8 @@ class Color
 public:
 	Color();
 	Color(float r, float g, float b, float a = 1.0f);
-	Color(glm::vec4 color);
-	Color(glm::vec3 color);
+	Color(const glm::vec4& color);
+	Color(const glm::vec3& color);
 
 	float r, g, b, a;
 
@@ -49,7 +49,7 @@ Color::Color(float r, float g, float b, float a)
 }
 
 //=========================================================================
-Color::Color(glm::vec4 color)
+Color::Color(const glm::vec4& color)
 {
 	this->r = color.x;
 	this->g = color.y;
@@ -58,7 +58,7 @@ Color::Color(glm::vec4 color)
 }
 
 //=========================================================================
-Color::Color(glm::vec3 color)
+Color::Color(const glm::vec3& color)
 {
 	this->r = color.x;
 	this->g = color.y;

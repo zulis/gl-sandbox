@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
+#include "core/Math.h"
 #include "core/GL.h"
 #include <glfw/glfw3.h>
 #include "core/Input.h"
