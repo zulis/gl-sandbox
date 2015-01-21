@@ -89,6 +89,9 @@
     <ClCompile Include="..\src\Main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\Core\Geometry.cpp">
+      <Filter>include\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Game.h">

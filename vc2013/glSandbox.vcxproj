@@ -177,6 +177,7 @@
     <ClCompile Include="..\external\src\json\json_reader.cpp" />
     <ClCompile Include="..\external\src\json\json_value.cpp" />
     <ClCompile Include="..\external\src\json\json_writer.cpp" />
+    <ClCompile Include="..\include\Core\Geometry.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>

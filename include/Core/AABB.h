@@ -22,7 +22,6 @@ public:
 	glm::vec3 getNegative(const glm::vec3& normal) const;
 	glm::vec3 getMin() const;
 	glm::vec3 getMax() const;
-	glm::vec3 getDiagonal() const;
 	float getLongestEdge() const;
 	float getShortestEdge() const;
 	AABB transformed(const glm::mat4& matrix) const;
@@ -41,7 +40,7 @@ AABB::AABB()
 {
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
-	AABB(glm::vec3(maxFloat), glm::vec3(minFloat));
+	new (this) AABB(glm::vec3(maxFloat), glm::vec3(minFloat));
 }
 
 //=========================================================================
@@ -134,21 +133,15 @@ glm::vec3 AABB::getMax() const
 }
 
 //=========================================================================
-glm::vec3 AABB::getDiagonal() const
-{
-	return mMax - mMin;
-}
-
-//=========================================================================
 float AABB::getLongestEdge() const
 {
-	return glm::compMax(getDiagonal());
+	return glm::compMax(getSize());
 }
 
 //=========================================================================
 float AABB::getShortestEdge() const
 {
-	return glm::compMin(getDiagonal());
+	return glm::compMin(getSize());
 }
 
 //=========================================================================

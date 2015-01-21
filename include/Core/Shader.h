@@ -80,7 +80,7 @@ public:
 	void setUniform(const std::string& name, unsigned int i) const;
 	void setUniform(const std::string& name, float f) const;
 	void setUniform(const std::string& name, float f1, float f2) const;
-	void setUniform(const std::string& name, const glm::vec2 vec2) const;
+	void setUniform(const std::string& name, const glm::vec2& vec2) const;
 	void setUniform(const std::string& name, float f1, float f2, float f3) const;
 	void setUniform(const std::string& name, float f1, float f2, float f3, float f4) const;
 	void setUniform(const std::string& name, const glm::vec3& vec3) const;
@@ -208,7 +208,7 @@ void Shader::loadFromFile(const std::string& fileName)
 
 		logError("Could not load shader %s\n", fileName.c_str());
 		logError("-------------------------------------------------------------------------\n");
-		logError(mErrors.c_str());
+		logError("%s", mErrors.c_str());
 		logError("-------------------------------------------------------------------------\n");
 	}
 	else
@@ -406,7 +406,7 @@ void Shader::setUniform(const std::string& name, float f1, float f2) const
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::vec2 vec2) const
+void Shader::setUniform(const std::string& name, const glm::vec2& vec2) const
 {
 	setUniform(name, vec2.x, vec2.y);
 }
