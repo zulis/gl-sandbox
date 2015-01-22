@@ -4,10 +4,10 @@
 #include <mutex>
 #include <vector>
 #include <FreeImage.h>
-#include "core/GL.h"
-#include "core/ImageManager.h"
-#include "core/Color.h"
-#include "core/Log.h"
+#include "Core/GL.h"
+#include "Core/ImageManager.h"
+#include "Core/Color.h"
+#include "Core/Log.h"
 
 struct TextureCollection
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/ResourceManager.h"
-#include "core/Image.h"
+#include "Core/ResourceManager.h"
+#include "Core/Image.h"
 
 class ImageManager : public ResourceManager<Image>
 {

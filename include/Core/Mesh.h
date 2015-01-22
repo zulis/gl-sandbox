@@ -5,13 +5,13 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
-#include "core/MeshLoader.h"
-#include "core/Geometry.h"
-#include "core/Transform3d.h"
-#include "core/Material.h"
-#include "core/Texture.h"
-#include "core/AABB.h"
-#include "core/Camera.h"
+#include "Core/MeshLoader.h"
+#include "Core/Geometry.h"
+#include "Core/Transform3d.h"
+#include "Core/Material.h"
+#include "Core/Texture.h"
+#include "Core/AABB.h"
+#include "Core/Camera.h"
 
 typedef std::unique_ptr<class Mesh> MeshPtr;
 

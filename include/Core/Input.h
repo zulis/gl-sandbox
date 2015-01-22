@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include "core/Math.h"
+#include "Core/Math.h"
 
 enum class MouseButton
 {

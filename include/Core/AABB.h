@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Math.h"
+#include "Core/Math.h"
 
 class AABB
 {

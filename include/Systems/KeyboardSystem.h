@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Artemis.h>
-#include "components/KeyboardComponent.h"
+#include "Components/KeyboardComponent.h"
 
 class KeyboardSystem : public EntityProcessingSystem
 {

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Artemis.h>
-#include "components/MeshRenderComponent.h"
-#include "components/PlayerComponent.h"
-#include "components/VelocityComponent.h"
-#include "components/TransformComponent.h"
+#include "Components/MeshRenderComponent.h"
+#include "Components/PlayerComponent.h"
+#include "Components/VelocityComponent.h"
+#include "Components/TransformComponent.h"
 
 class PlayerMovementSystem : public EntityProcessingSystem
 {

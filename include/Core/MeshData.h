@@ -2,11 +2,11 @@
 
 #include <string>
 #include <vector>
-#include "core/GL.h"
-#include "core/Color.h"
-#include "core/Math.h"
-#include "core/Texture.h"
-#include "core/TextureType.h"
+#include "Core/GL.h"
+#include "Core/Color.h"
+#include "Core/Math.h"
+#include "Core/Texture.h"
+#include "Core/TextureType.h"
 
 struct MeshGeometry
 {

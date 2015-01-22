@@ -7,12 +7,12 @@
 #include <vector>
 #include <unordered_map>
 #include <fstream>
-#include "core/GL.h"
-#include "core/ShaderConstants.h"
-#include "core/Math.h"
-#include "core/Log.h"
-#include "core/Color.h"
-#include "core/StringUtils.h"
+#include "Core/GL.h"
+#include "Core/ShaderConstants.h"
+#include "Core/Math.h"
+#include "Core/Log.h"
+#include "Core/Color.h"
+#include "Core/StringUtils.h"
 
 typedef std::shared_ptr<class Shader> ShaderRef;
 

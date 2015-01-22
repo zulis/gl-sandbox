@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdarg>
-#include "core/GL.h"
+#include "Core/GL.h"
 
 void printErrorsGL(const char* func, int line);
 

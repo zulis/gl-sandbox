@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "core/Math.h"
-#include "core/AABB.h"
-#include "core/Plane.h"
+#include "Core/Math.h"
+#include "Core/AABB.h"
+#include "Core/Plane.h"
 
 //typedef std::shared_ptr<class Camera> CameraRef;
 typedef std::unique_ptr<class Camera> CameraPtr;

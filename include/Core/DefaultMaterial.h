@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Material.h"
+#include "Core/Material.h"
 
 typedef std::unique_ptr<class DefaultMaterial> MaterialDefaultRef;
 

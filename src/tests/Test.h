@@ -1,15 +1,15 @@
 #pragma once
 
-#include "core/Game.h"
-#include "core/State.h"
+#include "Core/Game.h"
+#include "Core/State.h"
 //////////////////////////////////////////
-#include "core/Camera.h"
-#include "core/Mesh.h"
-#include "core/PointLight.h"
-#include "core/DirectionalLight.h"
-#include "core/SpotLight.h"
-#include "core/Quad.h"
-#include "core/DefaultMaterial.h"
+#include "Core/Camera.h"
+#include "Core/Mesh.h"
+#include "Core/PointLight.h"
+#include "Core/DirectionalLight.h"
+#include "Core/SpotLight.h"
+#include "Core/Quad.h"
+#include "Core/DefaultMaterial.h"
 
 class Test : public State
 {

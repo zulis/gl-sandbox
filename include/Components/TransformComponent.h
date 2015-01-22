@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Artemis.h>
-#include "core/Math.h"
+#include "Core/Math.h"
 
 class TransformComponent : public Component
 {

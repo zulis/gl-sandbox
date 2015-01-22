@@ -4,7 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include "core/Math.h"
+#include "Core/Math.h"
 
 class StringUtils
 {

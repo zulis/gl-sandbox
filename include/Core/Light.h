@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "core/Color.h"
-#include "core/Math.h"
-#include "core/Shader.h"
+#include "Core/Color.h"
+#include "Core/Math.h"
+#include "Core/Shader.h"
 
 enum class LightType
 {

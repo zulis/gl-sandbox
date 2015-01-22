@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include <exception>
-#include "core/Window.h"
-#include "core/StateManager.h"
+#include "Core/Window.h"
+#include "Core/StateManager.h"
 
 class Game : public Window
 {

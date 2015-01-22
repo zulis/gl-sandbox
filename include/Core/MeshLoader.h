@@ -11,10 +11,10 @@
 #include <postprocess.h>
 #include <scene.h>
 #pragma endregion assimp
-#include "core/MeshData.h"
-#include "core/TextureType.h"
-#include "core/Log.h"
-#include "core/ResourceManager.h"
+#include "Core/MeshData.h"
+#include "Core/TextureType.h"
+#include "Core/Log.h"
+#include "Core/ResourceManager.h"
 
 class MeshDataCollection
 {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "core/Defines.h"
-#include "core/Input.h"
+#include "Core/Defines.h"
+#include "Core/Input.h"
 
 typedef std::shared_ptr<class State> StateRef;
 

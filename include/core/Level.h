@@ -4,14 +4,14 @@
 #include <vector>
 #include <fstream>
 #include <json.h>
-#include "core/Mesh.h"
-#include "core/DirectionalLight.h"
-#include "core/PointLight.h"
-#include "core/Camera.h"
-#include "core/Math.h"
-#include "core/Log.h"
-#include "core/StringUtils.h"
-#include "core/DefaultMaterial.h"
+#include "Core/Mesh.h"
+#include "Core/DirectionalLight.h"
+#include "Core/PointLight.h"
+#include "Core/Camera.h"
+#include "Core/Math.h"
+#include "Core/Log.h"
+#include "Core/StringUtils.h"
+#include "Core/DefaultMaterial.h"
 
 struct LevelMeshData
 {

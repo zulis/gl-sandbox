@@ -2,8 +2,8 @@
 
 #include <functional>
 #include <Artemis.h>
-#include "components/TransformComponent.h"
-#include "components/MeshRenderComponent.h"
+#include "Components/TransformComponent.h"
+#include "Components/MeshRenderComponent.h"
 
 class MeshRenderSystem : public EntityProcessingSystem
 {

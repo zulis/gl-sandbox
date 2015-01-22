@@ -3,8 +3,8 @@
 #include <memory>
 #include <functional>
 #include <Artemis.h>
-#include "core/Mesh.h"
-#include "core/Camera.h"
+#include "Core/Mesh.h"
+#include "Core/Camera.h"
 
 class MeshRenderComponent : public Component
 {
