@@ -94,12 +94,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Include;..\External\Include;..\External\Include\Assimp;..\External\Include\Artemis;..\External\Include\FreeImage;..\External\Include\Json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\External\Lib\MSVC\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\external\lib\msvc\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -110,12 +110,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Include;..\External\Include;..\External\Include\Assimp;..\External\Include\Artemis;..\External\Include\FreeImage;..\External\Include\Json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\External\Lib\MSVC\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\external\lib\msvc\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -128,14 +128,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Include;..\External\Include;..\External\Include\Assimp;..\External\Include\Artemis;..\External\Include\FreeImage;..\External\Include\Json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\External\Lib\MSVC\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\external\lib\msvc\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -148,97 +148,97 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Include;..\External\Include;..\External\Include\Assimp;..\External\Include\Artemis;..\External\Include\FreeImage;..\External\Include\Json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\External\Lib\MSVC\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\external\lib\msvc\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\External\Src\Artemis\Component.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\ComponentType.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\ComponentTypeManager.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\DelayedEntityProcessingSystem.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\DelayedEntitySystem.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\Entity.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\EntityManager.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\EntityProcessingSystem.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\EntitySystem.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\GroupManager.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\SystemBitManager.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\SystemManager.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\TagManager.cpp" />
-    <ClCompile Include="..\External\Src\Artemis\World.cpp" />
-    <ClCompile Include="..\External\src\json\json_reader.cpp" />
-    <ClCompile Include="..\External\src\json\json_value.cpp" />
-    <ClCompile Include="..\External\src\json\json_writer.cpp" />
-    <ClCompile Include="..\Src\Main.cpp" />
+    <ClCompile Include="..\external\src\artemis\Component.cpp" />
+    <ClCompile Include="..\external\src\artemis\ComponentType.cpp" />
+    <ClCompile Include="..\external\src\artemis\ComponentTypeManager.cpp" />
+    <ClCompile Include="..\external\src\artemis\DelayedEntityProcessingSystem.cpp" />
+    <ClCompile Include="..\external\src\artemis\DelayedEntitySystem.cpp" />
+    <ClCompile Include="..\external\src\artemis\Entity.cpp" />
+    <ClCompile Include="..\external\src\artemis\EntityManager.cpp" />
+    <ClCompile Include="..\external\src\artemis\EntityProcessingSystem.cpp" />
+    <ClCompile Include="..\external\src\artemis\EntitySystem.cpp" />
+    <ClCompile Include="..\external\src\artemis\GroupManager.cpp" />
+    <ClCompile Include="..\external\src\artemis\SystemBitManager.cpp" />
+    <ClCompile Include="..\external\src\artemis\SystemManager.cpp" />
+    <ClCompile Include="..\external\src\artemis\TagManager.cpp" />
+    <ClCompile Include="..\external\src\artemis\World.cpp" />
+    <ClCompile Include="..\external\src\json\json_reader.cpp" />
+    <ClCompile Include="..\external\src\json\json_value.cpp" />
+    <ClCompile Include="..\external\src\json\json_writer.cpp" />
+    <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External\Src\Json\json_batchallocator.h" />
-    <ClInclude Include="..\External\Src\Json\json_tool.h" />
-    <ClInclude Include="..\Include\Components\KeyboardComponent.h" />
-    <ClInclude Include="..\Include\Components\PlayerComponent.h" />
-    <ClInclude Include="..\Include\Components\MeshRenderComponent.h" />
-    <ClInclude Include="..\Include\Components\TransformComponent.h" />
-    <ClInclude Include="..\Include\Components\VelocityComponent.h" />
-    <ClInclude Include="..\Include\Core\AABB.h" />
-    <ClInclude Include="..\Include\Core\Camera.h" />
-    <ClInclude Include="..\Include\Core\Color.h" />
-    <ClInclude Include="..\Include\Core\Cube.h" />
-    <ClInclude Include="..\Include\Core\Defines.h" />
-    <ClInclude Include="..\Include\Core\DirectionalLight.h" />
-    <ClInclude Include="..\Include\Core\Level.h" />
-    <ClInclude Include="..\Include\Core\Listeners.h" />
-    <ClInclude Include="..\Include\Core\FileMonitor.h" />
-    <ClInclude Include="..\Include\Core\Font.h" />
-    <ClInclude Include="..\Include\Core\Game.h" />
-    <ClInclude Include="..\Include\Core\Geometry.h" />
-    <ClInclude Include="..\Include\Core\GL.h" />
-    <ClInclude Include="..\Include\Core\GLCore44.h" />
-    <ClInclude Include="..\Include\Core\ListenerSet.h" />
-    <ClInclude Include="..\Include\Core\Window.h" />
-    <ClInclude Include="..\Include\Core\Image.h" />
-    <ClInclude Include="..\Include\Core\ImageManager.h" />
-    <ClInclude Include="..\Include\Core\Input.h" />
-    <ClInclude Include="..\Include\Core\Light.h" />
-    <ClInclude Include="..\Include\Core\Log.h" />
-    <ClInclude Include="..\Include\Core\Material.h" />
-    <ClInclude Include="..\Include\Core\DefaultMaterial.h" />
-    <ClInclude Include="..\Include\Core\Math.h" />
-    <ClInclude Include="..\Include\Core\Mesh.h" />
-    <ClInclude Include="..\Include\Core\MeshData.h" />
-    <ClInclude Include="..\Include\Core\MeshLoader.h" />
-    <ClInclude Include="..\Include\Core\PointLight.h" />
-    <ClInclude Include="..\Include\Core\Quad.h" />
-    <ClInclude Include="..\Include\Core\Plane.h" />
-    <ClInclude Include="..\Include\Core\ResourceManager.h" />
-    <ClInclude Include="..\Include\Core\Shader.h" />
-    <ClInclude Include="..\Include\Core\ShaderConstants.h" />
-    <ClInclude Include="..\Include\Core\SpotLight.h" />
-    <ClInclude Include="..\Include\Core\State.h" />
-    <ClInclude Include="..\Include\Core\StateManager.h" />
-    <ClInclude Include="..\Include\Core\StringUtils.h" />
-    <ClInclude Include="..\Include\Core\Texture.h" />
-    <ClInclude Include="..\Include\Core\TextureType.h" />
-    <ClInclude Include="..\Include\Core\Transform2D.h" />
-    <ClInclude Include="..\Include\Core\Transform3D.h" />
-    <ClInclude Include="..\Include\Systems\KeyboardSystem.h" />
-    <ClInclude Include="..\Include\Systems\PlayerMovementSystem.h" />
-    <ClInclude Include="..\Include\Systems\MeshRenderSystem.h" />
-    <ClInclude Include="..\Src\EntityFactory.h" />
-    <ClInclude Include="..\Src\Tests\LoadLevelTest.h" />
-    <ClInclude Include="..\Src\Tests\Test.h" />
+    <ClInclude Include="..\external\src\json\json_batchallocator.h" />
+    <ClInclude Include="..\external\src\json\json_tool.h" />
+    <ClInclude Include="..\include\components\KeyboardComponent.h" />
+    <ClInclude Include="..\include\components\PlayerComponent.h" />
+    <ClInclude Include="..\include\components\MeshRenderComponent.h" />
+    <ClInclude Include="..\include\components\TransformComponent.h" />
+    <ClInclude Include="..\include\components\VelocityComponent.h" />
+    <ClInclude Include="..\include\core\AABB.h" />
+    <ClInclude Include="..\include\core\Camera.h" />
+    <ClInclude Include="..\include\core\Color.h" />
+    <ClInclude Include="..\include\core\Cube.h" />
+    <ClInclude Include="..\include\core\Defines.h" />
+    <ClInclude Include="..\include\core\DirectionalLight.h" />
+    <ClInclude Include="..\include\core\Level.h" />
+    <ClInclude Include="..\include\core\Listeners.h" />
+    <ClInclude Include="..\include\core\FileMonitor.h" />
+    <ClInclude Include="..\include\core\Font.h" />
+    <ClInclude Include="..\include\core\Game.h" />
+    <ClInclude Include="..\include\core\Geometry.h" />
+    <ClInclude Include="..\include\core\GL.h" />
+    <ClInclude Include="..\include\core\GLCore44.h" />
+    <ClInclude Include="..\include\core\ListenerSet.h" />
+    <ClInclude Include="..\include\core\Window.h" />
+    <ClInclude Include="..\include\core\Image.h" />
+    <ClInclude Include="..\include\core\ImageManager.h" />
+    <ClInclude Include="..\include\core\Input.h" />
+    <ClInclude Include="..\include\core\Light.h" />
+    <ClInclude Include="..\include\core\Log.h" />
+    <ClInclude Include="..\include\core\Material.h" />
+    <ClInclude Include="..\include\core\DefaultMaterial.h" />
+    <ClInclude Include="..\include\core\Math.h" />
+    <ClInclude Include="..\include\core\Mesh.h" />
+    <ClInclude Include="..\include\core\MeshData.h" />
+    <ClInclude Include="..\include\core\MeshLoader.h" />
+    <ClInclude Include="..\include\core\PointLight.h" />
+    <ClInclude Include="..\include\core\Quad.h" />
+    <ClInclude Include="..\include\core\Plane.h" />
+    <ClInclude Include="..\include\core\ResourceManager.h" />
+    <ClInclude Include="..\include\core\Shader.h" />
+    <ClInclude Include="..\include\core\ShaderConstants.h" />
+    <ClInclude Include="..\include\core\SpotLight.h" />
+    <ClInclude Include="..\include\core\State.h" />
+    <ClInclude Include="..\include\core\StateManager.h" />
+    <ClInclude Include="..\include\core\StringUtils.h" />
+    <ClInclude Include="..\include\core\Texture.h" />
+    <ClInclude Include="..\include\core\TextureType.h" />
+    <ClInclude Include="..\include\core\Transform2D.h" />
+    <ClInclude Include="..\include\core\Transform3D.h" />
+    <ClInclude Include="..\include\systems\KeyboardSystem.h" />
+    <ClInclude Include="..\include\systems\PlayerMovementSystem.h" />
+    <ClInclude Include="..\include\systems\MeshRenderSystem.h" />
+    <ClInclude Include="..\src\EntityFactory.h" />
+    <ClInclude Include="..\src\Tests\LoadLevelTest.h" />
+    <ClInclude Include="..\src\Tests\Test.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\External\Src\Json\json_internalarray.inl" />
-    <None Include="..\External\Src\Json\json_internalmap.inl" />
-    <None Include="..\External\Src\Json\json_valueiterator.inl" />
+    <None Include="..\external\src\json\json_internalarray.inl" />
+    <None Include="..\external\src\json\json_internalmap.inl" />
+    <None Include="..\external\src\json\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

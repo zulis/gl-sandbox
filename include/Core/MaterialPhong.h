@@ -2,8 +2,8 @@
 
 #include <map>
 #include <vector>
-#include "Core/Material.h"
-#include "Core/Texture.h"
+#include "core/Material.h"
+#include "core/Texture.h"
 
 typedef std::shared_ptr<class MaterialPhong> MaterialPhongRef;
 

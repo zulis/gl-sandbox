@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "Core/Shader.h"
-#include "Core/Texture.h"
-#include "Core/Geometry.h"
+#include "core/Shader.h"
+#include "core/Texture.h"
+#include "core/Geometry.h"
 
 typedef std::shared_ptr<class Quad> QuadRef;
 

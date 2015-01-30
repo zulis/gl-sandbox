@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Math.h"
+#include "core/Math.h"
 
 class Transform2D
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/GLCore44.h"
+#include "core/GLCore44.h"
 #include <gl/GL.h> // Should be after GLCore
-#include "Core/Color.h"
+#include "core/Color.h"
 
 #if !defined(GL_TEXTURE_MAX_ANISOTROPY_EXT)
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE

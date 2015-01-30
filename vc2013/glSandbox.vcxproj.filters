@@ -5,86 +5,86 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Include">
+    <Filter Include="src\artemis">
+      <UniqueIdentifier>{7f76d79e-b223-4562-8010-6dd5de3104c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\json">
+      <UniqueIdentifier>{dad51845-7fdb-4b46-978a-8cf6fd337746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tests">
+      <UniqueIdentifier>{0085f9ae-a2d2-47f1-b090-11946239f61a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Include\Components">
+    <Filter Include="include\components">
       <UniqueIdentifier>{bf0cbf78-0c84-4c5c-ae85-63102de20ef1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Core">
+    <Filter Include="include\core">
       <UniqueIdentifier>{42387aeb-223b-4e22-8dc7-317a98440c12}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Core\Material">
+    <Filter Include="include\core\Material">
       <UniqueIdentifier>{67e19c8f-44d2-4384-a9a0-7808cf377672}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Core\Light">
+    <Filter Include="include\core\Light">
       <UniqueIdentifier>{d31b3343-7dcf-46c5-85bb-9a1a3b713152}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Systems">
+    <Filter Include="include\systems">
       <UniqueIdentifier>{c8626aca-02f9-4163-933d-918a66f5f02e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Artemis">
-      <UniqueIdentifier>{7f76d79e-b223-4562-8010-6dd5de3104c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Tests">
-      <UniqueIdentifier>{0085f9ae-a2d2-47f1-b090-11946239f61a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Json">
-      <UniqueIdentifier>{dad51845-7fdb-4b46-978a-8cf6fd337746}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\external\src\artemis\Component.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\ComponentType.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\ComponentTypeManager.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\DelayedEntityProcessingSystem.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\DelayedEntitySystem.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\Entity.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\EntityManager.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\EntityProcessingSystem.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\EntitySystem.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\GroupManager.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\SystemBitManager.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\SystemManager.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\TagManager.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\artemis\World.cpp">
-      <Filter>src\Artemis</Filter>
+      <Filter>src\artemis</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\json\json_reader.cpp">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\json\json_value.cpp">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </ClCompile>
     <ClCompile Include="..\external\src\json\json_writer.cpp">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Main.cpp">
       <Filter>src</Filter>
@@ -92,177 +92,177 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Game.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\GL.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Color.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\StateManager.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\State.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Defines.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Components\TransformComponent.h">
-      <Filter>Include\Components</Filter>
+      <Filter>include\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Camera.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\AABB.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Plane.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Math.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Image.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\ResourceManager.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\ImageManager.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Geometry.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Shader.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Mesh.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Texture.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Components\VelocityComponent.h">
-      <Filter>Include\Components</Filter>
+      <Filter>include\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Components\KeyboardComponent.h">
-      <Filter>Include\Components</Filter>
+      <Filter>include\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Systems\KeyboardSystem.h">
-      <Filter>Include\Systems</Filter>
+      <Filter>include\systems</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Components\PlayerComponent.h">
-      <Filter>Include\Components</Filter>
+      <Filter>include\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Systems\PlayerMovementSystem.h">
-      <Filter>Include\Systems</Filter>
+      <Filter>include\systems</Filter>
     </ClInclude>
     <ClInclude Include="..\src\EntityFactory.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Font.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Quad.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Cube.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\ShaderConstants.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Transform3D.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Transform2D.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\MeshLoader.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\TextureType.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\MeshData.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Log.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\GLCore44.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Components\MeshRenderComponent.h">
-      <Filter>Include\Components</Filter>
+      <Filter>include\components</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Systems\MeshRenderSystem.h">
-      <Filter>Include\Systems</Filter>
+      <Filter>include\systems</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\StringUtils.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\DefaultMaterial.h">
-      <Filter>Include\Core\Material</Filter>
+      <Filter>include\core\Material</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Material.h">
-      <Filter>Include\Core\Material</Filter>
+      <Filter>include\core\Material</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\DirectionalLight.h">
-      <Filter>Include\Core\Light</Filter>
+      <Filter>include\core\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\SpotLight.h">
-      <Filter>Include\Core\Light</Filter>
+      <Filter>include\core\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\PointLight.h">
-      <Filter>Include\Core\Light</Filter>
+      <Filter>include\core\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Light.h">
-      <Filter>Include\Core\Light</Filter>
+      <Filter>include\core\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\FileMonitor.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Input.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Window.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\ListenerSet.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Listeners.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Core\Level.h">
-      <Filter>Include\Core</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\external\src\json\json_batchallocator.h">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </ClInclude>
     <ClInclude Include="..\external\src\json\json_tool.h">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tests\LoadLevelTest.h">
-      <Filter>src\Tests</Filter>
+      <Filter>src\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tests\Test.h">
-      <Filter>src\Tests</Filter>
+      <Filter>src\tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\external\src\json\json_internalarray.inl">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </None>
     <None Include="..\external\src\json\json_internalmap.inl">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </None>
     <None Include="..\external\src\json\json_valueiterator.inl">
-      <Filter>src\Json</Filter>
+      <Filter>src\json</Filter>
     </None>
   </ItemGroup>
 </Project>

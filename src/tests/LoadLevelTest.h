@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Game.h"
-#include "Core/Level.h"
-#include "Core/Camera.h"
+#include "core/Game.h"
+#include "core/Level.h"
+#include "core/Camera.h"
 
 class LoadLevelTest : public State
 {

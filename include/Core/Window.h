@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
-#include "Core/Math.h"
-#include "Core/GL.h"
+#include "core/Math.h"
+#include "core/GL.h"
 #include <glfw/glfw3.h>
-#include "Core/Input.h"
-#include "Core/Log.h"
+#include "core/Input.h"
+#include "core/Log.h"
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;

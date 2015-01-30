@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Light.h"
+#include "core/Light.h"
 
 typedef std::unique_ptr<class PointLight> PointLightRef;
 

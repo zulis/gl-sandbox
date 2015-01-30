@@ -4,9 +4,9 @@
 #include <vector>
 #include <limits>
 #include <functional>
-#include "Core/Math.h"
-#include "Core/Shader.h"
-#include "Core/AABB.h"
+#include "core/Math.h"
+#include "core/Shader.h"
+#include "core/AABB.h"
 
 typedef std::unique_ptr<class Geometry> GeometryRef;
 

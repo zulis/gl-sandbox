@@ -3,12 +3,12 @@
 #include <memory>
 #include <Artemis.h>
 
-#include "Core/Camera.h"
-#include "Core/Mesh.h"
-//#include "Core/MaterialPhong.h"
-#include "Core/PointLight.h"
-#include "Core/DirectionalLight.h"
-#include "Core/SpotLight.h"
+#include "core/Camera.h"
+#include "core/Mesh.h"
+//#include "core/MaterialPhong.h"
+#include "core/PointLight.h"
+#include "core/DirectionalLight.h"
+#include "core/SpotLight.h"
 
 #include "Components/MeshRenderComponent.h"
 #include "Components/TransformComponent.h"

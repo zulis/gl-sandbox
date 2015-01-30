@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Core/Game.h"
-#include "Core/State.h"
+#include "core/Game.h"
+#include "core/State.h"
 //////////////////////////////////////////
-#include "Core/Camera.h"
-#include "Core/Mesh.h"
-#include "Core/PointLight.h"
-#include "Core/DirectionalLight.h"
-#include "Core/SpotLight.h"
-#include "Core/Quad.h"
-#include "Core/DefaultMaterial.h"
+#include "core/Camera.h"
+#include "core/Mesh.h"
+#include "core/PointLight.h"
+#include "core/DirectionalLight.h"
+#include "core/SpotLight.h"
+#include "core/Quad.h"
+#include "core/DefaultMaterial.h"
 
 class Test : public State
 {
@@ -220,7 +220,7 @@ void Test::update(double elapsedTime)
 		glm::vec3 axisInCameraCoord = glm::cross(va, vb);
 		glm::mat3 camera2object = glm::inverse(glm::mat3(mCamera->getViewMatrix()) * glm::mat3(mMesh1->getMatrix()));
 		glm::vec3 axisInObjectCoord = camera2object * axisInCameraCoord;
-		mMesh1->setMatrix(glm::rotate(mMesh1->getMatrix(), glm::degrees(angle), axisInObjectCoord));
+		mMesh1->setMatrix(glm::rotate(mMesh1->getMatrix(), angle, axisInObjectCoord));
 		mLastMouseX = mCurrentMouseX;
 		mLastMouseY = mCurrentMouseY;
 	}

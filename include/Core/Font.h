@@ -3,12 +3,12 @@
 #include <memory>
 #include <string>
 #include <SDL_ttf.h>
-#include "Core/GL.h"
-#include "Core/Math.h"
-#include "Core/Color.h"
-#include "Core/Shader.h"
-#include "Core/Geometry.h"
-#include "Core/Texture.h"
+#include "core/GL.h"
+#include "core/Math.h"
+#include "core/Color.h"
+#include "core/Shader.h"
+#include "core/Geometry.h"
+#include "core/Texture.h"
 
 typedef std::shared_ptr<class Font> FontRef;
 
