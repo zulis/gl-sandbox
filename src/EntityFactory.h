@@ -77,8 +77,8 @@ void EntityFactory::setup(const CameraPtr& camera)
 	mSm->initializeAll();
 
 // 	Light light;
-// 	light.position = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
-// 	light.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
+// 	light.position = vec4(0.0f, -1.0f, 0.0f, 0.0f);
+// 	light.intensity = vec3(1.0f, 1.0f, 1.0f);
 
 // 	auto mat = MaterialPhong::create();
 // 	mat->setAmbientColor(0.1f, 0.1f, 0.1f);
@@ -102,15 +102,15 @@ void EntityFactory::setup(const CameraPtr& camera)
 	//mesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	
 	auto light = PointLight::create();
-	light->setPosition(glm::vec3(0, 0, 5));
+	light->setPosition(vec3(0, 0, 5));
 
 	auto mat = mesh->getMaterial();
-	//mat->addTexture("assets/models/box/box_d.png", TextureType::DiffuseMap, 0);
+	//mat->addTexture("assets/models/box/box_d.png", TextureType::ColorMap, 0);
 	//mat->addTexture("assets/models/box/box_n.png", TextureType::NormalMap, 0);
 	//mat->addTexture("assets/models/box/box_h.png", TextureType::HeightMap, 0);
 	//mat->addTexture("assets/models/box/box_s.png", TextureType::SpecularMap, 0);
 
-	//mat->addTexture("assets/models/sponza/textures/vase_plant.png", TextureType::DiffuseMap, 0);
+	//mat->addTexture("assets/models/sponza/textures/vase_plant.png", TextureType::ColorMap, 0);
 	//mat->addTexture("assets/textures/misc/opacity.png", TextureType::OpacityMap, 0);
 
 	mat->addLight(*light);

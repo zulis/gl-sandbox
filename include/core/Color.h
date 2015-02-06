@@ -7,8 +7,8 @@ class Color
 public:
 	Color();
 	Color(float r, float g, float b, float a = 1.0f);
-	Color(const glm::vec4& color);
-	Color(const glm::vec3& color);
+	Color(const vec4& color);
+	Color(const vec3& color);
 
 	float r, g, b, a;
 
@@ -25,8 +25,8 @@ public:
 	operator Color* ();
 	operator const Color* () const;
 
-	glm::vec3 rgb() const;
-	glm::vec4 rgba() const;
+	vec3 rgb() const;
+	vec4 rgba() const;
 
 };
 
@@ -49,7 +49,7 @@ Color::Color(float r, float g, float b, float a)
 }
 
 //=========================================================================
-Color::Color(const glm::vec4& color)
+Color::Color(const vec4& color)
 {
 	this->r = color.x;
 	this->g = color.y;
@@ -58,7 +58,7 @@ Color::Color(const glm::vec4& color)
 }
 
 //=========================================================================
-Color::Color(const glm::vec3& color)
+Color::Color(const vec3& color)
 {
 	this->r = color.x;
 	this->g = color.y;
@@ -133,13 +133,13 @@ Color::operator const Color* () const
 }
 
 //=========================================================================
-glm::vec3 Color::rgb() const
+vec3 Color::rgb() const
 {
-	return glm::vec3(r, g, b);
+	return vec3(r, g, b);
 }
 
 //=========================================================================
-glm::vec4 Color::rgba() const
+vec4 Color::rgba() const
 {
-	return glm::vec4(r, g, b, a);
+	return vec4(r, g, b, a);
 }

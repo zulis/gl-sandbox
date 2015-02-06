@@ -13,26 +13,26 @@ public:
 	};
 
 	AABB();
-	AABB(const glm::vec3& aMin, const glm::vec3& aMax);
+	AABB(const vec3& aMin, const vec3& aMax);
 	~AABB() {};
 
-	glm::vec3 getCenter() const;
-	glm::vec3 getSize() const;
-	glm::vec3 getPositive(const glm::vec3& normal) const;
-	glm::vec3 getNegative(const glm::vec3& normal) const;
-	glm::vec3 getMin() const;
-	glm::vec3 getMax() const;
+	vec3 getCenter() const;
+	vec3 getSize() const;
+	vec3 getPositive(const vec3& normal) const;
+	vec3 getNegative(const vec3& normal) const;
+	vec3 getMin() const;
+	vec3 getMax() const;
 	float getLongestEdge() const;
 	float getShortestEdge() const;
-	AABB transformed(const glm::mat4& matrix) const;
+	AABB transformed(const mat4& matrix) const;
 	void extend(float value);
-	void extend(const glm::vec3& point);
+	void extend(const vec3& point);
 	AABB::IntersectionType intersect(const AABB& other) const;
 	bool overlaps(const AABB& other) const;
 
 private:
-	glm::vec3 mMin;
-	glm::vec3 mMax;
+	vec3 mMin;
+	vec3 mMax;
 };
 
 //=========================================================================
@@ -40,31 +40,31 @@ AABB::AABB()
 {
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
-	new (this) AABB(glm::vec3(maxFloat), glm::vec3(minFloat));
+	new (this) AABB(vec3(maxFloat), vec3(minFloat));
 }
 
 //=========================================================================
-AABB::AABB(const glm::vec3& aMin, const glm::vec3& aMax) : mMin(aMin), mMax(aMax)
+AABB::AABB(const vec3& aMin, const vec3& aMax) : mMin(aMin), mMax(aMax)
 {
 }
 
 //=========================================================================
-glm::vec3 AABB::getCenter() const
+vec3 AABB::getCenter() const
 {
 	return (mMin + mMax) * 0.5f;
 }
 
 //=========================================================================
-glm::vec3 AABB::getSize() const
+vec3 AABB::getSize() const
 {
 	return mMax - mMin;
 }
 
 //=========================================================================
-glm::vec3 AABB::getPositive(const glm::vec3& normal) const
+vec3 AABB::getPositive(const vec3& normal) const
 {
-	glm::vec3 result = getMin();
-	glm::vec3 size = getSize();
+	vec3 result = getMin();
+	vec3 size = getSize();
 
 	if(normal.x > 0)
 		result.x += size.x;
@@ -79,10 +79,10 @@ glm::vec3 AABB::getPositive(const glm::vec3& normal) const
 }
 
 //=========================================================================
-glm::vec3 AABB::getNegative(const glm::vec3& normal) const
+vec3 AABB::getNegative(const vec3& normal) const
 {
-	glm::vec3 result = getMin();
-	glm::vec3 size = getSize();
+	vec3 result = getMin();
+	vec3 size = getSize();
 
 	if(normal.x < 0)
 		result.x += size.x;
@@ -97,10 +97,10 @@ glm::vec3 AABB::getNegative(const glm::vec3& normal) const
 }
 
 //=========================================================================
-AABB AABB::transformed(const glm::mat4& matrix)  const
+AABB AABB::transformed(const mat4& matrix)  const
 {
 	AABB res;
-	glm::vec4 point(1, 1, 1, 1);
+	vec4 point(1, 1, 1, 1);
 	float aabbIn[6] = { mMin.x, mMin.y, mMin.z, mMax.x, mMax.y, mMax.z };
 
 	for(int i = 0; i < 2; i++)
@@ -112,7 +112,7 @@ AABB AABB::transformed(const glm::mat4& matrix)  const
 				point.x = aabbIn[i * 3];
 				point.y = aabbIn[j * 3 + 1];
 				point.z = aabbIn[k * 3 + 2];
-				res.extend(glm::vec3(matrix * point));
+				res.extend(vec3(matrix * point));
 			}
 		}
 	}
@@ -121,13 +121,13 @@ AABB AABB::transformed(const glm::mat4& matrix)  const
 }
 
 //=========================================================================
-glm::vec3 AABB::getMin() const
+vec3 AABB::getMin() const
 {
 	return mMin;
 }
 
 //=========================================================================
-glm::vec3 AABB::getMax() const
+vec3 AABB::getMax() const
 {
 	return mMax;
 }
@@ -135,27 +135,27 @@ glm::vec3 AABB::getMax() const
 //=========================================================================
 float AABB::getLongestEdge() const
 {
-	return glm::compMax(getSize());
+	return compMax(getSize());
 }
 
 //=========================================================================
 float AABB::getShortestEdge() const
 {
-	return glm::compMin(getSize());
+	return compMin(getSize());
 }
 
 //=========================================================================
 void AABB::extend(float value)
 {
-	mMin -= glm::vec3(value);
-	mMax += glm::vec3(value);
+	mMin -= vec3(value);
+	mMax += vec3(value);
 }
 
 //=========================================================================
-void AABB::extend(const glm::vec3& point)
+void AABB::extend(const vec3& point)
 {
-	mMin = glm::min(mMin, point);
-	mMax = glm::max(mMax, point);
+	mMin = min(mMin, point);
+	mMax = max(mMax, point);
 }
 
 //=========================================================================

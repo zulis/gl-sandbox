@@ -16,9 +16,9 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	void setPosition(glm::vec3 position);
+	void setPosition(vec3 position);
 	void setPosition(float x, float y, float z);
-	void setLookAt(glm::vec3 lookAt);
+	void setLookAt(vec3 lookAt);
 	void setLookAt(float x, float y, float z);
 	void setAspectRatio(float ratio);
 	void setPerspective(float fov, float aspectRatio, float nearPlane, float farPlane);
@@ -27,11 +27,11 @@ public:
 	void setNearClip(float nearClip);
 	void setFarClip(float farClip);
 
-	glm::vec3 getPosition() const;
-	glm::mat4 getViewMatrix() const;
-	glm::mat4 getProjectionMatrix() const;
-	glm::vec3 getRight() const;
-	glm::vec3 getUp() const;
+	vec3 getPosition() const;
+	mat4 getViewMatrix() const;
+	mat4 getProjectionMatrix() const;
+	vec3 getRight() const;
+	vec3 getUp() const;
 	float getFarClip() const;
 	float getNearClip() const;
 
@@ -45,13 +45,13 @@ public:
 	bool contains(const AABB& aabb) const;
 
 private:
-	glm::vec3 mPosition;
-	glm::vec3 mLookAt;
-	glm::vec3 mUp { glm::vec3(0.0f, 1.0f, 0.0f) };
-	glm::vec3 mRight;
-	glm::vec3 mDirection;
-	glm::mat4 mView;
-	glm::mat4 mProjection;
+	vec3 mPosition;
+	vec3 mLookAt;
+	vec3 mUp { vec3(0.0f, 1.0f, 0.0f) };
+	vec3 mRight;
+	vec3 mDirection;
+	mat4 mView;
+	mat4 mProjection;
 	float mRotateSpeed { 0.005f };
 	float mStrafeSpeed { 5.0f };
 	float mFov;
@@ -88,7 +88,7 @@ Camera::~Camera()
 }
 
 //=========================================================================
-void Camera::setPosition(glm::vec3 position)
+void Camera::setPosition(vec3 position)
 {
 	mPosition = position;
 	update();
@@ -97,15 +97,15 @@ void Camera::setPosition(glm::vec3 position)
 //=========================================================================
 void Camera::setPosition(float x, float y, float z)
 {
-	setPosition(glm::vec3(x, y, z));
+	setPosition(vec3(x, y, z));
 }
 
 //=========================================================================
-void Camera::setLookAt(glm::vec3 point)
+void Camera::setLookAt(vec3 point)
 {
 	if (point != mPosition)
 	{
-		glm::vec3 direction = glm::normalize(point - mPosition);
+		vec3 direction = normalize(point - mPosition);
 		mVerticalAngle = asinf(direction.y);
 		mHorizontalAngle = atan2f(direction.x, direction.z);
 		update();
@@ -115,11 +115,11 @@ void Camera::setLookAt(glm::vec3 point)
 //=========================================================================
 void Camera::setLookAt(float x, float y, float z)
 {
-	setLookAt(glm::vec3(x, y, z));
+	setLookAt(vec3(x, y, z));
 }
 
 //=========================================================================
-glm::vec3 Camera::getPosition() const
+vec3 Camera::getPosition() const
 {
 	return mPosition;
 }
@@ -132,13 +132,13 @@ void Camera::setAspectRatio(float ratio)
 }
 
 //=========================================================================
-glm::mat4 Camera::getViewMatrix() const
+mat4 Camera::getViewMatrix() const
 {
 	return mView;
 }
 
 //=========================================================================
-glm::mat4 Camera::getProjectionMatrix() const
+mat4 Camera::getProjectionMatrix() const
 {
 	return mProjection;
 }
@@ -146,33 +146,33 @@ glm::mat4 Camera::getProjectionMatrix() const
 //=========================================================================
 void Camera::update()
 {
-	mDirection = glm::vec3(
+	mDirection = vec3(
 	                 cos(mVerticalAngle) * sin(mHorizontalAngle),
 	                 sin(mVerticalAngle),
 	                 cos(mVerticalAngle) * cos(mHorizontalAngle)
 	             );
 
-	mRight = glm::vec3(sin(mHorizontalAngle - glm::half_pi<float>()), 0, cos(mHorizontalAngle - glm::half_pi<float>()));
-	mUp = glm::cross(mRight, mDirection);
+	mRight = vec3(sin(mHorizontalAngle - half_pi<float>()), 0, cos(mHorizontalAngle - half_pi<float>()));
+	mUp = cross(mRight, mDirection);
 
-	mProjection = glm::perspective(glm::radians(mFov), mAspectRatio, mNearClip, mFarClip);
-	mView = glm::lookAt(mPosition, mPosition + mDirection, mUp);
+	mProjection = perspective(radians(mFov), mAspectRatio, mNearClip, mFarClip);
+	mView = lookAt(mPosition, mPosition + mDirection, mUp);
 
 	// Calculate frustum planes
-	glm::vec3 cN = mPosition + mDirection * mNearClip;
-	glm::vec3 cF = mPosition + mDirection * mFarClip;
+	vec3 cN = mPosition + mDirection * mNearClip;
+	vec3 cF = mPosition + mDirection * mFarClip;
 
-	float Hnear = 2.0f * tan(glm::radians(mFov / 2.0f)) * mNearClip;
+	float Hnear = 2.0f * tan(radians(mFov / 2.0f)) * mNearClip;
 	float Wnear = Hnear * mAspectRatio;
-	float Hfar = 2.0f * tan(glm::radians(mFov / 2.0f)) * mFarClip;
+	float Hfar = 2.0f * tan(radians(mFov / 2.0f)) * mFarClip;
 	float Wfar = Hfar * mAspectRatio;
 	float hHnear = Hnear / 2.0f;
 	float hWnear = Wnear / 2.0f;
 	float hHfar = Hfar / 2.0f;
 	float hWfar = Wfar / 2.0f;
 
-	glm::vec3 farPts[4];
-	glm::vec3 nearPts[4];
+	vec3 farPts[4];
+	vec3 nearPts[4];
 
 	farPts[0] = cF + mUp * hHfar - mRight * hWfar;
 	farPts[1] = cF - mUp * hHfar - mRight * hWfar;
@@ -289,13 +289,13 @@ bool Camera::contains(const AABB& aabb) const
 }
 
 //=========================================================================
-glm::vec3 Camera::getRight() const
+vec3 Camera::getRight() const
 {
 	return mRight;
 }
 
 //=========================================================================
-glm::vec3 Camera::getUp() const
+vec3 Camera::getUp() const
 {
 	return mUp;
 }

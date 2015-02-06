@@ -22,19 +22,19 @@ struct LevelMeshData
 
 	std::string name;
 	std::string fileName;
-	glm::ivec2 textureScale;
+	ivec2 textureScale;
 	bool visible;
-	glm::vec3 position;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+	vec3 position;
+	vec3 rotation;
+	vec3 scale;
 };
 
 struct LevelLightData
 {
 	LightType type;
 	bool visible;
-	glm::vec3 position;
-	glm::vec3 direction;
+	vec3 position;
+	vec3 direction;
 	float radius;
 	Color color;
 };
@@ -59,13 +59,13 @@ public:
 	void update(double elapsedTime);
 	void draw(const CameraPtr& camera);
 
-	const glm::vec3 getCamPosition() const;
-	const glm::vec3 getCamLookAt() const;
+	const vec3 getCamPosition() const;
+	const vec3 getCamLookAt() const;
 
 private:
-	std::vector<MeshPtr> mMeshList;
-	glm::vec3 mCamPosition { glm::vec3() };
-	glm::vec3 mCamLookAt { glm::vec3() };
+	std::vector<MeshRef> mMeshList;
+	vec3 mCamPosition { vec3() };
+	vec3 mCamLookAt { vec3() };
 	std::string mModelFormat;
 	MaterialDefaultRef mMaterial;
 	LevelData levelData;
@@ -224,7 +224,7 @@ void Level::loadFromFile(const std::string& fileName)
 				light->setPosition(lightData.position);
 				light->setAmbient(lightData.color);
 				light->setDiffuse(lightData.color);
-				light->setAttenuation(glm::vec2(0.0f, lightData.radius));
+				light->setAttenuation(vec2(0.0f, lightData.radius));
 				mMaterial->addLight(*light);
 				break;
 			}
@@ -282,13 +282,13 @@ void Level::draw(const CameraPtr& camera, const Shader& shader)
 }
 
 //=========================================================================
-const glm::vec3 Level::getCamPosition() const
+const vec3 Level::getCamPosition() const
 {
 	return mCamPosition;
 }
 
 //=========================================================================
-const glm::vec3 Level::getCamLookAt() const
+const vec3 Level::getCamLookAt() const
 {
 	return mCamLookAt;
 }
@@ -318,7 +318,7 @@ LevelLightData Level::getPointLightData(const Json::Value& data)
 	lightData.type = LightType::Point;
 	lightData.visible = StringUtils::toBool(data["Visible"].asString());
 	lightData.position = StringUtils::toVec3(data["Position"].asString());
-	lightData.direction = glm::vec3();
+	lightData.direction = vec3();
 	lightData.radius = StringUtils::toFloat(data["Radius"].asString());
 	lightData.color = Color(StringUtils::toVec3(data["Color"].asString()) / 255.0f);
 	return lightData;

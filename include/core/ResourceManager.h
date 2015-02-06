@@ -3,11 +3,10 @@
 #include <string>
 #include <unordered_map>
 
-template<class T>
+template<typename T>
 class ResourceManager
 {
 public:
-	typedef std::pair<std::string, T*> Resource;
 	typedef std::unordered_map<std::string, T*> ResourceMap;
 
 	ResourceManager();
@@ -25,20 +24,20 @@ private:
 };
 
 //=========================================================================
-template<class T>
+template<typename T>
 ResourceManager<T>::ResourceManager()
 {
 }
 
 //=========================================================================
-template<class T>
+template<typename T>
 ResourceManager<T>::~ResourceManager()
 {
 	releaseAllResources();
 }
 
 //=========================================================================
-template<class T>
+template<typename T>
 T* ResourceManager<T>::getResource(const std::string& fileName)
 {
 	T* resource = find(fileName);
@@ -49,14 +48,14 @@ T* ResourceManager<T>::getResource(const std::string& fileName)
 
 		// If the resource loaded successfully, add it do the resource map
 		if(resource != NULL)
-			mResource.insert(Resource(fileName, resource));
+			mResource.insert(std::make_pair(fileName, resource));
 	}
 
 	return resource;
 }
 
 //=========================================================================
-template<class T>
+template<typename T>
 void ResourceManager<T>::releaseResource(const std::string& fileName)
 {
 	T* resource = find(fileName);
@@ -69,7 +68,7 @@ void ResourceManager<T>::releaseResource(const std::string& fileName)
 }
 
 //=========================================================================
-template<class T>
+template<typename T>
 void ResourceManager<T>::releaseAllResources()
 {
 	while(mResource.begin() != mResource.end())
@@ -80,7 +79,7 @@ void ResourceManager<T>::releaseAllResources()
 }
 
 //=========================================================================
-template<class T>
+template<typename T>
 T* ResourceManager<T>::find(const std::string& fileName)
 {
 	T* resource = NULL;

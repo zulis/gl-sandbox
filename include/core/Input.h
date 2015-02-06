@@ -24,7 +24,7 @@ public:
 	void setMouseChangeStatus(int x, int y);
 	void setMouseButtonStatus(const MouseButton& button, bool down);
 	void setMouseScrollStatus(double x, double y);
-	const glm::ivec2 getMousePosition() const;
+	const ivec2 getMousePosition() const;
 	int getMouseX() const;
 	int getMouseY() const;
 	int getMouseChangeX() const;
@@ -115,9 +115,9 @@ void Input::setMouseScrollStatus(double x, double y)
 }
 
 //=========================================================================
-const glm::ivec2 Input::getMousePosition() const
+const ivec2 Input::getMousePosition() const
 {
-	return glm::ivec2(mMouseX, mMouseY);
+	return ivec2(mMouseX, mMouseY);
 }
 
 //=========================================================================

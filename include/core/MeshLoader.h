@@ -143,13 +143,13 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					//aiTransformVecByMatrix4(&tmp, trafo);
 
 					const aiVector3D* vertice = &(mesh->mVertices[i]);
-					meshPart.geometry.vertices.push_back(glm::vec3(vertice->x, vertice->y, vertice->z) * scaleFactor);
+					meshPart.geometry.vertices.push_back(vec3(vertice->x, vertice->y, vertice->z) * scaleFactor);
 				}
 
 				if(mesh->HasNormals())
 				{
 					const aiVector3D* normal = &(mesh->mNormals[i]);
-					meshPart.geometry.normals.push_back(glm::vec3(normal->x, normal->y, normal->z));
+					meshPart.geometry.normals.push_back(vec3(normal->x, normal->y, normal->z));
 				}
 
 				if(mesh->HasTangentsAndBitangents())
@@ -158,17 +158,17 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					const aiVector3D* tangent = &(mesh->mTangents[i]);
 					const aiVector3D* bitangent = &(mesh->mBitangents[i]);
 
-					// Put the three vectors into my glm::vec3 struct format for doing maths.
-					glm::vec3 t(tangent->x, tangent->y, tangent->z);
-					glm::vec3 n(normal->x, normal->y, normal->z);
-					glm::vec3 b(bitangent->x, bitangent->y, bitangent->z);
+					// Put the three vectors into my vec3 struct format for doing maths.
+					vec3 t(tangent->x, tangent->y, tangent->z);
+					vec3 n(normal->x, normal->y, normal->z);
+					vec3 b(bitangent->x, bitangent->y, bitangent->z);
 
 					// Orthogonalize and normalize the tangent so we can use it in something
 					// approximating a T, N, B inverse matrix
-					glm::vec3 ti = glm::normalize(t - n * glm::dot(n, t));
+					vec3 ti = normalize(t - n * dot(n, t));
 
 					// Get determinant of T,B,N 3x3 matrix by dot*cross method
-					float det = (glm::dot(glm::cross(n, t), b));
+					float det = (dot(cross(n, t), b));
 
 					if (det < 0.0f)
 					{
@@ -178,14 +178,14 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					{
 						det = 1.0f;
 					}
-					meshPart.geometry.tangents.push_back(glm::vec4(ti.x, ti.y, ti.z, det));
+					meshPart.geometry.tangents.push_back(vec4(ti.x, ti.y, ti.z, det));
 
-					//meshPart.geometry.tangents.push_back(glm::vec3(tangent->x, tangent->y, tangent->z));
-					meshPart.geometry.bitangents.push_back(glm::vec3(bitangent->x, bitangent->y, bitangent->z));
+					//meshPart.geometry.tangents.push_back(vec3(tangent->x, tangent->y, tangent->z));
+					meshPart.geometry.bitangents.push_back(vec3(bitangent->x, bitangent->y, bitangent->z));
 				}
 
 				const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &zero3D;
-				meshPart.geometry.texCoords.push_back(glm::vec2(texCoord->x, texCoord->y));
+				meshPart.geometry.texCoords.push_back(vec2(texCoord->x, texCoord->y));
 			}
 
 			for(unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -266,7 +266,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					switch((aiTextureType)m)
 					{
 						case aiTextureType_DIFFUSE:
-							meshTexture.textureType = TextureType::DiffuseMap;
+							meshTexture.textureType = TextureType::ColorMap;
 							break;
 
 						case aiTextureType_SPECULAR:

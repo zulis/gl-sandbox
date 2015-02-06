@@ -5,30 +5,30 @@
 class Transform2D
 {
 public:
-	Transform2D(const glm::vec2& position = glm::vec2(0.0f), float rotation = 0.0f, const glm::vec2& scale = glm::vec2(1.0f));
+	Transform2D(const vec2& position = vec2(0.0f), float rotation = 0.0f, const vec2& scale = vec2(1.0f));
 
 	void setPosition(float x, float y);
-	void setPosition(const glm::vec2& position);
+	void setPosition(const vec2& position);
 	void setRotation(float rotation);
 	void setScale(float scale);
 	void setScale(float x, float y);
-	void setScale(const glm::vec2& scale);
-	const glm::mat4 getMatrix() const;
-	void setMatrix(const glm::mat4& matrix);
+	void setScale(const vec2& scale);
+	const mat4 getMatrix() const;
+	void setMatrix(const mat4& matrix);
 
-	const glm::vec2 getPosition() const;
+	const vec2 getPosition() const;
 
 private:
 	void updateMatrix();
-	glm::vec2 mPosition;
+	vec2 mPosition;
 	float mRotation;
-	glm::vec2 mScale;
-	glm::mat4 mMatrix;
+	vec2 mScale;
+	mat4 mMatrix;
 
 };
 
 //=========================================================================
-Transform2D::Transform2D(const glm::vec2& position, float rotation, const glm::vec2& scale)
+Transform2D::Transform2D(const vec2& position, float rotation, const vec2& scale)
 {
 	mPosition = position;
 	mRotation = rotation;
@@ -39,11 +39,11 @@ Transform2D::Transform2D(const glm::vec2& position, float rotation, const glm::v
 //=========================================================================
 void Transform2D::setPosition(float x, float y)
 {
-	setPosition(glm::vec2(x, y));
+	setPosition(vec2(x, y));
 }
 
 //=========================================================================
-void Transform2D::setPosition(const glm::vec2& position)
+void Transform2D::setPosition(const vec2& position)
 {
 	mPosition = position;
 	updateMatrix();
@@ -65,11 +65,11 @@ void Transform2D::setScale(float scale)
 //=========================================================================
 void Transform2D::setScale(float x, float y)
 {
-	setScale(glm::vec2(x, y));
+	setScale(vec2(x, y));
 }
 
 //=========================================================================
-void Transform2D::setScale(const glm::vec2& scale)
+void Transform2D::setScale(const vec2& scale)
 {
 	mScale = scale;
 	updateMatrix();
@@ -78,26 +78,26 @@ void Transform2D::setScale(const glm::vec2& scale)
 //=========================================================================
 void Transform2D::updateMatrix()
 {
-	mMatrix = glm::mat4(1.0f);
-	mMatrix = glm::translate(mMatrix, glm::vec3(mPosition.x, mPosition.y, 0.0f));
-	mMatrix = glm::rotate(mMatrix, mRotation, glm::vec3(0.0f, 0.0f, 1.0f));
-	mMatrix = glm::scale(mMatrix, glm::vec3(mScale.x, mScale.y, 0.0f));
+	mMatrix = mat4(1.0f);
+	mMatrix = translate(mMatrix, vec3(mPosition.x, mPosition.y, 0.0f));
+	mMatrix = rotate(mMatrix, mRotation, vec3(0.0f, 0.0f, 1.0f));
+	mMatrix = scale(mMatrix, vec3(mScale.x, mScale.y, 0.0f));
 }
 
 //=========================================================================
-const glm::mat4 Transform2D::getMatrix() const
+const mat4 Transform2D::getMatrix() const
 {
 	return mMatrix;
 }
 
 //=========================================================================
-void Transform2D::setMatrix(const glm::mat4& matrix)
+void Transform2D::setMatrix(const mat4& matrix)
 {
 	mMatrix = matrix;
 }
 
 //=========================================================================
-const glm::vec2 Transform2D::getPosition() const
+const vec2 Transform2D::getPosition() const
 {
-	return glm::vec2(mMatrix[3][0], mMatrix[3][1]);
+	return vec2(mMatrix[3][0], mMatrix[3][1]);
 }

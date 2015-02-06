@@ -26,8 +26,8 @@ public:
 
 private:
 	CameraPtr mCamera;
-	MeshPtr mMesh1, mMesh2;
-	MeshPtr mLightMesh;
+	MeshRef mMesh1, mMesh2;
+	MeshRef mLightMesh;
 	QuadRef mQuad;
 	MaterialDefaultRef mMaterial;
 	float mStrafeSpeed { 0.1f };
@@ -38,9 +38,9 @@ private:
 	int mWindowHeight;
 	int mLastMouseX, mLastMouseY, mCurrentMouseX, mCurrentMouseY;
 	float mRotation { 0.0f };
-	glm::vec3 mLightLookAt{ glm::vec3(0.0f, 0.0f, 1.0f) };
+	vec3 mLightLookAt{ vec3(0.0f, 0.0f, 1.0f) };
 
-	glm::vec3 getArcballVector(int x, int y);
+	vec3 getArcballVector(int x, int y);
 };
 
 //=========================================================================
@@ -58,7 +58,7 @@ void Test::setup()
 	//mMesh->setAutoLoadTextures(false);
 
 	
-	//mMesh2 = Mesh::create(); mMesh2->loadFromFile("assets/models/plane/plane.fbx"); mMesh2->getMaterial()->setTilingUV(500); mMesh2->setPosition(glm::vec3(0, -15, 0));
+	//mMesh2 = Mesh::create(); mMesh2->loadFromFile("assets/models/plane/plane.fbx"); mMesh2->getMaterial()->setTilingUV(500); mMesh2->setPosition(vec3(0, -15, 0));
 
 	//mMesh->loadFromFile("assets/models/box/box.fbx");
 	mMesh1->loadFromFile("assets/models/leeperrysmith/leeperrysmith.fbx", 6); mMesh1->setRotationX(-90);
@@ -70,7 +70,7 @@ void Test::setup()
 	//mMesh->loadFromFile("assets/models/sponza/sponza.obj", 0.02f);
 	//auto material = mMesh1->getMaterial();
 
-	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::DiffuseMap);
+	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_d.jpg", TextureType::ColorMap);
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_n.jpg", TextureType::NormalMap);
 	//material->addTexture("assets/models/leeperrysmith/leeperrysmith_s.jpg", TextureType::SpecularMap);
 
@@ -89,8 +89,8 @@ void Test::setup()
 	auto light = PointLight::create();
 	//auto light = DirectionalLight::create();
 	//auto light = SpotLight::create();
-	light->setPosition(glm::vec3(0.0f, 10.0f, 0.0f));
-	light->setLookAt(glm::vec3(mLightLookAt));
+	light->setPosition(vec3(0.0f, 10.0f, 0.0f));
+	light->setLookAt(vec3(mLightLookAt));
 	light->setAmbient(Color::white());
 	light->setDiffuse(Color::white());
 	light->setSpecular(Color::white());
@@ -108,21 +108,21 @@ void Test::setup()
 
 	/*
 	auto light = PointLight::create();
-	light->setPosition(glm::vec3(-5, 0, 0));
+	light->setPosition(vec3(-5, 0, 0));
 	light->setAmbient(Color::red());
 	light->setDiffuse(Color::red());
 	//light->setSpecular(Color::white());
-	//light->setAttenuation(glm::vec2(100, 1000));
+	//light->setAttenuation(vec2(100, 1000));
 	material->addLight(*light);
 
 	light->setAmbient(Color::green());
 	light->setDiffuse(Color::green());
-	light->setPosition(glm::vec3(0, 0, 5));
+	light->setPosition(vec3(0, 0, 5));
 	material->addLight(*light);
 
 	light->setAmbient(Color::blue());
 	light->setDiffuse(Color::blue());
-	light->setPosition(glm::vec3(5, 0, 0));
+	light->setPosition(vec3(5, 0, 0));
 	material->addLight(*light);
 	*/
 
@@ -214,13 +214,13 @@ void Test::update(double elapsedTime)
 
 	if(mCurrentMouseX != mLastMouseX || mCurrentMouseY != mLastMouseY)
 	{
-		glm::vec3 va = getArcballVector(mLastMouseX, mLastMouseY);
-		glm::vec3 vb = getArcballVector(mCurrentMouseX, mCurrentMouseY);
-		float angle = acos(std::min(1.0f, glm::dot(va, vb)));
-		glm::vec3 axisInCameraCoord = glm::cross(va, vb);
-		glm::mat3 camera2object = glm::inverse(glm::mat3(mCamera->getViewMatrix()) * glm::mat3(mMesh1->getMatrix()));
-		glm::vec3 axisInObjectCoord = camera2object * axisInCameraCoord;
-		mMesh1->setMatrix(glm::rotate(mMesh1->getMatrix(), angle, axisInObjectCoord));
+		vec3 va = getArcballVector(mLastMouseX, mLastMouseY);
+		vec3 vb = getArcballVector(mCurrentMouseX, mCurrentMouseY);
+		float angle = acos(std::min(1.0f, dot(va, vb)));
+		vec3 axisInCameraCoord = cross(va, vb);
+		mat3 camera2object = inverse(mat3(mCamera->getViewMatrix()) * mat3(mMesh1->getMatrix()));
+		vec3 axisInObjectCoord = camera2object * axisInCameraCoord;
+		mMesh1->setMatrix(rotate(mMesh1->getMatrix(), angle, axisInObjectCoord));
 		mLastMouseX = mCurrentMouseX;
 		mLastMouseY = mCurrentMouseY;
 	}
@@ -231,7 +231,7 @@ void Test::update(double elapsedTime)
 
 	//mMesh1->setLookAt(mCamera->getPosition()); mMesh1->setRotationX(-90);
 	//mMesh1->setLookAt(mLightMesh->getPosition()); mMesh1->setRotationX(-90);
-	//mMesh1->setRotateTowards(mLightMesh->getRotation(), glm::radians(90.0f) * elapsedTime); //mMesh1->setRotationX(-90);
+	//mMesh1->setRotateTowards(mLightMesh->getRotation(), radians(90.0f) * elapsedTime); //mMesh1->setRotationX(-90);
 	
 }
 
@@ -280,9 +280,9 @@ void Test::resize(unsigned int width, unsigned int height)
 }
 
 //=========================================================================
-glm::vec3 Test::getArcballVector(int x, int y)
+vec3 Test::getArcballVector(int x, int y)
 {
-	glm::vec3 P = glm::vec3(1.0 * x / mWindowWidth * 2 - 1.0,
+	vec3 P = vec3(1.0 * x / mWindowWidth * 2 - 1.0,
 	                        1.0 * y / mWindowHeight * 2 - 1.0,
 	                        0);
 	P.y = -P.y;
@@ -291,7 +291,7 @@ glm::vec3 Test::getArcballVector(int x, int y)
 	if(OP_squared <= 1 * 1)
 		P.z = sqrt(1 * 1 - OP_squared);  // Pythagore
 	else
-		P = glm::normalize(P);  // nearest point
+		P = normalize(P);  // nearest point
 
 	return P;
 }

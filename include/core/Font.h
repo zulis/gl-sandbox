@@ -75,8 +75,8 @@ Font::Font(const std::string& fileName, int size)
 		0.0, 1.0
 	};
 
-	std::vector<glm::vec3> v(std::begin(vertices), std::end(vertices));
-	std::vector<glm::vec2> t(std::begin(uv), std::end(uv));
+	std::vector<vec3> v(std::begin(vertices), std::end(vertices));
+	std::vector<vec2> t(std::begin(uv), std::end(uv));
 
 	mGeometry->setVertices(v);
 	mGeometry->setTexCoords(t);
@@ -111,8 +111,8 @@ void Font::print(const std::string& text, unsigned int x, unsigned int y, Color 
 	//GLenum format = (surface->format->BytesPerPixel == 3) ? GL_RGB : GL_RGBA;
 	//mTexture->loadFromRaw(GL_RGBA/*format*/, surface->w, surface->h, (unsigned char*)surface->pixels);
 
-	auto projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
-	glm::mat4 mvp = projection * glm::mat4(1.0f);
+	auto projection = ortho(-1.0f, 1.0f, -1.0f, 1.0f);
+	mat4 mvp = projection * mat4(1.0f);
 
 	mTexture->bind();
 

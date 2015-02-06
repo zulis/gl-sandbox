@@ -7,3 +7,5 @@
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+using namespace glm;

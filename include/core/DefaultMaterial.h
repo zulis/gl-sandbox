@@ -33,10 +33,10 @@ DefaultMaterial::DefaultMaterial() : Material("assets/shaders/defaultMaterial")
 //=========================================================================
 void DefaultMaterial::updateUniforms(unsigned int geometryIndex)
 {
-	if(!bindTexture(TextureType::DiffuseMap, 0, geometryIndex))
+	if(!bindTexture(TextureType::ColorMap, 0, geometryIndex))
 	{
-		addTexture(mDefaultDiffuse, TextureType::DiffuseMap, geometryIndex);
-		bindTexture(TextureType::DiffuseMap, 0, geometryIndex);
+		addTexture(mDefaultDiffuse, TextureType::ColorMap, geometryIndex);
+		bindTexture(TextureType::ColorMap, 0, geometryIndex);
 	}
 
 	bindTexture(TextureType::NormalMap, 1, geometryIndex);

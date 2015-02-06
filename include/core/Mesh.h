@@ -13,12 +13,12 @@
 #include "core/AABB.h"
 #include "core/Camera.h"
 
-typedef std::unique_ptr<class Mesh> MeshPtr;
+typedef std::unique_ptr<class Mesh> MeshRef;
 
 class Mesh final : public Transform3D
 {
 public:
-	static MeshPtr create();
+	static MeshRef create();
 	Mesh() {};
 	~Mesh() {};
 
@@ -57,7 +57,7 @@ private:
 };
 
 //=========================================================================
-MeshPtr Mesh::create()
+MeshRef Mesh::create()
 {
 	//return MeshRef(new Mesh);
 	return std::make_unique<Mesh>();
@@ -73,8 +73,8 @@ void Mesh::loadFromFile(const std::string& fileName, float scaleFactor)
 
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
-	glm::vec3 min(maxFloat);
-	glm::vec3 max(minFloat);
+	vec3 min(maxFloat);
+	vec3 max(minFloat);
 
 	unsigned int geometryIndex = 0;
 
@@ -151,7 +151,7 @@ void Mesh::updateUniforms(const Camera& camera, const Shader& shader)
 	shader.setUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * getMatrix());
 
 	auto mv = camera.getViewMatrix() * getMatrix();
-	shader.setUniform(ShaderConstants::NormalMatrix, glm::mat3(glm::vec3(mv[0]), glm::vec3(mv[1]), glm::vec3(mv[2])));
+	shader.setUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 }
 
 //=========================================================================

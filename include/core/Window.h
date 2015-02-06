@@ -36,7 +36,7 @@ public:
 	void setTitle(const std::string& title);
 	const Input& getInput() const;
 	Input& getInput();
-	const glm::mat4 getOrtho() const;
+	const mat4 getOrtho() const;
 	void setMouseVisibility(bool isVisible);
 	//GLFWwindow* getGLFWWindow() const;
 
@@ -286,12 +286,12 @@ Input& Window::getInput()
 }
 
 //=========================================================================
-const glm::mat4 Window::getOrtho() const
+const mat4 Window::getOrtho() const
 {
 	int width;
 	int height;
 	glfwGetFramebufferSize(mWindow, &width, &height);
-	return glm::ortho(0.0f, (float)width, (float)height, (float)0.0f);
+	return ortho(0.0f, (float)width, (float)height, (float)0.0f);
 }
 
 //=========================================================================

@@ -14,14 +14,14 @@ uniform mat4 ModelViewMatrix;
 uniform mat4 MVP;
 uniform mat3 NormalMatrix;
 
-layout(binding = 0) uniform sampler2D DiffuseMap;
+layout(binding = 0) uniform sampler2D ColorMap;
 layout(binding = 1) uniform sampler2D NormalMap;
 layout(binding = 2) uniform sampler2D HeightMap;
 layout(binding = 3) uniform sampler2D SpecularMap;
 layout(binding = 4) uniform sampler2D EmissiveMap;
 layout(binding = 5) uniform sampler2D OpacityMap;
 
-uniform bool DiffuseMapIsUsed;
+uniform bool ColorMapIsUsed;
 uniform bool NormalMapIsUsed;
 uniform bool HeightMapIsUsed;
 uniform bool SpecularMapIsUsed;

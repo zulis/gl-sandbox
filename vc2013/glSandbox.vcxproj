@@ -202,6 +202,8 @@
     <ClInclude Include="..\include\core\GL.h" />
     <ClInclude Include="..\include\core\GLCore44.h" />
     <ClInclude Include="..\include\core\ListenerSet.h" />
+    <ClInclude Include="..\include\core\Shape.h" />
+    <ClInclude Include="..\include\core\Singleton.h" />
     <ClInclude Include="..\include\core\Window.h" />
     <ClInclude Include="..\include\core\Image.h" />
     <ClInclude Include="..\include\core\ImageManager.h" />
@@ -232,6 +234,7 @@
     <ClInclude Include="..\include\systems\PlayerMovementSystem.h" />
     <ClInclude Include="..\include\systems\MeshRenderSystem.h" />
     <ClInclude Include="..\src\EntityFactory.h" />
+    <ClInclude Include="..\src\tests\Deferred.h" />
     <ClInclude Include="..\src\Tests\LoadLevelTest.h" />
     <ClInclude Include="..\src\Tests\Test.h" />
   </ItemGroup>

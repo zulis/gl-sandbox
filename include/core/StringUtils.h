@@ -23,8 +23,8 @@ public:
 	static float toFloat(const std::string& s);
 	static double toDouble(const std::string& s);
 	static int toBool(const std::string& s);
-	static const glm::vec2 toVec2(const std::string& s);
-	static const glm::vec3 toVec3(const std::string& s);
+	static const vec2 toVec2(const std::string& s);
+	static const vec3 toVec3(const std::string& s);
 
 private:
 	static std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems);
@@ -140,9 +140,9 @@ int StringUtils::toBool(const std::string& s)
 }
 
 //=========================================================================
-const glm::vec2 StringUtils::toVec2(const std::string& s)
+const vec2 StringUtils::toVec2(const std::string& s)
 {
-	glm::vec2 result;
+	vec2 result;
 	auto ss = StringUtils::split(s, ' ');
 	result.x = StringUtils::toFloat(ss[0]);
 	result.y = StringUtils::toFloat(ss[1]);
@@ -150,9 +150,9 @@ const glm::vec2 StringUtils::toVec2(const std::string& s)
 }
 
 //=========================================================================
-const glm::vec3 StringUtils::toVec3(const std::string& s)
+const vec3 StringUtils::toVec3(const std::string& s)
 {
-	glm::vec3 result;
+	vec3 result;
 	auto ss = StringUtils::split(s, ' ');
 	result.x = StringUtils::toFloat(ss[0]);
 	result.y = StringUtils::toFloat(ss[1]);

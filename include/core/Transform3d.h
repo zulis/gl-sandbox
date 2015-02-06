@@ -5,47 +5,47 @@
 class Transform3D
 {
 public:
-	Transform3D(const glm::vec3& position = glm::vec3(0.0f), const glm::vec3& rotation = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f));
+	Transform3D(const vec3& position = vec3(0.0f), const vec3& rotation = vec3(0.0f), const vec3& scale = vec3(1.0f));
 
 	void setPosition(float x, float y, float z);
 	void setMoveBy(float x, float y, float z);
 	void setRotation(float x, float y, float z);
 	void setScale(float x, float y, float z);
-	void setPosition(const glm::vec3& position);
-	void setMoveBy(const glm::vec3& delta);
-	void setRotation(const glm::vec3& rotation);
-	void setRotation(const glm::quat& quat);
+	void setPosition(const vec3& position);
+	void setMoveBy(const vec3& delta);
+	void setRotation(const vec3& rotation);
+	void setRotation(const quat& quat);
 	void setRotationX(float x);
 	void setRotationY(float Y);
 	void setRotationZ(float z);
 	void setScale(float scale);
-	void setScale(const glm::vec3& scale);
-	void setMatrix(const glm::mat4& matrix);
-	void setLookAt(const glm::vec3& target);
-	void setRotateTowards(const glm::quat& target, float maxAngle);
+	void setScale(const vec3& scale);
+	void setMatrix(const mat4& matrix);
+	void setLookAt(const vec3& target);
+	void setRotateTowards(const quat& target, float maxAngle);
 
-	glm::vec3 getPosition() const;
-	glm::quat getRotation() const;
-	glm::vec3 getEulerAngles() const;
-	glm::vec3 getScale() const;
-	glm::mat4 getMatrix() const;
+	vec3 getPosition() const;
+	quat getRotation() const;
+	vec3 getEulerAngles() const;
+	vec3 getScale() const;
+	mat4 getMatrix() const;
 
 private:
 	void updateMatrix();
-	glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 target) const;
-	glm::quat lookAt(const glm::vec3& direction, glm::vec3 desiredUp = glm::vec3(0, 1, 0)) const;
-	glm::quat rotateTowards(glm::quat current, glm::quat target, float maxAngle) const;
-	glm::vec3 mPosition;
-	glm::quat mRotation;
-	glm::vec3 mScale;
-	glm::mat4 mMatrix;
+	quat rotationBetweenVectors(vec3 start, vec3 target) const;
+	quat lookAt(const vec3& direction, vec3 desiredUp = vec3(0, 1, 0)) const;
+	quat rotateTowards(quat current, quat target, float maxAngle) const;
+	vec3 mPosition;
+	quat mRotation;
+	vec3 mScale;
+	mat4 mMatrix;
 };
 
 //=========================================================================
-Transform3D::Transform3D(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
+Transform3D::Transform3D(const vec3& position, const vec3& rotation, const vec3& scale)
 {
 	mPosition = position;
-	mRotation = glm::toQuat(glm::orientate3(glm::radians(rotation)));
+	mRotation = toQuat(orientate3(radians(rotation)));
 	mScale = scale;
 	updateMatrix();
 }
@@ -53,73 +53,73 @@ Transform3D::Transform3D(const glm::vec3& position, const glm::vec3& rotation, c
 //=========================================================================
 void Transform3D::setPosition(float x, float y, float z)
 {
-	setPosition(glm::vec3(x, y, z));
+	setPosition(vec3(x, y, z));
 }
 
 //=========================================================================
 void Transform3D::setMoveBy(float x, float y, float z)
 {
-	setMoveBy(glm::vec3(x, y, z));
+	setMoveBy(vec3(x, y, z));
 }
 
 //=========================================================================
 void Transform3D::setRotation(float x, float y, float z)
 {
-	setRotation(glm::vec3(x, y, z));
+	setRotation(vec3(x, y, z));
 }
 
 //=========================================================================
 void Transform3D::setRotationX(float x)
 {
 	auto rotation = getEulerAngles();
-	setRotation(glm::vec3(x, rotation.y, rotation.z));
+	setRotation(vec3(x, rotation.y, rotation.z));
 }
 
 //=========================================================================
 void Transform3D::setRotationY(float y)
 {
 	auto rotation = getEulerAngles();
-	setRotation(glm::vec3(rotation.x, y, rotation.z));
+	setRotation(vec3(rotation.x, y, rotation.z));
 }
 
 //=========================================================================
 void Transform3D::setRotationZ(float z)
 {
 	auto rotation = getEulerAngles();
-	setRotation(glm::vec3(rotation.x, rotation.y, z));
+	setRotation(vec3(rotation.x, rotation.y, z));
 }
 
 //=========================================================================
 void Transform3D::setScale(float x, float y, float z)
 {
-	setScale(glm::vec3(x, y, z));
+	setScale(vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3D::setPosition(const  glm::vec3& position)
+void Transform3D::setPosition(const  vec3& position)
 {
 	mPosition = position;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setMoveBy(const  glm::vec3& delta)
+void Transform3D::setMoveBy(const  vec3& delta)
 {
 	mPosition += delta;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setRotation(const glm::vec3& rotation)
+void Transform3D::setRotation(const vec3& rotation)
 {
-	auto rot = glm::radians(rotation);
-	mRotation = glm::quat(rot);
-	//mRotation = glm::toQuat(glm::orientate3(glm::radians(rotation)));
+	auto rot = radians(rotation);
+	mRotation = quat(rot);
+	//mRotation = toQuat(orientate3(radians(rotation)));
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setRotation(const glm::quat& quat)
+void Transform3D::setRotation(const quat& quat)
 {
 	mRotation = quat;
 	updateMatrix();
@@ -132,7 +132,7 @@ void Transform3D::setScale(float scale)
 }
 
 //=========================================================================
-void Transform3D::setScale(const glm::vec3& scale)
+void Transform3D::setScale(const vec3& scale)
 {
 	mScale = scale;
 	updateMatrix();
@@ -141,41 +141,41 @@ void Transform3D::setScale(const glm::vec3& scale)
 //=========================================================================
 void Transform3D::updateMatrix()
 {
-	glm::mat4 translationMatrix = glm::translate(glm::mat4(), mPosition);
-	glm::mat4 rotationMatrix = glm::toMat4(mRotation);
-	glm::mat4 scaleMatrix = glm::scale(mScale);
+	mat4 translationMatrix = translate(mat4(), mPosition);
+	mat4 rotationMatrix = toMat4(mRotation);
+	mat4 scaleMatrix = scale(mScale);
 	mMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 }
 
 //=========================================================================
-void Transform3D::setMatrix(const glm::mat4& matrix)
+void Transform3D::setMatrix(const mat4& matrix)
 {
 	mMatrix = matrix;
 }
 
 //=========================================================================
-glm::vec3 Transform3D::getPosition() const
+vec3 Transform3D::getPosition() const
 {
-	return glm::vec3(mMatrix[3][0], mMatrix[3][1], mMatrix[3][2]);
+	return vec3(mMatrix[3][0], mMatrix[3][1], mMatrix[3][2]);
 }
 
 //=========================================================================
-glm::quat Transform3D::getRotation() const
+quat Transform3D::getRotation() const
 {
 	return mRotation;
 }
 
 //=========================================================================
-glm::vec3 Transform3D::getEulerAngles() const
+vec3 Transform3D::getEulerAngles() const
 {
-	glm::vec3 eulers;
+	vec3 eulers;
 	float sy = 2.0f * (mRotation.y * mRotation.w - mRotation.x * mRotation.z);
 
-	if(sy < 1.0f - glm::epsilon<float>())
+	if(sy < 1.0f - epsilon<float>())
 	{
-		if(sy > -1.0f + glm::epsilon<float>())
+		if(sy > -1.0f + epsilon<float>())
 		{
-			eulers = glm::vec3(
+			eulers = vec3(
 			             atan2f(mRotation.y * mRotation.z + mRotation.x * mRotation.w, 0.5f - (mRotation.x * mRotation.x + mRotation.y * mRotation.y)),
 			             asinf(sy),
 			             atan2f(mRotation.x * mRotation.y + mRotation.z * mRotation.w, 0.5f - (mRotation.y * mRotation.y + mRotation.z * mRotation.z)));
@@ -183,100 +183,100 @@ glm::vec3 Transform3D::getEulerAngles() const
 		else
 		{
 			// not a unique solution; x + z = atan2(-m21, m11)
-			eulers = glm::vec3(
+			eulers = vec3(
 			             0.0f,
-			             -glm::half_pi<float>(),
+			             -half_pi<float>(),
 			             atan2f(mRotation.x * mRotation.w - mRotation.y * mRotation.z, 0.5f - (mRotation.x * mRotation.x + mRotation.z * mRotation.z)));
 		}
 	}
 	else
 	{
 		// not a unique solution; x - z = atan2(-m21, m11)
-		eulers = glm::vec3(
+		eulers = vec3(
 		             0.0f,
-		             glm::half_pi<float>(),
+		             half_pi<float>(),
 		             -atan2f(mRotation.x * mRotation.w - mRotation.y * mRotation.z, 0.5f - (mRotation.x * mRotation.x + mRotation.z * mRotation.z)));
 	}
 
 	// adjust so that z, rather than y, is in [-pi/2, pi/2]
-	if(eulers.z < -glm::half_pi<float>())
+	if(eulers.z < -half_pi<float>())
 	{
 		if(eulers.x < 0.0f)
 		{
-			eulers.x += glm::pi<float>();
+			eulers.x += pi<float>();
 		}
 		else
 		{
-			eulers.x -= glm::pi<float>();
+			eulers.x -= pi<float>();
 		}
 		eulers.y = -eulers.y;
 		if(eulers.y < 0.0f)
 		{
-			eulers.y += glm::pi<float>();
+			eulers.y += pi<float>();
 		}
 		else
 		{
-			eulers.y -= glm::pi<float>();
+			eulers.y -= pi<float>();
 		}
-		eulers.z += glm::pi<float>();
+		eulers.z += pi<float>();
 	}
-	else if(eulers.z > glm::half_pi<float>())
+	else if(eulers.z > half_pi<float>())
 	{
 		if(eulers.x < 0.0f)
 		{
-			eulers.x += glm::pi<float>();
+			eulers.x += pi<float>();
 		}
 		else
 		{
-			eulers.x -= glm::pi<float>();
+			eulers.x -= pi<float>();
 		}
 		eulers.y = -eulers.y;
 		if(eulers.y < 0.0f)
 		{
-			eulers.y += glm::pi<float>();
+			eulers.y += pi<float>();
 		}
 		else
 		{
-			eulers.y -= glm::pi<float>();
+			eulers.y -= pi<float>();
 		}
-		eulers.z -= glm::pi<float>();
+		eulers.z -= pi<float>();
 	}
 
-	return glm::degrees(eulers);
+	return degrees(eulers);
 }
 
 //=========================================================================
-glm::vec3 Transform3D::getScale() const
+vec3 Transform3D::getScale() const
 {
-	return glm::vec3(glm::length(mMatrix[0]), glm::length(mMatrix[1]), glm::length(mMatrix[2]));
+	return vec3(length(mMatrix[0]), length(mMatrix[1]), length(mMatrix[2]));
 }
 
 //=========================================================================
-glm::mat4 Transform3D::getMatrix() const
+mat4 Transform3D::getMatrix() const
 {
 	return mMatrix;
 }
 
 //=========================================================================
-void Transform3D::setLookAt(const glm::vec3& target)
+void Transform3D::setLookAt(const vec3& target)
 {
 	auto position = getPosition();
 
 	if (position != target)
 	{
-		auto direction = glm::normalize(target - position);
+		auto direction = normalize(target - position);
 		setRotation(lookAt(direction));
 	}
 }
 
 //=========================================================================
-glm::quat Transform3D::rotationBetweenVectors(glm::vec3 start, glm::vec3 target) const
+quat Transform3D::rotationBetweenVectors(vec3 start, vec3 target) const
 {
-	start = glm::normalize(start);
-	target = glm::normalize(target);
+	start = normalize(start);
+	target = normalize(target);
 
-	float cosTheta = glm::dot(start, target);
-	glm::vec3 rotationAxis;
+	float cosTheta = dot(start, target);
+	vec3 rotationAxis;
 
 	if(cosTheta < -1 + 0.001f)
 	{
@@ -285,22 +285,22 @@ glm::quat Transform3D::rotationBetweenVectors(glm::vec3 start, glm::vec3 target)
 		// So guess one; any will do as long as it's perpendicular to start
 		// This implementation favors a rotation around the Up axis,
 		// since it's often what you want to do.
-		rotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), start);
+		rotationAxis = cross(vec3(0.0f, 0.0f, 1.0f), start);
 
-		if(glm::length2(rotationAxis) < 0.01)   // bad luck, they were parallel, try again!
-			rotationAxis = glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), start);
+		if(length2(rotationAxis) < 0.01)   // bad luck, they were parallel, try again!
+			rotationAxis = cross(vec3(1.0f, 0.0f, 0.0f), start);
 
-		rotationAxis = glm::normalize(rotationAxis);
-		return glm::angleAxis(180.0f, rotationAxis);
+		rotationAxis = normalize(rotationAxis);
+		return angleAxis(180.0f, rotationAxis);
 	}
 
 	// Implementation from Stan Melax's Game Programming Gems 1 article
-	rotationAxis = glm::cross(start, target);
+	rotationAxis = cross(start, target);
 
-	float s = glm::sqrt((1 + cosTheta) * 2);
+	float s = sqrt((1 + cosTheta) * 2);
 	float invs = 1 / s;
 
-	return glm::quat(
+	return quat(
 	           s * 0.5f,
 	           rotationAxis.x * invs,
 	           rotationAxis.y * invs,
@@ -309,36 +309,36 @@ glm::quat Transform3D::rotationBetweenVectors(glm::vec3 start, glm::vec3 target)
 }
 
 //=========================================================================
-glm::quat Transform3D::lookAt(const glm::vec3& direction, glm::vec3 desiredUp) const
+quat Transform3D::lookAt(const vec3& direction, vec3 desiredUp) const
 {
-	if(glm::length2(direction) < 0.0001f)
-		return glm::quat();
+	if(length2(direction) < 0.0001f)
+		return quat();
 
 	// Recompute desiredUp so that it's perpendicular to the direction
 	// You can skip that part if you really want to force desiredUp
-	glm::vec3 right = glm::cross(direction, desiredUp);
-	desiredUp = glm::cross(right, direction);
+	vec3 right = cross(direction, desiredUp);
+	desiredUp = cross(right, direction);
 
 	// Find the rotation between the front of the object (that we assume towards +Z,
 	// but this depends on your model) and the desired direction
-	glm::quat rot1 = rotationBetweenVectors(glm::vec3(0.0f, 0.0f, 1.0f), direction);
+	quat rot1 = rotationBetweenVectors(vec3(0.0f, 0.0f, 1.0f), direction);
 	// Because of the 1rst rotation, the up is probably completely screwed up.
 	// Find the rotation between the "up" of the rotated object, and the desired up
-	glm::vec3 newUp = rot1 * glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::quat rot2 = rotationBetweenVectors(newUp, desiredUp);
+	vec3 newUp = rot1 * vec3(0.0f, 1.0f, 0.0f);
+	quat rot2 = rotationBetweenVectors(newUp, desiredUp);
 
 	// Apply them
 	return rot2 * rot1; // remember, in reverse order.
 }
 
 //=========================================================================
-void Transform3D::setRotateTowards(const glm::quat& target, float maxAngle)
+void Transform3D::setRotateTowards(const quat& target, float maxAngle)
 {
 	setRotation(rotateTowards(mRotation, target, maxAngle));
 }
 
 //=========================================================================
-glm::quat Transform3D::rotateTowards(glm::quat current, glm::quat target, float maxAngle) const
+quat Transform3D::rotateTowards(quat current, quat target, float maxAngle) const
 {
 	if(maxAngle < 0.001f)
 	{
@@ -346,7 +346,7 @@ glm::quat Transform3D::rotateTowards(glm::quat current, glm::quat target, float 
 		return current;
 	}
 
-	float cosTheta = glm::dot(current, target);
+	float cosTheta = dot(current, target);
 
 	// q1 and q2 are already equal.
 	// Force q2 just to be sure
@@ -374,7 +374,7 @@ glm::quat Transform3D::rotateTowards(glm::quat current, glm::quat target, float 
 	float fT = maxAngle / angle;
 	angle = maxAngle;
 
-	glm::quat res = (sin((1.0f - fT) * angle) * current + sin(fT * angle) * target) / sin(angle);
-	res = glm::normalize(res);
+	quat res = (sin((1.0f - fT) * angle) * current + sin(fT * angle) * target) / sin(angle);
+	res = normalize(res);
 	return res;
 }

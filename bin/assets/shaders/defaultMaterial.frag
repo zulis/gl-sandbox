@@ -316,11 +316,11 @@ void main()
 		specular = results.specular;
 	}
 	
-	if(DiffuseMapIsUsed)
+	if(ColorMapIsUsed)
 	{
-		ambient *= texture(DiffuseMap, TexCoord);
-		diffuse *= texture(DiffuseMap, TexCoord);
-		alpha = texture(DiffuseMap, TexCoord).a;
+		ambient *= texture(ColorMap, TexCoord);
+		diffuse *= texture(ColorMap, TexCoord);
+		alpha = texture(ColorMap, TexCoord).a;
 	}
 	
 	if(EmissiveMapIsUsed)

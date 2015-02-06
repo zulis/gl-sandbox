@@ -24,10 +24,10 @@
 //	virtual void setGeometry(std::vector<GeometryRef>* geometries);
 //
 //private:
-//	std::vector<glm::vec3> mVertices;
+//	std::vector<vec3> mVertices;
 //	std::vector<unsigned int> mIndices;
-//	std::vector<glm::vec2> mTexCoords;
-//	std::vector<glm::vec3> mNormals;
+//	std::vector<vec2> mTexCoords;
+//	std::vector<vec3> mNormals;
 //	Geometry::DrawType mDrawType { Geometry::DrawType::TRIANGLES };
 //
 //};
@@ -54,14 +54,14 @@
 //	{
 //		mVertices =
 //		{
-//			glm::vec3(-side, -side, -side),
-//			glm::vec3(-side, -side, side),
-//			glm::vec3(side, -side, -side),
-//			glm::vec3(side, -side, side),
-//			glm::vec3(-side, side, side),
-//			glm::vec3(-side, side, -side),
-//			glm::vec3(side, side, -side),
-//			glm::vec3(side, side, side)
+//			vec3(-side, -side, -side),
+//			vec3(-side, -side, side),
+//			vec3(side, -side, -side),
+//			vec3(side, -side, side),
+//			vec3(-side, side, side),
+//			vec3(-side, side, -side),
+//			vec3(side, side, -side),
+//			vec3(side, side, side)
 //		};
 //
 //		mIndices = { 1, 0, 0, 2, 2, 3, 3, 1, 4, 1, 4, 5, 5, 6, 6, 7, 7, 4, 7, 3, 6, 2, 5, 0 };
@@ -71,35 +71,35 @@
 //		mVertices =
 //		{
 //			// Front
-//			glm::vec3(-side, -side, side),
-//			glm::vec3(side, -side, side),
-//			glm::vec3(side, side, side),
-//			glm::vec3(-side, side, side),
+//			vec3(-side, -side, side),
+//			vec3(side, -side, side),
+//			vec3(side, side, side),
+//			vec3(-side, side, side),
 //			// Right
-//			glm::vec3(side, -side, side),
-//			glm::vec3(side, -side, -side),
-//			glm::vec3(side, side, -side),
-//			glm::vec3(side, side, side),
+//			vec3(side, -side, side),
+//			vec3(side, -side, -side),
+//			vec3(side, side, -side),
+//			vec3(side, side, side),
 //			// Back
-//			glm::vec3(-side, -side, -side),
-//			glm::vec3(-side, side, -side),
-//			glm::vec3(side, side, -side),
-//			glm::vec3(side, -side, -side),
+//			vec3(-side, -side, -side),
+//			vec3(-side, side, -side),
+//			vec3(side, side, -side),
+//			vec3(side, -side, -side),
 //			// Left
-//			glm::vec3(-side, -side, side),
-//			glm::vec3(-side, side, side),
-//			glm::vec3(-side, side, -side),
-//			glm::vec3(-side, -side, -side),
+//			vec3(-side, -side, side),
+//			vec3(-side, side, side),
+//			vec3(-side, side, -side),
+//			vec3(-side, -side, -side),
 //			// Bottom
-//			glm::vec3(-side, -side, side),
-//			glm::vec3(-side, -side, -side),
-//			glm::vec3(side, -side, -side),
-//			glm::vec3(side, -side, side),
+//			vec3(-side, -side, side),
+//			vec3(-side, -side, -side),
+//			vec3(side, -side, -side),
+//			vec3(side, -side, side),
 //			// Top
-//			glm::vec3(-side, side, side),
-//			glm::vec3(side, side, side),
-//			glm::vec3(side, side, -side),
-//			glm::vec3(-side, side, -side)
+//			vec3(-side, side, side),
+//			vec3(side, side, side),
+//			vec3(side, side, -side),
+//			vec3(-side, side, -side)
 //		};
 //
 //		mIndices =
@@ -115,69 +115,69 @@
 //		mNormals =
 //		{
 //			// Front
-//			glm::vec3(0.0f, 0.0f, 1.0f),
-//			glm::vec3(0.0f, 0.0f, 1.0f),
-//			glm::vec3(0.0f, 0.0f, 1.0f),
-//			glm::vec3(0.0f, 0.0f, 1.0f),
+//			vec3(0.0f, 0.0f, 1.0f),
+//			vec3(0.0f, 0.0f, 1.0f),
+//			vec3(0.0f, 0.0f, 1.0f),
+//			vec3(0.0f, 0.0f, 1.0f),
 //			// Right
-//			glm::vec3(1.0f, 0.0f, 0.0f),
-//			glm::vec3(1.0f, 0.0f, 0.0f),
-//			glm::vec3(1.0f, 0.0f, 0.0f),
-//			glm::vec3(1.0f, 0.0f, 0.0f),
+//			vec3(1.0f, 0.0f, 0.0f),
+//			vec3(1.0f, 0.0f, 0.0f),
+//			vec3(1.0f, 0.0f, 0.0f),
+//			vec3(1.0f, 0.0f, 0.0f),
 //			// Back
-//			glm::vec3(0.0f, 0.0f, -1.0f),
-//			glm::vec3(0.0f, 0.0f, -1.0f),
-//			glm::vec3(0.0f, 0.0f, -1.0f),
-//			glm::vec3(0.0f, 0.0f, -1.0f),
+//			vec3(0.0f, 0.0f, -1.0f),
+//			vec3(0.0f, 0.0f, -1.0f),
+//			vec3(0.0f, 0.0f, -1.0f),
+//			vec3(0.0f, 0.0f, -1.0f),
 //			// Left
-//			glm::vec3(-1.0f, 0.0f, 0.0f),
-//			glm::vec3(-1.0f, 0.0f, 0.0f),
-//			glm::vec3(-1.0f, 0.0f, 0.0f),
-//			glm::vec3(-1.0f, 0.0f, 0.0f),
+//			vec3(-1.0f, 0.0f, 0.0f),
+//			vec3(-1.0f, 0.0f, 0.0f),
+//			vec3(-1.0f, 0.0f, 0.0f),
+//			vec3(-1.0f, 0.0f, 0.0f),
 //			// Bottom
-//			glm::vec3(0.0f, -1.0f, 0.0f),
-//			glm::vec3(0.0f, -1.0f, 0.0f),
-//			glm::vec3(0.0f, -1.0f, 0.0f),
-//			glm::vec3(0.0f, -1.0f, 0.0f),
+//			vec3(0.0f, -1.0f, 0.0f),
+//			vec3(0.0f, -1.0f, 0.0f),
+//			vec3(0.0f, -1.0f, 0.0f),
+//			vec3(0.0f, -1.0f, 0.0f),
 //			// Top
-//			glm::vec3(0.0f, 1.0f, 0.0f),
-//			glm::vec3(0.0f, 1.0f, 0.0f),
-//			glm::vec3(0.0f, 1.0f, 0.0f),
-//			glm::vec3(0.0f, 1.0f, 0.0f)
+//			vec3(0.0f, 1.0f, 0.0f),
+//			vec3(0.0f, 1.0f, 0.0f),
+//			vec3(0.0f, 1.0f, 0.0f),
+//			vec3(0.0f, 1.0f, 0.0f)
 //		};
 //
 //		mTexCoords =
 //		{
 //			// Front
-//			glm::vec2(0.0f, 0.0f),
-//			glm::vec2(1.0f, 0.0f),
-//			glm::vec2(1.0f, 1.0f),
-//			glm::vec2(0.0f, 1.0f),
+//			vec2(0.0f, 0.0f),
+//			vec2(1.0f, 0.0f),
+//			vec2(1.0f, 1.0f),
+//			vec2(0.0f, 1.0f),
 //			// Right
-//			glm::vec2(0.0f, 0.0f),
-//			glm::vec2(1.0f, 0.0f),
-//			glm::vec2(1.0f, 1.0f),
-//			glm::vec2(0.0f, 1.0f),
+//			vec2(0.0f, 0.0f),
+//			vec2(1.0f, 0.0f),
+//			vec2(1.0f, 1.0f),
+//			vec2(0.0f, 1.0f),
 //			// Back
-//			glm::vec2(0.0f, 0.0f),
-//			glm::vec2(1.0f, 0.0f),
-//			glm::vec2(1.0f, 1.0f),
-//			glm::vec2(0.0f, 1.0f),
+//			vec2(0.0f, 0.0f),
+//			vec2(1.0f, 0.0f),
+//			vec2(1.0f, 1.0f),
+//			vec2(0.0f, 1.0f),
 //			// Left
-//			glm::vec2(0.0f, 0.0f),
-//			glm::vec2(1.0f, 0.0f),
-//			glm::vec2(1.0f, 1.0f),
-//			glm::vec2(0.0f, 1.0f),
+//			vec2(0.0f, 0.0f),
+//			vec2(1.0f, 0.0f),
+//			vec2(1.0f, 1.0f),
+//			vec2(0.0f, 1.0f),
 //			// Bottom
-//			glm::vec2(0.0f, 0.0f),
-//			glm::vec2(1.0f, 0.0f),
-//			glm::vec2(1.0f, 1.0f),
-//			glm::vec2(0.0f, 1.0f),
+//			vec2(0.0f, 0.0f),
+//			vec2(1.0f, 0.0f),
+//			vec2(1.0f, 1.0f),
+//			vec2(0.0f, 1.0f),
 //			// Top
-//			glm::vec2(0.0f, 0.0f),
-//			glm::vec2(1.0f, 0.0f),
-//			glm::vec2(1.0f, 1.0f),
-//			glm::vec2(0.0f, 1.0f)
+//			vec2(0.0f, 0.0f),
+//			vec2(1.0f, 0.0f),
+//			vec2(1.0f, 1.0f),
+//			vec2(0.0f, 1.0f)
 //		};
 //	}
 //}
@@ -189,14 +189,14 @@
 //
 //	mVertices =
 //	{
-//		glm::vec3(aabb.getMin().x, aabb.getMin().y, aabb.getMin().z),
-//		glm::vec3(aabb.getMin().x, aabb.getMin().y, aabb.getMax().z),
-//		glm::vec3(aabb.getMax().x, aabb.getMin().y, aabb.getMin().z),
-//		glm::vec3(aabb.getMax().x, aabb.getMin().y, aabb.getMax().z),
-//		glm::vec3(aabb.getMin().x, aabb.getMax().y, aabb.getMax().z),
-//		glm::vec3(aabb.getMin().x, aabb.getMax().y, aabb.getMin().z),
-//		glm::vec3(aabb.getMax().x, aabb.getMax().y, aabb.getMin().z),
-//		glm::vec3(aabb.getMax().x, aabb.getMax().y, aabb.getMax().z)
+//		vec3(aabb.getMin().x, aabb.getMin().y, aabb.getMin().z),
+//		vec3(aabb.getMin().x, aabb.getMin().y, aabb.getMax().z),
+//		vec3(aabb.getMax().x, aabb.getMin().y, aabb.getMin().z),
+//		vec3(aabb.getMax().x, aabb.getMin().y, aabb.getMax().z),
+//		vec3(aabb.getMin().x, aabb.getMax().y, aabb.getMax().z),
+//		vec3(aabb.getMin().x, aabb.getMax().y, aabb.getMin().z),
+//		vec3(aabb.getMax().x, aabb.getMax().y, aabb.getMin().z),
+//		vec3(aabb.getMax().x, aabb.getMax().y, aabb.getMax().z)
 //	};
 //
 //	mIndices =

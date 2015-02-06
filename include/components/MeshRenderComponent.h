@@ -9,18 +9,18 @@
 class MeshRenderComponent : public Component
 {
 public:
-	MeshRenderComponent(MeshPtr mesh, CameraPtr camera);
+	MeshRenderComponent(MeshRef mesh, CameraPtr camera);
 	const Mesh& getMesh() const;
 	const Camera& getCamera() const;
 	bool isCulled(const Camera& camera);
 
 private:
-	MeshPtr mMesh;
+	MeshRef mMesh;
 	CameraPtr mCamera;
 };
 
 //=========================================================================
-MeshRenderComponent::MeshRenderComponent(MeshPtr mesh, CameraPtr camera)
+MeshRenderComponent::MeshRenderComponent(MeshRef mesh, CameraPtr camera)
 {
 	mMesh = std::move(mesh);
 	mCamera = std::move(camera);

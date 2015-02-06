@@ -80,16 +80,16 @@ public:
 	void setUniform(const std::string& name, unsigned int i) const;
 	void setUniform(const std::string& name, float f) const;
 	void setUniform(const std::string& name, float f1, float f2) const;
-	void setUniform(const std::string& name, const glm::vec2& vec2) const;
+	void setUniform(const std::string& name, const vec2& vec2) const;
 	void setUniform(const std::string& name, float f1, float f2, float f3) const;
 	void setUniform(const std::string& name, float f1, float f2, float f3, float f4) const;
-	void setUniform(const std::string& name, const glm::vec3& vec3) const;
+	void setUniform(const std::string& name, const vec3& vec3) const;
 	//void setUniform(const std::string& name, const vec4& vec4) const;
-	void setUniform(const std::string& name, const glm::mat3& mat3, bool transpose = false) const;
-	void setUniform(const std::string& name, const glm::mat4& mat4, bool transpose = false) const;
+	void setUniform(const std::string& name, const mat3& mat3, bool transpose = false) const;
+	void setUniform(const std::string& name, const mat4& mat4, bool transpose = false) const;
 	void setUniform(const std::string& name, bool b) const;
-	void setUniform(const std::string& name, const glm::vec4* vec4, int count) const;
-	void setUniform(const std::string& name, const glm::vec4& vec4) const;
+	void setUniform(const std::string& name, const vec4* vec4, int count) const;
+	void setUniform(const std::string& name, const vec4& vec4) const;
 	void setUniform(const std::string& name, const Color& color) const;
 
 	GLuint getAttribute(const std::string& name) const;
@@ -406,7 +406,7 @@ void Shader::setUniform(const std::string& name, float f1, float f2) const
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::vec2& vec2) const
+void Shader::setUniform(const std::string& name, const vec2& vec2) const
 {
 	setUniform(name, vec2.x, vec2.y);
 }
@@ -428,7 +428,7 @@ void Shader::setUniform(const std::string& name, float f1, float f2, float f3, f
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::vec3& vec3) const
+void Shader::setUniform(const std::string& name, const vec3& vec3) const
 {
 	setUniform(name, vec3.x, vec3.y, vec3.z);
 }
@@ -440,7 +440,7 @@ void Shader::setUniform(const std::string& name, const glm::vec3& vec3) const
 //}
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::vec4* vec4, int count) const
+void Shader::setUniform(const std::string& name, const vec4* vec4, int count) const
 {
 	auto uniform = getUniform(name);
 	if (uniform != -1)
@@ -448,7 +448,7 @@ void Shader::setUniform(const std::string& name, const glm::vec4* vec4, int coun
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::vec4& vec4) const
+void Shader::setUniform(const std::string& name, const vec4& vec4) const
 {
 	auto uniform = getUniform(name);
 	if (uniform != -1)
@@ -456,7 +456,7 @@ void Shader::setUniform(const std::string& name, const glm::vec4& vec4) const
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::mat3& mat3, bool transpose) const
+void Shader::setUniform(const std::string& name, const mat3& mat3, bool transpose) const
 {
 	auto uniform = getUniform(name);
 	if (uniform != -1)
@@ -464,7 +464,7 @@ void Shader::setUniform(const std::string& name, const glm::mat3& mat3, bool tra
 }
 
 //=========================================================================
-void Shader::setUniform(const std::string& name, const glm::mat4& mat4, bool transpose) const
+void Shader::setUniform(const std::string& name, const mat4& mat4, bool transpose) const
 {
 	auto uniform = getUniform(name);
 	if (uniform != -1)

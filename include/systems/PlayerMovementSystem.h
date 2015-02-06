@@ -85,8 +85,8 @@ void PlayerMovementSystem::processEntity(Entity& e)
 		rotationZ -= mPlayerRotateSpeed * world->getDelta();
 	}
 
-	//transform->setRotation(glm::vec3(0.0f, 0.0f, rotationZ));
-	transform->setRotation(glm::vec3(0.0f, rotationZ, 0.0f));
+	//transform->setRotation(vec3(0.0f, 0.0f, rotationZ));
+	transform->setRotation(vec3(0.0f, rotationZ, 0.0f));
 
 	//auto position = transform->getPosition();
 
@@ -94,7 +94,7 @@ void PlayerMovementSystem::processEntity(Entity& e)
 	positionY += velocity->y * world->getDelta();
 	//position.z = 0;
 
-	transform->setPosition(glm::vec3(positionX, positionY, 0.0f));
+	transform->setPosition(vec3(positionX, positionY, 0.0f));
 
 	// 		auto bbox = renderable->getAxisAlignedBoundingBox();
 	// 		auto cambbox = GameCamera::getBoundingBox();

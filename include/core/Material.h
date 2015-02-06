@@ -18,8 +18,8 @@ class Material : public FileMonitorListener
 {
 public:
 	Shader& getShader() const;
-	void addTexture(const TextureRef& texture, const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
-	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::DiffuseMap, unsigned int geometryIndex = 0);
+	void addTexture(const TextureRef& texture, const TextureType& textureType = TextureType::ColorMap, unsigned int geometryIndex = 0);
+	void addTexture(const std::string& fileName = std::string(), const TextureType& textureType = TextureType::ColorMap, unsigned int geometryIndex = 0);
 	void addLight(const Light& light);
 	Light& getLight(unsigned int index);
 
@@ -119,7 +119,7 @@ void Material::bind()
 		mShader->setUniform(ShaderConstants::MaterialShininess, mMaterialShininess);
 		mShader->setUniform(ShaderConstants::TilingU, mTilingU);
 		mShader->setUniform(ShaderConstants::TilingV, mTilingV);
-		mShader->setUniform(ShaderConstants::TilingUV, glm::vec2(mTilingU, mTilingV));
+		mShader->setUniform(ShaderConstants::TilingUV, vec2(mTilingU, mTilingV));
 
 		// Update lights
 		mShader->setUniform(ShaderConstants::TotalLights, static_cast<int>(mLights.size()));
@@ -209,8 +209,8 @@ bool Material::bindTexture(const TextureType& textureType, unsigned int textureu
 
 	switch(textureType)
 	{
-		case TextureType::DiffuseMap:
-			mShader->setUniform(ShaderConstants::DiffuseMapIsUsed, bindResult);
+		case TextureType::ColorMap:
+			mShader->setUniform(ShaderConstants::ColorMapIsUsed, bindResult);
 			break;
 
 		case TextureType::NormalMap:

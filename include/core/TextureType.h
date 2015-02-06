@@ -6,7 +6,7 @@
 enum TextureType
 {
 	//AmbientMap,
-	DiffuseMap,
+	ColorMap,
 	SpecularMap,
 	//SpecularLevel,
 	//Glossiness,
@@ -25,7 +25,7 @@ enum TextureType
 std::unordered_map<TextureType, std::string> TextureTypeName =
 {
 	//{ TextureType::AmbientMap, "AmbientMap" },
-	{ TextureType::DiffuseMap, "DiffuseMap" },
+	{ TextureType::ColorMap, "ColorMap" },
 	{ TextureType::SpecularMap, "SpecularMap" },
 	//{ TextureType::SpecularLevel, "SpecularLevel" },
 	//{ TextureType::Glossiness, "Glossiness" },

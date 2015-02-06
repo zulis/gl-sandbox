@@ -26,26 +26,26 @@ public:
 	};
 
 	static GeometryRef create();
-	static GeometryRef create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
+	static GeometryRef create(std::vector<vec3> vertices, std::vector<unsigned int> indices);
 	Geometry() {};
-	Geometry(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices);
+	Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices);
 	~Geometry();
 
-	void setVertices(const std::vector<glm::vec3>& vertices);
-	void setVertices(const std::vector<glm::vec2>& vertices);
+	void setVertices(const std::vector<vec3>& vertices);
+	void setVertices(const std::vector<vec2>& vertices);
 	void setIndices(const std::vector<unsigned int>& indices);
-	void setTexCoords(const std::vector<glm::vec2>& texCoords);
-	void setNormals(const std::vector<glm::vec3>& normals);
-	void setTangents(const std::vector<glm::vec4>& tangents);
-	void setBitangents(const std::vector<glm::vec3>& bitangents);
+	void setTexCoords(const std::vector<vec2>& texCoords);
+	void setNormals(const std::vector<vec3>& normals);
+	void setTangents(const std::vector<vec4>& tangents);
+	void setBitangents(const std::vector<vec3>& bitangents);
 	void setDrawType(DrawType drawType);
 
-	const std::vector<glm::vec3> getVertices() const;
+	const std::vector<vec3> getVertices() const;
 	const std::vector<unsigned int> getIndices() const;
-	const std::vector<glm::vec2> getTexCoords() const;
-	const std::vector<glm::vec3> getNormals() const;
-	const std::vector<glm::vec4> getTangents() const;
-	const std::vector<glm::vec3> getBitangents() const;
+	const std::vector<vec2> getTexCoords() const;
+	const std::vector<vec3> getNormals() const;
+	const std::vector<vec4> getTangents() const;
+	const std::vector<vec3> getBitangents() const;
 	unsigned int getDrawType() const;
 	const AABB getAABB() const;
 
@@ -59,12 +59,12 @@ public:
 
 private:
 	DrawType mDrawType { DrawType::TRIANGLES };
-	std::vector<glm::vec3> mVertices;
+	std::vector<vec3> mVertices;
 	std::vector<unsigned int> mIndices;
-	std::vector<glm::vec2> mTexCoords;
-	std::vector<glm::vec3> mNormals;
-	std::vector<glm::vec4> mTangents;
-	std::vector<glm::vec3> mBitangents;
+	std::vector<vec2> mTexCoords;
+	std::vector<vec3> mNormals;
+	std::vector<vec4> mTangents;
+	std::vector<vec3> mBitangents;
 	bool mIsReady { false };
 	GLuint mVaoHandle;
 	GLuint mVboHandle[6];
@@ -83,13 +83,13 @@ GeometryRef Geometry::create()
 }
 
 //=========================================================================
-GeometryRef Geometry::create(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices)
+GeometryRef Geometry::create(std::vector<vec3> vertices, std::vector<unsigned int> indices)
 {
 	return std::make_unique<Geometry>(vertices, indices);
 }
 
 //=========================================================================
-Geometry::Geometry(std::vector<glm::vec3> vertices, std::vector<unsigned int> indices)
+Geometry::Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices)
 {
 	setVertices(vertices);
 	setIndices(indices);
@@ -117,19 +117,19 @@ Geometry::~Geometry()
 }
 
 //=========================================================================
-void Geometry::setVertices(const std::vector<glm::vec3>& vertices)
+void Geometry::setVertices(const std::vector<vec3>& vertices)
 {
 	mVertices = vertices;
 }
 
 //=========================================================================
-void Geometry::setVertices(const std::vector<glm::vec2>& vertices)
+void Geometry::setVertices(const std::vector<vec2>& vertices)
 {
-	std::vector<glm::vec3> result;
+	std::vector<vec3> result;
 
 	for (auto& v : vertices)
 	{
-		result.push_back(glm::vec3(v.x, v.y, 0.0f));
+		result.push_back(vec3(v.x, v.y, 0.0f));
 	}
 
 	mVertices = result;
@@ -142,25 +142,25 @@ void Geometry::setIndices(const std::vector<unsigned int>& indices)
 }
 
 //=========================================================================
-void Geometry::setTexCoords(const std::vector<glm::vec2>& texCoords)
+void Geometry::setTexCoords(const std::vector<vec2>& texCoords)
 {
 	mTexCoords = texCoords;
 }
 
 //=========================================================================
-void Geometry::setNormals(const std::vector<glm::vec3>& normals)
+void Geometry::setNormals(const std::vector<vec3>& normals)
 {
 	mNormals = normals;
 }
 
 //=========================================================================
-void Geometry::setTangents(const std::vector<glm::vec4>& tangents)
+void Geometry::setTangents(const std::vector<vec4>& tangents)
 {
 	mTangents = tangents;
 }
 
 //=========================================================================
-void Geometry::setBitangents(const std::vector<glm::vec3>& bitangents)
+void Geometry::setBitangents(const std::vector<vec3>& bitangents)
 {
 	mBitangents = bitangents;
 }
@@ -172,7 +172,7 @@ void Geometry::setDrawType(DrawType drawType)
 }
 
 //=========================================================================
-const std::vector<glm::vec3> Geometry::getVertices() const
+const std::vector<vec3> Geometry::getVertices() const
 {
 	return mVertices;
 }
@@ -184,25 +184,25 @@ const std::vector<unsigned int> Geometry::getIndices() const
 }
 
 //=========================================================================
-const std::vector<glm::vec2> Geometry::getTexCoords() const
+const std::vector<vec2> Geometry::getTexCoords() const
 {
 	return mTexCoords;
 }
 
 //=========================================================================
-const std::vector<glm::vec3> Geometry::getNormals() const
+const std::vector<vec3> Geometry::getNormals() const
 {
 	return mNormals;
 }
 
 //=========================================================================
-const std::vector<glm::vec4> Geometry::getTangents() const
+const std::vector<vec4> Geometry::getTangents() const
 {
 	return mTangents;
 }
 
 //=========================================================================
-const std::vector<glm::vec3> Geometry::getBitangents() const
+const std::vector<vec3> Geometry::getBitangents() const
 {
 	return mBitangents;
 }
@@ -336,8 +336,8 @@ const AABB Geometry::getAABB() const
 {
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
-	glm::vec3 min(maxFloat);
-	glm::vec3 max(minFloat);
+	vec3 min(maxFloat);
+	vec3 max(minFloat);
 
 	for (unsigned int i = 0; i < mVertices.size(); i++)
 	{
@@ -368,7 +368,7 @@ const AABB Geometry::getAABB() const
 //=========================================================================
 void Geometry::generateNormals()
 {
-	mNormals.assign(mVertices.size(), glm::vec3(0.0f));
+	mNormals.assign(mVertices.size(), vec3(0.0f));
 
 	unsigned int n = mIndices.size() / 3;
 
@@ -378,13 +378,13 @@ void Geometry::generateNormals()
 		unsigned int index1 = mIndices[i * 3 + 1];
 		unsigned int index2 = mIndices[i * 3 + 2];
 
-		glm::vec3 v0 = mVertices[index0];
-		glm::vec3 v1 = mVertices[index1];
-		glm::vec3 v2 = mVertices[index2];
+		vec3 v0 = mVertices[index0];
+		vec3 v1 = mVertices[index1];
+		vec3 v2 = mVertices[index2];
 
-		glm::vec3 e0 = v1 - v0;
-		glm::vec3 e1 = v2 - v0;
-		glm::vec3 normal = glm::normalize(glm::cross(e0, e1));
+		vec3 e0 = v1 - v0;
+		vec3 e1 = v2 - v0;
+		vec3 normal = normalize(cross(e0, e1));
 
 		mNormals[index0] += normal;
 		mNormals[index1] += normal;
@@ -393,7 +393,7 @@ void Geometry::generateNormals()
 
 	for (unsigned int i = 0; i < mNormals.size(); i++)
 	{
-		mNormals[i] = glm::normalize(mNormals[i]);
+		mNormals[i] = normalize(mNormals[i]);
 	}
 }
 
@@ -402,36 +402,36 @@ void Geometry::generateTangents()
 {
 	if (hasIndices() && hasNormals() && hasTexCoords())
 	{
-		std::vector<glm::vec3> tan1Accum;
-		std::vector<glm::vec3> tan2Accum;
+		std::vector<vec3> tan1Accum;
+		std::vector<vec3> tan2Accum;
 
 		for (unsigned int i = 0; i < mVertices.size(); i++)
 		{
-			tan1Accum.push_back(glm::vec3(0.0f));
-			tan2Accum.push_back(glm::vec3(0.0f));
-			mTangents.push_back(glm::vec4(0.0f));
+			tan1Accum.push_back(vec3(0.0f));
+			tan2Accum.push_back(vec3(0.0f));
+			mTangents.push_back(vec4(0.0f));
 		}
 
 		// Compute the tangent vector
 		for (unsigned int i = 0; i < mIndices.size(); i += 3)
 		{
-			const glm::vec3& p1 = mVertices[mIndices[i]];
-			const glm::vec3& p2 = mVertices[mIndices[i + 1]];
-			const glm::vec3& p3 = mVertices[mIndices[i + 2]];
+			const vec3& p1 = mVertices[mIndices[i]];
+			const vec3& p2 = mVertices[mIndices[i + 1]];
+			const vec3& p3 = mVertices[mIndices[i + 2]];
 
-			const glm::vec2& tc1 = mTexCoords[mIndices[i]];
-			const glm::vec2& tc2 = mTexCoords[mIndices[i + 1]];
-			const glm::vec2& tc3 = mTexCoords[mIndices[i + 2]];
+			const vec2& tc1 = mTexCoords[mIndices[i]];
+			const vec2& tc2 = mTexCoords[mIndices[i + 1]];
+			const vec2& tc3 = mTexCoords[mIndices[i + 2]];
 
-			glm::vec3 q1 = p2 - p1;
-			glm::vec3 q2 = p3 - p1;
+			vec3 q1 = p2 - p1;
+			vec3 q2 = p3 - p1;
 			float s1 = tc2.x - tc1.x, s2 = tc3.x - tc1.x;
 			float t1 = tc2.y - tc1.y, t2 = tc3.y - tc1.y;
 			float r = 1.0f / (s1 * t2 - s2 * t1);
-			glm::vec3 tan1((t2*q1.x - t1*q2.x) * r,
+			vec3 tan1((t2*q1.x - t1*q2.x) * r,
 				(t2*q1.y - t1*q2.y) * r,
 				(t2*q1.z - t1*q2.z) * r);
-			glm::vec3 tan2((s1*q2.x - s2*q1.x) * r,
+			vec3 tan2((s1*q2.x - s2*q1.x) * r,
 				(s1*q2.y - s2*q1.y) * r,
 				(s1*q2.z - s2*q1.z) * r);
 			tan1Accum[mIndices[i]] += tan1;
@@ -444,15 +444,15 @@ void Geometry::generateTangents()
 
 		for (unsigned int i = 0; i < mVertices.size(); ++i)
 		{
-			const glm::vec3& n = mNormals[i];
-			glm::vec3& t1 = tan1Accum[i];
-			glm::vec3& t2 = tan2Accum[i];
+			const vec3& n = mNormals[i];
+			vec3& t1 = tan1Accum[i];
+			vec3& t2 = tan2Accum[i];
 
 			// Gram-Schmidt orthogonalize
-			//mTangents[i] = glm::vec3(glm::normalize(t1 - (glm::dot(n, t1) * n)));
-			mTangents[i] = glm::vec4(glm::normalize(t1 - (glm::dot(n, t1) * n)), 0.0f);
+			//mTangents[i] = vec3(normalize(t1 - (dot(n, t1) * n)));
+			mTangents[i] = vec4(normalize(t1 - (dot(n, t1) * n)), 0.0f);
 			// Store handedness in w
-			mTangents[i].w = (glm::dot(glm::cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
+			mTangents[i].w = (dot(cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
 		}
 
 		tan1Accum.clear();

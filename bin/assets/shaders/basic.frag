@@ -1,11 +1,12 @@
-#version 330 core
-
-precision highp float;
+#include "common.glsl"
 
 in vec2 TexCoord;
 out vec4 FragColor;
 
 void main()
 {
-	FragColor = vec4(1, 1, 1, 1);
+	if(ColorMapIsUsed)
+		FragColor = texture(ColorMap, TexCoord);
+	else
+		FragColor = vec4(1, 1, 1, 1);
 }

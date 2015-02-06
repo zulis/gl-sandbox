@@ -253,6 +253,15 @@
     <ClInclude Include="..\src\tests\Test.h">
       <Filter>src\tests</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\tests\Deferred.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Shape.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Singleton.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\external\src\json\json_internalarray.inl">

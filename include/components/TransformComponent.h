@@ -6,22 +6,22 @@
 class TransformComponent : public Component
 {
 public:
-	TransformComponent(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
-	void setPosition(glm::vec3 position);
-	void setRotation(glm::vec3 rotation);
-	void setScale(glm::vec3 scale);
-	//glm::mat4 getMatrix();
+	TransformComponent(vec3 position = vec3(0.0f), vec3 rotation = vec3(0.0f), vec3 scale = vec3(1.0f));
+	void setPosition(vec3 position);
+	void setRotation(vec3 rotation);
+	void setScale(vec3 scale);
+	//mat4 getMatrix();
 
-	glm::vec3& getPosition();
-	glm::vec3& getRotation();
-	glm::vec3& getScale();
+	vec3& getPosition();
+	vec3& getRotation();
+	vec3& getScale();
 
 private:
 	//const float mDiff = 100.0f;
-	glm::vec3 mPosition;
-	glm::vec3 mRotation;
-	glm::vec3 mScale;
-	//glm::mat4 mMatrix;
+	vec3 mPosition;
+	vec3 mRotation;
+	vec3 mScale;
+	//mat4 mMatrix;
 	//bool mNeedUpdate;
 
 private:
@@ -29,7 +29,7 @@ private:
 };
 
 //=========================================================================
-TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+TransformComponent::TransformComponent(vec3 position, vec3 rotation, vec3 scale)
 {
 	setPosition(position);
 	setRotation(rotation);
@@ -37,21 +37,21 @@ TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation, g
 }
 
 //=========================================================================
-void TransformComponent::setPosition(glm::vec3 position)
+void TransformComponent::setPosition(vec3 position)
 {
 	mPosition = position; // *mDiff;
 	//mNeedUpdate = true;
 }
 
 //=========================================================================
-void TransformComponent::setRotation(glm::vec3 rotation)
+void TransformComponent::setRotation(vec3 rotation)
 {
 	mRotation = rotation;
 	//mNeedUpdate = true;
 }
 
 //=========================================================================
-void TransformComponent::setScale(glm::vec3 scale)
+void TransformComponent::setScale(vec3 scale)
 {
 	mScale = scale;
 	//mNeedUpdate = true;
@@ -63,16 +63,16 @@ void TransformComponent::setScale(glm::vec3 scale)
 // 	// In GLM the angle must be in degrees here, so convert it.
 // 	//quat q = angleAxis(degrees(m_rotation),  RotationAxis);
 // 
-// 	glm::mat4 translation = glm::translate(glm::mat4(), mPosition);
-// 	glm::mat4 rotation = glm::eulerAngleYXZ(mRotation.y, mRotation.x, mRotation.z);
-// 	glm::mat4 scale = glm::scale(glm::mat4(), mScale);
+// 	mat4 translation = translate(mat4(), mPosition);
+// 	mat4 rotation = eulerAngleYXZ(mRotation.y, mRotation.x, mRotation.z);
+// 	mat4 scale = scale(mat4(), mScale);
 // 	mMatrix = translation * rotation * scale;
 // 
 // 	mNeedUpdate = false;
 // }
 
 //=========================================================================
-// glm::mat4 TransformComponent::getMatrix()
+// mat4 TransformComponent::getMatrix()
 // {
 // 	if(mNeedUpdate)
 // 		updateMatrix();
@@ -81,19 +81,19 @@ void TransformComponent::setScale(glm::vec3 scale)
 // }
 
 //=========================================================================
-glm::vec3& TransformComponent::getPosition()
+vec3& TransformComponent::getPosition()
 {
 	return mPosition;
 }
 
 //=========================================================================
-glm::vec3& TransformComponent::getRotation()
+vec3& TransformComponent::getRotation()
 {
 	return mRotation;
 }
 
 //=========================================================================
-glm::vec3& TransformComponent::getScale()
+vec3& TransformComponent::getScale()
 {
 	return mScale;
 }
