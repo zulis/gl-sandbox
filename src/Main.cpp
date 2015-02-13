@@ -1,5 +1,5 @@
-#include "tests/Test.h"
-#include "tests/LoadLevelTest.h"
+//#include "tests/Test.h"
+//#include "tests/LoadLevelTest.h"
 #include "tests/Deferred.h"
 
 //RUN(Test)

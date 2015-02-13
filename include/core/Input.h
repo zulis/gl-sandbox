@@ -21,7 +21,7 @@ public:
 	bool isKeyUp(int key) const;
 
 	void setMousePositionStatus(int x, int y);
-	void setMouseChangeStatus(int x, int y);
+	void setMousePositionChangeStatus(int x, int y);
 	void setMouseButtonStatus(const MouseButton& button, bool down);
 	void setMouseScrollStatus(double x, double y);
 	const ivec2 getMousePosition() const;
@@ -95,7 +95,7 @@ void Input::setMousePositionStatus(int x, int y)
 }
 
 //=========================================================================
-void Input::setMouseChangeStatus(int x, int y)
+void Input::setMousePositionChangeStatus(int x, int y)
 {
 	mMouseChangeX = x;
 	mMouseChangeY = y;

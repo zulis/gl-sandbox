@@ -1,11 +1,21 @@
 #pragma once
 
 #include "core/Game.h"
-#include "core/Camera.h"
-#include "core/Shader.h"
-#include "core/Shape.h"
-#include "core/Transform3d.h"
-#include "core/Texture.h"
+//#include "core/Camera.h"
+//#include "core/Shader.h"
+//#include "core/Shape.h"
+//#include "core/Transform3d.h"
+//#include "core/Texture.h"
+#include "core/Resource.h"
+
+class Abc
+{
+public:
+	Abc(const std::string& fileName) : mFileName(fileName)
+	{}
+
+	std::string mFileName;
+};
 
 class Deferred : public State
 {
@@ -20,20 +30,24 @@ public:
 	virtual void resize(unsigned int width, unsigned int height);
 
 private:
-	CameraPtr mCamera;
-	float mStrafeSpeed{ 0.2f };
-	float mStrafeFastSpeed{ 0.4f };
+	//CameraPtr mCamera;
+	//float mStrafeSpeed{ 0.2f };
+	//float mStrafeFastSpeed{ 0.4f };
 
-	ShaderRef mShader;
-	GeometryRef mShape;
-	Transform3D mTransform;
-	TextureRef mColorTex;
+	//ShaderRef mShader;
+	//GeometryRef mShape;
+	//Transform3D mTransform;
+	//TextureRef mColorTex;
 };
 
 //=========================================================================
 void Deferred::setup()
 {
-	mCamera = Camera::create();
+	auto a1 = Resource::create<Abc>("aaa.txt");
+	auto a2 = Resource::create<Abc>("bbb.txt");
+	auto a3 = Resource::create<Abc>("aaa.txt");
+
+	/*mCamera = Camera::create();
 	mCamera->setRotateSpeed(0.002f);
 	mCamera->setStrafeSpeed(mStrafeSpeed);
 	mCamera->setPosition(vec3(0, 0, -2));
@@ -41,7 +55,7 @@ void Deferred::setup()
 
 	mShader = Shader::create("assets/shaders/basic");
 	mShape = Shape::createCube();
-	mColorTex = Texture::create("assets/textures/default/default_d.png");
+	mColorTex = Texture::create("assets/textures/default/default_d.png");*/
 }
 
 //=========================================================================
@@ -50,7 +64,7 @@ void Deferred::input(Input& input)
 	if (input.isKeyDown(KEY_ESCAPE))
 		quit();
 
-	if (input.isKeyDown(KEY_LEFT_SHIFT))
+	/*if (input.isKeyDown(KEY_LEFT_SHIFT))
 		mCamera->setStrafeSpeed(mStrafeFastSpeed);
 	else
 		mCamera->setStrafeSpeed(mStrafeSpeed);
@@ -81,7 +95,7 @@ void Deferred::input(Input& input)
 	else
 	{
 		input.showMouse();
-	}
+	}*/
 }
 
 //=========================================================================
@@ -94,24 +108,24 @@ void Deferred::draw()
 {
 	gl::enableCullFace(gl::CullFaceType::Back);
 
-	mColorTex->bind();
-	mShader->bind();
+	//mColorTex->bind();
+	//mShader->bind();
 
-	//mShader->setUniform(ShaderConstants::ProjectionMatrix, mCamera->getProjectionMatrix());
-	//mShader->setUniform(ShaderConstants::ViewMatrix, mCamera->getViewMatrix());
-	//mShader->setUniform(ShaderConstants::ModelMatrix, mTransform.getMatrix());
-	//mShader->setUniform(ShaderConstants::ModelViewMatrix, mCamera->getViewMatrix() * mTransform.getMatrix());
-	mShader->setUniform(ShaderConstants::MVP, mCamera->getProjectionMatrix() * mCamera->getViewMatrix() * mTransform.getMatrix());
-	mShader->setUniform(ShaderConstants::ColorMapIsUsed, true);
-	//mShader->setUniform(ShaderConstants::ColorMap, 0);
+	////mShader->setUniform(ShaderConstants::ProjectionMatrix, mCamera->getProjectionMatrix());
+	////mShader->setUniform(ShaderConstants::ViewMatrix, mCamera->getViewMatrix());
+	////mShader->setUniform(ShaderConstants::ModelMatrix, mTransform.getMatrix());
+	////mShader->setUniform(ShaderConstants::ModelViewMatrix, mCamera->getViewMatrix() * mTransform.getMatrix());
+	//mShader->setUniform(ShaderConstants::MVP, mCamera->getProjectionMatrix() * mCamera->getViewMatrix() * mTransform.getMatrix());
+	//mShader->setUniform(ShaderConstants::ColorMapIsUsed, true);
+	////mShader->setUniform(ShaderConstants::ColorMap, 0);
 
-	//auto mv = mCamera->getViewMatrix() * mTransform.getMatrix();
-	//mShader->setUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+	////auto mv = mCamera->getViewMatrix() * mTransform.getMatrix();
+	////mShader->setUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 
-	mShape->draw(*mShader);
-	mShader->unbind();
+	//mShape->draw(*mShader);
+	//mShader->unbind();
 
-	mColorTex->unbind();
+	//mColorTex->unbind();
 
 	gl::disableCullFace();
 }
@@ -119,5 +133,5 @@ void Deferred::draw()
 //=========================================================================
 void Deferred::resize(unsigned int width, unsigned int height)
 {
-	mCamera->setAspectRatio((float)width / height);
+	//mCamera->setAspectRatio((float)width / height);
 }

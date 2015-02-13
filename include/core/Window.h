@@ -7,6 +7,8 @@
 #include "core/Input.h"
 #include "core/Log.h"
 
+typedef unsigned long DWORD;
+
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
@@ -169,9 +171,11 @@ Window::Window(int width, int height, WindowMode mode)
 	// Init OpenGL
 	logNote("Initialising OpenGL...");
 
-	if(ogl_LoadFunctions() == ogl_LOAD_FAILED)
+	GLenum err = glewInit();
+
+	if (GLEW_OK != err)
 	{
-		logError("OpenGL initialisation failed.");
+		logError("OpenGL initialisation failed: %s", glewGetErrorString(err));
 		glfwDestroyWindow(mWindow);
 		glfwTerminate();
 		exit(1);
@@ -229,7 +233,7 @@ void Window::run()
 		input(mInput);
 		// Reset mouse statuses
 		mInput.setMouseScrollStatus(0, 0);
-		mInput.setMouseChangeStatus(0, 0);
+		mInput.setMousePositionChangeStatus(0, 0);
 		// Check mouse visibility
 		setMouseVisibility(mInput.isMouseVisible());
 
