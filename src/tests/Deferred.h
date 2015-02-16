@@ -11,7 +11,7 @@
 class Abc
 {
 public:
-	Abc(const std::string& fileName) : mFileName(fileName)
+    Abc(const std::string& fileName, int sk) : mFileName(fileName)
 	{}
 
 	std::string mFileName;
@@ -43,9 +43,9 @@ private:
 //=========================================================================
 void Deferred::setup()
 {
-	auto a1 = Resource::create<Abc>("aaa.txt");
-	auto a2 = Resource::create<Abc>("bbb.txt");
-	auto a3 = Resource::create<Abc>("aaa.txt");
+	auto a1 = Resource::create<Abc>("aaa.txt", 1);
+	auto a2 = Resource::create<Abc>("bbb.txt", 2);
+	auto a3 = Resource::create<Abc>("aaa.txt", 3);
 
 	/*mCamera = Camera::create();
 	mCamera->setRotateSpeed(0.002f);
