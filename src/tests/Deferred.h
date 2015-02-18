@@ -36,30 +36,14 @@ private:
 //=========================================================================
 void Deferred::setup()
 {
-	{
-		auto a1 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
-        auto a2 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
-        auto a3 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+	auto a1 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+	auto a2 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+	auto a3 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
 
-		//auto b1 = Image::create("bbb", 1);
-		//auto b2 = Image::create("bbb", 1);
-		//auto b3 = Image::create("bbb", 1);
-	}
-	
-	/*
-	std::cout << "--------------------" << std::endl;
+	auto b1 = Resource::create<Image>("assets\\textures\\default\\default_n.png");
+	auto b2 = Resource::create<Image>("assets\\textures\\default\\default_n.png");
+	auto b3 = Resource::create<Image>("assets\\textures\\default\\default_n.png");
 
-	auto b1 = std::make_unique<Abc>("bbb", 5);
-	auto b2 = std::make_unique<Abc>("bbb", 5);
-	auto b3 = std::make_unique<Abc>("bbb", 5);
-
-	(*b1).mFileName = "pakeistas";
-	std::cout << b2.get()->mFileName << std::endl;
-	std::cout << b3.get()->mFileName << std::endl;*/
-
-	int i;
-
-	i = 0;
 	/*mCamera = Camera::create();
 	mCamera->setRotateSpeed(0.002f);
 	mCamera->setStrafeSpeed(mStrafeSpeed);
@@ -74,41 +58,41 @@ void Deferred::setup()
 //=========================================================================
 void Deferred::input(Input& input)
 {
-	if (input.isKeyDown(KEY_ESCAPE))
+	if(input.isKeyDown(KEY_ESCAPE))
 		quit();
 
 	/*if (input.isKeyDown(KEY_LEFT_SHIFT))
-		mCamera->setStrafeSpeed(mStrafeFastSpeed);
-		else
-		mCamera->setStrafeSpeed(mStrafeSpeed);
+	    mCamera->setStrafeSpeed(mStrafeFastSpeed);
+	    else
+	    mCamera->setStrafeSpeed(mStrafeSpeed);
 
-		if (input.isKeyDown(KEY_W))
-		mCamera->move(Camera::FORWARD);
-		else if (input.isKeyDown(KEY_S))
-		mCamera->move(Camera::BACKWARD);
+	    if (input.isKeyDown(KEY_W))
+	    mCamera->move(Camera::FORWARD);
+	    else if (input.isKeyDown(KEY_S))
+	    mCamera->move(Camera::BACKWARD);
 
-		if (input.isKeyDown(KEY_A))
-		mCamera->move(Camera::LEFT);
-		else if (input.isKeyDown(KEY_D))
-		mCamera->move(Camera::RIGHT);
+	    if (input.isKeyDown(KEY_A))
+	    mCamera->move(Camera::LEFT);
+	    else if (input.isKeyDown(KEY_D))
+	    mCamera->move(Camera::RIGHT);
 
-		if (input.isKeyDown(KEY_E))
-		mCamera->move(Camera::UP);
-		else if (input.isKeyDown(KEY_Q))
-		mCamera->move(Camera::DOWN);
+	    if (input.isKeyDown(KEY_E))
+	    mCamera->move(Camera::UP);
+	    else if (input.isKeyDown(KEY_Q))
+	    mCamera->move(Camera::DOWN);
 
-		if (input.getMouseScroolY() != 0)
-		mCamera->move(input.getMouseScroolY() > 0 ? Camera::FORWARD : Camera::BACKWARD);
+	    if (input.getMouseScroolY() != 0)
+	    mCamera->move(input.getMouseScroolY() > 0 ? Camera::FORWARD : Camera::BACKWARD);
 
-		if (input.isMouseDown(MouseButton::Right))
-		{
-		input.hideMouse();
-		mCamera->rotate((float)input.getMouseChangeX(), (float)input.getMouseChangeY());
-		}
-		else
-		{
-		input.showMouse();
-		}*/
+	    if (input.isMouseDown(MouseButton::Right))
+	    {
+	    input.hideMouse();
+	    mCamera->rotate((float)input.getMouseChangeX(), (float)input.getMouseChangeY());
+	    }
+	    else
+	    {
+	    input.showMouse();
+	    }*/
 }
 
 //=========================================================================

@@ -33,14 +33,14 @@ T* get(Args&& ... args)
 	for(auto it = range.first; it != range.second; ++it)
 	{
 		if(objectArgs == it->second)
-            // found... return
-            return static_cast<T*>(objectCollection[object].get());
+			// found... return
+			return static_cast<T*>(objectCollection[object].get());
 	}
 
 	// not found... add and return
 	object.emplace(objectType, objectArgs);
-    objectCollection[object] = std::make_shared<T>(std::forward<Args>(args)...);
-    return static_cast<T*>(objectCollection[object].get());
+	objectCollection[object] = std::make_shared<T>(std::forward<Args>(args)...);
+	return static_cast<T*>(objectCollection[object].get());
 }
 
 class Resource
@@ -60,7 +60,7 @@ class Shared
 {
 public:
 	template<typename... Args >
-	static std::shared_ptr<T> create(Args&&... args)
+	static std::shared_ptr<T> create(Args&& ... args)
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
