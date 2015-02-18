@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "core/Game.h"
 //#include "core/Camera.h"
 //#include "core/Shader.h"
@@ -7,23 +8,7 @@
 //#include "core/Transform3d.h"
 //#include "core/Texture.h"
 #include "core/Resource.h"
-#include <iostream>
-
-class Image : public Shared<Image>
-{
-public:
-	Image(const std::string& fileName, int sk) : mFileName(fileName)
-	{
-		std::cout << "create:" << mFileName << std::endl;
-	}
-
-	~Image()
-	{
-		std::cout << "release:" << mFileName << std::endl;
-	}
-
-	std::string mFileName;
-};
+#include "core/Image.h"
 
 class Deferred : public State
 {
@@ -52,10 +37,10 @@ private:
 void Deferred::setup()
 {
 	{
-		auto a1 = Resource::create<Image>("aaa", 1);
-		auto a2 = Resource::create<Image>("aaa", 1);
-		auto a3 = Resource::create<Image>("aaa", 1);
-		std::cout << "--------------------" << std::endl;
+		auto a1 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+        auto a2 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+        auto a3 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+
 		//auto b1 = Image::create("bbb", 1);
 		//auto b2 = Image::create("bbb", 1);
 		//auto b3 = Image::create("bbb", 1);

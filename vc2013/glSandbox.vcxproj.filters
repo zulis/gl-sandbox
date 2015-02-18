@@ -58,5 +58,8 @@
     <ClInclude Include="..\include\core\Resource.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\core\Image.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

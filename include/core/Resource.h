@@ -22,7 +22,7 @@ void unpack(ObjectArgs* args, First first, Rest... rest)
 }
 
 template<typename T, typename... Args>
-std::shared_ptr<T> get(Args&& ... args)
+T* get(Args&& ... args)
 {
 	ObjectArgs objectArgs;
 	unpack(&objectArgs, std::forward<Args>(args)...);
@@ -33,14 +33,14 @@ std::shared_ptr<T> get(Args&& ... args)
 	for(auto it = range.first; it != range.second; ++it)
 	{
 		if(objectArgs == it->second)
-			return std::static_pointer_cast<T>(objectCollection[object]);
+            // found... return
+            return static_cast<T*>(objectCollection[object].get());
 	}
 
-	// not found... add
+	// not found... add and return
 	object.emplace(objectType, objectArgs);
-	auto ptr = std::make_shared<T>(std::forward<Args>(args)...);
-	objectCollection[object] = ptr;
-	return ptr;
+    objectCollection[object] = std::make_shared<T>(std::forward<Args>(args)...);
+    return static_cast<T*>(objectCollection[object].get());
 }
 
 class Resource
@@ -49,15 +49,9 @@ public:
 	virtual ~Resource() = default;
 
 	template<typename T, typename... Args>
-	static std::shared_ptr<T> create(Args&& ... args)
+	static T* create(Args&& ... args)
 	{
 		return get<T>(std::forward<Args>(args)...);
-	}
-
-	template<typename T, typename... Args>
-	static T* create2(Args&& ... args)
-	{
-		return get<T>(std::forward<Args>(args)...).get();
 	}
 };
 

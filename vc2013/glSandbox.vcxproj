@@ -167,6 +167,7 @@
     <ClInclude Include="..\include\core\Defines.h" />
     <ClInclude Include="..\include\core\Game.h" />
     <ClInclude Include="..\include\core\GL.h" />
+    <ClInclude Include="..\include\core\Image.h" />
     <ClInclude Include="..\include\core\Input.h" />
     <ClInclude Include="..\include\core\Log.h" />
     <ClInclude Include="..\include\core\Math.h" />

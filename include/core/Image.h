@@ -59,6 +59,8 @@ Image::~Image()
 
 	if(mPixels)
 		delete[] mPixels;
+
+    logNote("Image released: %s", mFileName.c_str());
 }
 
 //=========================================================================
@@ -99,34 +101,11 @@ void Image::loadFromFile(const std::string& fileName)
 		{
 			mBpp = FreeImage_GetBPP(bitmap);
 
-			// Convert, or may crash on Texture->loadFromRaw
 			if(mBpp != 32)
 			{
 				bitmap = FreeImage_ConvertTo32Bits(bitmap);
 				mBpp = 32;
 			}
-
-			/*switch (mBpp)
-			{
-			case 8:
-			bitmap = FreeImage_ConvertToGreyscale(bitmap);
-			break;
-
-			case 24:
-			bitmap = FreeImage_ConvertTo24Bits(bitmap);
-			break;
-
-			case 32:
-			bitmap = FreeImage_ConvertTo32Bits(bitmap);
-			break;
-
-			default:
-			//Free FreeImage's copy of the data
-			FreeImage_Unload(bitmap);
-			generateCheckTexture();
-			return;
-			break;
-			}*/
 
 			// Get the image width and height
 			mWidth = FreeImage_GetWidth(bitmap);
@@ -139,7 +118,7 @@ void Image::loadFromFile(const std::string& fileName)
 			// If this somehow one of these failed (they shouldn't), return failure
 			if((bits == 0) || (mWidth == 0) || (mHeight == 0))
 			{
-				logError("Could not load texture: %s", fileName.c_str());
+				logError("Could not load image: %s", fileName.c_str());
 				generateCheckImage();
 			}
 			else
@@ -153,6 +132,8 @@ void Image::loadFromFile(const std::string& fileName)
 
 				//Free FreeImage's copy of the data
 				FreeImage_Unload(bitmap);
+
+                logNote("Image created: %s", mFileName.c_str());
 			}
 		}
 	}
@@ -185,6 +166,7 @@ void Image::generateCheckImage()
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, checkImage, mWidth * mHeight * mChannels);
+    logNote("Image created: %s", mFileName.c_str());
 }
 
 //=========================================================================
