@@ -6,9 +6,9 @@
 //#include "core/Shader.h"
 //#include "core/Shape.h"
 //#include "core/Transform3d.h"
-//#include "core/Texture.h"
 #include "core/Resource.h"
-#include "core/Image.h"
+//#include "core/Image.h"
+#include "core/Texture.h"
 
 class Deferred : public State
 {
@@ -36,13 +36,22 @@ private:
 //=========================================================================
 void Deferred::setup()
 {
-	auto a1 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
-	auto a2 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
-	auto a3 = Resource::create<Image>("assets\\textures\\default\\default_d.png");
+	//auto a1 = Resource::get<Texture>("assets\\textures\\default\\default_d.png");
+	//auto a2 = Resource::get<Texture>("assets\\textures\\default\\default_d.png");
+	//auto a3 = Resource::get<Texture>("assets\\textures\\default\\default_d.png");
 
-	auto b1 = Resource::create<Image>("assets\\textures\\default\\default_n.png");
-	auto b2 = Resource::create<Image>("assets\\textures\\default\\default_n.png");
-	auto b3 = Resource::create<Image>("assets\\textures\\default\\default_n.png");
+	//auto b1 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
+	//auto b2 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
+	//auto b3 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
+
+	auto a1 = Resource::get<Texture>(Color::red());
+	auto a2 = Resource::get<Texture>(Color::red());
+	auto a3 = Resource::get<Texture>(Color::red());
+
+	auto b1 = Resource::get<Texture>(Color::blue());
+	auto b2 = Resource::get<Texture>(Color::blue());
+	auto b3 = Resource::get<Texture>(Color::blue());
+
 
 	/*mCamera = Camera::create();
 	mCamera->setRotateSpeed(0.002f);

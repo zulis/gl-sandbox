@@ -3,41 +3,11 @@
 #include <memory>
 #include <mutex>
 #include <vector>
-#include <FreeImage.h>
 #include "core/GL.h"
-#include "core/ImageManager.h"
 #include "core/Color.h"
 #include "core/Log.h"
-
-struct TextureCollection
-{
-	bool operator==(const TextureCollection& m) const
-	{
-		return m.fileName == fileName;
-	}
-
-	unsigned int increaseRef()
-	{
-		refCount++;
-		logNote("Texture ref increased to %i: %s", refCount, fileName.c_str());
-		return refCount;
-	}
-
-	unsigned int decreaseRef()
-	{
-		refCount--;
-		logNote("Texture ref decreased to %i: %s", refCount, fileName.c_str());
-		return refCount;
-	}
-
-	std::string fileName;
-	GLuint textureID { 0 };
-	unsigned int refCount { 1 };
-	unsigned int width;
-	unsigned int height;
-};
-
-typedef std::shared_ptr<class Texture> TextureRef;
+#include "core/Image.h"
+#include "core/Resource.h"
 
 class Texture
 {
@@ -45,10 +15,10 @@ class Texture
 public:
 	struct Format;
 
-	static TextureRef create(const std::string& fileName = std::string(), const Format& format = Format());
-	static TextureRef create(const Color& color, const Format& format = Format());
+	//static TextureRef create(const char* fileName = std::string(), const Format& format = Format());
+	//static TextureRef create(const Color& color, const Format& format = Format());
 
-	Texture(const std::string& fileName = std::string(), const Format& format = Format());
+	Texture(const char* fileName = "", const Format& format = Format());
 	Texture(const Color& color, const Format& format = Format());
 	virtual ~Texture();
 
@@ -61,7 +31,7 @@ public:
 	GLuint getTextureID() const;
 	/*int getChannels() const;
 	const unsigned char* getPixels() const;
-	const std::string& getFileName() const;
+	const char* getFileName() const;
 	*/
 
 	struct Format
@@ -83,43 +53,39 @@ public:
 	};
 
 private:
-	ImageManager mImageMng;
-	Image* mImage;
-	void getTexture(const std::string& fileName, const Format& format);
+	//Image* mImage;
+	void getTexture(const char* fileName, const Format& format);
 	void getTexture(const Color& color, const Format& format);
-	std::string colorToString(const Color& color);
 	void loadFromRaw(const int format, const int width, const int height, const unsigned char* pixels);
 
 	GLuint mTextureID;
 	Format mFormat;
-	std::string mFileName;
-	static std::vector<TextureCollection>* sTextureCollection;
+	const char* mFileName;
 
 	//unsigned char* mPixels;
-	unsigned int mWidth { 0 };
-	unsigned int mHeight { 0 };
+	unsigned int mWidth{ 0 };
+	unsigned int mHeight{ 0 };
 	//unsigned int mChannels{ 0 };
 
 };
 
-std::vector<TextureCollection>* Texture::sTextureCollection = new std::vector<TextureCollection>();
+
+////=========================================================================
+//TextureRef Texture::create(const char* fileName, const Format& format)
+//{
+//	//return TextureRef(new Texture(fileName, format));
+//	return std::make_shared<Texture>(fileName, format);
+//}
+//
+////=========================================================================
+//TextureRef Texture::create(const Color& color, const Format& format)
+//{
+//	//return TextureRef(new Texture(color, format));
+//	return std::make_shared<Texture>(color, format);
+//}
 
 //=========================================================================
-TextureRef Texture::create(const std::string& fileName, const Format& format)
-{
-	//return TextureRef(new Texture(fileName, format));
-	return std::make_shared<Texture>(fileName, format);
-}
-
-//=========================================================================
-TextureRef Texture::create(const Color& color, const Format& format)
-{
-	//return TextureRef(new Texture(color, format));
-	return std::make_shared<Texture>(color, format);
-}
-
-//=========================================================================
-// TextureRef Texture::create(const std::string& name, const int internalFormat, const int pixelDataFormat, const int width, const int height, const unsigned char* buffer, unsigned int channels, const Format& format)
+// TextureRef Texture::create(const char* name, const int internalFormat, const int pixelDataFormat, const int width, const int height, const unsigned char* buffer, unsigned int channels, const Format& format)
 // {
 // 	return TextureRef(new Texture(name, internalFormat, pixelDataFormat, width, height, buffer, channels, format));
 // }
@@ -161,7 +127,7 @@ void Texture::Format::setMagFilter(GLenum magFiler)
 }
 
 //=========================================================================
-Texture::Texture(const std::string& fileName, const Format& format)
+Texture::Texture(const char* fileName, const Format& format)
 {
 	getTexture(fileName, format);
 }
@@ -174,106 +140,41 @@ Texture::Texture(const Color& color, const Format& format)
 //=========================================================================
 Texture::~Texture()
 {
-	unsigned int refCount = -1;
-	TextureCollection textureCollection;
-	textureCollection.fileName = mFileName;
 
-	auto it = std::find(sTextureCollection->begin(), sTextureCollection->end(), textureCollection);
+	if (mTextureID)
+		glDeleteTextures(1, &mTextureID);
 
-	if(it != sTextureCollection->end())
-	{
-		refCount = (*it).decreaseRef();
-	}
-
-	if(refCount == 0)
-	{
-		sTextureCollection->erase(it);
-
-		if(mTextureID)
-			glDeleteTextures(1, &mTextureID);
-
-		logNote("Texture released: %s", mFileName.c_str());
-	}
+	logNote("Texture released: %s", mFileName);
 }
 
 //=========================================================================
-void Texture::getTexture(const std::string& fileName, const Format& format)
+void Texture::getTexture(const char* fileName, const Format& format)
 {
 	mFormat = format;
-	mFileName = fileName;
 
-	TextureCollection textureCollection;
-	textureCollection.fileName = fileName;
+	auto image = Resource::get<Image>(fileName);
+	mFileName = image->getFileName();
 
-	auto it = std::find(sTextureCollection->begin(), sTextureCollection->end(), textureCollection);
+	if (mFormat.mFlipped)
+		image->flipVertical();
 
-	if(it != sTextureCollection->end())
-	{
-		(*it).increaseRef();
-		mTextureID = (*it).textureID;
-		mWidth = (*it).width;
-		mHeight = (*it).height;
-	}
-	else
-	{
-		mImage = mImageMng.get()->getResource(fileName);
-
-		if(mFormat.mFlipped)
-			mImage->flipVertical();
-
-		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
-
-		textureCollection.textureID = mTextureID;
-		textureCollection.width = mImage->getWidth();
-		textureCollection.height = mImage->getHeight();
-
-		logNote("Texture created: %s", mFileName.c_str());
-		sTextureCollection->push_back(textureCollection);
-	}
+	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
+	logNote("Texture created: %s", mFileName);
 }
 
 //=========================================================================
 void Texture::getTexture(const Color& color, const Format& format)
 {
 	mFormat = format;
-	mFileName = colorToString(color);
 
-	TextureCollection textureCollection;
-	textureCollection.fileName = colorToString(color);
+	auto image = Resource::get<Image>(color);
+	mFileName = image->getFileName();
 
-	auto it = std::find(sTextureCollection->begin(), sTextureCollection->end(), textureCollection);
+	if (mFormat.mFlipped)
+		image->flipVertical();
 
-	if(it != sTextureCollection->end())
-	{
-		(*it).increaseRef();
-		mTextureID = (*it).textureID;
-		mWidth = (*it).width;
-		mHeight = (*it).height;
-	}
-	else
-	{
-		mImage = new Image(color);
-
-		if(mFormat.mFlipped)
-			mImage->flipVertical();
-
-		loadFromRaw(GL_BGRA, mImage->getWidth(), mImage->getHeight(), mImage->getPixels());
-
-		textureCollection.textureID = mTextureID;
-		textureCollection.width = mImage->getWidth();
-		textureCollection.height = mImage->getHeight();
-
-		logNote("Texture created: %s", mFileName.c_str());
-		sTextureCollection->push_back(textureCollection);
-
-		delete mImage;
-	}
-}
-
-//=========================================================================
-std::string Texture::colorToString(const Color& color)
-{
-	return "Color (r:" + std::to_string(color.r) + " g:" + std::to_string(color.g) + " b:" + std::to_string(color.b) + " a:" + std::to_string(color.a) + ")";
+	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
+	logNote("Texture created: %s", mFileName);
 }
 
 //=========================================================================
@@ -284,20 +185,25 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 	mWidth = width;
 	mHeight = height;
 
-	if(mFormat.mMipmapping)
+	if (mFormat.mMipmapping)
 	{
 		mFormat.mMinFilter = GL_LINEAR_MIPMAP_LINEAR;
 		mFormat.mMagFilter = GL_LINEAR;
 	}
 
 	int numMipmaps = 1;
-	while((width | height) >> numMipmaps) numMipmaps += 1;
+	while ((width | height) >> numMipmaps) numMipmaps += 1;
 
 	glGenTextures(1, &mTextureID);
 	glBindTexture(mFormat.mTarget, mTextureID);
 	glTexStorage2D(mFormat.mTarget, numMipmaps, GL_RGBA8, width, height);
 	glTexSubImage2D(mFormat.mTarget, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, pixels);
-	glGenerateMipmap(mFormat.mTarget);
+
+	if (mFormat.mMipmapping)
+	{
+		glGenerateMipmap(mFormat.mTarget);
+	}
+
 	glTexParameteri(mFormat.mTarget, GL_TEXTURE_WRAP_S, mFormat.mWrapS);
 	glTexParameteri(mFormat.mTarget, GL_TEXTURE_WRAP_T, mFormat.mWrapT);
 	glTexParameteri(mFormat.mTarget, GL_TEXTURE_MAG_FILTER, mFormat.mMagFilter);
@@ -312,8 +218,8 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 	/*
 	if (mFormat.mMipmapping)
 	{
-		mFormat.mMinFilter = GL_LINEAR_MIPMAP_LINEAR;
-		mFormat.mMagFilter = GL_LINEAR;
+	mFormat.mMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+	mFormat.mMagFilter = GL_LINEAR;
 	}
 
 	glGenTextures(1, &mTextureID);
@@ -331,7 +237,7 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
 
 	if (mFormat.mMipmapping)
-		glGenerateMipmap(mFormat.mTarget);
+	glGenerateMipmap(mFormat.mTarget);
 
 	glBindTexture(mFormat.mTarget, 0);
 	*/
@@ -375,18 +281,18 @@ GLuint Texture::getTextureID() const
 /*//=========================================================================
 int Texture::getChannels() const
 {
-	return mImage->getChannels();
+return mImage->getChannels();
 }
 
 //=========================================================================
 const unsigned char* Texture::getPixels() const
 {
-	return mImage->getPixels();
+return mImage->getPixels();
 }
 
 //=========================================================================
-const std::string& Texture::getFileName() const
+const char* Texture::getFileName() const
 {
-	return mImage->getFileName();
+return mImage->getFileName();
 }
 */

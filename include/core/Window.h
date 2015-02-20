@@ -128,7 +128,7 @@ Window::Window(int width, int height, WindowMode mode)
 
 	glfwInit();
 
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	//glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -171,6 +171,7 @@ Window::Window(int width, int height, WindowMode mode)
 	// Init OpenGL
 	logNote("Initialising OpenGL...");
 
+	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 
 	if (GLEW_OK != err)

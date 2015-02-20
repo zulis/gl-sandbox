@@ -8,7 +8,7 @@
 class Image
 {
 public:
-	Image(const std::string& fileName = std::string());
+	Image(const char* fileName = "");
 	Image(const Color& color);
 	virtual ~Image();
 
@@ -17,7 +17,7 @@ public:
 	unsigned int getChannels();
 	unsigned int getBpp();
 	const unsigned char* getPixels();
-	const std::string& getFileName() const;
+	const char* getFileName() const;
 	void flipVertical();
 	void flipHorizontal();
 
@@ -27,18 +27,18 @@ private:
 	unsigned int mChannels;
 	unsigned int mBpp;
 	unsigned char* mPixels;
-	std::string mFileName;
+	char* mFileName;
 
 private:
 	void generateCheckImage();
 	void generateImage(const Color& color);
-	void loadFromFile(const std::string& fileName);
+	void loadFromFile(const char* fileName);
 	static void FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char* message);
 
 };
 
 //=========================================================================
-Image::Image(const std::string& fileName)
+Image::Image(const char* fileName)
 {
 	loadFromFile(fileName);
 }
@@ -60,18 +60,18 @@ Image::~Image()
 	if(mPixels)
 		delete[] mPixels;
 
-    logNote("Image released: %s", mFileName.c_str());
+	logNote("Image released: %s", mFileName);
 }
 
 //=========================================================================
-void Image::loadFromFile(const std::string& fileName)
+void Image::loadFromFile(const char* fileName)
 {
 	// Is called ONLY when linking with FreeImage as a static library
 #ifdef FREEIMAGE_LIB
 	FreeImage_Initialise();
 #endif
 
-	mFileName = fileName;
+	mFileName = strdup(fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	FIBITMAP* bitmap(0);
 
@@ -79,11 +79,11 @@ void Image::loadFromFile(const std::string& fileName)
 	FreeImage_SetOutputMessage(FreeImageLoadErrorHandler);
 
 	// Check the file signature and deduce its format
-	fif = FreeImage_GetFileType(fileName.c_str(), 0);
+	fif = FreeImage_GetFileType(fileName, 0);
 
 	// If still unknown, try to guess the file format from the file extension
 	if(fif == FIF_UNKNOWN)
-		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
+		fif = FreeImage_GetFIFFromFilename(fileName);
 
 	// If still unknown, return failure
 	if(fif == FIF_UNKNOWN)
@@ -92,7 +92,7 @@ void Image::loadFromFile(const std::string& fileName)
 	{
 		// Check that the plugin has reading capabilities and load the file
 		if(FreeImage_FIFSupportsReading(fif))
-			bitmap = FreeImage_Load(fif, fileName.c_str());
+			bitmap = FreeImage_Load(fif, fileName);
 
 		// If the image failed to load, return failure
 		if(!bitmap)
@@ -118,7 +118,7 @@ void Image::loadFromFile(const std::string& fileName)
 			// If this somehow one of these failed (they shouldn't), return failure
 			if((bits == 0) || (mWidth == 0) || (mHeight == 0))
 			{
-				logError("Could not load image: %s", fileName.c_str());
+				logError("Could not load image: %s", fileName);
 				generateCheckImage();
 			}
 			else
@@ -133,7 +133,7 @@ void Image::loadFromFile(const std::string& fileName)
 				//Free FreeImage's copy of the data
 				FreeImage_Unload(bitmap);
 
-                logNote("Image created: %s", mFileName.c_str());
+				logNote("Image created: %s", mFileName);
 			}
 		}
 	}
@@ -166,13 +166,15 @@ void Image::generateCheckImage()
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, checkImage, mWidth * mHeight * mChannels);
-    logNote("Image created: %s", mFileName.c_str());
+	logNote("Image created: %s", mFileName);
 }
 
 //=========================================================================
 void Image::generateImage(const Color& color)
 {
-	mFileName = "Color (r:" + std::to_string(color.r) + " g:" + std::to_string(color.g) + " b:" + std::to_string(color.b) + " a:" + std::to_string(color.a) + ")";
+	std::string tmp("Color (r:" + std::to_string(color.r) + " g:" + std::to_string(color.g) + " b:" + std::to_string(color.b) + " a:" + std::to_string(color.a) + ")");
+	mFileName = strdup(tmp.c_str());
+
 	mWidth = 1;
 	mHeight = 1;
 	mChannels = 4;
@@ -186,6 +188,7 @@ void Image::generateImage(const Color& color)
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, image, mWidth * mHeight * mChannels);
+	logNote("Image created: %s", mFileName);
 }
 
 //=========================================================================
@@ -225,7 +228,7 @@ const unsigned char* Image::getPixels()
 }
 
 //=========================================================================
-const std::string& Image::getFileName() const
+const char* Image::getFileName() const
 {
 	return mFileName;
 }

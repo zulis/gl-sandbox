@@ -10,6 +10,8 @@ public:
 	Color(const vec4& color);
 	Color(const vec3& color);
 
+	bool operator == (const Color &other) const;
+
 	float r, g, b, a;
 
 	static Color black();
@@ -64,6 +66,12 @@ Color::Color(const vec3& color)
 	this->g = color.y;
 	this->b = color.z;
 	this->a = 1.0f;
+}
+
+//=========================================================================
+bool Color::operator==(const Color &other) const
+{
+	return(r == other.r && g == other.g && b == other.b && a == other.a);
 }
 
 //=========================================================================
