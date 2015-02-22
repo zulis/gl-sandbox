@@ -15,10 +15,7 @@ class Texture
 public:
 	struct Format;
 
-	//static TextureRef create(const char* fileName = std::string(), const Format& format = Format());
-	//static TextureRef create(const Color& color, const Format& format = Format());
-
-	Texture(const char* fileName = "", const Format& format = Format());
+	Texture(const char* fileName = NULL, const Format& format = Format());
 	Texture(const Color& color, const Format& format = Format());
 	virtual ~Texture();
 
@@ -53,7 +50,6 @@ public:
 	};
 
 private:
-	//Image* mImage;
 	void getTexture(const char* fileName, const Format& format);
 	void getTexture(const Color& color, const Format& format);
 	void loadFromRaw(const int format, const int width, const int height, const unsigned char* pixels);
@@ -214,33 +210,6 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, (GLint)anisotropy);
 
 	glBindTexture(mFormat.mTarget, 0);
-
-	/*
-	if (mFormat.mMipmapping)
-	{
-	mFormat.mMinFilter = GL_LINEAR_MIPMAP_LINEAR;
-	mFormat.mMagFilter = GL_LINEAR;
-	}
-
-	glGenTextures(1, &mTextureID);
-	glBindTexture(mFormat.mTarget, mTextureID);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	glTexImage2D(mFormat.mTarget, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-	glTexParameteri(mFormat.mTarget, GL_TEXTURE_WRAP_S, mFormat.mWrapS);
-	glTexParameteri(mFormat.mTarget, GL_TEXTURE_WRAP_T, mFormat.mWrapT);
-	glTexParameteri(mFormat.mTarget, GL_TEXTURE_MIN_FILTER, mFormat.mMinFilter);
-	glTexParameteri(mFormat.mTarget, GL_TEXTURE_MAG_FILTER, mFormat.mMagFilter);
-
-	GLfloat anisotropy;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-
-	if (mFormat.mMipmapping)
-	glGenerateMipmap(mFormat.mTarget);
-
-	glBindTexture(mFormat.mTarget, 0);
-	*/
 }
 
 //=========================================================================

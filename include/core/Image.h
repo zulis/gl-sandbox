@@ -8,7 +8,7 @@
 class Image
 {
 public:
-	Image(const char* fileName = "");
+	Image(const char* fileName = NULL);
 	Image(const Color& color);
 	virtual ~Image();
 
@@ -78,65 +78,70 @@ void Image::loadFromFile(const char* fileName)
 	// Set error handler
 	FreeImage_SetOutputMessage(FreeImageLoadErrorHandler);
 
-	// Check the file signature and deduce its format
-	fif = FreeImage_GetFileType(fileName, 0);
+    if (fileName == NULL)
+        generateCheckImage();
+    else
+    {
+        // Check the file signature and deduce its format
+        fif = FreeImage_GetFileType(fileName, 0);
 
-	// If still unknown, try to guess the file format from the file extension
-	if(fif == FIF_UNKNOWN)
-		fif = FreeImage_GetFIFFromFilename(fileName);
+        // If still unknown, try to guess the file format from the file extension
+        if (fif == FIF_UNKNOWN)
+            fif = FreeImage_GetFIFFromFilename(fileName);
 
-	// If still unknown, return failure
-	if(fif == FIF_UNKNOWN)
-		generateCheckImage();
-	else
-	{
-		// Check that the plugin has reading capabilities and load the file
-		if(FreeImage_FIFSupportsReading(fif))
-			bitmap = FreeImage_Load(fif, fileName);
+        // If still unknown, return failure
+        if (fif == FIF_UNKNOWN)
+            generateCheckImage();
+        else
+        {
+            // Check that the plugin has reading capabilities and load the file
+            if (FreeImage_FIFSupportsReading(fif))
+                bitmap = FreeImage_Load(fif, fileName);
 
-		// If the image failed to load, return failure
-		if(!bitmap)
-			generateCheckImage();
-		else
-		{
-			mBpp = FreeImage_GetBPP(bitmap);
+            // If the image failed to load, return failure
+            if (!bitmap)
+                generateCheckImage();
+            else
+            {
+                mBpp = FreeImage_GetBPP(bitmap);
 
-			if(mBpp != 32)
-			{
-				bitmap = FreeImage_ConvertTo32Bits(bitmap);
-				mBpp = 32;
-			}
+                if (mBpp != 32)
+                {
+                    bitmap = FreeImage_ConvertTo32Bits(bitmap);
+                    mBpp = 32;
+                }
 
-			// Get the image width and height
-			mWidth = FreeImage_GetWidth(bitmap);
-			mHeight = FreeImage_GetHeight(bitmap);
-			mChannels = mBpp / 8;
+                // Get the image width and height
+                mWidth = FreeImage_GetWidth(bitmap);
+                mHeight = FreeImage_GetHeight(bitmap);
+                mChannels = mBpp / 8;
 
-			// Retrieve the image data
-			BYTE* bits = FreeImage_GetBits(bitmap);
+                // Retrieve the image data
+                BYTE* bits = FreeImage_GetBits(bitmap);
 
-			// If this somehow one of these failed (they shouldn't), return failure
-			if((bits == 0) || (mWidth == 0) || (mHeight == 0))
-			{
-				logError("Could not load image: %s", fileName);
-				generateCheckImage();
-			}
-			else
-			{
-				//FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitmap);
-				//mPixels = (unsigned char*)malloc(mWidth * mHeight * colorType);
-				//memcpy(mPixels, bits, mWidth * mHeight * colorType);
+                // If this somehow one of these failed (they shouldn't), return failure
+                if ((bits == 0) || (mWidth == 0) || (mHeight == 0))
+                {
+                    logError("Could not load image: %s", fileName);
+                    generateCheckImage();
+                }
+                else
+                {
+                    //FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitmap);
+                    //mPixels = (unsigned char*)malloc(mWidth * mHeight * colorType);
+                    //memcpy(mPixels, bits, mWidth * mHeight * colorType);
 
-				mPixels = new unsigned char[mWidth * mHeight * mChannels];
-				FreeImage_ConvertToRawBits(mPixels, bitmap, mWidth * mChannels, mBpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, TRUE);
+                    mPixels = new unsigned char[mWidth * mHeight * mChannels];
+                    FreeImage_ConvertToRawBits(mPixels, bitmap, mWidth * mChannels, mBpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, TRUE);
 
-				//Free FreeImage's copy of the data
-				FreeImage_Unload(bitmap);
+                    //Free FreeImage's copy of the data
+                    FreeImage_Unload(bitmap);
 
-				logNote("Image created: %s", mFileName);
-			}
-		}
-	}
+                    logNote("Image created: %s", mFileName);
+                }
+            }
+        }
+    }
 }
 
 //=========================================================================
