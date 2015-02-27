@@ -64,5 +64,11 @@
     <ClInclude Include="..\include\core\Texture.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\core\Shader.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\StringUtils.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

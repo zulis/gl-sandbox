@@ -35,7 +35,7 @@ Game::~Game()
 template<class T>
 void Game::run()
 {
-	auto state = StateManager::setState<T>();
+	StateManager::setState<T>();
 	Window::run();
 }
 

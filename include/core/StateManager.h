@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <cassert>
 #include "core/State.h"
 
 class StateManager
@@ -33,45 +34,41 @@ State* StateManager::setState()
 //=========================================================================
 State* StateManager::getState()
 {
-	if(mState)
-		return mState.get();
-	else
-		return nullptr;
+	assert(mState);
+	return mState.get();
 }
 
 //=========================================================================
 bool StateManager::shouldQuit()
 {
-	if(mState)
-		return mState->mShouldQuit;
-	else
-		return false;
+	assert(mState);
+	return mState->mShouldQuit;
 }
 
 //=========================================================================
 void StateManager::input(Input& input)
 {
-	if (mState)
-		mState->input(input);
+	assert(mState);
+	mState->input(input);
 }
 
 //=========================================================================
 void StateManager::update(double elapsedTime)
 {
-	if(mState)
-		mState->update(elapsedTime);
+	assert(mState);
+	mState->update(elapsedTime);
 }
 
 //=========================================================================
 void StateManager::draw()
 {
-	if(mState)
-		mState->draw();
+	assert(mState);
+	mState->draw();
 }
 
 //=========================================================================
 void StateManager::resize(unsigned int width, unsigned int height)
 {
-	if(mState)
-		mState->resize(width, height);
+	assert(mState);
+	mState->resize(width, height);
 }

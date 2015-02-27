@@ -3,12 +3,12 @@
 #include <iostream>
 #include "core/Game.h"
 //#include "core/Camera.h"
-//#include "core/Shader.h"
 //#include "core/Shape.h"
 //#include "core/Transform3d.h"
 #include "core/Resource.h"
 //#include "core/Image.h"
-#include "core/Texture.h"
+//#include "core/Texture.h"
+#include "core/Shader.h"
 
 class Deferred : public State
 {
@@ -17,6 +17,7 @@ public:
 	~Deferred() {};
 
 	virtual void setup();
+	virtual void cleanup();
 	virtual void input(Input& input);
 	virtual void update(double elapsedTime);
 	virtual void draw();
@@ -44,13 +45,15 @@ void Deferred::setup()
 	//auto b2 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
 	//auto b3 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
 
-	auto a1 = Resource::get<Texture>(Color::red());
-	auto a2 = Resource::get<Texture>(Color::red());
-	auto a3 = Resource::get<Texture>(Color::red());
+	//auto a1 = Resource::get<Texture>(Color::red());
+	//auto a2 = Resource::get<Texture>(Color::red());
+	//auto a3 = Resource::get<Texture>(Color::red());
 
-	auto b1 = Resource::get<Texture>(Color::blue());
-	auto b2 = Resource::get<Texture>(Color::blue());
-	auto b3 = Resource::get<Texture>(Color::blue());
+	//auto b1 = Resource::get<Texture>(Color::blue());
+	//auto b2 = Resource::get<Texture>(Color::blue());
+	//auto b3 = Resource::get<Texture>(Color::blue());
+
+
 
 
 	/*mCamera = Camera::create();
@@ -62,6 +65,12 @@ void Deferred::setup()
 	mShader = Shader::create("assets/shaders/basic");
 	mShape = Shape::createCube();
 	mColorTex = Texture::create("assets/textures/default/default_d.png");*/
+}
+
+//=========================================================================
+void Deferred::cleanup()
+{
+
 }
 
 //=========================================================================

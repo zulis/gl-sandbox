@@ -8,7 +8,6 @@ typedef std::shared_ptr<class State> StateRef;
 
 class State
 {
-	//friend class Game;
 	friend class StateManager;
 public:
 	virtual void setup() {};
@@ -23,7 +22,7 @@ public:
 private:
 	template<class T>
 	static StateRef create();
-	bool mShouldQuit;
+	bool mShouldQuit{ false };
 };
 
 //=========================================================================
@@ -35,7 +34,6 @@ StateRef State::create()
 		ptr->cleanup();
 		delete ptr;
 	});
-	state->mShouldQuit = false;
 	state->setup();
 	return state;
 }
