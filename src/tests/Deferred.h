@@ -8,7 +8,8 @@
 #include "core/Resource.h"
 //#include "core/Image.h"
 //#include "core/Texture.h"
-#include "core/Shader.h"
+//#include "core/Shader.h"
+#include "core/MeshLoader.h"
 
 class Deferred : public State
 {
@@ -53,8 +54,16 @@ void Deferred::setup()
 	//auto b2 = Resource::get<Texture>(Color::blue());
 	//auto b3 = Resource::get<Texture>(Color::blue());
 
+    //auto sh1 = Shared<Shader>::create();
+    //sh1->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
+    //sh1->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
+    //sh1->link();
 
+    auto ml1 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+    auto ml2 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+    auto ml3 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
 
+    auto md1 = ml1->getMeshData();
 
 	/*mCamera = Camera::create();
 	mCamera->setRotateSpeed(0.002f);

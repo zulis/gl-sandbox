@@ -70,5 +70,11 @@
     <ClInclude Include="..\include\core\StringUtils.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\core\MeshData.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\MeshLoader.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

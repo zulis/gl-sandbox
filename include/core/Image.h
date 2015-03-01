@@ -60,7 +60,7 @@ Image::~Image()
 	if(mPixels)
 		delete[] mPixels;
 
-	logNote("Image released: %s", mFileName);
+	log("Image released: %s", mFileName);
 }
 
 //=========================================================================
@@ -137,7 +137,7 @@ void Image::loadFromFile(const char* fileName)
                     //Free FreeImage's copy of the data
                     FreeImage_Unload(bitmap);
 
-                    logNote("Image created: %s", mFileName);
+                    log("Image created: %s", mFileName);
                 }
             }
         }
@@ -171,7 +171,7 @@ void Image::generateCheckImage()
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, checkImage, mWidth * mHeight * mChannels);
-	logNote("Image created: %s", mFileName);
+	log("Image created: %s", mFileName);
 }
 
 //=========================================================================
@@ -193,7 +193,7 @@ void Image::generateImage(const Color& color)
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, image, mWidth * mHeight * mChannels);
-	logNote("Image created: %s", mFileName);
+	log("Image created: %s", mFileName);
 }
 
 //=========================================================================

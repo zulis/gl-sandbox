@@ -12,88 +12,39 @@
 #include <scene.h>
 #pragma endregion assimp
 #include "core/MeshData.h"
-#include "core/TextureType.h"
 #include "core/Log.h"
-#include "core/ResourceManager.h"
-
-class MeshDataCollection
-{
-public:
-	typedef std::unordered_map<std::string, MeshData> ResourceMap;
-
-	static bool find(const std::string& fileName);
-	static void add(const std::string& fileName, MeshData meshData);
-	static MeshData get(const std::string& fileName);
-private:
-	static ResourceMap sMeshDataList;
-};
-
-MeshDataCollection::ResourceMap MeshDataCollection::sMeshDataList;
-
-//=========================================================================
-bool MeshDataCollection::find(const std::string& fileName)
-{
-	auto it = sMeshDataList.find(fileName);
-
-	if (it == sMeshDataList.end())
-		return false;
-	else
-		return true;
-}
-
-//=========================================================================
-void MeshDataCollection::add(const std::string& fileName, MeshData meshData)
-{
-	if (!find(fileName))
-		sMeshDataList[fileName] = meshData;
-}
-
-//=========================================================================
-MeshData MeshDataCollection::get(const std::string& fileName)
-{
-	auto it = sMeshDataList.find(fileName);
-
-	if (it != sMeshDataList.end())
-		return it->second;
-	else
-		return MeshData();
-}
-
-typedef std::shared_ptr<class MeshLoader> MeshLoaderRef;
 
 class MeshLoader
 {
 public:
-	static MeshLoaderRef create();
-	MeshLoader();
-	virtual ~MeshLoader();
+    MeshLoader(const std::string& fileName, float scaleFactor = 1.0f);
+    virtual ~MeshLoader() {};
 
-	void setTexturePath(const std::string& texturePath);
-	MeshData loadFromFile(const std::string& fileName, float scaleFactor = 1.0f) const;
+    const MeshData getMeshData();
+
+	//void setTexturePath(const std::string& texturePath);
 
 private:
-	MeshLoader(const MeshLoader&);
-	MeshLoader& operator = (const MeshLoader&);
-	std::string mTexturePath;
+	//MeshLoader(const MeshLoader&);
+	//MeshLoader& operator = (const MeshLoader&);
+	//std::string mTexturePath;
+    MeshData mMeshData;
+    MeshData loadFromFile(const std::string& fileName, float scaleFactor = 1.0f) const;
 
-	std::string getFileName(std::string& pathName) const;
-	std::string setDefaultTexturePath(std::string pathName) const;
+	//std::string getFileName(std::string& pathName) const;
+	//std::string setDefaultTexturePath(std::string pathName) const;
 };
 
 //=========================================================================
-MeshLoaderRef MeshLoader::create()
+MeshLoader::MeshLoader(const std::string& fileName, float scaleFactor)
 {
-	return MeshLoaderRef(new MeshLoader);
+    mMeshData = loadFromFile(fileName, scaleFactor);
 }
 
 //=========================================================================
-MeshLoader::MeshLoader()
+const MeshData MeshLoader::getMeshData()
 {
-}
-
-//=========================================================================
-MeshLoader::~MeshLoader()
-{
+    return mMeshData;
 }
 
 //=========================================================================
@@ -101,9 +52,6 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 {
 	MeshData result;
 
-	if (MeshDataCollection::find(fileName))
-		return MeshDataCollection::get(fileName);
-	
 	unsigned int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs |
 	                     aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes | aiProcess_SortByPType | aiProcess_TransformUVCoords;
 
@@ -116,11 +64,11 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 	}
 	else
 	{
-		logNote("Mesh loaded: %s", fileName.c_str());
-		logNote("  Submeshes  : %i", scene->mNumMeshes);
-		logNote("  Animations : %i", scene->mNumAnimations);
-		logNote("  Materials  : %i", scene->mNumMaterials);
-		logNote("  Textures   : %i", scene->mNumTextures);
+		log("Mesh loaded: %s", fileName.c_str());
+		log("  Submeshes  : %i", scene->mNumMeshes);
+		log("  Animations : %i", scene->mNumAnimations);
+		log("  Materials  : %i", scene->mNumMaterials);
+		log("  Textures   : %i", scene->mNumTextures);
 
 		const aiVector3D zero3D(0.0f, 0.0f, 0.0f);
 
@@ -129,8 +77,8 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			const aiMesh* mesh = scene->mMeshes[n];
 			const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-			logNote("  mesh[%i] [Geometry.Vertices]    : %i", n, mesh->mNumVertices);
-			logNote("  mesh[%i] [Geometry.Faces]       : %i", n, mesh->mNumFaces);
+			log("  mesh[%i] [Geometry.Vertices]    : %i", n, mesh->mNumVertices);
+			log("  mesh[%i] [Geometry.Faces]       : %i", n, mesh->mNumFaces);
 
 			MeshPart meshPart;
 
@@ -200,15 +148,15 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			#pragma endregion geometry
 
 			#pragma region materials
-			std::string texturePath = mTexturePath;
+            /*std::string texturePath = mTexturePath;
 
-			if(mTexturePath == std::string())
-				texturePath = setDefaultTexturePath(fileName);
-			else
-			{
-				if(texturePath.find_last_of("\\/") != texturePath.size() - 1)
-					texturePath += "/";
-			}
+            if(mTexturePath == std::string())
+            texturePath = setDefaultTexturePath(fileName);
+            else
+            {
+            if(texturePath.find_last_of("\\/") != texturePath.size() - 1)
+            texturePath += "/";
+            }*/
 
 			aiString textureFileName;
 
@@ -241,12 +189,12 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS_STRENGTH, &shininessStrength, &max);
 			//meshPart.material.shininess = shininess;
 
-			logNote("  mesh[%i] [Material.ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
-			logNote("  mesh[%i] [Material.diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
-			logNote("  mesh[%i] [Material.specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
-			//logNote("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
-			//logNote("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
-			logNote("  mesh[%i] [Material.shininess]   : %.3f", n, meshPart.material.shininess);
+			log("  mesh[%i] [Material.ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
+			log("  mesh[%i] [Material.diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
+			log("  mesh[%i] [Material.specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
+			//log("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
+			//log("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
+			log("  mesh[%i] [Material.shininess]   : %.3f", n, meshPart.material.shininess);
 
 			for(unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
 			{
@@ -316,15 +264,16 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 							break;
 					}
 
-					auto texFileName = getFileName(std::string(textureFileName.C_Str()));
-					meshTexture.fileName = texturePath + texFileName;
+					//auto texFileName = getFileName(std::string(textureFileName.C_Str()));
+					//meshTexture.fileName = texturePath + texFileName;
+                    meshTexture.fileName = std::string(textureFileName.C_Str());
 					meshPart.material.textures.push_back(meshTexture);
 
 					std::string logInfoText = "  mesh[" + std::to_string(n) + "] [Texture." + TextureTypeName[meshTexture.textureType] + "]";
 					std::stringstream ss;
 					ss << std::setiosflags(std::ios_base::left) << std::setw(33) << logInfoText << ": %s";
 					logInfoText = ss.str();
-					logNote(logInfoText.c_str(), texFileName.c_str());
+                    log(logInfoText.c_str(), textureFileName.C_Str());
 
 					++index;
 				}
@@ -335,7 +284,6 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			result.push_back(meshPart);
 		}
 
-		MeshDataCollection::add(fileName, result);
 		return result;
 	}
 
@@ -343,29 +291,29 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 }
 
 //=========================================================================
-std::string MeshLoader::getFileName(std::string& pathName) const
-{
-	const size_t idx = pathName.find_last_of("\\/");
-
-	if(std::string::npos != idx)
-		pathName.erase(0, idx + 1);
-
-	return pathName;
-}
-
-//=========================================================================
-std::string MeshLoader::setDefaultTexturePath(std::string pathName) const
-{
-	const size_t idx = pathName.find_last_of("\\/");
-
-	if(std::string::npos != idx)
-		pathName.erase(idx + 1, pathName.length() - idx - 1);
-
-	return pathName;
-}
+//std::string MeshLoader::getFileName(std::string& pathName) const
+//{
+//	const size_t idx = pathName.find_last_of("\\/");
+//
+//	if(std::string::npos != idx)
+//		pathName.erase(0, idx + 1);
+//
+//	return pathName;
+//}
 
 //=========================================================================
-void MeshLoader::setTexturePath(const std::string& texturePath)
-{
-	mTexturePath = texturePath;
-}
+//std::string MeshLoader::setDefaultTexturePath(std::string pathName) const
+//{
+//	const size_t idx = pathName.find_last_of("\\/");
+//
+//	if(std::string::npos != idx)
+//		pathName.erase(idx + 1, pathName.length() - idx - 1);
+//
+//	return pathName;
+//}
+
+//=========================================================================
+//void MeshLoader::setTexturePath(const std::string& texturePath)
+//{
+//	mTexturePath = texturePath;
+//}

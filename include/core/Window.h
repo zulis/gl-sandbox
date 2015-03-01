@@ -169,8 +169,6 @@ Window::Window(int width, int height, WindowMode mode)
 	glfwSetFramebufferSizeCallback(mWindow, framebufferSizeCallback);
 
 	// Init OpenGL
-	logNote("Initialising OpenGL...");
-
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 
@@ -192,11 +190,11 @@ Window::Window(int width, int height, WindowMode mode)
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	logNote("GL Vendor    = %s", vendor);
-	logNote("GL Renderer  = %s", renderer);
-	logNote("GL Version (string)  = %s", version);
-	logNote("GL Version (integer) = %d.%d", major, minor);
-	logNote("GLSL Version = %s", glslVersion);
+	log("GL Vendor    = %s", vendor);
+	log("GL Renderer  = %s", renderer);
+	log("GL Version (string)  = %s", version);
+	log("GL Version (integer) = %d.%d", major, minor);
+	log("GLSL Version = %s", glslVersion);
 }
 
 //=========================================================================

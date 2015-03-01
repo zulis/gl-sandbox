@@ -140,7 +140,7 @@ Texture::~Texture()
 	if (mTextureID)
 		glDeleteTextures(1, &mTextureID);
 
-	logNote("Texture released: %s", mFileName);
+	log("Texture released: %s", mFileName);
 }
 
 //=========================================================================
@@ -155,7 +155,7 @@ void Texture::getTexture(const char* fileName, const Format& format)
 		image->flipVertical();
 
 	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
-	logNote("Texture created: %s", mFileName);
+	log("Texture created: %s", mFileName);
 }
 
 //=========================================================================
@@ -170,7 +170,7 @@ void Texture::getTexture(const Color& color, const Format& format)
 		image->flipVertical();
 
 	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
-	logNote("Texture created: %s", mFileName);
+	log("Texture created: %s", mFileName);
 }
 
 //=========================================================================
