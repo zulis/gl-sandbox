@@ -3,6 +3,7 @@
 #include <exception>
 #include "core/Window.h"
 #include "core/StateManager.h"
+#include "core/Ui.h"
 
 class Game : public Window
 {
@@ -24,11 +25,13 @@ public:
 Game::Game() : Window(1280, 720, WindowMode::Windowed)
 {
 	setTitle("Game!");
+	ImGuiWrapper::Initialize();
 }
 
 //=========================================================================
 Game::~Game()
 {
+	ImGuiWrapper::Shutdown();
 }
 
 //=========================================================================
@@ -64,7 +67,9 @@ void Game::update(double elapsedTime)
 void Game::draw()
 {
 	gl::clear(Color::gray(0.6f));
+	ImGuiWrapper::Update(*this);
 	StateManager::draw();
+	ImGuiWrapper::Draw();
 }
 
 //=========================================================================
@@ -77,7 +82,7 @@ int main(int argc, char *argv[])                                          \
 		game.run<STATE>();                                                \
 		return 0;                                                         \
 	}                                                                     \
-	catch (std::exception *e)                                             \
+	catch (...)                                                           \
 	{                                                                     \
 		return 1;                                                         \
 	}                                                                     \

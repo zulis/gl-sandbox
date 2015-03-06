@@ -7,6 +7,7 @@
 #include "core/Math.h"
 #include "core/Shader.h"
 #include "core/AABB.h"
+#include "core/ShaderConstants.h"
 
 typedef std::unique_ptr<class Geometry> GeometryRef;
 
@@ -55,7 +56,8 @@ public:
 	bool hasTangents() const;
 	bool hasBitangents() const;
 
-	void draw(const Shader& shader);
+	void prepare(const Shader& shader);
+	void draw() const;
 
 private:
 	DrawType mDrawType { DrawType::TRIANGLES };
@@ -65,13 +67,13 @@ private:
 	std::vector<vec3> mNormals;
 	std::vector<vec4> mTangents;
 	std::vector<vec3> mBitangents;
-	bool mIsReady { false };
+	//bool mIsReady { false };
 	GLuint mVaoHandle;
 	GLuint mVboHandle[6];
 
 	Geometry(const Geometry&) = delete;
 	Geometry& operator=(const Geometry&) = delete;
-	void prepare(const Shader& shader);
+	
 	void generateNormals();
 	void generateTangents();
 };
@@ -105,15 +107,15 @@ Geometry::~Geometry()
 	mTangents.clear();
 	mBitangents.clear();
 
-	if (mIsReady)
-	{
+	//if (mIsReady)
+	//{
 		glBindVertexArray(0);
 
 		for (auto& hande : mVboHandle)
 			glDeleteBuffers(1, &hande);
 
 		glDeleteVertexArrays(1, &mVaoHandle);
-	}
+	//}
 }
 
 //=========================================================================
@@ -308,14 +310,14 @@ void Geometry::prepare(const Shader& shader)
 
 	glBindVertexArray(0);
 
-	mIsReady = true;
+	//mIsReady = true;
 }
 
 //=========================================================================
-void Geometry::draw(const Shader& shader)
+void Geometry::draw() const
 {
-	if (!mIsReady)
-		prepare(shader);
+	//if (!mIsReady)
+		//prepare(shader);
 
 	glBindVertexArray(mVaoHandle);
 

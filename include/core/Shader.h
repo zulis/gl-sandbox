@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <tuple>
 #include <fstream>
 #include "core/GL.h"
 #include "core/Math.h"
@@ -32,6 +33,7 @@ public:
 	bool link();
 	void bind();
 	void unbind();
+	void reload();
 
 	//void setUniform(const std::string& name, const Texture* tex);
 	//void setUniform(const std::string& name, const TextureCube* tex);
@@ -59,6 +61,7 @@ public:
 
 private:
 	std::unordered_map<ShaderType, GLuint> mShaderMap;
+	std::unordered_map<ShaderType, std::string> mShaderTypesAndFileNamesMap;
 	std::unordered_map<std::string, GLuint> mAttributeMap;
 	std::unordered_map<std::string, GLuint> mUniformMap;
 	GLuint mProgram;
@@ -84,6 +87,7 @@ Shader::~Shader()
 	if(mProgram)
 		glDeleteProgram(mProgram);
 
+	mShaderTypesAndFileNamesMap.clear();
 	mShaderMap.clear();
 	mAttributeMap.clear();
 	mUniformMap.clear();
@@ -138,6 +142,7 @@ bool Shader::loadFromFile(const std::string& fileName, const ShaderType& shaderT
         }
 
         mShaderMap[shaderType] = shader;
+		mShaderTypesAndFileNamesMap[shaderType] = fileName;
 
         log("Shader loaded: %s", fileName.c_str());
         return true;
@@ -321,6 +326,32 @@ void Shader::bind()
 void Shader::unbind()
 {
 	glUseProgram(0);
+}
+
+//=========================================================================
+void Shader::reload()
+{
+	auto files = mShaderTypesAndFileNamesMap;
+
+	unbind();
+
+	for (const auto& s : mShaderMap)
+		glDeleteShader(s.second);
+
+	if (mProgram)
+		glDeleteProgram(mProgram);
+
+	mShaderTypesAndFileNamesMap.clear();
+	mShaderMap.clear();
+	mAttributeMap.clear();
+	mUniformMap.clear();
+
+	for (const auto& sh : files)
+	{
+		loadFromFile(sh.second, sh.first);
+	}
+
+	log("Shader reloaded.");
 }
 
 //=========================================================================

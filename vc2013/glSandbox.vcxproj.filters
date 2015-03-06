@@ -15,10 +15,16 @@
     <Filter Include="include\core">
       <UniqueIdentifier>{42387aeb-223b-4e22-8dc7-317a98440c12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{8aecf396-e818-4d18-8824-1a7c66bda35e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +80,42 @@
       <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\core\MeshLoader.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Geometry.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\AABB.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\ShaderConstants.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Camera.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Plane.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Transform.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Listeners.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\src\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\src\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Ui.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\FileMonitor.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\ListenerSet.h">
       <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>

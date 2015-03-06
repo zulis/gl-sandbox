@@ -160,25 +160,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\external\src\imgui\imgui.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\external\src\imgui\imconfig.h" />
+    <ClInclude Include="..\external\src\imgui\imgui.h" />
+    <ClInclude Include="..\include\core\AABB.h" />
+    <ClInclude Include="..\include\core\Camera.h" />
     <ClInclude Include="..\include\core\Color.h" />
     <ClInclude Include="..\include\core\Defines.h" />
+    <ClInclude Include="..\include\core\FileMonitor.h" />
     <ClInclude Include="..\include\core\Game.h" />
+    <ClInclude Include="..\include\core\Geometry.h" />
     <ClInclude Include="..\include\core\GL.h" />
+    <ClInclude Include="..\include\core\ListenerSet.h" />
+    <ClInclude Include="..\include\core\Ui.h" />
     <ClInclude Include="..\include\core\Image.h" />
     <ClInclude Include="..\include\core\Input.h" />
+    <ClInclude Include="..\include\core\Listeners.h" />
     <ClInclude Include="..\include\core\Log.h" />
     <ClInclude Include="..\include\core\Math.h" />
     <ClInclude Include="..\include\core\MeshData.h" />
     <ClInclude Include="..\include\core\MeshLoader.h" />
+    <ClInclude Include="..\include\core\Plane.h" />
     <ClInclude Include="..\include\core\Resource.h" />
     <ClInclude Include="..\include\core\Shader.h" />
+    <ClInclude Include="..\include\core\ShaderConstants.h" />
     <ClInclude Include="..\include\core\State.h" />
     <ClInclude Include="..\include\core\StateManager.h" />
     <ClInclude Include="..\include\core\StringUtils.h" />
     <ClInclude Include="..\include\core\Texture.h" />
+    <ClInclude Include="..\include\core\Transform.h" />
     <ClInclude Include="..\include\core\Window.h" />
     <ClInclude Include="..\src\tests\Deferred.h" />
   </ItemGroup>

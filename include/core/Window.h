@@ -40,7 +40,7 @@ public:
 	Input& getInput();
 	const mat4 getOrtho() const;
 	void setMouseVisibility(bool isVisible);
-	//GLFWwindow* getGLFWWindow() const;
+	GLFWwindow* getGLFWWindow() const;
 
 private:
 	GLFWwindow* mWindow { nullptr };
@@ -88,9 +88,9 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int state, int 
 
 	if(button == GLFW_MOUSE_BUTTON_LEFT)
 		mouseButton = MouseButton::Left;
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+	else if(button == GLFW_MOUSE_BUTTON_RIGHT)
 		mouseButton = MouseButton::Right;
-	else if (button == GLFW_MOUSE_BUTTON_MIDDLE)
+	else if(button == GLFW_MOUSE_BUTTON_MIDDLE)
 		mouseButton = MouseButton::Middle;
 	else
 		return; // Unsupported
@@ -103,7 +103,7 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int state, int 
 void Window::cursorPosCallback(GLFWwindow* window, double x, double y)
 {
 	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	currentWindow->getInput().setMousePositionStatus(x, y);
+	currentWindow->getInput().setMousePositionStatus(static_cast<int>(x), static_cast<int>(y));
 }
 
 //=========================================================================
@@ -172,7 +172,7 @@ Window::Window(int width, int height, WindowMode mode)
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 
-	if (GLEW_OK != err)
+	if(GLEW_OK != err)
 	{
 		logError("OpenGL initialisation failed: %s", glewGetErrorString(err));
 		glfwDestroyWindow(mWindow);
@@ -195,6 +195,8 @@ Window::Window(int width, int height, WindowMode mode)
 	log("GL Version (string)  = %s", version);
 	log("GL Version (integer) = %d.%d", major, minor);
 	log("GLSL Version = %s", glslVersion);
+
+
 }
 
 //=========================================================================
@@ -236,14 +238,14 @@ void Window::run()
 		// Check mouse visibility
 		setMouseVisibility(mInput.isMouseVisible());
 
-		if (frameCounter >= 1.0)
-		{
-			double totalTime = 1000.0 * frameCounter / (double)frames;
-			double fps = 1000.0f / totalTime;
-			glfwSetWindowTitle(mWindow, std::string(mTitle + " [" + std::to_string(fps) + "]").c_str());
-			frames = 0;
-			frameCounter = 0;
-		}
+// 		if(frameCounter >= 1.0)
+// 		{
+// 			double totalTime = 1000.0 * frameCounter / (double)frames;
+// 			double fps = 1000.0f / totalTime;
+// 			glfwSetWindowTitle(mWindow, std::string(mTitle + " [" + std::to_string(fps) + "]").c_str());
+// 			frames = 0;
+// 			frameCounter = 0;
+// 		}
 
 		while(mRunning && accumulator >= frameTime)
 		{
@@ -304,7 +306,7 @@ void Window::setMouseVisibility(bool isVisible)
 }
 
 //=========================================================================
-// GLFWwindow* Window::getGLFWWindow() const
-// {
-// 	return mWindow;
-// }
+GLFWwindow* Window::getGLFWWindow() const
+{
+	return mWindow;
+}

@@ -125,7 +125,7 @@ int StringUtils::toInt(const string& s)
 //=========================================================================
 float StringUtils::toFloat(const string& s)
 {
-	return atof(s.c_str());
+	return static_cast<float>(atof(s.c_str()));
 }
 
 //=========================================================================

@@ -37,9 +37,9 @@ public:
 	bool isMouseVisible() const;
 
 private:
-	std::unordered_map<int, bool> mKeyTable;
-	mutable std::unordered_map<int, bool> mPrevKeyTable;
-	std::unordered_map<MouseButton, bool> mMouseButtons;
+	std::unordered_map<int, bool> mKeyMap;
+	mutable std::unordered_map<int, bool> mPrevKeyMap;
+	std::unordered_map<MouseButton, bool> mMouseMap;
 	int mMouseX {0};
 	int mMouseY { 0 };
 	int mMouseChangeX { 0 };
@@ -52,16 +52,16 @@ private:
 //=========================================================================
 void Input::setKeyStatus(int key, bool isDown)
 {
-	mPrevKeyTable = mKeyTable;
-	mKeyTable[key] = isDown;
+	mPrevKeyMap = mKeyMap;
+	mKeyMap[key] = isDown;
 }
 
 //=========================================================================
 bool Input::isKeyDown(int key) const
 {
-	auto it = mKeyTable.find(key);
+	auto it = mKeyMap.find(key);
 
-	if(it != mKeyTable.end())
+	if(it != mKeyMap.end())
 		return it->second;
 	else
 		return false;
@@ -70,14 +70,14 @@ bool Input::isKeyDown(int key) const
 //=========================================================================
 bool Input::isKeyUp(int key) const
 {
-	auto itPrev = mPrevKeyTable.find(key);
-	auto it = mKeyTable.find(key);
+	auto itPrev = mPrevKeyMap.find(key);
+	auto it = mKeyMap.find(key);
 
-	if(itPrev != mPrevKeyTable.end() && it != mKeyTable.end())
+	if(itPrev != mPrevKeyMap.end() && it != mKeyMap.end())
 	{
 		if(itPrev->second == true && it->second == false)
 		{
-			mPrevKeyTable[key] = false;
+			mPrevKeyMap[key] = false;
 			return true;
 		}
 	}
@@ -104,7 +104,7 @@ void Input::setMousePositionChangeStatus(int x, int y)
 //=========================================================================
 void Input::setMouseButtonStatus(const MouseButton& button, bool down)
 {
-	mMouseButtons[button] = down;
+	mMouseMap[button] = down;
 }
 
 //=========================================================================
@@ -159,10 +159,10 @@ double Input::getMouseScroolY() const
 //=========================================================================
 bool Input::isMouseDown(const MouseButton& button) const
 {
-	auto it = mMouseButtons.find(button);
+	auto it = mMouseMap.find(button);
 
-	if (it != mMouseButtons.end())
-		return mMouseButtons.at(button);
+	if (it != mMouseMap.end())
+		return mMouseMap.at(button);
 	else
 		return false;
 }

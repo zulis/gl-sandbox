@@ -2,10 +2,10 @@
 
 #include "core/Math.h"
 
-class Transform3D
+class Transform
 {
 public:
-	Transform3D(const vec3& position = vec3(0.0f), const vec3& rotation = vec3(0.0f), const vec3& scale = vec3(1.0f));
+	Transform(const vec3& position = vec3(0.0f), const vec3& rotation = vec3(0.0f), const vec3& scale = vec3(1.0f));
 
 	void setPosition(float x, float y, float z);
 	void setMoveBy(float x, float y, float z);
@@ -42,7 +42,7 @@ private:
 };
 
 //=========================================================================
-Transform3D::Transform3D(const vec3& position, const vec3& rotation, const vec3& scale)
+Transform::Transform(const vec3& position, const vec3& rotation, const vec3& scale)
 {
 	mPosition = position;
 	mRotation = toQuat(orientate3(radians(rotation)));
@@ -51,66 +51,66 @@ Transform3D::Transform3D(const vec3& position, const vec3& rotation, const vec3&
 }
 
 //=========================================================================
-void Transform3D::setPosition(float x, float y, float z)
+void Transform::setPosition(float x, float y, float z)
 {
 	setPosition(vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3D::setMoveBy(float x, float y, float z)
+void Transform::setMoveBy(float x, float y, float z)
 {
 	setMoveBy(vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3D::setRotation(float x, float y, float z)
+void Transform::setRotation(float x, float y, float z)
 {
 	setRotation(vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3D::setRotationX(float x)
+void Transform::setRotationX(float x)
 {
 	auto rotation = getEulerAngles();
 	setRotation(vec3(x, rotation.y, rotation.z));
 }
 
 //=========================================================================
-void Transform3D::setRotationY(float y)
+void Transform::setRotationY(float y)
 {
 	auto rotation = getEulerAngles();
 	setRotation(vec3(rotation.x, y, rotation.z));
 }
 
 //=========================================================================
-void Transform3D::setRotationZ(float z)
+void Transform::setRotationZ(float z)
 {
 	auto rotation = getEulerAngles();
 	setRotation(vec3(rotation.x, rotation.y, z));
 }
 
 //=========================================================================
-void Transform3D::setScale(float x, float y, float z)
+void Transform::setScale(float x, float y, float z)
 {
 	setScale(vec3(x, y, z));
 }
 
 //=========================================================================
-void Transform3D::setPosition(const  vec3& position)
+void Transform::setPosition(const  vec3& position)
 {
 	mPosition = position;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setMoveBy(const  vec3& delta)
+void Transform::setMoveBy(const  vec3& delta)
 {
 	mPosition += delta;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setRotation(const vec3& rotation)
+void Transform::setRotation(const vec3& rotation)
 {
 	auto rot = radians(rotation);
 	mRotation = quat(rot);
@@ -119,27 +119,27 @@ void Transform3D::setRotation(const vec3& rotation)
 }
 
 //=========================================================================
-void Transform3D::setRotation(const quat& quat)
+void Transform::setRotation(const quat& quat)
 {
 	mRotation = quat;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::setScale(float scale)
+void Transform::setScale(float scale)
 {
 	setScale(scale, scale, scale);
 }
 
 //=========================================================================
-void Transform3D::setScale(const vec3& scale)
+void Transform::setScale(const vec3& scale)
 {
 	mScale = scale;
 	updateMatrix();
 }
 
 //=========================================================================
-void Transform3D::updateMatrix()
+void Transform::updateMatrix()
 {
 	mat4 translationMatrix = translate(mat4(), mPosition);
 	mat4 rotationMatrix = toMat4(mRotation);
@@ -148,25 +148,25 @@ void Transform3D::updateMatrix()
 }
 
 //=========================================================================
-void Transform3D::setMatrix(const mat4& matrix)
+void Transform::setMatrix(const mat4& matrix)
 {
 	mMatrix = matrix;
 }
 
 //=========================================================================
-vec3 Transform3D::getPosition() const
+vec3 Transform::getPosition() const
 {
 	return vec3(mMatrix[3][0], mMatrix[3][1], mMatrix[3][2]);
 }
 
 //=========================================================================
-quat Transform3D::getRotation() const
+quat Transform::getRotation() const
 {
 	return mRotation;
 }
 
 //=========================================================================
-vec3 Transform3D::getEulerAngles() const
+vec3 Transform::getEulerAngles() const
 {
 	vec3 eulers;
 	float sy = 2.0f * (mRotation.y * mRotation.w - mRotation.x * mRotation.z);
@@ -246,19 +246,19 @@ vec3 Transform3D::getEulerAngles() const
 }
 
 //=========================================================================
-vec3 Transform3D::getScale() const
+vec3 Transform::getScale() const
 {
 	return vec3(length(mMatrix[0]), length(mMatrix[1]), length(mMatrix[2]));
 }
 
 //=========================================================================
-mat4 Transform3D::getMatrix() const
+mat4 Transform::getMatrix() const
 {
 	return mMatrix;
 }
 
 //=========================================================================
-void Transform3D::setLookAt(const vec3& target)
+void Transform::setLookAt(const vec3& target)
 {
 	auto position = getPosition();
 
@@ -270,7 +270,7 @@ void Transform3D::setLookAt(const vec3& target)
 }
 
 //=========================================================================
-quat Transform3D::rotationBetweenVectors(vec3 start, vec3 target) const
+quat Transform::rotationBetweenVectors(vec3 start, vec3 target) const
 {
 	start = normalize(start);
 	target = normalize(target);
@@ -309,7 +309,7 @@ quat Transform3D::rotationBetweenVectors(vec3 start, vec3 target) const
 }
 
 //=========================================================================
-quat Transform3D::lookAt(const vec3& direction, vec3 desiredUp) const
+quat Transform::lookAt(const vec3& direction, vec3 desiredUp) const
 {
 	if(length2(direction) < 0.0001f)
 		return quat();
@@ -332,13 +332,13 @@ quat Transform3D::lookAt(const vec3& direction, vec3 desiredUp) const
 }
 
 //=========================================================================
-void Transform3D::setRotateTowards(const quat& target, float maxAngle)
+void Transform::setRotateTowards(const quat& target, float maxAngle)
 {
 	setRotation(rotateTowards(mRotation, target, maxAngle));
 }
 
 //=========================================================================
-quat Transform3D::rotateTowards(quat current, quat target, float maxAngle) const
+quat Transform::rotateTowards(quat current, quat target, float maxAngle) const
 {
 	if(maxAngle < 0.001f)
 	{
