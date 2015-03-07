@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <mutex>
 #include "core/Game.h"
 #include "core/Camera.h"
 //#include "core/Shape.h"
@@ -40,10 +41,10 @@ private:
 	//GeometryRef mShape;
 	//Transform3D mTransform;
 	//TextureRef mColorTex;
-	bool mShaderReload{ false };
-	std::shared_ptr<Shader> mShader;
+	ShaderPtr mShader;
 	std::vector<std::shared_ptr<Geometry>> mGeometryVec;
 	FileMonitorRef mFileMonitor;
+    std::mutex mMutex;
 
 	void drawUI();
 };
@@ -73,16 +74,14 @@ void Deferred::setup()
 	//sh1->link();
 
 	mFileMonitor = FileMonitor::create();
-	mFileMonitor->add("assets\\shaders\\basic.vert");
-	mFileMonitor->add("assets\\shaders\\basic.frag");
+	mFileMonitor->addFile("assets\\shaders\\basic.vert");
+	mFileMonitor->addFile("assets\\shaders\\basic.frag");
 	mFileMonitor->addListener(this);
 
-	mShader = Shared<Shader>::create();
+	mShader = Shader::create();
 	mShader->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
 	mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
 	mShader->link();
-
-	std::cout << std::this_thread::get_id() << std::endl;
 
 	auto ml1 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
 	auto ml2 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
@@ -166,17 +165,7 @@ void Deferred::input(Input& input)
 //=========================================================================
 void Deferred::update(double elapsedTime)
 {
-	if (mShaderReload)
-	{
-		//mShader->reload();
-		mShaderReload = false;
-
-		/*mShader.reset();
-		mShader = Shared<Shader>::create();
-		mShader->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
-		mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
-		mShader->link();*/
-	}
+    mFileMonitor->update();
 }
 
 //=========================================================================
@@ -242,15 +231,12 @@ void Deferred::resize(unsigned int width, unsigned int height)
 //=========================================================================
 void Deferred::onFileMonitorFileChange(const std::string& fileName)
 {
-	mShaderReload = true;
-
-	std::cout << std::this_thread::get_id() << std::endl;
-
-	mShader.reset();
-	mShader = Shared<Shader>::create();
-	mShader->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
-	mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
-	mShader->link();
+    mShader->reload();
+    /* mShader.reset();
+     mShader = Shared<Shader>::create();
+     mShader->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
+     mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
+     mShader->link();*/
 }
 
 //=========================================================================

@@ -207,30 +207,7 @@
 
      io.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels, io.Fonts->GetGlyphRangesJapanese());  // Load Japanese characters
      io.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
-
- If you want to input Japanese/Chinese/Korean in the text input widget:
-
-    - when loading the font, pass a range that contains the characters you need, e.g.: io.Fonts->GetGlyphRangesJapanese()
-    - to have the Microsoft IME cursor appears at the right location in the screen, setup a handler for the io.ImeSetInputScreenPosFn function:
-
-        #include <Windows.h>
-        #include <Imm.h>
-        static void ImImpl_ImeSetInputScreenPosFn(int x, int y)
-        {
-          // Notify OS Input Method Editor of text input position
-          HWND hwnd = glfwGetWin32Window(window);
-          if (HIMC himc = ImmGetContext(hwnd))
-          {
-            COMPOSITIONFORM cf;
-            cf.ptCurrentPos.x = x;
-            cf.ptCurrentPos.y = y;
-            cf.dwStyle = CFS_FORCE_POSITION;
-            ImmSetCompositionWindow(himc, &cf);
-          }
-        }
-
-        // Set pointer to handler in ImGuiIO structure
-        io.ImeSetInputScreenPosFn = ImImpl_ImeSetInputScreenPosFn;
+     io.ImeWindowHandle = MY_HWND;      // To input using Microsoft IME, give ImGui the hwnd of your application
 
  - tip: the construct 'IMGUI_ONCE_UPON_A_FRAME { ... }' will run the block of code only once a frame. You can use it to quickly add custom UI in the middle of a deep nested inner loop in your code.
  - tip: you can create widgets without a Begin()/End() block, they will go in an implicit window called "Debug"
@@ -442,7 +419,8 @@ static size_t       ImFormatStringV(char* buf, size_t buf_size, const char* fmt,
 // Helpers: Misc
 static ImU32        ImCrc32(const void* data, size_t data_size, ImU32 seed);
 static bool         ImLoadFileToMemory(const char* filename, const char* file_open_mode, void** out_file_data, size_t* out_file_size, size_t padding_bytes = 0);
-static int          ImUpperPowerOfTwo(int v) { v--; v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16; v++; return v; }
+static inline int   ImUpperPowerOfTwo(int v) { v--; v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16; v++; return v; }
+static inline bool  ImCharIsSpace(int c) { return c == ' ' || c == '\t' || c == 0x3000; }
 
 // Helpers: UTF-8 <> wchar
 static int          ImTextCharToUtf8(char* buf, size_t buf_size, unsigned int in_char);                                // return output UTF-8 bytes count
@@ -458,6 +436,7 @@ static int          ImTextCountUtf8BytesFromWchar(const ImWchar* in_text, const 
 
 static const char*  GetClipboardTextFn_DefaultImpl();
 static void         SetClipboardTextFn_DefaultImpl(const char* text);
+static void         ImeSetInputScreenPosFn_DefaultImpl(int x, int y);
 
 //-----------------------------------------------------------------------------
 // Texture Atlas data
@@ -561,7 +540,7 @@ ImGuiIO::ImGuiIO()
     MemFreeFn = free;
     GetClipboardTextFn = GetClipboardTextFn_DefaultImpl;   // Platform dependent default implementations
     SetClipboardTextFn = SetClipboardTextFn_DefaultImpl;
-    ImeSetInputScreenPosFn = NULL;
+    ImeSetInputScreenPosFn = ImeSetInputScreenPosFn_DefaultImpl;
 }
 
 // Pass in translated ASCII characters for text input.
@@ -1156,6 +1135,13 @@ static inline ImGuiWindow* GetCurrentWindow()
     IM_ASSERT(g.CurrentWindow != NULL);    // ImGui::NewFrame() hasn't been called yet?
     g.CurrentWindow->Accessed = true;
     return g.CurrentWindow;
+}
+
+static inline ImGuiWindow* GetParentWindow()
+{
+    ImGuiState& g = *GImGui;
+    IM_ASSERT(g.CurrentWindowStack.size() >= 2);
+    return g.CurrentWindowStack[g.CurrentWindowStack.size() - 2];
 }
 
 static void SetActiveId(ImGuiID id) 
@@ -2269,7 +2255,7 @@ static void RenderCollapseTriangle(ImVec2 p_min, bool opened, float scale, bool 
     
     if (shadow && (window->Flags & ImGuiWindowFlags_ShowBorders) != 0)
         window->DrawList->AddTriangleFilled(a+ImVec2(2,2), b+ImVec2(2,2), c+ImVec2(2,2), window->Color(ImGuiCol_BorderShadow));
-    window->DrawList->AddTriangleFilled(a, b, c, window->Color(ImGuiCol_Border));
+    window->DrawList->AddTriangleFilled(a, b, c, window->Color(ImGuiCol_Text));
 }
 
 // Calculate text size. Text can be multi-line. Optionally ignore text after a ## marker.
@@ -2592,7 +2578,11 @@ void ImGui::EndChild()
             sz.y = 0;
         
         ImGui::End();
+
+        window = GetCurrentWindow();
+        ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + sz);
         ItemSize(sz);
+        ItemAdd(bb, NULL);
     }
 }
 
@@ -3193,8 +3183,6 @@ static void SetFont(ImFont* font)
     g.Font = font;
     g.FontSize = g.IO.FontGlobalScale * g.Font->FontSize * g.Font->Scale;
     g.FontTexUvWhitePixel = g.Font->ContainerAtlas->TexUvWhitePixel;
-    g.Font->FallbackGlyph = NULL;
-    g.Font->FallbackGlyph = g.Font->FindGlyph(g.Font->FallbackChar);
 }
 
 void ImGui::PushFont(ImFont* font)
@@ -3312,7 +3300,7 @@ void ImGui::PushStyleVar(ImGuiStyleVar idx, const ImVec2& val)
     ImGuiState& g = *GImGui;
 
     ImVec2* pvar = GetStyleVarVec2Addr(idx);
-    IM_ASSERT(pvar != NULL); // Called function with wrong-type? Varialble is not a ImVec2.
+    IM_ASSERT(pvar != NULL); // Called function with wrong-type? Variable is not a ImVec2.
     ImGuiStyleMod backup;
     backup.Var = idx;
     backup.PreviousValue = *pvar;
@@ -3863,9 +3851,9 @@ void ImGui::LabelTextV(const char* label, const char* fmt, va_list args)
     const char* value_text_begin = &buf[0];
     const char* value_text_end = value_text_begin + ImFormatStringV(buf, IM_ARRAYSIZE(buf), fmt, args);
 
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
-    const ImGuiAabb value_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w + style.FramePadding.x*2, text_size.y));
-    const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w + style.FramePadding.x*2 + (text_size.x > 0.0f ? style.ItemInnerSpacing.x : 0.0f), 0.0f) + text_size);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const ImGuiAabb value_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w + style.FramePadding.x*2, label_size.y));
+    const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w + style.FramePadding.x*2 + (label_size.x > 0.0f ? style.ItemInnerSpacing.x : 0.0f), 0.0f) + label_size);
     ItemSize(bb);
     if (!ItemAdd(value_bb, NULL))
         return;
@@ -3960,9 +3948,9 @@ bool ImGui::Button(const char* label, const ImVec2& size_arg, bool repeat_when_h
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
-    const ImVec2 size(size_arg.x != 0.0f ? size_arg.x : text_size.x, size_arg.y != 0.0f ? size_arg.y : text_size.y);
+    const ImVec2 size(size_arg.x != 0.0f ? size_arg.x : label_size.x, size_arg.y != 0.0f ? size_arg.y : label_size.y);
     const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + size + style.FramePadding*2.0f);
     ItemSize(bb);
     if (!ItemAdd(bb, &id))
@@ -3975,8 +3963,8 @@ bool ImGui::Button(const char* label, const ImVec2& size_arg, bool repeat_when_h
     const ImU32 col = window->Color((hovered && held) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
-    const ImVec2 off = ImVec2(ImMax(0.0f, size.x - text_size.x) * 0.5f, ImMax(0.0f, size.y - text_size.y) * 0.5f);  // Center (only applies if we explicitly gave a size bigger than the text size, which isn't the common path)
-    RenderTextClipped(bb.Min + style.FramePadding + off, label, NULL, &text_size, bb.Max);                          // Render clip (only applies if we explicitly gave a size smaller than the text size, which isn't the commmon path)
+    const ImVec2 off = ImVec2(ImMax(0.0f, size.x - label_size.x) * 0.5f, ImMax(0.0f, size.y - label_size.y) * 0.5f); // Center (only applies if we explicitly gave a size bigger than the text size, which isn't the common path)
+    RenderTextClipped(bb.Min + style.FramePadding + off, label, NULL, &label_size, bb.Max);                          // Render clip (only applies if we explicitly gave a size smaller than the text size, which isn't the commmon path)
 
     return pressed;
 }
@@ -3991,9 +3979,9 @@ bool ImGui::SmallButton(const char* label)
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
-    const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + text_size + ImVec2(style.FramePadding.x*2,0));
+    const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + label_size + ImVec2(style.FramePadding.x*2,0));
     ItemSize(bb);
     if (!ItemAdd(bb, &id))
         return false;
@@ -4277,10 +4265,10 @@ bool ImGui::CollapsingHeader(const char* label, const char* str_id, bool display
 
     // Framed header expand a little outside the default padding
     const ImVec2 window_padding = window->WindowPadding();
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const ImVec2 pos_min = window->DC.CursorPos;
     const ImVec2 pos_max = window->Pos + GetContentRegionMax();
-    ImGuiAabb bb = ImGuiAabb(pos_min, ImVec2(pos_max.x, pos_min.y + text_size.y));
+    ImGuiAabb bb = ImGuiAabb(pos_min, ImVec2(pos_max.x, pos_min.y + label_size.y));
     if (display_frame)
     {
         bb.Min.x -= window_padding.x*0.5f - 1;
@@ -4288,7 +4276,7 @@ bool ImGui::CollapsingHeader(const char* label, const char* str_id, bool display
         bb.Max.y += style.FramePadding.y * 2;
     }
 
-    const ImGuiAabb text_bb(bb.Min, bb.Min + ImVec2(window->FontSize() + style.FramePadding.x*2*2,0) + text_size);
+    const ImGuiAabb text_bb(bb.Min, bb.Min + ImVec2(window->FontSize() + style.FramePadding.x*2*2,0) + label_size);
     ItemSize(ImVec2(text_bb.GetSize().x, bb.GetSize().y));  // NB: we don't provide our width so that it doesn't get feed back into AutoFit
 
     // When logging is enabled, if automatically expand tree nodes (but *NOT* collapsing headers.. seems like sensible behaviour).
@@ -4378,8 +4366,8 @@ void ImGui::BulletTextV(const char* fmt, va_list args)
 
     const ImGuiStyle& style = g.Style;
     const float line_height = window->FontSize();
-    const ImVec2 text_size = CalcTextSize(text_begin, text_end, true);
-    const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(line_height + (text_size.x > 0.0f ? (style.FramePadding.x*2) : 0.0f),0) + text_size);  // Empty text doesn't add padding
+    const ImVec2 label_size = CalcTextSize(text_begin, text_end, true);
+    const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(line_height + (label_size.x > 0.0f ? (style.FramePadding.x*2) : 0.0f),0) + label_size);  // Empty text doesn't add padding
     ItemSize(bb);
     if (!ItemAdd(bb, NULL))
         return;
@@ -4507,7 +4495,7 @@ ImGuiID ImGui::GetID(const void* ptr_id)
 // NB: only call right after InputText because we are using its InitialValue storage
 static void ApplyNumericalTextInput(const char* buf, float *v)
 {
-    while (*buf == ' ' || *buf == '\t')
+    while (ImCharIsSpace(*buf))
         buf++;
 
     // We don't support '-' op because it would conflict with inputing negative value.
@@ -4516,7 +4504,7 @@ static void ApplyNumericalTextInput(const char* buf, float *v)
     if (op == '+' || op == '*' || op == '/')
     {
         buf++;
-        while (*buf == ' ' || *buf == '\t')
+        while (ImCharIsSpace(*buf))
             buf++;
     }
     else
@@ -4580,10 +4568,10 @@ bool ImGui::SliderFloat(const char* label, float* v, float v_min, float v_max, c
         }
     }
 
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
-    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, text_size.y) + style.FramePadding*2.0f);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y) + style.FramePadding*2.0f);
     const ImGuiAabb slider_bb(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding);
-    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(text_size.x > 0.0f ? style.ItemInnerSpacing.x + text_size.x : 0.0f, 0.0f));
+    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
 
     // NB- we don't call ItemSize() yet becausae we may turn into a text edit box later in the function
     if (!ItemAdd(slider_bb, &id))
@@ -4901,15 +4889,15 @@ static void Plot(ImGuiPlotType plot_type, const char* label, float (*values_gett
 
     const ImGuiStyle& style = g.Style;
 
-    const ImVec2 text_size = ImGui::CalcTextSize(label, NULL, true);
+    const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
     if (graph_size.x == 0.0f)
         graph_size.x = ImGui::CalcItemWidth();
     if (graph_size.y == 0.0f)
-        graph_size.y = text_size.y;
+        graph_size.y = label_size.y;
 
     const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(graph_size.x, graph_size.y) + style.FramePadding*2.0f);
     const ImGuiAabb graph_bb(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding);
-    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(text_size.x > 0.0f ? style.ItemInnerSpacing.x + text_size.x : 0.0f, 0));
+    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0));
     ItemSize(bb);
     if (!ItemAdd(bb, NULL))
         return;
@@ -5034,16 +5022,16 @@ bool ImGui::Checkbox(const char* label, bool* v)
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
-    const ImGuiAabb check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(text_size.y + style.FramePadding.y*2, text_size.y + style.FramePadding.y*2));
+    const ImGuiAabb check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(label_size.y + style.FramePadding.y*2, label_size.y + style.FramePadding.y*2));
     ItemSize(check_bb);
 
     ImGuiAabb total_bb = check_bb;
-    if (text_size.x > 0)
+    if (label_size.x > 0)
         SameLine(0, (int)style.ItemInnerSpacing.x);
-    const ImGuiAabb text_bb(window->DC.CursorPos + ImVec2(0,style.FramePadding.y), window->DC.CursorPos + ImVec2(0,style.FramePadding.y) + text_size);
-    if (text_size.x > 0)
+    const ImGuiAabb text_bb(window->DC.CursorPos + ImVec2(0,style.FramePadding.y), window->DC.CursorPos + ImVec2(0,style.FramePadding.y) + label_size);
+    if (label_size.x > 0)
     {
         ItemSize(ImVec2(text_bb.GetWidth(), check_bb.GetHeight()));
         total_bb = ImGuiAabb(ImMin(check_bb.Min, text_bb.Min), ImMax(check_bb.Max, text_bb.Max));
@@ -5092,17 +5080,16 @@ bool ImGui::RadioButton(const char* label, bool active)
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
-
-    const ImGuiAabb check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(text_size.y + style.FramePadding.y*2-1, text_size.y + style.FramePadding.y*2-1));
+    const ImGuiAabb check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(label_size.y + style.FramePadding.y*2-1, label_size.y + style.FramePadding.y*2-1));
     ItemSize(check_bb);
 
     ImGuiAabb total_bb = check_bb;
-    if (text_size.x > 0)
+    if (label_size.x > 0)
         SameLine(0, (int)style.ItemInnerSpacing.x);
-    const ImGuiAabb text_bb(window->DC.CursorPos + ImVec2(0, style.FramePadding.y), window->DC.CursorPos + ImVec2(0, style.FramePadding.y) + text_size);
-    if (text_size.x > 0)
+    const ImGuiAabb text_bb(window->DC.CursorPos + ImVec2(0, style.FramePadding.y), window->DC.CursorPos + ImVec2(0, style.FramePadding.y) + label_size);
+    if (label_size.x > 0)
     {
         ItemSize(ImVec2(text_bb.GetWidth(), check_bb.GetHeight()));
         total_bb.Add(text_bb);
@@ -5168,9 +5155,8 @@ static void    STB_TEXTEDIT_LAYOUTROW(StbTexteditRow* r, STB_TEXTEDIT_STRING* ob
     r->num_chars = (int)(text_remaining - (obj->Text + line_start_idx));
 }
 
-static bool is_white(unsigned int c)                                                              { return c==0 || c==' ' || c=='\t' || c=='\r' || c=='\n'; }
 static bool is_separator(unsigned int c)                                                          { return c==',' || c==';' || c=='(' || c==')' || c=='{' || c=='}' || c=='[' || c==']' || c=='|'; }
-#define STB_TEXTEDIT_IS_SPACE(CH)                                                                 ( is_white((unsigned int)CH) || is_separator((unsigned int)CH) )
+#define STB_TEXTEDIT_IS_SPACE(CH)                                                                 ( ImCharIsSpace((unsigned int)CH) || is_separator((unsigned int)CH) )
 static void STB_TEXTEDIT_DELETECHARS(STB_TEXTEDIT_STRING* obj, int pos, int n)                    { ImWchar* dst = obj->Text+pos; const ImWchar* src = obj->Text+pos+n; while (ImWchar c = *src++) *dst++ = c; *dst = '\0'; }
 static bool STB_TEXTEDIT_INSERTCHARS(STB_TEXTEDIT_STRING* obj, int pos, const ImWchar* new_text, int new_text_len)
 {
@@ -5302,8 +5288,8 @@ bool ImGui::InputFloat(const char* label, float *v, float step, float step_fast,
 
     const ImGuiStyle& style = g.Style;
     const float w = ImGui::CalcItemWidth();
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
-    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, text_size.y) + style.FramePadding*2.0f);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y) + style.FramePadding*2.0f);
 
     ImGui::PushID(label);
     const float button_sz = window->FontSize();
@@ -5343,10 +5329,10 @@ bool ImGui::InputFloat(const char* label, float *v, float step, float step_fast,
 
     ImGui::PopID();
 
-    if (text_size.x > 0)
+    if (label_size.x > 0)
     {
         ImGui::SameLine(0, (int)style.ItemInnerSpacing.x);
-        ItemSize(text_size);
+        ItemSize(label_size);
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
     }
 
@@ -5428,7 +5414,7 @@ static bool InputTextFilterCharacter(unsigned int* p_char, ImGuiInputTextFlags f
                 *p_char = (c += 'A'-'a');
 
         if (flags & ImGuiInputTextFlags_CharsNoBlank)
-            if (c == ' ' || c == '\t')
+            if (ImCharIsSpace(c))
                 return false;
     }
 
@@ -5464,9 +5450,9 @@ bool ImGui::InputText(const char* label, char* buf, size_t buf_size, ImGuiInputT
     const ImGuiID id = window->GetID(label);
     const float w = ImGui::CalcItemWidth();
 
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
-    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, text_size.y) + style.FramePadding*2.0f);
-    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(text_size.x > 0.0f ? (style.ItemInnerSpacing.x + text_size.x) : 0.0f, 0.0f));
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y) + style.FramePadding*2.0f);
+    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? (style.ItemInnerSpacing.x + label_size.x) : 0.0f, 0.0f));
     ItemSize(bb);
     if (!ItemAdd(frame_bb, &id))
         return false;
@@ -5766,7 +5752,7 @@ bool ImGui::InputText(const char* label, char* buf, size_t buf_size, ImGuiInputT
         edit_state.InputCursorScreenPos = cursor_pos;
     }
 
-    if (text_size.x > 0)
+    if (label_size.x > 0)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     if ((flags & ImGuiInputTextFlags_EnterReturnsTrue) != 0)
@@ -5886,9 +5872,9 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
     const ImGuiID id = window->GetID(label);
     const float w = ImGui::CalcItemWidth();
 
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
-    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, text_size.y) + style.FramePadding*2.0f);
-    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(style.ItemInnerSpacing.x + text_size.x,0));
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+    const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y) + style.FramePadding*2.0f);
+    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(style.ItemInnerSpacing.x + label_size.x,0));
     ItemSize(bb);
     if (!ItemAdd(frame_bb, &id))
         return false;
@@ -5909,7 +5895,7 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
             RenderTextClipped(frame_bb.Min + style.FramePadding, item_text, NULL, NULL, value_bb.Max);
     }
 
-    if (text_size.x > 0)
+    if (label_size.x > 0)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     ImGui::PushID((int)id);
@@ -5934,7 +5920,7 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
 
         const ImVec2 backup_pos = ImGui::GetCursorPos();
         const float popup_off_x = 0.0f;//style.ItemInnerSpacing.x;
-        const float popup_height = (text_size.y + style.ItemSpacing.y) * ImMin(items_count, height_in_items) + style.WindowPadding.y;
+        const float popup_height = (label_size.y + style.ItemSpacing.y) * ImMin(items_count, height_in_items) + style.WindowPadding.y;
         const ImGuiAabb popup_aabb(ImVec2(frame_bb.Min.x+popup_off_x, frame_bb.Max.y), ImVec2(frame_bb.Max.x+popup_off_x, frame_bb.Max.y + popup_height));
         ImGui::SetCursorPos(popup_aabb.Min - window->Pos);
 
@@ -5988,10 +5974,10 @@ bool ImGui::Selectable(const char* label, bool selected, const ImVec2& size_arg)
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const ImVec2 text_size = CalcTextSize(label, NULL, true);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
     
     const float w = window->Pos.x + ImGui::GetContentRegionMax().x - window->DC.CursorPos.x;
-    const ImVec2 size(size_arg.x != 0.0f ? size_arg.x : w, size_arg.y != 0.0f ? size_arg.y : text_size.y);
+    const ImVec2 size(size_arg.x != 0.0f ? size_arg.x : w, size_arg.y != 0.0f ? size_arg.y : label_size.y);
     const ImGuiAabb bb(window->DC.CursorPos, window->DC.CursorPos + size);
     ItemSize(bb);
 
@@ -6019,7 +6005,7 @@ bool ImGui::Selectable(const char* label, bool selected, const ImVec2& size_arg)
     }
 
     //const ImVec2 off = ImVec2(ImMax(0.0f, size.x - text_size.x) * 0.5f, ImMax(0.0f, size.y - text_size.y) * 0.5f);
-    RenderTextClipped(bb.Min, label, NULL, &text_size, bb_with_spacing.Max);
+    RenderTextClipped(bb.Min, label, NULL, &label_size, bb_with_spacing.Max);
 
     return pressed;
 }
@@ -6039,8 +6025,6 @@ bool ImGui::Selectable(const char* label, bool* p_selected, const ImVec2& size_a
 bool ImGui::ListBoxHeader(const char* label, const ImVec2& size_arg)
 {
     ImGuiWindow* window = GetCurrentWindow();
-    if (window->SkipItems)
-        return false;
 
     const ImGuiStyle& style = ImGui::GetStyle();
     const ImGuiID id = ImGui::GetID(label);
@@ -6052,6 +6036,8 @@ bool ImGui::ListBoxHeader(const char* label, const ImVec2& size_arg)
     size.y = (size_arg.y != 0.0f) ? size_arg.y : ImGui::GetTextLineHeightWithSpacing() * 7.4f + style.ItemSpacing.y;
     const ImVec2 frame_size = ImVec2(size.x, ImMax(size.y, label_size.y));
     const ImGuiAabb frame_bb(window->DC.CursorPos, window->DC.CursorPos + frame_size);
+    const ImGuiAabb bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    window->DC.LastItemAabb = bb;
 
     if (label_size.x > 0)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
@@ -6078,7 +6064,13 @@ bool ImGui::ListBoxHeader(const char* label, int items_count, int height_in_item
 
 void ImGui::ListBoxFooter()
 {
+    ImGuiWindow* parent_window = GetParentWindow();
+    const ImGuiAabb bb = parent_window->DC.LastItemAabb;
+    
     ImGui::EndChildFrame();
+
+    parent_window->DC.CursorPos = bb.Min;
+    ItemSize(bb, NULL);
 }
 
 bool ImGui::ListBox(const char* label, int* current_item, const char** items, int items_count, int height_items)
@@ -6089,6 +6081,10 @@ bool ImGui::ListBox(const char* label, int* current_item, const char** items, in
 
 bool ImGui::ListBox(const char* label, int* current_item, bool (*items_getter)(void*, int, const char**), void* data, int items_count, int height_in_items)
 {
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
     if (!ImGui::ListBoxHeader(label, items_count, height_in_items))
         return false;
 
@@ -6242,7 +6238,7 @@ bool ImGui::ColorEdit4(const char* label, float col[4], bool alpha)
             value_changed |= ImGui::InputText("##Text", buf, IM_ARRAYSIZE(buf), ImGuiInputTextFlags_CharsHexadecimal);
             ImGui::PopItemWidth();
             char* p = buf;
-            while (*p == '#' || *p == ' ' || *p == '\t') 
+            while (*p == '#' || ImCharIsSpace(*p)) 
                 p++;
 
             // Treat at unsigned (%X is unsigned)
@@ -6362,7 +6358,7 @@ static void ItemSize(ImVec2 size, ImVec2* adjust_vertical_offset)
     window->DC.CursorPosPrevLine = ImVec2(window->DC.CursorPos.x + size.x, window->DC.CursorPos.y);
     window->DC.CursorPos = ImVec2((float)(int)(window->Pos.x + window->DC.ColumnsStartX + window->DC.ColumnsOffsetX), (float)(int)(window->DC.CursorPos.y + line_height + g.Style.ItemSpacing.y));
 
-    window->SizeContentsFit = ImMax(window->SizeContentsFit, ImVec2(window->DC.CursorPosPrevLine.x, window->DC.CursorPos.y) - window->Pos + ImVec2(0.0f, window->ScrollY));
+    window->SizeContentsFit = ImMax(window->SizeContentsFit, ImVec2(window->DC.CursorPosPrevLine.x - window->Pos.x, window->DC.CursorPos.y + window->ScrollY - window->Pos.y));
 
     window->DC.PrevLineHeight = line_height;
     window->DC.CurrentLineHeight = 0.0f;
@@ -7459,9 +7455,10 @@ void    ImFont::Clear()
     DisplayOffset = ImVec2(-0.5f, 0.5f);
     ContainerAtlas = NULL;
     Glyphs.clear();
+    FallbackGlyph = NULL;
+    FallbackXAdvance = 0.0f;
     IndexXAdvance.clear();
     IndexLookup.clear();
-    FallbackGlyph = NULL;
 }
 
 // Retrieve list of range (2 int per range, values are inclusive)
@@ -7563,7 +7560,7 @@ void ImFont::BuildLookupTable()
     IndexLookup.resize((size_t)max_codepoint + 1);
     for (size_t i = 0; i < (size_t)max_codepoint + 1; i++)
     {
-        IndexXAdvance[i] = 0.0f;
+        IndexXAdvance[i] = -1.0f;
         IndexLookup[i] = -1;
     }
     for (size_t i = 0; i < Glyphs.size(); i++)
@@ -7577,7 +7574,8 @@ void ImFont::BuildLookupTable()
     // FIXME: Needs proper TAB handling but it needs to be contextualized (can arbitrary say that each string starts at "column 0"
     if (FindGlyph((unsigned short)' '))
     {
-        Glyphs.resize(Glyphs.size() + 1);
+        if (Glyphs.back().Codepoint != '\t')   // So we can call this function multiple times
+            Glyphs.resize(Glyphs.size() + 1);
         ImFont::Glyph& tab_glyph = Glyphs.back();
         tab_glyph = *FindGlyph((unsigned short)' ');
         tab_glyph.Codepoint = '\t';
@@ -7585,6 +7583,19 @@ void ImFont::BuildLookupTable()
         IndexXAdvance[(size_t)tab_glyph.Codepoint] = (float)tab_glyph.XAdvance;
         IndexLookup[(size_t)tab_glyph.Codepoint] = (int)(Glyphs.size()-1);
     }
+
+    FallbackGlyph = NULL;
+    FallbackGlyph = FindGlyph(FallbackChar);
+    FallbackXAdvance = FallbackGlyph ? FallbackGlyph->XAdvance : 0.0f;
+    for (size_t i = 0; i < (size_t)max_codepoint + 1; i++)
+        if (IndexXAdvance[i] < 0.0f)
+            IndexXAdvance[i] = FallbackXAdvance;
+}
+
+void ImFont::SetFallbackChar(ImWchar c)
+{
+    FallbackChar = c;
+    BuildLookupTable();
 }
 
 const ImFont::Glyph* ImFont::FindGlyph(unsigned short c) const
@@ -7796,8 +7807,8 @@ const char* ImFont::CalcWordWrapPositionA(float scale, const char* text, const c
             continue;
         }
 
-        const float char_width = ((size_t)c < IndexXAdvance.size()) ? IndexXAdvance[(size_t)c] * scale : 0.0f;
-        if (c == ' ' || c == '\t')
+        const float char_width = ((size_t)c < IndexXAdvance.size()) ? IndexXAdvance[(size_t)c] * scale : FallbackXAdvance;
+        if (ImCharIsSpace(c))
         {
             if (inside_word)
             {
@@ -7879,7 +7890,7 @@ ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, cons
                 while (s < text_end)
                 {
                     const char c = *s;
-                    if (c == ' ' || c == '\t') { s++; } else if (c == '\n') { s++; break; } else { break; }
+                    if (ImCharIsSpace(c)) { s++; } else if (c == '\n') { s++; break; } else { break; }
                 }
                 continue;
             }
@@ -7900,7 +7911,7 @@ ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, cons
             continue;
         }
         
-        const float char_width = ((size_t)c < IndexXAdvance.size()) ? IndexXAdvance[(size_t)c] * scale : 0.0f;
+        const float char_width = ((size_t)c < IndexXAdvance.size()) ? IndexXAdvance[(size_t)c] * scale : FallbackXAdvance;
         if (line_width + char_width >= max_width)
             break;
 
@@ -7944,7 +7955,7 @@ ImVec2 ImFont::CalcTextSizeW(float size, float max_width, const ImWchar* text_be
             continue;
         }
         
-        const float char_width = ((size_t)c < IndexXAdvance.size()) ? IndexXAdvance[(size_t)c] * scale : 0.0f;
+        const float char_width = ((size_t)c < IndexXAdvance.size()) ? IndexXAdvance[(size_t)c] * scale : FallbackXAdvance;
         if (line_width + char_width >= max_width)
             break;
 
@@ -8011,7 +8022,7 @@ void ImFont::RenderText(float size, ImVec2 pos, ImU32 col, const ImVec4& clip_re
                 while (s < text_end)
                 {
                     const char c = *s;
-                    if (c == ' ' || c == '\t') { s++; } else if (c == '\n') { s++; break; } else { break; }
+                    if (ImCharIsSpace(c)) { s++; } else if (c == '\n') { s++; break; } else { break; }
                 }
                 continue;
             }
@@ -8104,11 +8115,13 @@ void ImFont::RenderText(float size, ImVec2 pos, ImU32 col, const ImVec4& clip_re
 
 #if defined(_MSC_VER) && !defined(IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCS)
 
+#ifndef _WINDOWS_
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#endif
 
 // Win32 API clipboard implementation
-static const char*  GetClipboardTextFn_DefaultImpl()
+static const char* GetClipboardTextFn_DefaultImpl()
 {
     static char* buf_local = NULL;
     if (buf_local)
@@ -8150,7 +8163,7 @@ static void SetClipboardTextFn_DefaultImpl(const char* text)
 #else
 
 // Local ImGui-only clipboard implementation, if user hasn't defined better clipboard handlers
-static const char*  GetClipboardTextFn_DefaultImpl()
+static const char* GetClipboardTextFn_DefaultImpl()
 {
     return GImGui->PrivateClipboard;
 }
@@ -8168,6 +8181,37 @@ static void SetClipboardTextFn_DefaultImpl(const char* text)
     g.PrivateClipboard = (char*)ImGui::MemAlloc((size_t)(text_end - text) + 1);
     memcpy(g.PrivateClipboard, text, (size_t)(text_end - text));
     g.PrivateClipboard[(size_t)(text_end - text)] = 0;
+}
+
+#endif
+
+#if defined(_MSC_VER) && !defined(IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCS)
+
+#ifndef _WINDOWS_
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+#include <Imm.h>
+#pragma comment(lib, "imm32")
+
+static void ImeSetInputScreenPosFn_DefaultImpl(int x, int y)
+{
+    // Notify OS Input Method Editor of text input position
+    if (HWND hwnd = (HWND)GImGui->IO.ImeWindowHandle)
+        if (HIMC himc = ImmGetContext(hwnd))
+        {
+            COMPOSITIONFORM cf;
+            cf.ptCurrentPos.x = x;
+            cf.ptCurrentPos.y = y;
+            cf.dwStyle = CFS_FORCE_POSITION;
+            ImmSetCompositionWindow(himc, &cf);
+        }
+}
+
+#else
+
+static void ImeSetInputScreenPosFn_DefaultImpl(int x, int y)
+{
 }
 
 #endif
@@ -8745,22 +8789,32 @@ void ImGui::ShowTestWindow(bool* opened)
         ImGui::SameLine();
         ImGui::Checkbox("Rich", &c4);
 
-        // SliderFloat
+        // Various
         static float f0=1.0f, f1=2.0f, f2=3.0f;
         ImGui::PushItemWidth(80);
         const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD" };
         static int item = -1;
         ImGui::Combo("Combo", &item, items, IM_ARRAYSIZE(items));
-        //ImGui::SameLine();
-        //ImGui::ListBox("Listbox", &item, items, IM_ARRAYSIZE(items));
-        //if (ImGui::IsItemHovered())
-        //    ImGui::SetTooltip("Hovered"); 
-        ImGui::SameLine(); 
+        ImGui::SameLine();
         ImGui::SliderFloat("X", &f0, 0.0f,5.0f);
         ImGui::SameLine();
         ImGui::SliderFloat("Y", &f1, 0.0f,5.0f);
         ImGui::SameLine();
         ImGui::SliderFloat("Z", &f2, 0.0f,5.0f);
+        ImGui::PopItemWidth();
+
+        ImGui::PushItemWidth(80);
+        ImGui::Text("Lists:");
+        static int selection[4] = { 0, 1, 2, 3 };
+        for (int i = 0; i < 4; i++)
+        {
+            if (i > 0) ImGui::SameLine();
+            ImGui::PushID(i);
+            ImGui::ListBox("", &selection[i], items, IM_ARRAYSIZE(items));
+            ImGui::PopID();
+            //if (ImGui::IsItemHovered()) ImGui::SetTooltip("ListBox %d hovered", i); 
+        }
+        ImGui::PopItemWidth();
     }
 
     if (ImGui::CollapsingHeader("Child regions"))
@@ -9288,7 +9342,7 @@ struct ExampleAppConsole
                 while (word_start > data->Buf)
                 {
                     const char c = word_start[-1];
-                    if (c == ' ' || c == '\t' || c == ',' || c == ';')
+                    if (ImCharIsSpace(c) || c == ',' || c == ';')
                         break;
                     word_start--;
                 }

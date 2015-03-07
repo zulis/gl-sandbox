@@ -44,7 +44,7 @@ void ListenerSet<T>::notify(Function&& f, Arguments&& ... args)
 {
 	for(T listener : mListeners)
 	{
-		auto callback = std::bind(f, listener, args...);
+        auto callback = std::bind(f, listener, std::forward<Arguments>(args)...);
 		callback(listener);
 	}
 }

@@ -11,5 +11,4 @@ void main()
 	Position = position.xyz;
 	Normal = normalize(NormalMatrix * VertexNormal);
 	gl_Position = ProjectionMatrix * position;
-	
 }

@@ -17,15 +17,18 @@
 
 #define ERROR_BUFSIZE 1024
 
+typedef std::unique_ptr<class Shader> ShaderPtr;
+
 enum class ShaderType
 {
-    Vertex,
-    Fragment
+	Vertex,
+	Fragment
 };
 
 class Shader
 {
 public:
+    static ShaderPtr create();
 	Shader();
 	virtual ~Shader();
 
@@ -60,15 +63,20 @@ public:
 	bool hasUniform(const std::string& name) const;
 
 private:
-	std::unordered_map<ShaderType, GLuint> mShaderMap;
-	std::unordered_map<ShaderType, std::string> mShaderTypesAndFileNamesMap;
+	std::vector<std::tuple<ShaderType, std::string, GLuint>> mShaderVec;
 	std::unordered_map<std::string, GLuint> mAttributeMap;
 	std::unordered_map<std::string, GLuint> mUniformMap;
 	GLuint mProgram;
 
-    std::string readSource(std::string fileName);
+	std::string readSource(std::string fileName);
 	void showInfo(/*const std::string& fileName*/);
 };
+
+//=========================================================================
+ShaderPtr Shader::create()
+{
+    return std::make_unique<Shader>();
+}
 
 //=========================================================================
 Shader::Shader()
@@ -81,18 +89,17 @@ Shader::~Shader()
 {
 	unbind();
 
-	for(const auto& s : mShaderMap)
-		glDeleteShader(s.second);
+	for(const auto& s : mShaderVec)
+		glDeleteShader(std::get<2>(s));
 
 	if(mProgram)
 		glDeleteProgram(mProgram);
 
-	mShaderTypesAndFileNamesMap.clear();
-	mShaderMap.clear();
+	mShaderVec.clear();
 	mAttributeMap.clear();
 	mUniformMap.clear();
 
-    log("Shader released.");
+	log("Shader released.");
 }
 
 //=========================================================================
@@ -110,52 +117,51 @@ bool Shader::loadFromFile(const std::string& fileName, const ShaderType& shaderT
 			type = GL_FRAGMENT_SHADER;
 			break;
 	}
-	
+
 	auto source = readSource(fileName);
 
-    if (source != std::string())
-    {
-        auto sourceChar = source.c_str();
-        auto shader = glCreateShader(type);
-        glShaderSource(shader, 1, &sourceChar, NULL);
-        glCompileShader(shader);
+	if(source != std::string())
+	{
+		//auto sourceChar = source.c_str();
+		auto shader = glCreateShader(type);
+		auto sourceChar = (const GLchar*)source.c_str();
+		glShaderSource(shader, 1, &sourceChar, NULL);
+		glCompileShader(shader);
 
-        int isOK;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &isOK);
+		GLint isCompiled = 0;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
 
-        if (!isOK)
-        {
-            log("Failed to compile shader: %s", fileName.c_str());
+		if(isCompiled == GL_FALSE)
+		{
+			log("Failed to compile shader: %s", fileName.c_str());
 
-            GLchar tempErrorLog[ERROR_BUFSIZE];
-            GLsizei length;
+			GLchar errorLog[ERROR_BUFSIZE];
+			GLsizei length;
 
-            glGetShaderInfoLog(shader, ERROR_BUFSIZE, &length, tempErrorLog);
+			glGetShaderInfoLog(shader, ERROR_BUFSIZE, &length, errorLog);
 
             if (length > 0)
-            {
-                log(tempErrorLog);
-                glDeleteShader(shader);
-            }
+			    log(errorLog);
 
-            return false;
-        }
+			glDeleteShader(shader);
 
-        mShaderMap[shaderType] = shader;
-		mShaderTypesAndFileNamesMap[shaderType] = fileName;
+			return false;
+		}
 
-        log("Shader loaded: %s", fileName.c_str());
-        return true;
-    }
-    else
-        return false;
+		mShaderVec.push_back(std::make_tuple(shaderType, fileName, shader));
+
+		log("Shader loaded: %s", fileName.c_str());
+		return true;
+	}
+	else
+		return false;
 }
 
 //=========================================================================
 bool Shader::link()
 {
-	for(const auto& s : mShaderMap)
-		glAttachShader(mProgram, s.second);
+	for(const auto& s : mShaderVec)
+		glAttachShader(mProgram, std::get<2>(s));
 
 	glLinkProgram(mProgram);
 
@@ -243,7 +249,7 @@ bool Shader::link()
 	// the same with uniforms
 	*/
 
-    log("Shader linked.");
+	log("Shader linked.");
 	return true;
 }
 
@@ -255,36 +261,36 @@ std::string Shader::readSource(std::string fileName)
 	std::string search = "#include";
 	std::stringstream  ss;
 
-    if (!source.fail())
-    {
-        unsigned int curLine = 0;
+	if(!source.fail())
+	{
+		unsigned int curLine = 0;
 
-        while (std::getline(source, line))
-        {
-            curLine++;
+		while(std::getline(source, line))
+		{
+			curLine++;
 
-            if (StringUtils::startsWith(line, search))
-            {
-                // Extract file name
-                line = StringUtils::extract(line, '"');
+			if(StringUtils::startsWith(line, search))
+			{
+				// Extract file name
+				line = StringUtils::extract(line, '"');
 
-                // Extract path name
-                fileName = StringUtils::cutTail(fileName, "\\/");
+				// Extract path name
+				fileName = StringUtils::cutTail(fileName, "\\/");
 
-                // Include file content
-                ss << readSource(fileName + line);
-            }
-            else
-                ss << line << std::endl;
-        }
+				// Include file content
+				ss << readSource(fileName + line);
+			}
+			else
+				ss << line << std::endl;
+		}
 
-        return ss.str();
-    }
-    else
-    {
-        log("Failed to load shader: %s", fileName.c_str());
-        return std::string();
-    }
+		return ss.str();
+	}
+	else
+	{
+		log("Failed to load shader: %s", fileName.c_str());
+		return std::string();
+	}
 }
 
 /// <summary>
@@ -298,22 +304,22 @@ void Shader::showInfo(/*const std::string& fileName*/)
 //     log("VertexShader ID: %s\n", std::to_string(mVertexShaderID).c_str());
 //     log("FragmentShader ID: %s\n", std::to_string(mFragmentShaderID).c_str());
 //     log("\n");
-    log("Uniforms:");
+	log("Uniforms:");
 
-    for (auto i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
-    {
-        log("  %s -> %d", i->first.c_str(), i->second);
-    }
+	for(auto i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
+	{
+		log("  %s -> %d", i->first.c_str(), i->second);
+	}
 
-    //log("\n");
-    log("Attributes:");
+	//log("\n");
+	log("Attributes:");
 
-    for (auto i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
-    {
-        log("  %s -> %d", i->first.c_str(), i->second);
-    }
+	for(auto i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
+	{
+		log("  %s -> %d", i->first.c_str(), i->second);
+	}
 
-    //log("------------------------------------------------\n");
+	//log("------------------------------------------------\n");
 }
 
 //=========================================================================
@@ -331,25 +337,22 @@ void Shader::unbind()
 //=========================================================================
 void Shader::reload()
 {
-	auto files = mShaderTypesAndFileNamesMap;
+	for(const auto& s : mShaderVec)
+	{
+		glDetachShader(mProgram, std::get<2>(s));
+        glDeleteShader(std::get<2>(s));
+	}
 
-	unbind();
+    auto shaderVec = mShaderVec;
 
-	for (const auto& s : mShaderMap)
-		glDeleteShader(s.second);
-
-	if (mProgram)
-		glDeleteProgram(mProgram);
-
-	mShaderTypesAndFileNamesMap.clear();
-	mShaderMap.clear();
+	mShaderVec.clear();
 	mAttributeMap.clear();
 	mUniformMap.clear();
 
-	for (const auto& sh : files)
-	{
-		loadFromFile(sh.second, sh.first);
-	}
+    for (const auto& s : shaderVec)
+        loadFromFile(std::get<1>(s), std::get<0>(s));
+
+	link();
 
 	log("Shader reloaded.");
 }
