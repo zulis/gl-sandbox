@@ -58,9 +58,6 @@
     <ClInclude Include="..\include\core\Log.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\Defines.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\Resource.h">
       <Filter>include\core</Filter>
     </ClInclude>
@@ -116,6 +113,9 @@
       <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\core\ListenerSet.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\CameraControllers.h">
       <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>
