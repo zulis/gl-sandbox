@@ -113,7 +113,7 @@ void Deferred::setup()
     mCamera = Camera::create();
     mCamera->setRotateSpeed(0.002f);
     mCamera->setStrafeSpeed(mStrafeSpeed);
-    mCamera->setPosition(vec3(0, 5, -10));
+    mCamera->setPosition(vec3(3, 5, -8));
     mCamera->setLookAt(vec3(0, 0, 0));
 
     /*
@@ -234,6 +234,9 @@ void Deferred::drawUI()
 
         static int item = 1;
         ui::Combo("combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+
+		ui::Text("Cam position:  %.2f %.2f %.2f", mCamera->getPosition().x, mCamera->getPosition().y, mCamera->getPosition().z);
+		ui::Text("Cam direction: %.2f %.2f %.2f", mCamera->getDirection().x, mCamera->getDirection().y, mCamera->getDirection().z);
     }
 
     ui::End();

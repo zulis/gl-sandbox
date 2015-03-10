@@ -18,6 +18,8 @@ public:
 
 	void setPosition(vec3 position);
 	void setPosition(float x, float y, float z);
+	void setDirection(vec3 direction);
+	void setDirection(float x, float y, float z);
 	void setLookAt(vec3 lookAt);
 	void setLookAt(float x, float y, float z);
 	void setAspectRatio(float ratio);
@@ -28,6 +30,7 @@ public:
 	void setFarClip(float farClip);
 
 	vec3 getPosition() const;
+	vec3 getDirection() const;
 	mat4 getViewMatrix() const;
 	mat4 getProjectionMatrix() const;
 	vec3 getRight() const;
@@ -101,6 +104,19 @@ void Camera::setPosition(float x, float y, float z)
 }
 
 //=========================================================================
+void Camera::setDirection(vec3 direction)
+{
+	mDirection = direction;
+	update();
+}
+
+//=========================================================================
+void Camera::setDirection(float x, float y, float z)
+{
+	setDirection(vec3(x, y, z));
+}
+
+//=========================================================================
 void Camera::setLookAt(vec3 point)
 {
 	if (point != mPosition)
@@ -122,6 +138,12 @@ void Camera::setLookAt(float x, float y, float z)
 vec3 Camera::getPosition() const
 {
 	return mPosition;
+}
+
+//=========================================================================
+vec3 Camera::getDirection() const
+{
+	return mDirection;
 }
 
 //=========================================================================
