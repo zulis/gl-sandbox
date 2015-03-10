@@ -60,7 +60,7 @@ Image::~Image()
 	if(mPixels)
 		delete[] mPixels;
 
-	log("Image released: %s", mFileName);
+	note("Image released: %s", mFileName);
 }
 
 //=========================================================================
@@ -122,7 +122,7 @@ void Image::loadFromFile(const char* fileName)
                 // If this somehow one of these failed (they shouldn't), return failure
                 if ((bits == 0) || (mWidth == 0) || (mHeight == 0))
                 {
-                    logError("Could not load image: %s", fileName);
+                    error("Could not load image: %s", fileName);
                     generateCheckImage();
                 }
                 else
@@ -137,7 +137,7 @@ void Image::loadFromFile(const char* fileName)
                     //Free FreeImage's copy of the data
                     FreeImage_Unload(bitmap);
 
-                    log("Image created: %s", mFileName);
+                    note("Image created: %s", mFileName);
                 }
             }
         }
@@ -171,7 +171,7 @@ void Image::generateCheckImage()
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, checkImage, mWidth * mHeight * mChannels);
-	log("Image created: %s", mFileName);
+	note("Image created: %s", mFileName);
 }
 
 //=========================================================================
@@ -193,13 +193,13 @@ void Image::generateImage(const Color& color)
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, image, mWidth * mHeight * mChannels);
-	log("Image created: %s", mFileName);
+	note("Image created: %s", mFileName);
 }
 
 //=========================================================================
 void Image::FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char* message)
 {
-	logError("FreeImage error: %s", message);
+	error("FreeImage error: %s", message);
 }
 
 //=========================================================================

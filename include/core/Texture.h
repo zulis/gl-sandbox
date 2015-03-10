@@ -11,7 +11,7 @@
 
 class Texture
 {
-	friend class Font;
+	//friend class Font;
 public:
 	struct Format;
 
@@ -140,7 +140,7 @@ Texture::~Texture()
 	if (mTextureID)
 		glDeleteTextures(1, &mTextureID);
 
-	log("Texture released: %s", mFileName);
+	note("Texture released: %s", mFileName);
 }
 
 //=========================================================================
@@ -155,7 +155,7 @@ void Texture::getTexture(const char* fileName, const Format& format)
 		image->flipVertical();
 
 	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
-	log("Texture created: %s", mFileName);
+	note("Texture created: %s", mFileName);
 }
 
 //=========================================================================
@@ -170,7 +170,7 @@ void Texture::getTexture(const Color& color, const Format& format)
 		image->flipVertical();
 
 	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
-	log("Texture created: %s", mFileName);
+	note("Texture created: %s", mFileName);
 }
 
 //=========================================================================

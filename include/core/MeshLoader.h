@@ -60,15 +60,15 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 
 	if(!scene)
 	{
-		logError("Could not load mesh: %s", fileName.c_str());
+		error("Could not load mesh: %s", fileName.c_str());
 	}
 	else
 	{
-		log("Mesh loaded: %s", fileName.c_str());
-		log("  Submeshes  : %i", scene->mNumMeshes);
-		log("  Animations : %i", scene->mNumAnimations);
-		log("  Materials  : %i", scene->mNumMaterials);
-		log("  Textures   : %i", scene->mNumTextures);
+		note("Mesh loaded: %s", fileName.c_str());
+		note("  Submeshes  : %i", scene->mNumMeshes);
+		note("  Animations : %i", scene->mNumAnimations);
+		note("  Materials  : %i", scene->mNumMaterials);
+		note("  Textures   : %i", scene->mNumTextures);
 
 		const aiVector3D zero3D(0.0f, 0.0f, 0.0f);
 
@@ -77,12 +77,15 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			const aiMesh* mesh = scene->mMeshes[n];
 			const aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-			log("  mesh[%i] [Geometry.Vertices]    : %i", n, mesh->mNumVertices);
-			log("  mesh[%i] [Geometry.Faces]       : %i", n, mesh->mNumFaces);
+			note("  mesh[%i] [Geometry.Vertices]    : %i", n, mesh->mNumVertices);
+			note("  mesh[%i] [Geometry.Faces]       : %i", n, mesh->mNumFaces);
 
 			MeshPart meshPart;
 
 			#pragma region geometry
+
+			meshPart.geometry.materialIndex = mesh->mMaterialIndex;
+
 			for(unsigned int i = 0; i < mesh->mNumVertices; i++)
 			{
 				if(mesh->HasPositions())
@@ -189,12 +192,12 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 			aiGetMaterialFloatArray(material, AI_MATKEY_SHININESS_STRENGTH, &shininessStrength, &max);
 			//meshPart.material.shininess = shininess;
 
-			log("  mesh[%i] [Material.ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
-			log("  mesh[%i] [Material.diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
-			log("  mesh[%i] [Material.specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
-			//log("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
-			//log("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
-			log("  mesh[%i] [Material.shininess]   : %.3f", n, meshPart.material.shininess);
+			note("  mesh[%i] [Material.ambient]     : %.3f %.3f %.3f %.3f", n, meshPart.material.ambient.r, meshPart.material.ambient.g, meshPart.material.ambient.b, meshPart.material.ambient.a);
+			note("  mesh[%i] [Material.diffuse]     : %.3f %.3f %.3f %.3f", n, meshPart.material.diffuse.r, meshPart.material.diffuse.g, meshPart.material.diffuse.b, meshPart.material.diffuse.a);
+			note("  mesh[%i] [Material.specular]    : %.3f %.3f %.3f %.3f", n, meshPart.material.specular.r, meshPart.material.specular.g, meshPart.material.specular.b, meshPart.material.specular.a);
+			//note("  mesh[%i] [Material.Emissive]    : %.3f %.3f %.3f %.3f", n, meshPart.material.emissive.r, meshPart.material.emissive.g, meshPart.material.emissive.b, meshPart.material.emissive.a);
+			//note("  mesh[%i] [Material.Transparent] : %.3f %.3f %.3f %.3f", n, meshPart.material.transparent.r, meshPart.material.transparent.g, meshPart.material.transparent.b, meshPart.material.transparent.a);
+			note("  mesh[%i] [Material.shininess]   : %.3f", n, meshPart.material.shininess);
 
 			for(unsigned int m = 0; m <= AI_TEXTURE_TYPE_MAX; m++)
 			{
@@ -273,7 +276,7 @@ MeshData MeshLoader::loadFromFile(const std::string& fileName, float scaleFactor
 					std::stringstream ss;
 					ss << std::setiosflags(std::ios_base::left) << std::setw(33) << logInfoText << ": %s";
 					logInfoText = ss.str();
-                    log(logInfoText.c_str(), textureFileName.C_Str());
+                    note(logInfoText.c_str(), textureFileName.C_Str());
 
 					++index;
 				}

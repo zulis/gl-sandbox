@@ -60,7 +60,7 @@ private:
 //=========================================================================
 void Window::errorCallback(int errorCode, const char* description)
 {
-	logError(description);
+	error(description);
 }
 
 //=========================================================================
@@ -174,7 +174,7 @@ Window::Window(int width, int height, WindowMode mode)
 
 	if(GLEW_OK != err)
 	{
-		logError("OpenGL initialisation failed: %s", glewGetErrorString(err));
+		error("OpenGL initialisation failed: %s", glewGetErrorString(err));
 		glfwDestroyWindow(mWindow);
 		glfwTerminate();
 		exit(1);
@@ -190,11 +190,11 @@ Window::Window(int width, int height, WindowMode mode)
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	log("GL Vendor    = %s", vendor);
-	log("GL Renderer  = %s", renderer);
-	log("GL Version (string)  = %s", version);
-	log("GL Version (integer) = %d.%d", major, minor);
-	log("GLSL Version = %s", glslVersion);
+	note("GL Vendor    = %s", vendor);
+	note("GL Renderer  = %s", renderer);
+	note("GL Version (string)  = %s", version);
+	note("GL Version (integer) = %d.%d", major, minor);
+	note("GLSL Version = %s", glslVersion);
 
 
 }

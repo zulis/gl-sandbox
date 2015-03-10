@@ -11,5 +11,4 @@ void main()
 		FragColor = texture(ColorMap, TexCoord);
 	else
 		FragColor = vec4(Normal, 1);
-		
 }

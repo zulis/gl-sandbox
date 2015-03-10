@@ -84,18 +84,23 @@ void Deferred::setup()
     mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
     mShader->link();
 
-    auto ml1 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
-    auto ml2 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
-    auto ml3 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+    //auto ml1 = Resource::get<MeshLoader>("assets\\models\\robot\\robot.obj");
+    //auto ml2 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+    //auto ml3 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
 
+	//auto ml1 = MeshDataLoader::loadFromFile("assets\\models\\leprechaun\\leprechaun.obj");
+	auto ml1 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+
+	//for (const auto& mp : ml1)
     for (const auto& mp : ml1->getMeshData())
     {
         auto geo = mp.geometry;
         auto mat = mp.material;
 
         auto geometry = Shared<Geometry>::create();
+		geometry->setIndices(geo.indices);
         geometry->setVertices(geo.vertices);
-        geometry->setIndices(geo.indices);
+		geometry->setNormals(geo.normals);
         geometry->setTexCoords(geo.texCoords);
         geometry->setTangents(geo.tangents);
         geometry->setBitangents(geo.bitangents);

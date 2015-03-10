@@ -99,7 +99,7 @@ Shader::~Shader()
 	mAttributeMap.clear();
 	mUniformMap.clear();
 
-	log("Shader released.");
+	note("Shader released.");
 }
 
 //=========================================================================
@@ -133,7 +133,7 @@ bool Shader::loadFromFile(const std::string& fileName, const ShaderType& shaderT
 
 		if(isCompiled == GL_FALSE)
 		{
-			log("Failed to compile shader: %s", fileName.c_str());
+			error("Failed to compile shader: %s", fileName.c_str());
 
 			GLchar errorLog[ERROR_BUFSIZE];
 			GLsizei length;
@@ -141,7 +141,7 @@ bool Shader::loadFromFile(const std::string& fileName, const ShaderType& shaderT
 			glGetShaderInfoLog(shader, ERROR_BUFSIZE, &length, errorLog);
 
             if (length > 0)
-			    log(errorLog);
+			    error(errorLog);
 
 			glDeleteShader(shader);
 
@@ -150,7 +150,7 @@ bool Shader::loadFromFile(const std::string& fileName, const ShaderType& shaderT
 
 		mShaderVec.push_back(std::make_tuple(shaderType, fileName, shader));
 
-		log("Shader loaded: %s", fileName.c_str());
+		note("Shader loaded: %s", fileName.c_str());
 		return true;
 	}
 	else
@@ -170,7 +170,7 @@ bool Shader::link()
 
 	if(!isOK)
 	{
-		log("Failed to link shader.");
+		note("Failed to link shader.");
 
 		GLchar errorLog[ERROR_BUFSIZE];
 		GLsizei length;
@@ -179,7 +179,7 @@ bool Shader::link()
 
 		if(length > 0)
 		{
-			log(errorLog);
+			note(errorLog);
 			glDeleteProgram(mProgram);
 		}
 
@@ -249,7 +249,7 @@ bool Shader::link()
 	// the same with uniforms
 	*/
 
-	log("Shader linked.");
+	note("Shader linked.");
 	return true;
 }
 
@@ -288,7 +288,7 @@ std::string Shader::readSource(std::string fileName)
 	}
 	else
 	{
-		log("Failed to load shader: %s", fileName.c_str());
+		error("Failed to load shader: %s", fileName.c_str());
 		return std::string();
 	}
 }
@@ -298,28 +298,28 @@ std::string Shader::readSource(std::string fileName)
 /// </summary>
 void Shader::showInfo(/*const std::string& fileName*/)
 {
-//     log("------------------------------------------------\n");
+     note("------------------------------------------------");
 //     log("Shader: %s\n", fileName.c_str());
 //     log("Program ID: %s\n", std::to_string(mProgram).c_str());
 //     log("VertexShader ID: %s\n", std::to_string(mVertexShaderID).c_str());
 //     log("FragmentShader ID: %s\n", std::to_string(mFragmentShaderID).c_str());
 //     log("\n");
-	log("Uniforms:");
+	note("Uniforms:");
 
 	for(auto i = mUniformMap.begin(); i != mUniformMap.end(); ++i)
 	{
-		log("  %s -> %d", i->first.c_str(), i->second);
+		note("  %s -> %d", i->first.c_str(), i->second);
 	}
 
 	//log("\n");
-	log("Attributes:");
+	note("Attributes:");
 
 	for(auto i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
 	{
-		log("  %s -> %d", i->first.c_str(), i->second);
+		note("  %s -> %d", i->first.c_str(), i->second);
 	}
 
-	//log("------------------------------------------------\n");
+	note("------------------------------------------------");
 }
 
 //=========================================================================
@@ -354,7 +354,7 @@ void Shader::reload()
 
 	link();
 
-	log("Shader reloaded.");
+	note("Shader reloaded.");
 }
 
 //=========================================================================
@@ -501,7 +501,7 @@ GLuint Shader::getAttribute(const std::string& name) const
 		return it->second;
 	else
 	{
-		//logError("Attribute '%s' not found\n", name.c_str());
+		//error("Attribute '%s' not found\n", name.c_str());
 		return -1;
 	}
 }
@@ -515,7 +515,7 @@ GLuint Shader::getUniform(const std::string& name) const
 		return it->second;
 	else
 	{
-		//logError("Uniform '%s' not found\n", name.c_str());
+		//error("Uniform '%s' not found\n", name.c_str());
 		return -1;
 	}
 }

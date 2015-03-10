@@ -18,6 +18,9 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{8aecf396-e818-4d18-8824-1a7c66bda35e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tinyobjloader">
+      <UniqueIdentifier>{3663e524-2c1b-4333-aa38-3019c40d717c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp">
@@ -25,6 +28,9 @@
     </ClCompile>
     <ClCompile Include="..\external\src\imgui\imgui.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\tinyobjloader\tiny_obj_loader.cc">
+      <Filter>tinyobjloader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +123,9 @@
     </ClInclude>
     <ClInclude Include="..\include\core\CameraControllers.h">
       <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\src\tinyobjloader\tiny_obj_loader.h">
+      <Filter>tinyobjloader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

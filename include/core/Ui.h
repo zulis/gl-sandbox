@@ -218,7 +218,7 @@ void Initialize()
 
 	ImGuiStyle mStyle;
 
-	mStyle.WindowPadding = ImVec2(10, 10);
+	/*mStyle.WindowPadding = ImVec2(10, 10);
 	mStyle.WindowMinSize = ImVec2(160, 80);
 	mStyle.FramePadding = ImVec2(4, 4);
 	mStyle.ItemSpacing = ImVec2(8, 4);
@@ -228,7 +228,7 @@ void Initialize()
 	mStyle.FrameRounding = 2.0f;
 	mStyle.TreeNodeSpacing = 6;
 	mStyle.ColumnsMinSpacing = 50;
-	mStyle.ScrollBarWidth = 12;
+	mStyle.ScrollbarWidth = 12;*/
 
 // 	mStyle.Colors[ImGuiCol_Text] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 // 	mStyle.Colors[ImGuiCol_WindowBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);

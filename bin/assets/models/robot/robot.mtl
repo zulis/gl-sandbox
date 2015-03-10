@@ -1,0 +1,10 @@
+newmtl Default
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 3.2
+illum 2
+map_Kd robot_color.png
+bump robot_normal.png
+map_bump robot_normal.png
+

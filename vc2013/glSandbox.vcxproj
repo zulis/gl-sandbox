@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,7 +110,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +128,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +148,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\artemis;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\external\include;..\external\include\glew;..\external\include\assimp;..\external\include\freeimage;..\external\include\json;$(BOOST_HOME);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,11 +161,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\external\src\imgui\imgui.cpp" />
+    <ClCompile Include="..\external\src\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\external\src\imgui\imconfig.h" />
     <ClInclude Include="..\external\src\imgui\imgui.h" />
+    <ClInclude Include="..\external\src\tinyobjloader\tiny_obj_loader.h" />
     <ClInclude Include="..\include\core\AABB.h" />
     <ClInclude Include="..\include\core\Camera.h" />
     <ClInclude Include="..\include\core\CameraControllers.h" />
