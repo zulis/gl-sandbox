@@ -45,7 +45,7 @@ private:
     ShaderPtr mShader;
     std::vector<std::shared_ptr<Geometry>> mGeometryVec;
     FileMonitorRef mFileMonitor;
-    std::mutex mMutex;
+    vec3 mMousePickPos;
 
     void drawUI();
 };
@@ -113,8 +113,10 @@ void Deferred::setup()
     mCamera = Camera::create();
     mCamera->setRotateSpeed(0.002f);
     mCamera->setStrafeSpeed(mStrafeSpeed);
-    mCamera->setPosition(vec3(3, 5, -8));
-    mCamera->setLookAt(vec3(0, 0, 0));
+    mCamera->setPosition(vec3(3.5, 2.2, -8.8));
+    //mCamera->setDirection(vec3(-0.023f, 0.419f, 0.907f));
+    mCamera->setDirection(vec3(-0.4, 0.2, 0.9));
+    //mCamera->setLookAt(vec3(0, 0, 0));
 
     /*
     mShader = Shader::create("assets/shaders/basic");
@@ -135,6 +137,8 @@ void Deferred::input(Input& input)
 
     if (input.isKeyDown(KEY_ESCAPE))
         quit();
+
+    mMousePickPos = mCamera->pick(input.getMousePosition());
 }
 
 //=========================================================================
@@ -217,9 +221,9 @@ void Deferred::drawUI()
     flags |= ImGuiWindowFlags_NoResize;
 
     ui::SetNextWindowPos(ImVec2(10, 10), ImGuiSetCond_FirstUseEver); // ImGuiSetCond_Always/*ImGuiSetCond_FirstUseEver*/);
-    ui::Begin("Test", (bool*)true, ImVec2(280, 800), 0.0f, flags);
+    ui::Begin("Test", (bool*)true, ImVec2(500, 1000), 0.0f, flags);
 
-    static bool showHelp = false;
+    static bool showHelp = true;
     if (ui::Button(showHelp ? "Hide help" : "Show help"))
         showHelp ^= 1;
 
@@ -235,8 +239,10 @@ void Deferred::drawUI()
         static int item = 1;
         ui::Combo("combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
 
-		ui::Text("Cam position:  %.2f %.2f %.2f", mCamera->getPosition().x, mCamera->getPosition().y, mCamera->getPosition().z);
-		ui::Text("Cam direction: %.2f %.2f %.2f", mCamera->getDirection().x, mCamera->getDirection().y, mCamera->getDirection().z);
+        ui::Text("Cam position:  %s", to_string(mCamera->getPosition()).c_str());
+        ui::Text("Cam direction: %s", to_string(mCamera->getDirection()).c_str());
+        //ui::Text("Mouse pick:    %s", to_string(mMousePickPos).c_str());
+        
     }
 
     ui::End();

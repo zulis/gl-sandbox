@@ -46,13 +46,14 @@ public:
 
 	bool intersects(const AABB& aabb) const;
 	bool contains(const AABB& aabb) const;
+    vec3 pick(const ivec2& mousePos);
 
 private:
 	vec3 mPosition;
 	vec3 mLookAt;
 	vec3 mUp { vec3(0.0f, 1.0f, 0.0f) };
 	vec3 mRight;
-	vec3 mDirection;
+    vec3 mDirection;
 	mat4 mView;
 	mat4 mProjection;
 	float mRotateSpeed { 0.005f };
@@ -106,8 +107,10 @@ void Camera::setPosition(float x, float y, float z)
 //=========================================================================
 void Camera::setDirection(vec3 direction)
 {
-	mDirection = direction;
-	update();
+    auto tmpPosition = mPosition;
+    setPosition(vec3(0));
+    setLookAt(direction);
+    setPosition(tmpPosition);
 }
 
 //=========================================================================
@@ -119,7 +122,7 @@ void Camera::setDirection(float x, float y, float z)
 //=========================================================================
 void Camera::setLookAt(vec3 point)
 {
-	if (point != mPosition)
+	if(point != mPosition)
 	{
 		vec3 direction = normalize(point - mPosition);
 		mVerticalAngle = asinf(direction.y);
@@ -338,4 +341,20 @@ void Camera::setFarClip(float farClip)
 void Camera::setStrafeSpeed(float speed)
 {
 	mStrafeSpeed = speed;
+}
+
+//=========================================================================
+vec3 Camera::pick(const ivec2& mousePos)
+{
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    GLfloat zCursor;
+    float winX = (float)mousePos.x;
+    float winY = (float)viewport[3] - (float)mousePos.y;
+    glReadPixels(winX, winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zCursor);
+
+    vec3 pos = glm::unProject(vec3(winX, winY, zCursor), mView, mProjection, ivec4(viewport[0], viewport[1], viewport[2], viewport[3]));
+
+    return pos;
 }
