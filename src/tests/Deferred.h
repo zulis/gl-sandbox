@@ -8,9 +8,9 @@
 //#include "core/Transform3d.h"
 #include "core/Resource.h"
 //#include "core/Image.h"
-//#include "core/Texture.h"
+#include "core/Texture.h"
 #include "core/Shader.h"
-#include "core/MeshLoader.h"
+#include "core/MeshDataLoader.h"
 #include "core/Geometry.h"
 #include "core/Transform.h"
 #include "core/FileMonitor.h"
@@ -44,11 +44,15 @@ private:
     //TextureRef mColorTex;
     ShaderPtr mShader;
     std::vector<std::shared_ptr<Geometry>> mGeometryVec;
+	std::map<unsigned int, TextureRef> mTextureMap;
     FileMonitorRef mFileMonitor;
     vec3 mMousePickPos;
+	static bool mShowColorMap;
 
     void drawUI();
 };
+
+bool Deferred::mShowColorMap = true;
 
 //=========================================================================
 void Deferred::setup()
@@ -84,19 +88,16 @@ void Deferred::setup()
     mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
     mShader->link();
 
-    //auto ml1 = Resource::get<MeshLoader>("assets\\models\\robot\\robot.obj");
-    //auto ml2 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
-    //auto ml3 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+	//auto mesh = Resource::get<MeshDataLoader>("assets\\models\\box\\box.obj");
+	//auto mesh = std::shared_ptr<MeshDataLoader>(new MeshDataLoader("assets\\models\\sponza\\sponza.obj", 0.5f));
+	auto mesh = std::shared_ptr<MeshDataLoader>(new MeshDataLoader("assets\\models\\leprechaun\\leprechaun.fbx"));
+	//auto mesh = Resource::get<MeshDataLoader>("assets\\models\\robot\\robot.obj");
 
-	//auto ml1 = MeshDataLoader::loadFromFile("assets\\models\\leprechaun\\leprechaun.obj");
-	auto ml1 = Resource::get<MeshLoader>("assets\\models\\leprechaun\\leprechaun.fbx");
+	auto meshData = mesh->getMeshData();
 
-	//for (const auto& mp : ml1)
-    for (const auto& mp : ml1->getMeshData())
+	auto idx = 0;
+    for (const auto& geo : meshData.geometryVec)
     {
-        auto geo = mp.geometry;
-        auto mat = mp.material;
-
         auto geometry = Shared<Geometry>::create();
 		geometry->setIndices(geo.indices);
         geometry->setVertices(geo.vertices);
@@ -106,7 +107,13 @@ void Deferred::setup()
         geometry->setBitangents(geo.bitangents);
         geometry->prepare(*mShader);
 
-        mGeometryVec.push_back(geometry);
+		mGeometryVec.push_back(geometry);
+
+		auto colorTex = meshData.materialMap[geo.materialIndex].textureMap[TextureType::ColorMap];
+		//note(colorTex.c_str());
+
+		if (colorTex.size() > 0)
+			mTextureMap[idx++] = Texture::create(("assets\\models\\leprechaun\\" + colorTex).c_str());
     }
 
 
@@ -170,8 +177,21 @@ void Deferred::draw()
 
     //mShader->setUniform(ShaderConstants::MVP, mCamera->get ->getViewMatrix() * transform.getMatrix());
 
+	auto idx = 0;
+
     for (const auto& geometry : mGeometryVec)
     {
+		if (mTextureMap[idx] && mShowColorMap)
+		{
+			mTextureMap[idx]->bind();
+			mShader->setUniform(ShaderConstants::ColorMap, 0);
+			mShader->setUniform(ShaderConstants::ColorMapIsUsed, true);
+		}
+		else
+			mShader->setUniform(ShaderConstants::ColorMapIsUsed, false);
+
+		idx++;
+
         geometry->draw();
     }
 
@@ -242,6 +262,7 @@ void Deferred::drawUI()
         ui::Text("Cam position:  %s", to_string(mCamera->getPosition()).c_str());
         ui::Text("Cam direction: %s", to_string(mCamera->getDirection()).c_str());
         //ui::Text("Mouse pick:    %s", to_string(mMousePickPos).c_str());
+		ui::Checkbox("Show color map", &mShowColorMap);
         
     }
 

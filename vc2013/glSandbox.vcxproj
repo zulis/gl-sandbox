@@ -161,13 +161,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\external\src\imgui\imgui.cpp" />
-    <ClCompile Include="..\external\src\tinyobjloader\tiny_obj_loader.cc" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\external\src\imgui\imconfig.h" />
     <ClInclude Include="..\external\src\imgui\imgui.h" />
-    <ClInclude Include="..\external\src\tinyobjloader\tiny_obj_loader.h" />
     <ClInclude Include="..\include\core\AABB.h" />
     <ClInclude Include="..\include\core\Camera.h" />
     <ClInclude Include="..\include\core\CameraControllers.h" />
@@ -184,7 +182,7 @@
     <ClInclude Include="..\include\core\Log.h" />
     <ClInclude Include="..\include\core\Math.h" />
     <ClInclude Include="..\include\core\MeshData.h" />
-    <ClInclude Include="..\include\core\MeshLoader.h" />
+    <ClInclude Include="..\include\core\MeshDataLoader.h" />
     <ClInclude Include="..\include\core\Plane.h" />
     <ClInclude Include="..\include\core\Resource.h" />
     <ClInclude Include="..\include\core\Shader.h" />

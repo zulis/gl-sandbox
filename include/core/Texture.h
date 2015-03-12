@@ -9,19 +9,21 @@
 #include "core/Image.h"
 #include "core/Resource.h"
 
+typedef std::unique_ptr<class Texture> TextureRef;
+
 class Texture
 {
-	//friend class Font;
 public:
 	struct Format;
 
+	static TextureRef create(const char* fileName = NULL, const Format& format = Format());
+	static TextureRef create(const Color& color, const Format& format = Format());
 	Texture(const char* fileName = NULL, const Format& format = Format());
 	Texture(const Color& color, const Format& format = Format());
 	virtual ~Texture();
 
 	void bind(GLuint textureUnit = 0);
 	void unbind(GLuint textureUnit = 0);
-
 
 	int getWidth() const;
 	int getHeight() const;
@@ -66,25 +68,19 @@ private:
 };
 
 
-////=========================================================================
-//TextureRef Texture::create(const char* fileName, const Format& format)
-//{
-//	//return TextureRef(new Texture(fileName, format));
-//	return std::make_shared<Texture>(fileName, format);
-//}
-//
-////=========================================================================
-//TextureRef Texture::create(const Color& color, const Format& format)
-//{
-//	//return TextureRef(new Texture(color, format));
-//	return std::make_shared<Texture>(color, format);
-//}
+//=========================================================================
+TextureRef Texture::create(const char* fileName, const Format& format)
+{
+	return TextureRef(new Texture(fileName, format));
+	//return std::make_unique<Texture>(fileName, format);
+}
 
 //=========================================================================
-// TextureRef Texture::create(const char* name, const int internalFormat, const int pixelDataFormat, const int width, const int height, const unsigned char* buffer, unsigned int channels, const Format& format)
-// {
-// 	return TextureRef(new Texture(name, internalFormat, pixelDataFormat, width, height, buffer, channels, format));
-// }
+TextureRef Texture::create(const Color& color, const Format& format)
+{
+	return TextureRef(new Texture(color, format));
+	//return std::make_unique<Texture>(color, format);
+}
 
 //=========================================================================
 Texture::Format::Format()
