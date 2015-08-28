@@ -17,6 +17,34 @@
 #include "core/Listeners.h"
 #include "core/Ui.h"
 #include "core/CameraControllers.h"
+#include "core/Entities.h"
+
+struct CInput : Component
+{
+	Input mInput;
+};
+
+struct CCamera : Component
+{
+	CameraPtr mCamera;
+	float mStrafeSpeed{ 0.2f };
+	float mStrafeFastSpeed{ 0.4f };
+
+	void init() override
+	{
+		mCamera = Camera::create();
+		mCamera->setRotateSpeed(0.002f);
+		mCamera->setStrafeSpeed(mStrafeSpeed);
+		mCamera->setPosition(vec3(3.5, 2.2, -8.8));
+		mCamera->setDirection(vec3(-0.4, 0.2, 0.9));
+	}
+
+	void update(double elapsedTime) override
+	{
+	}
+
+	void draw() override {}
+};
 
 class Deferred : public State, public FileMonitorListener
 {
@@ -34,7 +62,7 @@ public:
     virtual void onFileMonitorFileChange(const std::string& fileName);
 
 private:
-    CameraPtr mCamera;
+    //CameraPtr mCamera;
     float mStrafeSpeed{ 0.2f };
     float mStrafeFastSpeed{ 0.4f };
 
@@ -49,7 +77,18 @@ private:
     vec3 mMousePickPos;
 	static bool mShowColorMap;
 
+	Manager mManager;
+	Entity* cameraEntity;
+
+	enum Group : std::size_t
+	{
+		GCamera,
+		GInput,
+		GMesh
+	};
+
     void drawUI();
+	Entity& createCamera();
 };
 
 bool Deferred::mShowColorMap = true;
@@ -117,18 +156,18 @@ void Deferred::setup()
     }
 
 
-    mCamera = Camera::create();
-    mCamera->setRotateSpeed(0.002f);
-    mCamera->setStrafeSpeed(mStrafeSpeed);
-    mCamera->setPosition(vec3(3.5, 2.2, -8.8));
-    //mCamera->setDirection(vec3(-0.023f, 0.419f, 0.907f));
-    mCamera->setDirection(vec3(-0.4, 0.2, 0.9));
-    //mCamera->setLookAt(vec3(0, 0, 0));
+    //mCamera = Camera::create();
+    //mCamera->setRotateSpeed(0.002f);
+    //mCamera->setStrafeSpeed(mStrafeSpeed);
+    //mCamera->setPosition(vec3(3.5, 2.2, -8.8));
+    //mCamera->setDirection(vec3(-0.4, 0.2, 0.9));
 
     /*
     mShader = Shader::create("assets/shaders/basic");
     mShape = Shape::createCube();
     mColorTex = Texture::create("assets/textures/default/default_d.png");*/
+
+	cameraEntity = &createCamera();
 }
 
 //=========================================================================
@@ -140,24 +179,33 @@ void Deferred::cleanup()
 //=========================================================================
 void Deferred::input(Input& input)
 {
-    CameraController::flyController(mCamera, input);
+	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
+
+	CameraController::flyController(cam, input);
 
     if (input.isKeyDown(KEY_ESCAPE))
         quit();
 
-    mMousePickPos = mCamera->pick(input.getMousePosition());
+    mMousePickPos = cam->pick(input.getMousePosition());
 }
 
 //=========================================================================
 void Deferred::update(double elapsedTime)
 {
     mFileMonitor->update();
+
+	mManager.refresh();
+	mManager.update(elapsedTime);
 }
 
 //=========================================================================
 void Deferred::draw()
 {
+	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
+
     gl::enableCullFace(gl::CullFaceType::Back);
+
+	mManager.draw();
 
     Transform transform;
     transform.setRotationX(-90);
@@ -166,13 +214,13 @@ void Deferred::draw()
 
     mShader->bind();
 
-    mShader->setUniform(ShaderConstants::ProjectionMatrix, mCamera->getProjectionMatrix());
+    mShader->setUniform(ShaderConstants::ProjectionMatrix, cam->getProjectionMatrix());
     //mShader->setUniform(ShaderConstants::ViewMatrix,  mCamera->getViewMatrix());
     //mShader->setUniform(ShaderConstants::ModelMatrix, transform.getMatrix());
-    mShader->setUniform(ShaderConstants::ModelViewMatrix, mCamera->getViewMatrix() * transform.getMatrix());
-    mShader->setUniform(ShaderConstants::MVP, mCamera->getProjectionMatrix() *  mCamera->getViewMatrix() * transform.getMatrix());
+    mShader->setUniform(ShaderConstants::ModelViewMatrix, cam->getViewMatrix() * transform.getMatrix());
+    mShader->setUniform(ShaderConstants::MVP, cam->getProjectionMatrix() *  cam->getViewMatrix() * transform.getMatrix());
 
-    auto mv = mCamera->getViewMatrix() * transform.getMatrix();
+    auto mv = cam->getViewMatrix() * transform.getMatrix();
     mShader->setUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 
     //mShader->setUniform(ShaderConstants::MVP, mCamera->get ->getViewMatrix() * transform.getMatrix());
@@ -224,7 +272,8 @@ void Deferred::draw()
 //=========================================================================
 void Deferred::resize(unsigned int width, unsigned int height)
 {
-    mCamera->setAspectRatio((float)width / height);
+	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
+    cam->setAspectRatio((float)width / height);
 }
 
 //=========================================================================
@@ -236,6 +285,8 @@ void Deferred::onFileMonitorFileChange(const std::string& fileName)
 //=========================================================================
 void Deferred::drawUI()
 {
+	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
+
     ImGuiWindowFlags flags = 0;
     flags |= ImGuiWindowFlags_NoTitleBar;
     flags |= ImGuiWindowFlags_NoResize;
@@ -259,8 +310,8 @@ void Deferred::drawUI()
         static int item = 1;
         ui::Combo("combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
 
-        ui::Text("Cam position:  %s", to_string(mCamera->getPosition()).c_str());
-        ui::Text("Cam direction: %s", to_string(mCamera->getDirection()).c_str());
+        ui::Text("Cam position:  %s", to_string(cam->getPosition()).c_str());
+        ui::Text("Cam direction: %s", to_string(cam->getDirection()).c_str());
         //ui::Text("Mouse pick:    %s", to_string(mMousePickPos).c_str());
 		ui::Checkbox("Show color map", &mShowColorMap);
         
@@ -269,4 +320,12 @@ void Deferred::drawUI()
     ui::End();
 
     //ui::ShowTestWindow(NULL);
+}
+
+Entity& Deferred::createCamera()
+{
+	auto& entity(mManager.addEntity());
+	entity.addComponent<CCamera>();
+	entity.addGroup(Group::GCamera);
+	return entity;
 }

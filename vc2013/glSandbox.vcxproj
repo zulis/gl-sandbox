@@ -170,6 +170,7 @@
     <ClInclude Include="..\include\core\Camera.h" />
     <ClInclude Include="..\include\core\CameraControllers.h" />
     <ClInclude Include="..\include\core\Color.h" />
+    <ClInclude Include="..\include\core\Entities.h" />
     <ClInclude Include="..\include\core\FileMonitor.h" />
     <ClInclude Include="..\include\core\Game.h" />
     <ClInclude Include="..\include\core\Geometry.h" />
