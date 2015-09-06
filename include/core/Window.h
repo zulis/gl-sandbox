@@ -41,6 +41,8 @@ public:
 	const mat4 getOrtho() const;
 	void setMouseVisibility(bool isVisible);
 	GLFWwindow* getGLFWWindow() const;
+	const char* getClipboardText();
+	void setClipboardText(const char* text);
 
 private:
 	GLFWwindow* mWindow { nullptr };
@@ -309,4 +311,16 @@ void Window::setMouseVisibility(bool isVisible)
 GLFWwindow* Window::getGLFWWindow() const
 {
 	return mWindow;
+}
+
+//=========================================================================
+const char* Window::getClipboardText()
+{
+	return glfwGetClipboardString(mWindow);
+}
+
+//=========================================================================
+void Window::setClipboardText(const char* text)
+{
+	glfwSetClipboardString(mWindow, text);
 }

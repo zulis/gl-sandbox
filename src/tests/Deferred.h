@@ -290,8 +290,9 @@ void Deferred::drawUI()
     ImGuiWindowFlags flags = 0;
     flags |= ImGuiWindowFlags_NoTitleBar;
     flags |= ImGuiWindowFlags_NoResize;
+	flags |= ImGuiWindowFlags_NoMove;
 
-    ui::SetNextWindowPos(ImVec2(10, 10), ImGuiSetCond_FirstUseEver); // ImGuiSetCond_Always/*ImGuiSetCond_FirstUseEver*/);
+    ui::SetNextWindowPos(ImVec2(10, 10), ImGuiSetCond_FirstUseEver); // ImGuiSetCond_Always //ImGuiSetCond_FirstUseEver);
     ui::Begin("Test", (bool*)true, ImVec2(500, 1000), 0.0f, flags);
 
     static bool showHelp = true;
