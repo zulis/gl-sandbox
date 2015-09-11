@@ -13,12 +13,20 @@ public:
 	virtual void onDraw();
 	virtual void onResize(const unsigned int width, const unsigned int height);
 
+private:
+	TextureID mTexD;
+	TextureID mTexN;
+	TextureID mTexS;
 };
 
 //=========================================================================
 Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 {
 	setTitle("Game!");
+	mTexD = renderer->addTexture("assets/textures/default/default_d.png");
+	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
+	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
+
 }
 
 //=========================================================================
@@ -41,6 +49,10 @@ void Test::onUpdate(double deltaTime)
 //=========================================================================
 void Test::onDraw()
 {
+	renderer->setTexture(3, 0);
+	renderer->setTexture(mTexD, 0);
+	renderer->setTexture(mTexN, 1);
+	renderer->setTexture(mTexS, 2);
 }
 
 //=========================================================================

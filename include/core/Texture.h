@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <memory>
 #include <mutex>
 #include <vector>
 #include "core/GL.h"
@@ -9,17 +8,13 @@
 #include "core/Image.h"
 #include "core/Resource.h"
 
-typedef std::unique_ptr<class Texture> TextureRef;
-
 class Texture
 {
 public:
 	struct Format;
 
-	static TextureRef create(const char *fileName = NULL, const Format& format = Format());
-	static TextureRef create(const Color& color, const Format& format = Format());
-	Texture(const char *fileName = NULL, const Format& format = Format());
-	Texture(const Color& color, const Format& format = Format());
+	Texture(const char *fileName = NULL, const Format &format = Format());
+	Texture(const Color &color, const Format &format = Format());
 	virtual ~Texture();
 
 	void bind(GLuint textureUnit = 0);
@@ -52,8 +47,8 @@ public:
 	};
 
 private:
-	void getTexture(const char *fileName, const Format& format);
-	void getTexture(const Color& color, const Format& format);
+	void getTexture(const char *fileName, const Format &format);
+	void getTexture(const Color &color, const Format &format);
 	void loadFromRaw(const int format, const int width, const int height, const unsigned char *pixels);
 
 	GLuint mTextureID;
@@ -66,21 +61,6 @@ private:
 	//unsigned int mChannels{ 0 };
 
 };
-
-
-//=========================================================================
-TextureRef Texture::create(const char *fileName, const Format& format)
-{
-	return TextureRef(new Texture(fileName, format));
-	//return std::make_unique<Texture>(fileName, format);
-}
-
-//=========================================================================
-TextureRef Texture::create(const Color& color, const Format& format)
-{
-	return TextureRef(new Texture(color, format));
-	//return std::make_unique<Texture>(color, format);
-}
 
 //=========================================================================
 Texture::Format::Format()
@@ -119,12 +99,12 @@ void Texture::Format::setMagFilter(GLenum magFiler)
 }
 
 //=========================================================================
-Texture::Texture(const char *fileName, const Format& format)
+Texture::Texture(const char *fileName, const Format &format)
 {
 	getTexture(fileName, format);
 }
 
-Texture::Texture(const Color& color, const Format& format)
+Texture::Texture(const Color &color, const Format &format)
 {
 	getTexture(color, format);
 }
@@ -132,7 +112,6 @@ Texture::Texture(const Color& color, const Format& format)
 //=========================================================================
 Texture::~Texture()
 {
-
 	if (mTextureID)
 		glDeleteTextures(1, &mTextureID);
 
@@ -140,7 +119,7 @@ Texture::~Texture()
 }
 
 //=========================================================================
-void Texture::getTexture(const char *fileName, const Format& format)
+void Texture::getTexture(const char *fileName, const Format &format)
 {
 	mFormat = format;
 
@@ -155,7 +134,7 @@ void Texture::getTexture(const char *fileName, const Format& format)
 }
 
 //=========================================================================
-void Texture::getTexture(const Color& color, const Format& format)
+void Texture::getTexture(const Color &color, const Format &format)
 {
 	mFormat = format;
 
