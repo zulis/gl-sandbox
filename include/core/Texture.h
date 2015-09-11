@@ -16,9 +16,9 @@ class Texture
 public:
 	struct Format;
 
-	static TextureRef create(const char* fileName = NULL, const Format& format = Format());
+	static TextureRef create(const char *fileName = NULL, const Format& format = Format());
 	static TextureRef create(const Color& color, const Format& format = Format());
-	Texture(const char* fileName = NULL, const Format& format = Format());
+	Texture(const char *fileName = NULL, const Format& format = Format());
 	Texture(const Color& color, const Format& format = Format());
 	virtual ~Texture();
 
@@ -29,8 +29,8 @@ public:
 	int getHeight() const;
 	GLuint getTextureID() const;
 	/*int getChannels() const;
-	const unsigned char* getPixels() const;
-	const char* getFileName() const;
+	const unsigned char *getPixels() const;
+	const char *getFileName() const;
 	*/
 
 	struct Format
@@ -52,15 +52,15 @@ public:
 	};
 
 private:
-	void getTexture(const char* fileName, const Format& format);
+	void getTexture(const char *fileName, const Format& format);
 	void getTexture(const Color& color, const Format& format);
-	void loadFromRaw(const int format, const int width, const int height, const unsigned char* pixels);
+	void loadFromRaw(const int format, const int width, const int height, const unsigned char *pixels);
 
 	GLuint mTextureID;
 	Format mFormat;
-	const char* mFileName;
+	const char *mFileName;
 
-	//unsigned char* mPixels;
+	//unsigned char *mPixels;
 	unsigned int mWidth{ 0 };
 	unsigned int mHeight{ 0 };
 	//unsigned int mChannels{ 0 };
@@ -69,7 +69,7 @@ private:
 
 
 //=========================================================================
-TextureRef Texture::create(const char* fileName, const Format& format)
+TextureRef Texture::create(const char *fileName, const Format& format)
 {
 	return TextureRef(new Texture(fileName, format));
 	//return std::make_unique<Texture>(fileName, format);
@@ -119,7 +119,7 @@ void Texture::Format::setMagFilter(GLenum magFiler)
 }
 
 //=========================================================================
-Texture::Texture(const char* fileName, const Format& format)
+Texture::Texture(const char *fileName, const Format& format)
 {
 	getTexture(fileName, format);
 }
@@ -140,7 +140,7 @@ Texture::~Texture()
 }
 
 //=========================================================================
-void Texture::getTexture(const char* fileName, const Format& format)
+void Texture::getTexture(const char *fileName, const Format& format)
 {
 	mFormat = format;
 
@@ -170,7 +170,7 @@ void Texture::getTexture(const Color& color, const Format& format)
 }
 
 //=========================================================================
-void Texture::loadFromRaw(const int format, const int width, const int height, const unsigned char* pixels)
+void Texture::loadFromRaw(const int format, const int width, const int height, const unsigned char *pixels)
 {
 	// http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
 
@@ -250,13 +250,13 @@ return mImage->getChannels();
 }
 
 //=========================================================================
-const unsigned char* Texture::getPixels() const
+const unsigned char *Texture::getPixels() const
 {
 return mImage->getPixels();
 }
 
 //=========================================================================
-const char* Texture::getFileName() const
+const char *Texture::getFileName() const
 {
 return mImage->getFileName();
 }

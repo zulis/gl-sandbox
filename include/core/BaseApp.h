@@ -1,138 +1,126 @@
 #pragma once
 
-#include <string>
-#include "core/Math.h"
+#if defined(_WIN32) || defined(_WIN64)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include "core/GL.h"
 #include <glfw/glfw3.h>
 #include "core/Input.h"
+#include "core/Renderer.h"
 #include "core/Log.h"
-
-#include "core/BaseApp.h"
-
-extern BaseApp *app;
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
-class Input;
-
 enum class WindowMode
 {
-    Windowed,
-    FullScreen,
-    FullScreenNative
+	Windowed,
+	FullScreen,
+	FullScreenNative
 };
 
-class Window
+class BaseApp
 {
 public:
-	Window(int width, int height, WindowMode mode);
-	virtual ~Window();
+	BaseApp(int width, int height, WindowMode mode);
+	virtual ~BaseApp();
 
-	virtual void resize(unsigned int width, unsigned int height) = 0;
-	virtual void input(Input& input) = 0;
-	virtual void update(double elapsedTime) = 0;
-	virtual void draw() = 0;
+	virtual void onInput(const Input &input) = 0;
+	virtual void onUpdate(double deltaTime) = 0;
+	virtual void onDraw() = 0;
+	virtual void onResize(const unsigned int width, const unsigned int height) = 0;
 
 	void run();
 	void quit();
-	void setTitle(const std::string& title);
-	const Input& getInput() const;
-	Input& getInput();
-	const mat4 getOrtho() const;
-	void setMouseVisibility(bool isVisible);
-	GLFWwindow* getGLFWWindow() const;
-	const char* getClipboardText();
-	void setClipboardText(const char* text);
+	void setTitle(const char *title);
+	void showMouse();
+	void hideMouse();
+	void setClipboardText(const char *text);
+	const char *getClipboardText();
+
+protected:
+	Renderer *renderer;
 
 private:
-	GLFWwindow* mWindow { nullptr };
-	Input mInput;
-	bool mRunning { true };
-	std::string mTitle;
+	GLFWwindow *mWindow;
+	Input *mInput;
+	bool mRunning;
 
+private:
 	inline static void errorCallback(int errorCode, const char* description);
 	inline static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	inline static void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod);
 	inline static void cursorPosCallback(GLFWwindow* window, double x, double y);
 	inline static void scrollCallback(GLFWwindow* window, double offsetX, double offsetY);
 	inline static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
 };
 
 // Callbacks
 //=========================================================================
-void Window::errorCallback(int errorCode, const char* description)
+void BaseApp::errorCallback(int errorCode, const char* description)
 {
 	error(description);
 }
 
 //=========================================================================
-void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void BaseApp::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-
-	bool isDown;
-
-	if(action == GLFW_PRESS)
-		isDown = true;
-	else if(action == GLFW_RELEASE)
-		isDown = false;
-	else
-		// GLFW_REPEAT must be ignored
-		return;
-
-	currentWindow->getInput().setKeyStatus(key, isDown);
+	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
+	baseApp->mInput->setKeyStatus(key, action == GLFW_PRESS ? true : false);
 }
 
 //=========================================================================
-void Window::mouseButtonCallback(GLFWwindow* window, int button, int state, int mod)
+void BaseApp::mouseButtonCallback(GLFWwindow* window, int button, int state, int mod)
 {
+	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
+
 	MouseButton mouseButton;
 
-	if(button == GLFW_MOUSE_BUTTON_LEFT)
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
 		mouseButton = MouseButton::Left;
-	else if(button == GLFW_MOUSE_BUTTON_RIGHT)
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
 		mouseButton = MouseButton::Right;
-	else if(button == GLFW_MOUSE_BUTTON_MIDDLE)
+	else if (button == GLFW_MOUSE_BUTTON_MIDDLE)
 		mouseButton = MouseButton::Middle;
 	else
 		return; // Unsupported
 
-	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	currentWindow->getInput().setMouseButtonStatus(mouseButton, state == GLFW_PRESS);
+	baseApp->mInput->setMouseButtonStatus(mouseButton, state == GLFW_PRESS);
 }
 
 //=========================================================================
-void Window::cursorPosCallback(GLFWwindow* window, double x, double y)
+void BaseApp::cursorPosCallback(GLFWwindow* window, double x, double y)
 {
-	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	currentWindow->getInput().setMousePositionStatus(static_cast<int>(x), static_cast<int>(y));
+	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
+	baseApp->mInput->setMousePositionStatus(static_cast<int>(x), static_cast<int>(y));
 }
 
 //=========================================================================
-void Window::scrollCallback(GLFWwindow* window, double offsetX, double offsetY)
+void BaseApp::scrollCallback(GLFWwindow* window, double offsetX, double offsetY)
 {
-	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	currentWindow->getInput().setMouseScrollStatus(offsetX, offsetY);
+	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
+	baseApp->mInput->setMouseScrollStatus(offsetX, offsetY);
 }
 
 //=========================================================================
-void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+void BaseApp::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	gl::setViewport(width, height);
-	Window* currentWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	currentWindow->resize(width, height);
-
-	//app->onResize(width, height);
+	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
+	baseApp->onResize(width, height);
 }
 
 //=========================================================================
-Window::Window(int width, int height, WindowMode mode)
+BaseApp::BaseApp(int width, int height, WindowMode mode)
 {
 	glfwSetErrorCallback(&errorCallback);
 
-	glfwInit();
+	if (!glfwInit())
+		exit(1);
 
 	//glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -147,7 +135,7 @@ Window::Window(int width, int height, WindowMode mode)
 	GLFWmonitor* mon = glfwGetPrimaryMonitor();
 	const GLFWvidmode* vidmode = glfwGetVideoMode(mon);
 
-	if(mode == WindowMode::FullScreenNative)
+	if (mode == WindowMode::FullScreenNative)
 	{
 		width = vidmode->width;
 		height = vidmode->height;
@@ -155,7 +143,7 @@ Window::Window(int width, int height, WindowMode mode)
 
 	mWindow = glfwCreateWindow(width, height, "", (mode == WindowMode::FullScreen || mode == WindowMode::FullScreenNative) ? mon : NULL, NULL);
 
-	if(!mWindow)
+	if (!mWindow)
 		exit(1);
 
 	glfwMakeContextCurrent(mWindow);
@@ -178,7 +166,7 @@ Window::Window(int width, int height, WindowMode mode)
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 
-	if(GLEW_OK != err)
+	if (GLEW_OK != err)
 	{
 		error("OpenGL initialisation failed: %s", glewGetErrorString(err));
 		glfwDestroyWindow(mWindow);
@@ -187,39 +175,51 @@ Window::Window(int width, int height, WindowMode mode)
 	}
 
 	// Display some information about the OpenGL version we are running
-	const GLubyte* renderer = glGetString(GL_RENDERER);
-	const GLubyte* vendor = glGetString(GL_VENDOR);
-	const GLubyte* version = glGetString(GL_VERSION);
+	const GLubyte* glRenderer = glGetString(GL_RENDERER);
+	const GLubyte* glVendor = glGetString(GL_VENDOR);
+	const GLubyte* glVersion = glGetString(GL_VERSION);
 	const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-	GLint major, minor;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
+	GLint glMajor, glMinor;
+	glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
+	glGetIntegerv(GL_MINOR_VERSION, &glMinor);
 
-	note("GL Vendor    = %s", vendor);
-	note("GL Renderer  = %s", renderer);
-	note("GL Version (string)  = %s", version);
-	note("GL Version (integer) = %d.%d", major, minor);
+	note("GL Vendor    = %s", glVendor);
+	note("GL Renderer  = %s", glRenderer);
+	note("GL Version (string)  = %s", glVersion);
+	note("GL Version (integer) = %d.%d", glMajor, glMinor);
 	note("GLSL Version = %s", glslVersion);
 
-
+	mInput = new Input();
+	renderer = new Renderer();
 }
 
 //=========================================================================
-Window::~Window()
+BaseApp::~BaseApp()
 {
-	glfwDestroyWindow(mWindow);
-	glfwTerminate();
+	if (renderer)
+		delete renderer;
+
+	if (mInput)
+		delete mInput;
+	
+	if (mWindow)
+	{
+		glfwDestroyWindow(mWindow);
+		glfwTerminate();
+	}
 }
 
 //=========================================================================
-void Window::run()
+void BaseApp::run()
 {
+	mRunning = true;
+
 	// Call resize before we start
 	{
 		int width, height;
 		glfwGetFramebufferSize(mWindow, &width, &height);
-		resize(width, height);
+		onResize(width, height);
 	}
 
 	glfwSetTime(0.0);
@@ -229,7 +229,7 @@ void Window::run()
 	const double frameTime = 1.0 / 60.0;
 	int frames = 0;
 
-	while(!glfwWindowShouldClose(mWindow) && mRunning)
+	while (!glfwWindowShouldClose(mWindow) && mRunning)
 	{
 		const double timeStamp = glfwGetTime();
 		const double dt = timeStamp - lastTimeStamp;
@@ -237,25 +237,23 @@ void Window::run()
 		accumulator += dt;
 		frameCounter += dt;
 
-		input(mInput);
 		// Reset mouse statuses
-		mInput.setMouseScrollStatus(0, 0);
-		mInput.setMousePositionChangeStatus(0, 0);
-		// Check mouse visibility
-		setMouseVisibility(mInput.isMouseVisible());
+		onInput(*mInput);
+		mInput->setMouseScrollStatus(0, 0);
+		mInput->setMousePositionChangeStatus(0, 0);
 
-// 		if(frameCounter >= 1.0)
-// 		{
-// 			double totalTime = 1000.0 * frameCounter / (double)frames;
-// 			double fps = 1000.0f / totalTime;
-// 			glfwSetWindowTitle(mWindow, std::string(mTitle + " [" + std::to_string(fps) + "]").c_str());
-// 			frames = 0;
-// 			frameCounter = 0;
-// 		}
+		// 		if(frameCounter >= 1.0)
+		// 		{
+		// 			double totalTime = 1000.0 * frameCounter / (double)frames;
+		// 			double fps = 1000.0f / totalTime;
+		// 			glfwSetWindowTitle(mWindow, std::string(mTitle + " [" + std::to_string(fps) + "]").c_str());
+		// 			frames = 0;
+		// 			frameCounter = 0;
+		// 		}
 
-		while(mRunning && accumulator >= frameTime)
+		while (mRunning && accumulator >= frameTime)
 		{
-			update(frameTime);
+			onUpdate(frameTime);
 			accumulator -= frameTime;
 		}
 
@@ -263,7 +261,7 @@ void Window::run()
 		gl::enable3D();
 		gl::enableAlphaBlending();
 
-		draw();
+		onDraw();
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
@@ -272,59 +270,37 @@ void Window::run()
 }
 
 //=========================================================================
-void Window::quit()
+void BaseApp::quit()
 {
 	mRunning = false;
 }
 
 //=========================================================================
-void Window::setTitle(const std::string& title)
+void BaseApp::setTitle(const char *title)
 {
-	mTitle = title;
-	glfwSetWindowTitle(mWindow, title.c_str());
+	glfwSetWindowTitle(mWindow, title);
 }
 
 //=========================================================================
-const Input& Window::getInput() const
+void BaseApp::showMouse()
 {
-	return mInput;
+	glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 //=========================================================================
-Input& Window::getInput()
+void BaseApp::hideMouse()
 {
-	return mInput;
+	glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 //=========================================================================
-const mat4 Window::getOrtho() const
-{
-	int width;
-	int height;
-	glfwGetFramebufferSize(mWindow, &width, &height);
-	return ortho(0.0f, (float)width, (float)height, (float)0.0f);
-}
-
-//=========================================================================
-void Window::setMouseVisibility(bool isVisible)
-{
-	glfwSetInputMode(mWindow, GLFW_CURSOR, isVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-}
-
-//=========================================================================
-GLFWwindow* Window::getGLFWWindow() const
-{
-	return mWindow;
-}
-
-//=========================================================================
-const char* Window::getClipboardText()
-{
-	return glfwGetClipboardString(mWindow);
-}
-
-//=========================================================================
-void Window::setClipboardText(const char* text)
+void BaseApp::setClipboardText(const char *text)
 {
 	glfwSetClipboardString(mWindow, text);
+}
+
+//=========================================================================
+const char *BaseApp::getClipboardText()
+{
+	return glfwGetClipboardString(mWindow);
 }

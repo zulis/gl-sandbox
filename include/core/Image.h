@@ -8,16 +8,17 @@
 class Image
 {
 public:
-	Image(const char* fileName = NULL);
+	Image();
+	Image(const char *fileName);
 	Image(const Color& color);
-	virtual ~Image();
+	~Image();
 
-	unsigned int getWidth();
-	unsigned int getHeight();
-	unsigned int getChannels();
-	unsigned int getBpp();
-	const unsigned char* getPixels();
-	const char* getFileName() const;
+	unsigned int getWidth() const;
+	unsigned int getHeight() const;
+	unsigned int getChannels() const;
+	unsigned int getBpp() const;
+	unsigned char *getPixels() const;
+	const char *getFileName() const;
 	void flipVertical();
 	void flipHorizontal();
 
@@ -26,19 +27,25 @@ private:
 	unsigned int mHeight;
 	unsigned int mChannels;
 	unsigned int mBpp;
-	unsigned char* mPixels;
-	char* mFileName;
+	unsigned char *mPixels;
+	const char *mFileName;
 
 private:
 	void generateCheckImage();
 	void generateImage(const Color& color);
-	void loadFromFile(const char* fileName);
-	static void FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char* message);
+	void loadFromFile(const char *fileName);
+	static void FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char *message);
 
 };
 
 //=========================================================================
-Image::Image(const char* fileName)
+Image::Image()
+{
+	loadFromFile(NULL);
+}
+
+//=========================================================================
+Image::Image(const char *fileName)
 {
 	loadFromFile(fileName);
 }
@@ -64,7 +71,7 @@ Image::~Image()
 }
 
 //=========================================================================
-void Image::loadFromFile(const char* fileName)
+void Image::loadFromFile(const char *fileName)
 {
 	// Is called ONLY when linking with FreeImage as a static library
 #ifdef FREEIMAGE_LIB
@@ -178,7 +185,7 @@ void Image::generateCheckImage()
 void Image::generateImage(const Color& color)
 {
 	std::string tmp("Color (r:" + std::to_string(color.r) + " g:" + std::to_string(color.g) + " b:" + std::to_string(color.b) + " a:" + std::to_string(color.a) + ")");
-	mFileName = strdup(tmp.c_str());
+	mFileName = tmp.c_str();
 
 	mWidth = 1;
 	mHeight = 1;
@@ -197,43 +204,43 @@ void Image::generateImage(const Color& color)
 }
 
 //=========================================================================
-void Image::FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char* message)
+void Image::FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char *message)
 {
 	error("FreeImage error: %s", message);
 }
 
 //=========================================================================
-unsigned int Image::getWidth()
+unsigned int Image::getWidth() const
 {
 	return mWidth;
 }
 
 //=========================================================================
-unsigned int Image::getHeight()
+unsigned int Image::getHeight() const
 {
 	return mHeight;
 }
 
 //=========================================================================
-unsigned int Image::getChannels()
+unsigned int Image::getChannels() const
 {
 	return mChannels;
 }
 
 //=========================================================================
-unsigned int Image::getBpp()
+unsigned int Image::getBpp() const
 {
 	return mBpp;
 }
 
 //=========================================================================
-const unsigned char* Image::getPixels()
+unsigned char *Image::getPixels() const
 {
 	return mPixels;
 }
 
 //=========================================================================
-const char* Image::getFileName() const
+const char *Image::getFileName() const
 {
 	return mFileName;
 }

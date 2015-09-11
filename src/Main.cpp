@@ -1,7 +1,22 @@
 //#include "tests/Test.h"
 //#include "tests/LoadLevelTest.h"
-#include "tests/Deferred.h"
+//#include "tests/Deferred.h"
+
+/*
+#ifdef _MSC_VER
+#    pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
+#endif
+*/
 
 //RUN(Test)
 //RUN(LoadLevelTest)
-RUN(Deferred)
+//RUN(Deferred)
+
+#include "tests/Test.h"
+
+void main(int argc, char *argv[])
+{
+	Test test;
+	test.run();
+}
+

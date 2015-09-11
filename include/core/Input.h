@@ -14,7 +14,7 @@ class Input
 {
 public:
 	Input() {};
-	virtual ~Input() {};
+	~Input() {};
 
 	void setKeyStatus(int key, bool isDown);
 	bool isKeyDown(int key) const;
@@ -32,9 +32,6 @@ public:
 	double getMouseScroolX() const;
 	double getMouseScroolY() const;
 	bool isMouseDown(const MouseButton& button) const;
-	void showMouse();
-	void hideMouse();
-	bool isMouseVisible() const;
 
 private:
 	std::unordered_map<int, bool> mKeyMap;
@@ -46,7 +43,6 @@ private:
 	int mMouseChangeY{ 0 };
 	double mMouseScrollX { 0 };
 	double mMouseScrollY { 0 };
-	bool mMouseIsVisible{ true };
 };
 
 //=========================================================================
@@ -165,24 +161,6 @@ bool Input::isMouseDown(const MouseButton& button) const
 		return mMouseMap.at(button);
 	else
 		return false;
-}
-
-//=========================================================================
-void Input::showMouse()
-{
-	mMouseIsVisible = true;
-}
-
-//=========================================================================
-void Input::hideMouse()
-{
-	mMouseIsVisible = false;
-}
-
-//=========================================================================
-bool Input::isMouseVisible() const
-{
-	return mMouseIsVisible;
 }
 
 //=========================================================================
