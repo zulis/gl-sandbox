@@ -78,7 +78,7 @@ void Image::loadFromFile(const char *fileName)
 	FreeImage_Initialise();
 #endif
 
-	mFileName = strdup(fileName);
+	mFileName = _strdup(fileName);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	FIBITMAP* bitmap(0);
 
@@ -144,7 +144,7 @@ void Image::loadFromFile(const char *fileName)
                     //Free FreeImage's copy of the data
                     FreeImage_Unload(bitmap);
 
-                    note("Image created: %s", mFileName);
+                    note("Image loaded: %s", mFileName);
                 }
             }
         }
@@ -178,7 +178,7 @@ void Image::generateCheckImage()
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, checkImage, mWidth * mHeight * mChannels);
-	note("Image created: %s", mFileName);
+	note("Image loaded: %s", mFileName);
 }
 
 //=========================================================================
@@ -200,7 +200,7 @@ void Image::generateImage(const Color& color)
 
 	mPixels = (unsigned char*)malloc(mWidth * mHeight * mChannels);
 	memcpy(mPixels, image, mWidth * mHeight * mChannels);
-	note("Image created: %s", mFileName);
+	note("Image loaded: %s", mFileName);
 }
 
 //=========================================================================

@@ -17,6 +17,8 @@ private:
 	TextureID mTexD;
 	TextureID mTexN;
 	TextureID mTexS;
+
+	ShaderID mShader;
 };
 
 //=========================================================================
@@ -27,6 +29,7 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
 	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
 
+	mShader = renderer->addShader("assets/shaders/basic.shd");
 }
 
 //=========================================================================
@@ -53,6 +56,8 @@ void Test::onDraw()
 	renderer->setTexture(mTexD, 0);
 	renderer->setTexture(mTexN, 1);
 	renderer->setTexture(mTexS, 2);
+
+	renderer->setShader(mShader);
 }
 
 //=========================================================================

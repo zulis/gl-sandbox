@@ -20,6 +20,9 @@ public:
 	TextureID addTexture(const Color &color, const Texture::Format &format = Texture::Format());
 	void setTexture(const TextureID texureID, int textureUnit = 0);
 
+	ShaderID addShader(const char *fileName);
+	void setShader(const ShaderID shaderID);
+
 private:
 	std::vector<Texture*> mTextures;
 	std::vector<Shader*> mShaders;
@@ -68,4 +71,19 @@ void Renderer::setTexture(const TextureID texureID, int textureUnit)
 {
 	if (texureID < mTextures.size())
 		mTextures[texureID]->bind(textureUnit);
+}
+
+//=========================================================================
+ShaderID Renderer::addShader(const char *fileName)
+{
+	Shader *shader = new Shader(fileName);
+	mShaders.push_back(shader);
+	return mShaders.size() - 1;
+}
+
+//=========================================================================
+void Renderer::setShader(const ShaderID shaderID)
+{
+	if (shaderID < mShaders.size())
+		mShaders[shaderID]->bind();
 }

@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <mutex>
 #include <vector>
 #include "core/GL.h"
 #include "core/Color.h"
@@ -15,7 +14,7 @@ public:
 
 	Texture(const char *fileName = NULL, const Format &format = Format());
 	Texture(const Color &color, const Format &format = Format());
-	virtual ~Texture();
+	~Texture();
 
 	void bind(GLuint textureUnit = 0);
 	void unbind(GLuint textureUnit = 0);

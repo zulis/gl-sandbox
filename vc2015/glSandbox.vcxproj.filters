@@ -31,9 +31,6 @@
     <ClInclude Include="..\include\Core\Window.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tests\Deferred.h">
-      <Filter>src\tests</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\StateManager.h">
       <Filter>include\core</Filter>
     </ClInclude>
@@ -97,6 +94,12 @@
     <ClInclude Include="..\include\core\Listeners.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\external\src\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\src\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\core\Ui.h">
       <Filter>include\core</Filter>
     </ClInclude>
@@ -115,23 +118,17 @@
     <ClInclude Include="..\include\core\Entities.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\external\src\imgui\imconfig.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="..\include\core\Renderer.h">
+      <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\external\src\imgui\imgui.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="..\include\core\BaseApp.h">
+      <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\external\src\imgui\imgui_internal.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="..\src\tests\Test.h">
+      <Filter>src\tests</Filter>
     </ClInclude>
-    <ClInclude Include="..\external\src\imgui\stb_rect_pack.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\external\src\imgui\stb_textedit.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\external\src\imgui\stb_truetype.h">
-      <Filter>imgui</Filter>
+    <ClInclude Include="..\src\tests\Deferred.h">
+      <Filter>src\tests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
