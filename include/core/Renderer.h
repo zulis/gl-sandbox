@@ -3,6 +3,7 @@
 #include <vector>
 #include "core/Texture.h"
 #include "core/Shader.h"
+#include "core/Color.h"
 
 typedef int TextureID;
 typedef int ShaderID;
@@ -12,26 +13,32 @@ typedef int ShaderID;
 
 class Renderer
 {
+	friend class BaseApp;
+
 public:
 	Renderer();
 	~Renderer();
 
-	TextureID addTexture(const char *fileName = NULL, const Texture::Format& format = Texture::Format());
+	TextureID addTexture(const std::string &fileName = std::string(), const Texture::Format& format = Texture::Format());
 	TextureID addTexture(const Color &color, const Texture::Format &format = Texture::Format());
 	void setTexture(const TextureID texureID, int textureUnit = 0);
 
-	ShaderID addShader(const char *fileName);
+	ShaderID addShader(const std::string &fileName);
 	void setShader(const ShaderID shaderID);
+
+	void setCearColor(const Color &color);
 
 private:
 	std::vector<Texture*> mTextures;
 	std::vector<Shader*> mShaders;
+	Color mClearColor;
 
 };
 
 //=========================================================================
 Renderer::Renderer()
 {
+	mClearColor = Color::black();
 }
 
 //=========================================================================
@@ -51,7 +58,7 @@ Renderer::~Renderer()
 }
 
 //=========================================================================
-TextureID Renderer::addTexture(const char *fileName, const Texture::Format& format)
+TextureID Renderer::addTexture(const std::string &fileName, const Texture::Format& format)
 {
 	Texture *texture = new Texture(fileName, format);
 	mTextures.push_back(texture);
@@ -74,7 +81,7 @@ void Renderer::setTexture(const TextureID texureID, int textureUnit)
 }
 
 //=========================================================================
-ShaderID Renderer::addShader(const char *fileName)
+ShaderID Renderer::addShader(const std::string &fileName)
 {
 	Shader *shader = new Shader(fileName);
 	mShaders.push_back(shader);
@@ -86,4 +93,10 @@ void Renderer::setShader(const ShaderID shaderID)
 {
 	if (shaderID < mShaders.size())
 		mShaders[shaderID]->bind();
+}
+
+//=========================================================================
+void Renderer::setCearColor(const Color &color)
+{
+	mClearColor = color;
 }

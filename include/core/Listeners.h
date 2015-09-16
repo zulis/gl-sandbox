@@ -4,5 +4,5 @@ class FileMonitorListener
 {
 public:
 	virtual ~FileMonitorListener() {}
-	virtual void onFileMonitorFileChange(const std::string& fileName) = 0;
+	virtual void onFileMonitorFileChange(const std::string &fileName) = 0;
 };

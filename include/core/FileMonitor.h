@@ -24,12 +24,12 @@ public:
     FileMonitor();
     ~FileMonitor() {};
 
-    void addFile(const std::string& fileName);
+    void addFile(const std::string &fileName);
     void update();
 
 private:
-    //void check(const std::string& fileName);
-    std::time_t getFileTime(const std::string& fileName);
+    //void check(const std::string &fileName);
+    std::time_t getFileTime(const std::string &fileName);
     //std::vector<std::future<void>> mTasks;
     std::unordered_map<std::string, std::time_t> mFileNameMap;
     Clock::time_point mTime;
@@ -48,7 +48,7 @@ FileMonitor::FileMonitor()
 }
 
 //=========================================================================
-//void FileMonitor::check(const std::string& fileName)
+//void FileMonitor::check(const std::string &fileName)
 //{
 //	auto time = getFileTime(fileName);
 //
@@ -66,11 +66,11 @@ FileMonitor::FileMonitor()
 //}
 
 //=========================================================================
-void FileMonitor::addFile(const std::string& fileName)
+void FileMonitor::addFile(const std::string &fileName)
 {
     mFileNameMap[fileName] = getFileTime(fileName);
 
-    //std::async([&](const std::string& fileName)
+    //std::async([&](const std::string &fileName)
     //{
     //	auto time = getFileTime(fileName);
 
@@ -113,7 +113,7 @@ void FileMonitor::update()
 }
 
 //=========================================================================
-std::time_t FileMonitor::getFileTime(const std::string& fileName)
+std::time_t FileMonitor::getFileTime(const std::string &fileName)
 {
     struct tm* time;
     struct stat attrib;

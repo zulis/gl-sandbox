@@ -37,7 +37,7 @@ public:
 
 	void run();
 	void quit();
-	void setTitle(const std::string& title);
+	void setTitle(const std::string &title);
 	const Input& getInput() const;
 	Input& getInput();
 	const mat4 getOrtho() const;
@@ -278,7 +278,7 @@ void Window::quit()
 }
 
 //=========================================================================
-void Window::setTitle(const std::string& title)
+void Window::setTitle(const std::string &title)
 {
 	mTitle = title;
 	glfwSetWindowTitle(mWindow, title.c_str());

@@ -59,7 +59,7 @@ public:
     virtual void draw();
     virtual void resize(unsigned int width, unsigned int height);
 
-    virtual void onFileMonitorFileChange(const std::string& fileName);
+    virtual void onFileMonitorFileChange(const std::string &fileName);
 
 private:
     //CameraPtr mCamera;
@@ -277,7 +277,7 @@ void Deferred::resize(unsigned int width, unsigned int height)
 }
 
 //=========================================================================
-void Deferred::onFileMonitorFileChange(const std::string& fileName)
+void Deferred::onFileMonitorFileChange(const std::string &fileName)
 {
     mShader->reload();
 }

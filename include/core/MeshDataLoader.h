@@ -17,19 +17,19 @@
 class MeshDataLoader
 {
 public:
-	MeshDataLoader(const std::string& fileName, float scaleFactor = 1.0f);
+	MeshDataLoader(const std::string &fileName, float scaleFactor = 1.0f);
 	virtual ~MeshDataLoader() {};
 
-	const MeshData getMeshData();
+	const MeshData &getMeshData();
 
-	//void setTexturePath(const std::string& texturePath);
+	//void setTexturePath(const std::string &texturePath);
 
 private:
 	//MeshLoader(const MeshLoader&);
 	//MeshLoader& operator = (const MeshLoader&);
 	//std::string mTexturePath;
 	MeshData mMeshData;
-	MeshData loadFromFile(const std::string& fileName, float scaleFactor = 1.0f);
+	MeshData loadFromFile(const std::string &fileName, float scaleFactor = 1.0f);
 
 	//std::string getFileName(std::string& pathName) const;
 	//std::string setDefaultTexturePath(std::string pathName) const;
@@ -49,19 +49,19 @@ private:
 };
 
 //=========================================================================
-MeshDataLoader::MeshDataLoader(const std::string& fileName, float scaleFactor)
+MeshDataLoader::MeshDataLoader(const std::string &fileName, float scaleFactor)
 {
 	mMeshData = loadFromFile(fileName, scaleFactor);
 }
 
 //=========================================================================
-const MeshData MeshDataLoader::getMeshData()
+const MeshData &MeshDataLoader::getMeshData()
 {
 	return mMeshData;
 }
 
 //=========================================================================
-MeshData MeshDataLoader::loadFromFile(const std::string& fileName, float scaleFactor)
+MeshData MeshDataLoader::loadFromFile(const std::string &fileName, float scaleFactor)
 {
 	MeshData meshData;
 
@@ -445,7 +445,7 @@ std::vector<vec2> MeshDataLoader::getTexCoords(const aiMesh* aimesh)
 //}
 
 //=========================================================================
-//void MeshLoader::setTexturePath(const std::string& texturePath)
+//void MeshLoader::setTexturePath(const std::string &texturePath)
 //{
 //	mTexturePath = texturePath;
 //}

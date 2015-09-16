@@ -12,7 +12,7 @@ class Texture
 public:
 	struct Format;
 
-	Texture(const char *fileName = NULL, const Format &format = Format());
+	Texture(const std::string &fileName = std::string(), const Format &format = Format());
 	Texture(const Color &color, const Format &format = Format());
 	~Texture();
 
@@ -46,7 +46,7 @@ public:
 	};
 
 private:
-	void getTexture(const char *fileName, const Format &format);
+	void getTexture(const std::string &fileName, const Format &format);
 	void getTexture(const Color &color, const Format &format);
 	void loadFromRaw(const int format, const int width, const int height, const unsigned char *pixels);
 
@@ -98,7 +98,7 @@ void Texture::Format::setMagFilter(GLenum magFiler)
 }
 
 //=========================================================================
-Texture::Texture(const char *fileName, const Format &format)
+Texture::Texture(const std::string &fileName, const Format &format)
 {
 	getTexture(fileName, format);
 }
@@ -118,7 +118,7 @@ Texture::~Texture()
 }
 
 //=========================================================================
-void Texture::getTexture(const char *fileName, const Format &format)
+void Texture::getTexture(const std::string &fileName, const Format &format)
 {
 	mFormat = format;
 

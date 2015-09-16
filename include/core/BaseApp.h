@@ -260,6 +260,7 @@ void BaseApp::run()
 		// Enable 3D rendering & alpha
 		gl::enable3D();
 		gl::enableAlphaBlending();
+		gl::clear(renderer->mClearColor);
 
 		onDraw();
 

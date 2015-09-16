@@ -9,7 +9,7 @@ class Image
 {
 public:
 	Image();
-	Image(const char *fileName);
+	Image(const std::string &fileName);
 	Image(const Color& color);
 	~Image();
 
@@ -33,7 +33,7 @@ private:
 private:
 	void generateCheckImage();
 	void generateImage(const Color& color);
-	void loadFromFile(const char *fileName);
+	void loadFromFile(const std::string &fileName);
 	static void FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char *message);
 
 };
@@ -45,7 +45,7 @@ Image::Image()
 }
 
 //=========================================================================
-Image::Image(const char *fileName)
+Image::Image(const std::string &fileName)
 {
 	loadFromFile(fileName);
 }
@@ -71,30 +71,30 @@ Image::~Image()
 }
 
 //=========================================================================
-void Image::loadFromFile(const char *fileName)
+void Image::loadFromFile(const std::string &fileName)
 {
 	// Is called ONLY when linking with FreeImage as a static library
 #ifdef FREEIMAGE_LIB
 	FreeImage_Initialise();
 #endif
 
-	mFileName = _strdup(fileName);
+	mFileName = _strdup(fileName.c_str());
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	FIBITMAP* bitmap(0);
 
 	// Set error handler
 	FreeImage_SetOutputMessage(FreeImageLoadErrorHandler);
 
-    if (fileName == NULL)
+    if (fileName.empty())
         generateCheckImage();
     else
     {
         // Check the file signature and deduce its format
-        fif = FreeImage_GetFileType(fileName, 0);
+		fif = FreeImage_GetFileType(fileName.c_str(), 0);
 
         // If still unknown, try to guess the file format from the file extension
         if (fif == FIF_UNKNOWN)
-            fif = FreeImage_GetFIFFromFilename(fileName);
+			fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 
         // If still unknown, return failure
         if (fif == FIF_UNKNOWN)
@@ -103,7 +103,7 @@ void Image::loadFromFile(const char *fileName)
         {
             // Check that the plugin has reading capabilities and load the file
             if (FreeImage_FIFSupportsReading(fif))
-                bitmap = FreeImage_Load(fif, fileName);
+                bitmap = FreeImage_Load(fif, fileName.c_str());
 
             // If the image failed to load, return failure
             if (!bitmap)
