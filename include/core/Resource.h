@@ -1,28 +1,39 @@
 #pragma once
 
+// Using ideas from mine post http://stackoverflow.com/questions/32628963/c-templates-stdtuple-to-void-and-back
+
 #include <memory>
-#include <typeindex>
 #include <map>
+
+template<class T, class...Args>
+std::map<std::tuple<Args...>, std::shared_ptr<T>>& getCache()
+{
+	static std::map<std::tuple<Args...>, std::shared_ptr<T>> cache; // only run once
+	return cache;
+}
 
 template<typename T, typename... Args>
 std::shared_ptr<T> getResource(Args&& ... args)
 {
-	static std::map<std::tuple<Args...>, std::shared_ptr<T>> objectCollection;
+	// std::decay_t should be used
+	auto& cache = getCache<T, std::decay_t<Args>...>();
 
 	// Creating tuple from the arguments
-	std::tuple<Args...> currentArgs(std::forward<Args>(args)...);
+	auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
 
-	//Search for object in map
-	auto objectIter = objectCollection.find(currentArgs);
+	// Search for object in the cache
+	auto it = cache.find(arguments);
 
-	if (objectIter != objectCollection.end())
+	if (it != cache.end())
 	{
-		return objectIter->second;
+		// Found. Return.
+		return it->second;
 	}
 
-	std::shared_ptr<T> newObject(new T(args...));
-	objectCollection.insert(std::pair<std::tuple<Args...>, std::shared_ptr<T>>(currentArgs, newObject));
-	return newObject;
+	// Not found. Add to cache.
+	auto object = std::make_shared<T>(std::forward<Args>(args)...);
+	cache.emplace(std::make_pair(std::move(arguments), object));
+	return object;
 }
 
 class Resource

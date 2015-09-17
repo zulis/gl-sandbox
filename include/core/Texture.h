@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include <memory>
-#include <vector>
-#include <map>
+//#include <memory>
+//#include <vector>
+//#include <map>
 #include "core/GL.h"
 #include "core/Color.h"
 #include "core/Log.h"
 #include "core/Image.h"
-//#include "core/Resource.h"
+#include "core/Resource.h"
 
 class Texture
 {
@@ -57,48 +57,48 @@ private:
 	unsigned int mHeight{ 0 };
 	//unsigned int mChannels{ 0 };
 
-	static std::map<std::string, std::shared_ptr<Image>> sImages;
-	static std::map<Color, std::shared_ptr<Image>> sImagesColor;
+	/*static std::map<std::string, std::shared_ptr<Image>> sImages;
+	static std::map<Color, std::shared_ptr<Image>> sImagesColor;*/
 
 private:
 	void getTexture(const std::string &fileName, const Format &format);
 	void getTexture(const Color &color, const Format &format);
 	void loadFromRaw(const int format, const int width, const int height, const unsigned char *pixels);
-	Image* getImage(const std::string &fileName);
-	Image* getImage(const Color &color);
+	/*Image* getImage(const std::string &fileName);
+	Image* getImage(const Color &color);*/
 
 };
 
-std::map<std::string, std::shared_ptr<Image>> Texture::sImages;
-std::map<Color, std::shared_ptr<Image>> Texture::sImagesColor;
-
-//=========================================================================
-Image* Texture::getImage(const std::string &fileName)
-{
-	auto it = sImages.find(fileName);
-	if (it != sImages.end())
-		return it->second.get();
-	else
-	{
-		std::shared_ptr<Image> newObject(new Image(fileName));
-		sImages.insert(std::make_pair(fileName, newObject));
-		return newObject.get();
-	}
-}
-
-//=========================================================================
-Image* Texture::getImage(const Color &color)
-{
-	auto it = sImagesColor.find(color);
-	if (it != sImagesColor.end())
-		return it->second.get();
-	else
-	{
-		std::shared_ptr<Image> newObject(new Image(color));
-		sImagesColor.insert(std::make_pair(color, newObject));
-		return newObject.get();
-	}
-}
+//std::map<std::string, std::shared_ptr<Image>> Texture::sImages;
+//std::map<Color, std::shared_ptr<Image>> Texture::sImagesColor;
+//
+////=========================================================================
+//Image* Texture::getImage(const std::string &fileName)
+//{
+//	auto it = sImages.find(fileName);
+//	if (it != sImages.end())
+//		return it->second.get();
+//	else
+//	{
+//		std::shared_ptr<Image> newObject(new Image(fileName));
+//		sImages.insert(std::make_pair(fileName, newObject));
+//		return newObject.get();
+//	}
+//}
+//
+////=========================================================================
+//Image* Texture::getImage(const Color &color)
+//{
+//	auto it = sImagesColor.find(color);
+//	if (it != sImagesColor.end())
+//		return it->second.get();
+//	else
+//	{
+//		std::shared_ptr<Image> newObject(new Image(color));
+//		sImagesColor.insert(std::make_pair(color, newObject));
+//		return newObject.get();
+//	}
+//}
 
 //=========================================================================
 Texture::Format::Format()
@@ -161,8 +161,8 @@ void Texture::getTexture(const std::string &fileName, const Format &format)
 {
 	mFormat = format;
 
-	//auto image = Resource::get<Image>(fileName);
-	auto image = getImage(fileName);
+	auto image = Resource::get<Image>(fileName);
+	//auto image = getImage(fileName);
 	mFileName = image->getFileName();
 
 	if (mFormat.mFlipped)
@@ -177,8 +177,8 @@ void Texture::getTexture(const Color &color, const Format &format)
 {
 	mFormat = format;
 
-	//auto image = Resource::get<Image>(color);
-	auto image = getImage(color);
+	auto image = Resource::get<Image>(color);
+	//auto image = getImage(color);
 	mFileName = image->getFileName();
 
 	if (mFormat.mFlipped)

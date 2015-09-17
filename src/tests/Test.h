@@ -31,11 +31,11 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 
 	mTexD = renderer->addTexture("assets/textures/default/default_d.png");
 	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
-	mTexS = renderer->addTexture("assets/textures/default/default_d.png");
+	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
 
 	mShader1 = renderer->addShader("assets/shaders/basic.shd");
-	//mShader2 = renderer->addShader("assets/shaders/basic.shd");
-	//mShader3 = renderer->addShader("assets/shaders/basic.shd");
+	mShader2 = renderer->addShader("assets/shaders/basic.shd");
+	mShader3 = renderer->addShader("assets/shaders/basic.shd");
 }
 
 //=========================================================================

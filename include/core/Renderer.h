@@ -4,6 +4,7 @@
 #include "core/Texture.h"
 #include "core/Shader.h"
 #include "core/Color.h"
+#include "core/Resource.h"
 
 typedef int TextureID;
 typedef int ShaderID;
@@ -51,8 +52,8 @@ Renderer::~Renderer()
 	mTextures.clear();
 
 	// Cleanup shaders
-	for (const Shader *shader : mShaders)
-		delete shader;
+	//for (const Shader *shader : mShaders)
+		//delete shader;
 
 	mShaders.clear();
 }
@@ -83,8 +84,9 @@ void Renderer::setTexture(const TextureID texureID, int textureUnit)
 //=========================================================================
 ShaderID Renderer::addShader(const std::string &fileName)
 {
-	Shader *shader = new Shader(fileName);
-	mShaders.push_back(shader);
+	//Shader *shader = new Shader(fileName);
+	auto shader = Resource::get<Shader>(fileName);
+	mShaders.push_back(shader.get());
 	return mShaders.size() - 1;
 }
 
