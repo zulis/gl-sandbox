@@ -28,8 +28,8 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	renderer->setCearColor(Color::gray(0.5f));
 
 	mTexD = renderer->addTexture("assets/textures/default/default_d.png");
-	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
-	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
+	mTexN = renderer->addTexture("assets/textures/default/default_d.png");
+	mTexS = renderer->addTexture("assets/textures/default/default_d.png");
 
 	mShader = renderer->addShader("assets/shaders/basic.shd");
 }
