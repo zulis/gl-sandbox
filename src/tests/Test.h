@@ -18,7 +18,9 @@ private:
 	TextureID mTexN;
 	TextureID mTexS;
 
-	ShaderID mShader;
+	ShaderID mShader1;
+	ShaderID mShader2;
+	ShaderID mShader3;
 };
 
 //=========================================================================
@@ -28,10 +30,12 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	renderer->setCearColor(Color::gray(0.5f));
 
 	mTexD = renderer->addTexture("assets/textures/default/default_d.png");
-	mTexN = renderer->addTexture("assets/textures/default/default_d.png");
+	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
 	mTexS = renderer->addTexture("assets/textures/default/default_d.png");
 
-	mShader = renderer->addShader("assets/shaders/basic.shd");
+	mShader1 = renderer->addShader("assets/shaders/basic.shd");
+	//mShader2 = renderer->addShader("assets/shaders/basic.shd");
+	//mShader3 = renderer->addShader("assets/shaders/basic.shd");
 }
 
 //=========================================================================
@@ -59,7 +63,7 @@ void Test::onDraw()
 	renderer->setTexture(mTexN, 1);
 	renderer->setTexture(mTexS, 2);
 
-	renderer->setShader(mShader);
+	renderer->setShader(mShader1);
 }
 
 //=========================================================================
