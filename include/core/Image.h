@@ -129,7 +129,7 @@ void Image::loadFromFile(const std::string &fileName)
                 // If this somehow one of these failed (they shouldn't), return failure
                 if ((bits == 0) || (mWidth == 0) || (mHeight == 0))
                 {
-                    error("Could not load image: %s", fileName);
+                    error("Could not load image: %s", fileName.c_str());
                     generateCheckImage();
                 }
                 else

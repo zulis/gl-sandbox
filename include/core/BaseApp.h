@@ -6,11 +6,14 @@
 #endif
 
 #include "core/GL.h"
+#include "core/Ui.h"
 #include <glfw/glfw3.h>
+#include <glfw/glfw3native.h>
 #include "core/Input.h"
 #include "core/Renderer.h"
 #include "core/Camera.h"
 #include "core/Log.h"
+
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
@@ -195,6 +198,9 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	mInput = new Input();
 	renderer = new Renderer();
 	camera = new Camera();
+
+	ImGuiWrapper::ImGui_ImplGlfwGL3_Init(mWindow, false);
+	//ImGuiWrapper::setStyle();
 }
 
 //=========================================================================
@@ -211,6 +217,7 @@ BaseApp::~BaseApp()
 	
 	if (mWindow)
 	{
+		ImGuiWrapper::ImGui_ImplGlfwGL3_Shutdown();
 		glfwDestroyWindow(mWindow);
 		glfwTerminate();
 	}
@@ -269,6 +276,40 @@ void BaseApp::run()
 		gl::clear(renderer->mClearColor);
 
 		onDraw();
+
+		static float clear_color = 0.0f;
+		static bool show_test_window;
+		static bool show_another_window;
+
+		ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
+		
+		{
+			static float f = 0.0f;
+			ImGui::Text("Hello, world!");
+			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+			ImGui::ColorEdit3("clear color", (float*)&clear_color);
+			if (ImGui::Button("Test Window")) show_test_window ^= 1;
+			if (ImGui::Button("Another Window")) show_another_window ^= 1;
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		}
+
+		// 2. Show another simple window, this time using an explicit Begin/End pair
+		if (show_another_window)
+		{
+			ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
+			ImGui::Begin("Another Window", &show_another_window);
+			ImGui::Text("Hello");
+			ImGui::End();
+		}
+
+		// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+		if (show_test_window)
+		{
+			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+			ImGui::ShowTestWindow(&show_test_window);
+		}
+
+		ImGui::Render();
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();

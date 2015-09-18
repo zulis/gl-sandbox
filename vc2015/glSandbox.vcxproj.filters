@@ -26,6 +26,12 @@
     <ClCompile Include="..\external\src\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="..\external\src\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\src\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Window.h">
@@ -100,9 +106,6 @@
     <ClInclude Include="..\external\src\imgui\imgui.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\Ui.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\FileMonitor.h">
       <Filter>include\core</Filter>
     </ClInclude>
@@ -129,6 +132,12 @@
     </ClInclude>
     <ClInclude Include="..\src\tests\Deferred.h">
       <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\src\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Ui.h">
+      <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
