@@ -9,6 +9,7 @@
 #include <glfw/glfw3.h>
 #include "core/Input.h"
 #include "core/Renderer.h"
+#include "core/Camera.h"
 #include "core/Log.h"
 
 extern "C" {
@@ -43,6 +44,7 @@ public:
 
 protected:
 	Renderer *renderer;
+	Camera *camera;
 
 private:
 	GLFWwindow *mWindow;
@@ -192,11 +194,15 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 
 	mInput = new Input();
 	renderer = new Renderer();
+	camera = new Camera();
 }
 
 //=========================================================================
 BaseApp::~BaseApp()
 {
+	if (camera)
+		delete camera;
+
 	if (renderer)
 		delete renderer;
 

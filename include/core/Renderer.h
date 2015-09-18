@@ -77,7 +77,7 @@ TextureID Renderer::addTexture(const Color &color, const Texture::Format &format
 //=========================================================================
 void Renderer::setTexture(const TextureID texureID, int textureUnit)
 {
-	if (texureID < mTextures.size())
+	if (static_cast<size_t>(texureID) < mTextures.size())
 		mTextures[texureID]->bind(textureUnit);
 }
 
@@ -93,7 +93,7 @@ ShaderID Renderer::addShader(const std::string &fileName)
 //=========================================================================
 void Renderer::setShader(const ShaderID shaderID)
 {
-	if (shaderID < mShaders.size())
+	if (static_cast<size_t>(shaderID) < mShaders.size())
 		mShaders[shaderID]->bind();
 }
 

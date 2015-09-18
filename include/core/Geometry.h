@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <limits>
 #include <functional>
@@ -9,9 +8,7 @@
 #include "core/AABB.h"
 #include "core/ShaderConstants.h"
 
-typedef std::unique_ptr<class Geometry> GeometryRef;
-
-class Geometry final
+class Geometry
 {
 public:
 	enum DrawType
@@ -26,8 +23,6 @@ public:
 		POLYGON = 0x0009        // GL_POLYGON
 	};
 
-	static GeometryRef create();
-	static GeometryRef create(std::vector<vec3> vertices, std::vector<unsigned int> indices);
 	Geometry() {};
 	Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices);
 	~Geometry();
@@ -67,7 +62,6 @@ private:
 	std::vector<vec3> mNormals;
 	std::vector<vec4> mTangents;
 	std::vector<vec3> mBitangents;
-	//bool mIsReady { false };
 	GLuint mVaoHandle;
 	GLuint mVboHandle[6];
 
@@ -77,18 +71,6 @@ private:
 	void generateNormals();
 	void generateTangents();
 };
-
-//=========================================================================
-GeometryRef Geometry::create()
-{
-	return std::make_unique<Geometry>();
-}
-
-//=========================================================================
-GeometryRef Geometry::create(std::vector<vec3> vertices, std::vector<unsigned int> indices)
-{
-	return std::make_unique<Geometry>(vertices, indices);
-}
 
 //=========================================================================
 Geometry::Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices)
@@ -107,15 +89,12 @@ Geometry::~Geometry()
 	mTangents.clear();
 	mBitangents.clear();
 
-	//if (mIsReady)
-	//{
-		glBindVertexArray(0);
+	glBindVertexArray(0);
 
-		for (auto& hande : mVboHandle)
-			glDeleteBuffers(1, &hande);
+	for (auto& hande : mVboHandle)
+		glDeleteBuffers(1, &hande);
 
-		glDeleteVertexArrays(1, &mVaoHandle);
-	//}
+	glDeleteVertexArrays(1, &mVaoHandle);
 }
 
 //=========================================================================
@@ -309,16 +288,11 @@ void Geometry::prepare(const Shader& shader)
 	}
 
 	glBindVertexArray(0);
-
-	//mIsReady = true;
 }
 
 //=========================================================================
 void Geometry::draw() const
 {
-	//if (!mIsReady)
-		//prepare(shader);
-
 	glBindVertexArray(mVaoHandle);
 
 	if (mIndices.size() > 0)

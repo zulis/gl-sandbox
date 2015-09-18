@@ -1,20 +1,14 @@
 #pragma once
 
-#include <memory>
 #include "core/Math.h"
 #include "core/AABB.h"
 #include "core/Plane.h"
 
-//typedef std::shared_ptr<class Camera> CameraRef;
-typedef std::unique_ptr<class Camera> CameraPtr;
-
 class Camera
 {
 public:
-	static CameraPtr create();
-
 	Camera();
-	virtual ~Camera();
+	~Camera();
 
 	void setPosition(vec3 position);
 	void setPosition(float x, float y, float z);
@@ -70,13 +64,6 @@ private:
 
 	void update();
 };
-
-//=========================================================================
-CameraPtr Camera::create()
-{
-	//return CameraRef(new Camera);
-	return std::make_unique<Camera>();
-}
 
 //=========================================================================
 Camera::Camera() : mAspectRatio(4.0f / 3.0f)
@@ -350,8 +337,8 @@ vec3 Camera::pick(const ivec2& mousePos)
     glGetIntegerv(GL_VIEWPORT, viewport);
 
     GLfloat zCursor;
-    float winX = (float)mousePos.x;
-    float winY = (float)viewport[3] - (float)mousePos.y;
+	GLint winX = mousePos.x;
+	GLint winY = viewport[3] - mousePos.y;
     glReadPixels(winX, winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zCursor);
 
     vec3 pos = glm::unProject(vec3(winX, winY, zCursor), mView, mProjection, ivec4(viewport[0], viewport[1], viewport[2], viewport[3]));
