@@ -9,6 +9,8 @@
 #include "core/Image.h"
 #include "core/Resource.h"
 
+#define TEXTURE_UNIT_NONE (-1)
+
 class Texture
 {
 public:
@@ -19,7 +21,7 @@ public:
 	~Texture();
 
 	void bind(GLuint textureUnit = 0);
-	void unbind(GLuint textureUnit = 0);
+	void unbind();
 
 	int getWidth() const;
 	int getHeight() const;
@@ -49,12 +51,13 @@ public:
 
 private:
 	GLuint mTextureID;
+	GLuint mTextureUnit;
 	Format mFormat;
 	const char *mFileName;
 
 	//unsigned char *mPixels;
-	unsigned int mWidth{ 0 };
-	unsigned int mHeight{ 0 };
+	unsigned int mWidth;
+	unsigned int mHeight;
 	//unsigned int mChannels{ 0 };
 
 	/*static std::map<std::string, std::shared_ptr<Image>> sImages;
@@ -137,12 +140,12 @@ void Texture::Format::setMagFilter(GLenum magFiler)
 }
 
 //=========================================================================
-Texture::Texture(const std::string &fileName, const Format &format)
+Texture::Texture(const std::string &fileName, const Format &format) : mWidth(0), mHeight(0), mTextureUnit(TEXTURE_UNIT_NONE)
 {
 	getTexture(fileName, format);
 }
 
-Texture::Texture(const Color &color, const Format &format)
+Texture::Texture(const Color &color, const Format &format) : mWidth(0), mHeight(0), mTextureUnit(TEXTURE_UNIT_NONE)
 {
 	getTexture(color, format);
 }
@@ -230,17 +233,21 @@ void Texture::loadFromRaw(const int format, const int width, const int height, c
 //=========================================================================
 void Texture::bind(GLuint textureUnit)
 {
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
+	mTextureUnit = textureUnit;
+	glActiveTexture(GL_TEXTURE0 + mTextureUnit);
 	glBindTexture(mFormat.mTarget, mTextureID);
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0); // ? Do we need it here?
 }
 
 //=========================================================================
-void Texture::unbind(GLuint textureUnit)
+void Texture::unbind()
 {
-	glActiveTexture(GL_TEXTURE0 + textureUnit);
-	glBindTexture(mFormat.mTarget, 0);
-	glActiveTexture(GL_TEXTURE0);
+	if (mTextureUnit != TEXTURE_UNIT_NONE)
+	{
+		glActiveTexture(GL_TEXTURE0 + mTextureUnit);
+		glBindTexture(mFormat.mTarget, 0);
+		glActiveTexture(GL_TEXTURE0);
+	}
 }
 
 
