@@ -18,9 +18,7 @@ private:
 	TextureID mTexN;
 	TextureID mTexS;
 
-	ShaderID mShader1;
-	ShaderID mShader2;
-	ShaderID mShader3;
+	ShaderID mShader;
 
 	const float strafeSpeed{ 0.2f };
 	const float strafeFastSpeed{ 0.4f };
@@ -36,9 +34,7 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
 	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
 
-	mShader1 = renderer->addShader("assets/shaders/basic.shd");
-	mShader2 = renderer->addShader("assets/shaders/basic.shd");
-	mShader3 = renderer->addShader("assets/shaders/basic.shd");
+	mShader = renderer->addShader("assets/shaders/basic.shd");
 }
 
 //=========================================================================
@@ -92,12 +88,13 @@ void Test::onUpdate(double deltaTime)
 //=========================================================================
 void Test::onDraw()
 {
-	renderer->setTexture(3, 0);
+	renderer->setShader(mShader);
+
 	renderer->setTexture(mTexD, 0);
 	renderer->setTexture(mTexN, 1);
 	renderer->setTexture(mTexS, 2);
 
-	renderer->setShader(mShader1);
+	renderer->reset();
 }
 
 //=========================================================================
