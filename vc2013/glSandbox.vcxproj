@@ -180,6 +180,7 @@
     <ClInclude Include="..\include\core\Geometry.h" />
     <ClInclude Include="..\include\core\GL.h" />
     <ClInclude Include="..\include\core\ListenerSet.h" />
+    <ClInclude Include="..\include\core\Mesh.h" />
     <ClInclude Include="..\include\core\Renderer.h" />
     <ClInclude Include="..\include\core\Image.h" />
     <ClInclude Include="..\include\core\Input.h" />

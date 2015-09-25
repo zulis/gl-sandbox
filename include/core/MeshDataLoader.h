@@ -20,7 +20,7 @@ public:
 	MeshDataLoader(const std::string &fileName, float scaleFactor = 1.0f);
 	virtual ~MeshDataLoader() {};
 
-	const MeshData &getMeshData();
+	const MeshData *getMeshData();
 
 	//void setTexturePath(const std::string &texturePath);
 
@@ -55,9 +55,9 @@ MeshDataLoader::MeshDataLoader(const std::string &fileName, float scaleFactor)
 }
 
 //=========================================================================
-const MeshData &MeshDataLoader::getMeshData()
+const MeshData *MeshDataLoader::getMeshData()
 {
-	return mMeshData;
+	return &mMeshData;
 }
 
 //=========================================================================
