@@ -12,6 +12,7 @@
 #include "core/Input.h"
 #include "core/Renderer.h"
 #include "core/Camera.h"
+#include "core/Transform.h"
 #include "core/Log.h"
 
 extern "C" {
@@ -74,7 +75,17 @@ void BaseApp::errorCallback(int errorCode, const char* description)
 void BaseApp::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
-	baseApp->mInput->setKeyStatus(key, action == GLFW_PRESS ? true : false);
+
+	bool isDown;
+
+	if (action == GLFW_PRESS)
+		isDown = true;
+	else if (action == GLFW_RELEASE)
+		isDown = false;
+	else // GLFW_REPEAT must be ignored
+		return;
+
+	baseApp->mInput->setKeyStatus(key, isDown);
 }
 
 //=========================================================================
@@ -198,7 +209,7 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	renderer = new Renderer();
 	camera = new Camera();
 
-	ImGuiWrapper::ImGui_ImplGlfwGL3_Init(mWindow, false);
+	//ImGuiWrapper::ImGui_ImplGlfwGL3_Init(mWindow, false);
 	//ImGuiWrapper::setStyle();
 }
 
@@ -216,7 +227,7 @@ BaseApp::~BaseApp()
 	
 	if (mWindow)
 	{
-		ImGuiWrapper::ImGui_ImplGlfwGL3_Shutdown();
+		//ImGuiWrapper::ImGui_ImplGlfwGL3_Shutdown();
 		glfwDestroyWindow(mWindow);
 		glfwTerminate();
 	}
@@ -280,6 +291,7 @@ void BaseApp::run()
 		static bool show_test_window;
 		static bool show_another_window;
 
+		/*
 		ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
 		
 		{
@@ -309,6 +321,7 @@ void BaseApp::run()
 		}
 
 		ImGui::Render();
+		*/
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();

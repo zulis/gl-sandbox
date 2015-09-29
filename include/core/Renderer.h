@@ -49,6 +49,12 @@ public:
 
 	void reset();
 
+	Shader* getShader(const ShaderID shader)
+	{
+		return mShaders[shader];
+	}
+
+
 private:
 	std::vector<Texture*> mTextures;
 	std::vector<Shader*> mShaders;

@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "core/Math.h"
 
-class stringUtils
+class StringUtils
 {
 public:
 	static std::string trim(const std::string &s);
@@ -32,13 +32,13 @@ private:
 };
 
 //=========================================================================
-std::string stringUtils::trim(const std::string &s)
+std::string StringUtils::trim(const std::string &s)
 {
 	return trimLeft(trimRight(s));
 }
 
 //=========================================================================
-std::string stringUtils::trimLeft(const std::string &s)
+std::string StringUtils::trimLeft(const std::string &s)
 {
 	auto temp = s;
 	temp.erase(std::begin(temp),
@@ -49,7 +49,7 @@ std::string stringUtils::trimLeft(const std::string &s)
 }
 
 //=========================================================================
-std::string stringUtils::trimRight(const std::string &s)
+std::string StringUtils::trimRight(const std::string &s)
 {
 	auto temp = s;
 	temp.erase(std::find_if(std::rbegin(temp), std::rend(temp),
@@ -59,13 +59,13 @@ std::string stringUtils::trimRight(const std::string &s)
 }
 
 //=========================================================================
-bool stringUtils::startsWith(const std::string &s, const std::string &value)
+bool StringUtils::startsWith(const std::string &s, const std::string &value)
 {
 	return trim(s).find(value) == 0;
 }
 
 //=========================================================================
-std::string stringUtils::extract(const std::string &s, const char& between)
+std::string StringUtils::extract(const std::string &s, const char& between)
 {
 	std::string result = s;
 	result = result.substr(result.find(between) + 1);
@@ -74,7 +74,7 @@ std::string stringUtils::extract(const std::string &s, const char& between)
 }
 
 //=========================================================================
-std::string stringUtils::cutTail(const std::string &s, const std::string &cutAt)
+std::string StringUtils::cutTail(const std::string &s, const std::string &cutAt)
 {
 	std::string result = s;
 	const size_t idx = result.find_last_of(cutAt) + 1;
@@ -86,13 +86,13 @@ std::string stringUtils::cutTail(const std::string &s, const std::string &cutAt)
 }
 
 //=========================================================================
-bool stringUtils::contains(const std::string &s, const std::string &value)
+bool StringUtils::contains(const std::string &s, const std::string &value)
 {
 	return s.find(value, 0) != std::string::npos;
 }
 
 //=========================================================================
-std::vector<std::string> &stringUtils::split(const std::string &s, char delim, std::vector<std::string> &elems)
+std::vector<std::string> &StringUtils::split(const std::string &s, char delim, std::vector<std::string> &elems)
 {
 	std::stringstream ss(s);
 	std::string item;
@@ -106,7 +106,7 @@ std::vector<std::string> &stringUtils::split(const std::string &s, char delim, s
 }
 
 //=========================================================================
-std::vector<std::string> stringUtils::split(const std::string &s, char delim)
+std::vector<std::string> StringUtils::split(const std::string &s, char delim)
 {
 	std::vector<std::string> elems;
 	split(s, delim, elems);
@@ -114,54 +114,54 @@ std::vector<std::string> stringUtils::split(const std::string &s, char delim)
 }
 
 //=========================================================================
-std::string stringUtils::toLower(std::string &s)
+std::string StringUtils::toLower(std::string &s)
 {
 	transform(s.begin(), s.end(), s.begin(), ::tolower);
 	return s;
 }
 
 //=========================================================================
-int stringUtils::toInt(const std::string &s)
+int StringUtils::toInt(const std::string &s)
 {
 	return atoi(s.c_str());
 }
 
 //=========================================================================
-float stringUtils::toFloat(const std::string &s)
+float StringUtils::toFloat(const std::string &s)
 {
 	return static_cast<float>(atof(s.c_str()));
 }
 
 //=========================================================================
-double stringUtils::toDouble(const std::string &s)
+double StringUtils::toDouble(const std::string &s)
 {
 	return atof(s.c_str());
 }
 
 //=========================================================================
-int stringUtils::toBool(const std::string &s)
+int StringUtils::toBool(const std::string &s)
 {
 	auto ss = toLower(trim(s));
 	return contains(ss, "1") || contains(ss, "true");
 }
 
 //=========================================================================
-const vec2 stringUtils::toVec2(const std::string &s)
+const vec2 StringUtils::toVec2(const std::string &s)
 {
 	vec2 result;
-	auto ss = stringUtils::split(s, ' ');
-	result.x = stringUtils::toFloat(ss[0]);
-	result.y = stringUtils::toFloat(ss[1]);
+	auto ss = StringUtils::split(s, ' ');
+	result.x = StringUtils::toFloat(ss[0]);
+	result.y = StringUtils::toFloat(ss[1]);
 	return result;
 }
 
 //=========================================================================
-const vec3 stringUtils::toVec3(const std::string &s)
+const vec3 StringUtils::toVec3(const std::string &s)
 {
 	vec3 result;
-	auto ss = stringUtils::split(s, ' ');
-	result.x = stringUtils::toFloat(ss[0]);
-	result.y = stringUtils::toFloat(ss[1]);
-	result.z = stringUtils::toFloat(ss[2]);
+	auto ss = StringUtils::split(s, ' ');
+	result.x = StringUtils::toFloat(ss[0]);
+	result.y = StringUtils::toFloat(ss[1]);
+	result.z = StringUtils::toFloat(ss[2]);
 	return result;
 }

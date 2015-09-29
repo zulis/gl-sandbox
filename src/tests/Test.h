@@ -46,6 +46,13 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	delete loader;*/
 
 	mMesh.loadFromFile("assets/models/box/box.fbx");
+	//mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
+	mMesh.makeDrawable(renderer, mShader);
+
+	camera->setPosition(0, 0, -5);
+	camera->setLookAt(0, 0, 0);
+
+	gl::enableCullFace(gl::CullFaceType::Back);
 }
 
 //=========================================================================
@@ -102,10 +109,34 @@ void Test::onDraw()
 {
 	renderer->setShader(mShader);
 
-	renderer->setTexture(mTexD, 0);
-	renderer->setTexture(mTexN, 1);
-	renderer->setTexture(mTexS, 2);
+	/*
+	Transform transform;
+	transform.setRotationX(-90);
+	transform.setRotationY(180);
+	transform.setScale(0.1);
+	*/
 
+	renderer->setShaderUniform(ShaderConstants::ProjectionMatrix, camera->getProjectionMatrix());
+	renderer->setShaderUniform(ShaderConstants::ModelViewMatrix, camera->getViewMatrix() /** transform.getMatrix()*/);
+	renderer->setShaderUniform(ShaderConstants::MVP, camera->getProjectionMatrix() *  camera->getViewMatrix() /** transform.getMatrix()*/);
+
+	auto mv = camera->getViewMatrix() /** transform.getMatrix()*/;
+	renderer->setShaderUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+
+	// Color map
+	renderer->setTexture(mTexD, 0);
+	renderer->setShaderUniform(ShaderConstants::ColorMap, 0);
+	renderer->setShaderUniform(ShaderConstants::ColorMapIsUsed, true);
+	// Normal map
+	//renderer->setTexture(mTexN, 1);
+	//renderer->setShaderUniform(ShaderConstants::NormalMap, 1);
+	//renderer->setShaderUniform(ShaderConstants::NormalMapIsUsed, true);
+	// Specular map
+	//renderer->setTexture(mTexS, 2);
+	//renderer->setShaderUniform(ShaderConstants::SpecularMap, 2);
+	//renderer->setShaderUniform(ShaderConstants::SpecularMapIsUsed, true);
+
+	// Draw mesh
 	mMesh.draw(renderer);
 
 	renderer->reset();
@@ -114,4 +145,5 @@ void Test::onDraw()
 //=========================================================================
 void Test::onResize(const unsigned int width, const unsigned int height)
 {
+	camera->setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 }
