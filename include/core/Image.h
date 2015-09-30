@@ -3,6 +3,7 @@
 #include <string>
 #include <FreeImage.h>
 #include "core/Color.h"
+#include "core/StringUtils.h"
 #include "core/Log.h"
 
 class Image
@@ -41,7 +42,7 @@ private:
 //=========================================================================
 Image::Image()
 {
-	loadFromFile(NULL);
+	loadFromFile(nullptr);
 }
 
 //=========================================================================
@@ -184,8 +185,7 @@ void Image::generateCheckImage()
 //=========================================================================
 void Image::generateImage(const Color& color)
 {
-	std::string tmp("Color (r:" + std::to_string(color.r) + " g:" + std::to_string(color.g) + " b:" + std::to_string(color.b) + " a:" + std::to_string(color.a) + ")");
-	mFileName = tmp.c_str();
+	mFileName = "Color image";
 
 	mWidth = 1;
 	mHeight = 1;

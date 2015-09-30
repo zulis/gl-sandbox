@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include "core/Math.h"
+#include "core/Color.h"
 
 class StringUtils
 {
@@ -24,8 +25,8 @@ public:
 	static float toFloat(const std::string &s);
 	static double toDouble(const std::string &s);
 	static int toBool(const std::string &s);
-	static const vec2 toVec2(const std::string &s);
-	static const vec3 toVec3(const std::string &s);
+	static vec2 toVec2(const std::string &s);
+	static vec3 toVec3(const std::string &s);
 
 private:
 	static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
@@ -146,7 +147,7 @@ int StringUtils::toBool(const std::string &s)
 }
 
 //=========================================================================
-const vec2 StringUtils::toVec2(const std::string &s)
+vec2 StringUtils::toVec2(const std::string &s)
 {
 	vec2 result;
 	auto ss = StringUtils::split(s, ' ');
@@ -156,7 +157,7 @@ const vec2 StringUtils::toVec2(const std::string &s)
 }
 
 //=========================================================================
-const vec3 StringUtils::toVec3(const std::string &s)
+vec3 StringUtils::toVec3(const std::string &s)
 {
 	vec3 result;
 	auto ss = StringUtils::split(s, ' ');

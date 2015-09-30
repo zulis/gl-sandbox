@@ -13,16 +13,16 @@ public:
 	Mesh();
 	~Mesh();
 
-	void loadFromFile(const std::string &fileName);
-	void makeDrawable(Renderer *renderer, const ShaderID shader);
-	void draw(Renderer *renderer);
+	void loadFromFile(const std::string& fileName);
+	void makeDrawable(Renderer* renderer, const ShaderID shader);
+	void draw(Renderer* renderer);
 
 private:
 	std::vector<Geometry*> mGeometyVec;
 	std::map<unsigned int, MeshDataMaterial> mMaterialMap;
 
 private:
-	
+
 
 };
 
@@ -34,26 +34,25 @@ Mesh::Mesh()
 //=========================================================================
 Mesh::~Mesh()
 {
-	for each (Geometry* geometry in mGeometyVec)
+	for(auto& geometry : mGeometyVec)
 	{
 		delete geometry;
 	}
 }
 
-void Mesh::loadFromFile(const std::string &fileName)
+void Mesh::loadFromFile(const std::string& fileName)
 {
-	MeshDataLoader *loader = new MeshDataLoader(fileName);
+	auto loader = new MeshDataLoader(fileName);
 
-	for each (MeshDataGeometry mdg in loader->getMeshData()->geometryVec)
+	for(auto& mdg : loader->getMeshData()->geometryVec)
 	{
-		Geometry *geometry = new Geometry();
-		geometry->setIndices(mdg.indices);
+		auto geometry = new Geometry();
 		geometry->setVertices(mdg.vertices);
+		geometry->setIndices(mdg.indices);
 		geometry->setNormals(mdg.normals);
 		geometry->setTexCoords(mdg.texCoords);
 		geometry->setTangents(mdg.tangents);
 		geometry->setBitangents(mdg.bitangents);
-
 		mGeometyVec.push_back(geometry);
 	}
 
@@ -63,18 +62,18 @@ void Mesh::loadFromFile(const std::string &fileName)
 }
 
 //=========================================================================
-void Mesh::makeDrawable(Renderer *renderer, const ShaderID shader)
+void Mesh::makeDrawable(Renderer* renderer, const ShaderID shader)
 {
-	for each (Geometry* geometry in mGeometyVec)
+	for(auto& geometry : mGeometyVec)
 	{
-		geometry->prepare(*renderer->getShader(shader));
+		geometry->prepare(renderer->getShader(shader));
 	}
 }
 
 //=========================================================================
-void Mesh::draw(Renderer *renderer)
+void Mesh::draw(Renderer* renderer)
 {
-	for each (Geometry* geometry in mGeometyVec)
+	for(auto& geometry : mGeometyVec)
 	{
 		geometry->draw();
 	}

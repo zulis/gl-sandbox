@@ -1,8 +1,6 @@
 #pragma once
 
 #include "core/BaseApp.h"
-//#include "core/MeshDataLoader.h"
-#include "core/Mesh.h"
 
 class Test : public BaseApp
 {
@@ -10,7 +8,7 @@ public:
 	Test();
 	~Test();
 
-	virtual void onInput(const Input &input);
+	virtual void onInput(const Input& input);
 	virtual void onUpdate(double deltaTime);
 	virtual void onDraw();
 	virtual void onResize(const unsigned int width, const unsigned int height);
@@ -23,8 +21,14 @@ private:
 	ShaderID mShader;
 	Mesh mMesh;
 
-	const float strafeSpeed{ 0.2f };
-	const float strafeFastSpeed{ 0.4f };
+	const float strafeSpeed
+	{
+		0.2f
+	};
+	const float strafeFastSpeed
+	{
+		0.4f
+	};
 };
 
 //=========================================================================
@@ -33,24 +37,20 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	setTitle("Game!");
 	renderer->setCearColor(Color::gray(0.5f));
 
-	mTexD = renderer->addTexture("assets/textures/default/default_d.png");
+	//mTexD = renderer->addTexture("assets/textures/default/default_d.png");
+	mTexD = renderer->addTexture(Color::white());
 	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
 	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
 
 	mShader = renderer->addShader("assets/shaders/basic.shd");
 
-	/*MeshDataLoader* loader = new MeshDataLoader("assets/models/box/box.fbx");
-	for each (MeshDataGeometry mdg in loader->getMeshData()->geometryVec)
-	{
-	};
-	delete loader;*/
-
-	mMesh.loadFromFile("assets/models/box/box.fbx");
-	//mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
+	//mMesh.loadFromFile("assets/models/box/box.fbx");
+	mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
+	//mMesh.loadFromFile("assets/models/sponza/sponza.obj");
 	mMesh.makeDrawable(renderer, mShader);
 
-	camera->setPosition(0, 0, -5);
-	camera->setLookAt(0, 0, 0);
+	camera->setPosition(0, 2, -10);
+	camera->setLookAt(0, 4, 0);
 
 	gl::enableCullFace(gl::CullFaceType::Back);
 }
@@ -58,39 +58,38 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 //=========================================================================
 Test::~Test()
 {
-	//delete mMesh;
 }
 
 //=========================================================================
-void Test::onInput(const Input &input)
+void Test::onInput(const Input& input)
 {
-	if (input.isKeyDown(KEY_ESCAPE))
+	if(input.isKeyDown(KEY_ESCAPE))
 		quit();
 
-	if (input.isKeyDown(KEY_LEFT_SHIFT))
+	if(input.isKeyDown(KEY_LEFT_SHIFT))
 		camera->setStrafeSpeed(strafeFastSpeed);
 	else
 		camera->setStrafeSpeed(strafeSpeed);
 
-	if (input.isKeyDown(KEY_W))
+	if(input.isKeyDown(KEY_W))
 		camera->move(Camera::FORWARD);
-	else if (input.isKeyDown(KEY_S))
+	else if(input.isKeyDown(KEY_S))
 		camera->move(Camera::BACKWARD);
 
-	if (input.isKeyDown(KEY_A))
+	if(input.isKeyDown(KEY_A))
 		camera->move(Camera::LEFT);
-	else if (input.isKeyDown(KEY_D))
+	else if(input.isKeyDown(KEY_D))
 		camera->move(Camera::RIGHT);
 
-	if (input.isKeyDown(KEY_E))
+	if(input.isKeyDown(KEY_E))
 		camera->move(Camera::UP);
-	else if (input.isKeyDown(KEY_Q))
+	else if(input.isKeyDown(KEY_Q))
 		camera->move(Camera::DOWN);
 
-	if (input.getMouseScroolY() != 0)
+	if(input.getMouseScroolY() != 0)
 		camera->move(input.getMouseScroolY() > 0 ? Camera::FORWARD : Camera::BACKWARD);
 
-	if (input.isMouseDown(MouseButton::Right))
+	if(input.isMouseDown(MouseButton::Right))
 	{
 		hideMouse();
 		camera->rotate(static_cast<float>(input.getMouseChangeX()), static_cast<float>(input.getMouseChangeY()));
@@ -109,18 +108,16 @@ void Test::onDraw()
 {
 	renderer->setShader(mShader);
 
-	/*
 	Transform transform;
 	transform.setRotationX(-90);
 	transform.setRotationY(180);
 	transform.setScale(0.1);
-	*/
 
 	renderer->setShaderUniform(ShaderConstants::ProjectionMatrix, camera->getProjectionMatrix());
-	renderer->setShaderUniform(ShaderConstants::ModelViewMatrix, camera->getViewMatrix() /** transform.getMatrix()*/);
-	renderer->setShaderUniform(ShaderConstants::MVP, camera->getProjectionMatrix() *  camera->getViewMatrix() /** transform.getMatrix()*/);
+	renderer->setShaderUniform(ShaderConstants::ModelViewMatrix, camera->getViewMatrix() * transform.getMatrix());
+	renderer->setShaderUniform(ShaderConstants::MVP, camera->getProjectionMatrix() *  camera->getViewMatrix() * transform.getMatrix());
 
-	auto mv = camera->getViewMatrix() /** transform.getMatrix()*/;
+	auto mv = camera->getViewMatrix() * transform.getMatrix();
 	renderer->setShaderUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 
 	// Color map

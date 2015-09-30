@@ -165,7 +165,6 @@ void Texture::getTexture(const std::string &fileName, const Format &format)
 	mFormat = format;
 
 	auto image = Resource::get<Image>(fileName);
-	//auto image = getImage(fileName);
 	mFileName = image->getFileName();
 
 	if (mFormat.mFlipped)
@@ -181,11 +180,7 @@ void Texture::getTexture(const Color &color, const Format &format)
 	mFormat = format;
 
 	auto image = Resource::get<Image>(color);
-	//auto image = getImage(color);
 	mFileName = image->getFileName();
-
-	if (mFormat.mFlipped)
-		image->flipVertical();
 
 	loadFromRaw(GL_BGRA, image->getWidth(), image->getHeight(), image->getPixels());
 	note("Texture created: %s", mFileName);

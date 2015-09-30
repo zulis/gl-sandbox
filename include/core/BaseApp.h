@@ -5,6 +5,7 @@
 #include <windows.h>
 #endif
 
+#include <string>
 #include "core/GL.h"
 #include "core/Ui.h"
 #include <glfw/glfw3.h>
@@ -13,6 +14,10 @@
 #include "core/Renderer.h"
 #include "core/Camera.h"
 #include "core/Transform.h"
+#include "core/Light.h"
+#include "core/MeshData.h"
+#include "core/MeshDataLoader.h"
+#include "core/Mesh.h"
 #include "core/Log.h"
 
 extern "C" {
@@ -51,6 +56,7 @@ protected:
 
 private:
 	GLFWwindow *mWindow;
+	std::string mTitle;
 	Input *mInput;
 	bool mRunning;
 
@@ -209,7 +215,7 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	renderer = new Renderer();
 	camera = new Camera();
 
-	//ImGuiWrapper::ImGui_ImplGlfwGL3_Init(mWindow, false);
+	ImGuiWrapper::ImGui_ImplGlfwGL3_Init(mWindow, false);
 	//ImGuiWrapper::setStyle();
 }
 
@@ -224,10 +230,10 @@ BaseApp::~BaseApp()
 
 	if (mInput)
 		delete mInput;
-	
+
 	if (mWindow)
 	{
-		//ImGuiWrapper::ImGui_ImplGlfwGL3_Shutdown();
+		ImGuiWrapper::ImGui_ImplGlfwGL3_Shutdown();
 		glfwDestroyWindow(mWindow);
 		glfwTerminate();
 	}
@@ -265,14 +271,16 @@ void BaseApp::run()
 		mInput->setMouseScrollStatus(0, 0);
 		mInput->setMousePositionChangeStatus(0, 0);
 
-		// 		if(frameCounter >= 1.0)
-		// 		{
-		// 			double totalTime = 1000.0 * frameCounter / (double)frames;
-		// 			double fps = 1000.0f / totalTime;
-		// 			glfwSetWindowTitle(mWindow, std::string(mTitle + " [" + std::to_string(fps) + "]").c_str());
-		// 			frames = 0;
-		// 			frameCounter = 0;
-		// 		}
+#ifdef _DEBUG
+		if (frameCounter >= 1.0)
+		{
+			double totalTime = 1000.0 * frameCounter / (double)frames;
+			double fps = 1000.0f / totalTime;
+			glfwSetWindowTitle(mWindow, std::string(mTitle + " [FPS: " + std::to_string(static_cast<int>(trunc(fps))) + "]").c_str());
+			frames = 0;
+			frameCounter = 0;
+		}
+#endif
 
 		while (mRunning && accumulator >= frameTime)
 		{
@@ -293,35 +301,39 @@ void BaseApp::run()
 
 		/*
 		ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
-		
+
 		{
-			static float f = 0.0f;
-			ImGui::Text("Hello, world!");
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-			ImGui::ColorEdit3("clear color", (float*)&clear_color);
-			if (ImGui::Button("Test Window")) show_test_window ^= 1;
-			if (ImGui::Button("Another Window")) show_another_window ^= 1;
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		static float f = 0.0f;
+		ImGui::Text("Hello, world!");
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+		ImGui::ColorEdit3("clear color", (float*)&clear_color);
+		if (ImGui::Button("Test Window")) show_test_window ^= 1;
+		if (ImGui::Button("Another Window")) show_another_window ^= 1;
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
 
 		// 2. Show another simple window, this time using an explicit Begin/End pair
 		if (show_another_window)
 		{
-			ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
-			ImGui::Begin("Another Window", &show_another_window);
-			ImGui::Text("Hello");
-			ImGui::End();
+		ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
+		ImGui::Begin("Another Window", &show_another_window);
+		ImGui::Text("Hello");
+		ImGui::End();
 		}
 
 		// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
 		if (show_test_window)
 		{
-			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-			ImGui::ShowTestWindow(&show_test_window);
+		ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
+		ImGui::ShowTestWindow(&show_test_window);
 		}
 
 		ImGui::Render();
 		*/
+
+		//ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
+		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		//ImGui::Render();
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
@@ -338,6 +350,7 @@ void BaseApp::quit()
 //=========================================================================
 void BaseApp::setTitle(const char *title)
 {
+	mTitle = title;
 	glfwSetWindowTitle(mWindow, title);
 }
 

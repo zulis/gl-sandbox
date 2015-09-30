@@ -142,5 +142,8 @@
     <ClInclude Include="..\include\core\Mesh.h">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\core\Light.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

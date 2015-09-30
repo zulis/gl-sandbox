@@ -88,12 +88,19 @@ namespace ImGuiWrapper
 	void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawData* draw_data)
 	{
 		// Backup GL state
-		GLint last_program, last_texture, last_array_buffer, last_element_array_buffer, last_vertex_array;
-		glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
-		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+		GLint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+		GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+		GLint last_array_buffer; glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
+		GLint last_element_array_buffer; glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
+		GLint last_vertex_array; glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+		GLint last_blend_src; glGetIntegerv(GL_BLEND_SRC, &last_blend_src);
+		GLint last_blend_dst; glGetIntegerv(GL_BLEND_DST, &last_blend_dst);
+		GLint last_blend_equation_rgb; glGetIntegerv(GL_BLEND_EQUATION_RGB, &last_blend_equation_rgb);
+		GLint last_blend_equation_alpha; glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &last_blend_equation_alpha);
+		GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+		GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+		GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+		GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
 
 		// Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
 		glEnable(GL_BLEND);
@@ -112,10 +119,10 @@ namespace ImGuiWrapper
 		// Setup orthographic projection matrix
 		const float ortho_projection[4][4] =
 		{
-			{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-			{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-			{ 0.0f,                  0.0f,                  -1.0f, 0.0f },
-			{ -1.0f,                  1.0f,                   0.0f, 1.0f },
+			{ 2.0f / io.DisplaySize.x, 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+			{ 0.0f, 0.0f, -1.0f, 0.0f },
+			{ -1.0f, 1.0f, 0.0f, 1.0f },
 		};
 		glUseProgram(g_ShaderHandle);
 		glUniform1i(g_AttribLocationTex, 0);
@@ -155,7 +162,12 @@ namespace ImGuiWrapper
 		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
 		glBindVertexArray(last_vertex_array);
-		glDisable(GL_SCISSOR_TEST);
+		glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
+		glBlendFunc(last_blend_src, last_blend_dst);
+		if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+		if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+		if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+		if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
 	}
 
 	static const char* ImGui_ImplGlfwGL3_GetClipboardText()
@@ -209,7 +221,7 @@ namespace ImGuiWrapper
 		int width, height;
 		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);   // Load as RGBA 32-bits for OpenGL3 demo because it is more likely to be compatible with user's existing shader.
 
-																  // Create OpenGL texture
+		// Create OpenGL texture
 		glGenTextures(1, &g_FontTexture);
 		glBindTexture(GL_TEXTURE_2D, g_FontTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

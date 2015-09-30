@@ -34,6 +34,15 @@ public:
 	void setNormals(const std::vector<vec3>& normals);
 	void setTangents(const std::vector<vec4>& tangents);
 	void setBitangents(const std::vector<vec3>& bitangents);
+
+	void addVertices(const std::vector<vec3>& vertices);
+	void addVertices(const std::vector<vec2>& vertices);
+	void addIndices(const std::vector<unsigned int>& indices);
+	void addTexCoords(const std::vector<vec2>& texCoords);
+	void addNormals(const std::vector<vec3>& normals);
+	void addTangents(const std::vector<vec4>& tangents);
+	void addBitangents(const std::vector<vec3>& bitangents);
+
 	void setDrawType(DrawType drawType);
 
 	const std::vector<vec3> getVertices() const;
@@ -55,7 +64,7 @@ public:
 	void draw() const;
 
 private:
-	DrawType mDrawType { DrawType::TRIANGLES };
+	DrawType mDrawType{ DrawType::TRIANGLES };
 	std::vector<vec3> mVertices;
 	std::vector<unsigned int> mIndices;
 	std::vector<vec2> mTexCoords;
@@ -67,7 +76,7 @@ private:
 
 	Geometry(const Geometry&) = delete;
 	Geometry& operator=(const Geometry&) = delete;
-	
+
 	void generateNormals();
 	void generateTangents();
 };
@@ -144,6 +153,55 @@ void Geometry::setTangents(const std::vector<vec4>& tangents)
 void Geometry::setBitangents(const std::vector<vec3>& bitangents)
 {
 	mBitangents = bitangents;
+}
+
+//=========================================================================
+void Geometry::addVertices(const std::vector<vec3>& vertices)
+{
+	for (auto& val : vertices)
+		mVertices.emplace_back(val);
+}
+
+//=========================================================================
+void Geometry::addVertices(const std::vector<vec2>& vertices)
+{
+	for (auto& val : vertices)
+		mVertices.emplace_back(vec3(val.x, val.y, 0.0f));
+}
+
+//=========================================================================
+void Geometry::addIndices(const std::vector<unsigned int>& indices)
+{
+	for (auto& val : indices)
+		mIndices.emplace_back(val);
+}
+
+//=========================================================================
+void Geometry::addTexCoords(const std::vector<vec2>& texCoords)
+{
+	for (auto& val : texCoords)
+		mTexCoords.emplace_back(val);
+}
+
+//=========================================================================
+void Geometry::addNormals(const std::vector<vec3>& normals)
+{
+	for (auto& val : normals)
+		mNormals.emplace_back(val);
+}
+
+//=========================================================================
+void Geometry::addTangents(const std::vector<vec4>& tangents)
+{
+	for (auto& val : tangents)
+		mTangents.emplace_back(val);
+}
+
+//=========================================================================
+void Geometry::addBitangents(const std::vector<vec3>& bitangents)
+{
+	for (auto& val : bitangents)
+		mBitangents.emplace_back(val);
 }
 
 //=========================================================================
@@ -301,7 +359,7 @@ void Geometry::draw() const
 	}
 	else
 	{
-		glDrawArrays(mDrawType, 0, mVertices.size());
+		glDrawArrays(mDrawType, 0, mVertices.size() * 3 * sizeof(float));
 	}
 
 	glBindVertexArray(0);
