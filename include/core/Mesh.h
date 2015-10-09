@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "core/MeshDataLoader.h"
+#include "core/AABB.h"
 #include "core/Geometry.h"
 #include "core/Renderer.h"
 
@@ -16,10 +17,12 @@ public:
 	void loadFromFile(const std::string& fileName);
 	void makeDrawable(Renderer* renderer, const ShaderID shader);
 	void draw(Renderer* renderer);
+	AABB getAABB();
 
 private:
 	std::vector<Geometry*> mGeometyVec;
 	std::map<unsigned int, MeshDataMaterial> mMaterialMap;
+	AABB mAABB;
 
 private:
 
@@ -53,6 +56,11 @@ void Mesh::loadFromFile(const std::string& fileName)
 		geometry->setTexCoords(mdg.texCoords);
 		geometry->setTangents(mdg.tangents);
 		geometry->setBitangents(mdg.bitangents);
+		
+		AABB geometryAABB = geometry->getAABB();
+		mAABB.setMin(min(mAABB.getMin(), geometryAABB.getMin()));
+		mAABB.setMax(max(mAABB.getMax(), geometryAABB.getMax()));
+		
 		mGeometyVec.push_back(geometry);
 	}
 
@@ -77,4 +85,10 @@ void Mesh::draw(Renderer* renderer)
 	{
 		geometry->draw();
 	}
+}
+
+//=========================================================================
+AABB Mesh::getAABB()
+{
+	return mAABB;
 }

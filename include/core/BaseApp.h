@@ -18,6 +18,7 @@
 #include "core/MeshData.h"
 #include "core/MeshDataLoader.h"
 #include "core/Mesh.h"
+#include "core/AABB.h"
 #include "core/Log.h"
 
 extern "C" {

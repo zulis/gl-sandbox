@@ -29,6 +29,8 @@ public:
 	void extend(const vec3& point);
 	AABB::IntersectionType intersect(const AABB& other) const;
 	bool overlaps(const AABB& other) const;
+	void setMin(const vec3& min);
+	void setMax(const vec3& max);
 
 private:
 	vec3 mMin;
@@ -40,7 +42,7 @@ AABB::AABB()
 {
 	auto minFloat = std::numeric_limits<float>::min();
 	auto maxFloat = std::numeric_limits<float>::max();
-	new (this) AABB(vec3(maxFloat), vec3(minFloat));
+	new(this) AABB(vec3(maxFloat), vec3(minFloat));
 }
 
 //=========================================================================
@@ -185,4 +187,16 @@ bool AABB::overlaps(const AABB& other) const
 		return false;
 
 	return true;
+}
+
+//=========================================================================
+void AABB::setMin(const vec3& min)
+{
+	mMin = min;
+}
+
+//=========================================================================
+void AABB::setMax(const vec3& max)
+{
+	mMax = max;
 }

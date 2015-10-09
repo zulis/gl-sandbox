@@ -20,6 +20,7 @@ private:
 
 	ShaderID mShader;
 	Mesh mMesh;
+	Transform mTransform;
 
 	const float strafeSpeed
 	{
@@ -63,39 +64,49 @@ Test::~Test()
 //=========================================================================
 void Test::onInput(const Input& input)
 {
-	if(input.isKeyDown(KEY_ESCAPE))
+	if (input.isKeyDown(KEY_ESCAPE))
 		quit();
 
-	if(input.isKeyDown(KEY_LEFT_SHIFT))
+	if (input.isKeyDown(KEY_LEFT_SHIFT))
 		camera->setStrafeSpeed(strafeFastSpeed);
 	else
 		camera->setStrafeSpeed(strafeSpeed);
 
-	if(input.isKeyDown(KEY_W))
+	if (input.isKeyDown(KEY_W))
 		camera->move(Camera::FORWARD);
-	else if(input.isKeyDown(KEY_S))
+	else if (input.isKeyDown(KEY_S))
 		camera->move(Camera::BACKWARD);
 
-	if(input.isKeyDown(KEY_A))
+	if (input.isKeyDown(KEY_A))
 		camera->move(Camera::LEFT);
-	else if(input.isKeyDown(KEY_D))
+	else if (input.isKeyDown(KEY_D))
 		camera->move(Camera::RIGHT);
 
-	if(input.isKeyDown(KEY_E))
+	if (input.isKeyDown(KEY_E))
 		camera->move(Camera::UP);
-	else if(input.isKeyDown(KEY_Q))
+	else if (input.isKeyDown(KEY_Q))
 		camera->move(Camera::DOWN);
 
-	if(input.getMouseScroolY() != 0)
+	if (input.getMouseScroolY() != 0)
 		camera->move(input.getMouseScroolY() > 0 ? Camera::FORWARD : Camera::BACKWARD);
 
-	if(input.isMouseDown(MouseButton::Right))
+	if (input.isMouseDown(MouseButton::Right))
 	{
 		hideMouse();
 		camera->rotate(static_cast<float>(input.getMouseChangeX()), static_cast<float>(input.getMouseChangeY()));
 	}
 	else
 		showMouse();
+
+	auto k = mMesh.getAABB().transformed(mTransform.getMatrix()).intersect(AABB(camera->getPosition() - 0.5f, camera->getPosition() + 0.5f));
+
+	if (k == AABB::IntersectionType::Inside || k == AABB::IntersectionType::Intersect)
+	{
+		auto dir = camera->getDirection();
+		camera->setDirection(-dir);
+		camera->move(Camera::FORWARD);
+		camera->setDirection(dir);
+	}
 }
 
 //=========================================================================
@@ -106,18 +117,20 @@ void Test::onUpdate(double deltaTime)
 //=========================================================================
 void Test::onDraw()
 {
+	if (!camera->intersects(mMesh.getAABB().transformed(mTransform.getMatrix())))
+		return;
+
 	renderer->setShader(mShader);
 
-	Transform transform;
-	transform.setRotationX(-90);
-	transform.setRotationY(180);
-	transform.setScale(0.1);
+	mTransform.setRotationX(-90);
+	mTransform.setRotationY(180);
+	mTransform.setScale(0.1);
 
 	renderer->setShaderUniform(ShaderConstants::ProjectionMatrix, camera->getProjectionMatrix());
-	renderer->setShaderUniform(ShaderConstants::ModelViewMatrix, camera->getViewMatrix() * transform.getMatrix());
-	renderer->setShaderUniform(ShaderConstants::MVP, camera->getProjectionMatrix() *  camera->getViewMatrix() * transform.getMatrix());
+	renderer->setShaderUniform(ShaderConstants::ModelViewMatrix, camera->getViewMatrix() * mTransform.getMatrix());
+	renderer->setShaderUniform(ShaderConstants::MVP, camera->getProjectionMatrix() * camera->getViewMatrix() * mTransform.getMatrix());
 
-	auto mv = camera->getViewMatrix() * transform.getMatrix();
+	auto mv = camera->getViewMatrix() * mTransform.getMatrix();
 	renderer->setShaderUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 
 	// Color map
