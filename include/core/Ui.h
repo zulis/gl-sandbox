@@ -23,6 +23,7 @@ namespace ImGuiWrapper
 	static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;
 	static int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
 	static unsigned int g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle = 0;
+	static bool			g_install_callbacks;
 
 	void setStyle()
 	{
@@ -313,9 +314,10 @@ namespace ImGuiWrapper
 		return true;
 	}
 
-	bool ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool install_callbacks)
+	bool    ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool install_callbacks)
 	{
 		g_Window = window;
+		g_install_callbacks = install_callbacks;
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;                         // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
@@ -426,7 +428,8 @@ namespace ImGuiWrapper
 		g_MouseWheel = 0.0f;
 
 		// Hide OS mouse cursor if ImGui is drawing it
-		glfwSetInputMode(g_Window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+		if (g_install_callbacks)
+			glfwSetInputMode(g_Window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
 
 		// Start the frame
 		ImGui::NewFrame();

@@ -59,7 +59,8 @@ private:
 	GLFWwindow *mWindow;
 	std::string mTitle;
 	Input *mInput;
-	bool mRunning;
+	bool mRunning{ false };
+	bool mShowUI{ false };
 
 private:
 	inline static void errorCallback(int errorCode, const char* description);
@@ -93,6 +94,9 @@ void BaseApp::keyCallback(GLFWwindow* window, int key, int scancode, int action,
 		return;
 
 	baseApp->mInput->setKeyStatus(key, isDown);
+
+	if (key == KEY_F1 && action == GLFW_PRESS)
+		baseApp->mShowUI = !baseApp->mShowUI;
 }
 
 //=========================================================================
@@ -332,9 +336,12 @@ void BaseApp::run()
 		ImGui::Render();
 		*/
 
-		//ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
-		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		//ImGui::Render();
+		if (mShowUI)
+		{
+			ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Render();
+		}
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
