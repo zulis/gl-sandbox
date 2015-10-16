@@ -33,7 +33,7 @@ private:
 };
 
 //=========================================================================
-Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
+Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 {
 	setTitle("Game!");
 	renderer->setCearColor(Color::gray(0.5f));
