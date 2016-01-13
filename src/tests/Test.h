@@ -38,10 +38,10 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	setTitle("Game!");
 	renderer->setCearColor(Color::gray(0.5f));
 
-	//mTexD = renderer->addTexture("assets/textures/default/default_d.png");
-	mTexD = renderer->addTexture(Color::white());
-	mTexN = renderer->addTexture("assets/textures/default/default_n.png");
-	mTexS = renderer->addTexture("assets/textures/default/default_s.png");
+	mTexD = renderer->addTexture("assets/models/leprechaun/leprechaun_d.png");
+	//mTexD = renderer->addTexture(Color::white());
+	mTexN = renderer->addTexture("assets/models/leprechaun/leprechaun_n.png");
+	mTexS = renderer->addTexture("assets/models/leprechaun/leprechaun_s.png");
 
 	mShader = renderer->addShader("assets/shaders/basic.shd");
 
