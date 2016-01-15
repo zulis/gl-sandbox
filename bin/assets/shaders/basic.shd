@@ -1,6 +1,6 @@
 [Vertex]
 
-#include "common.glsl"
+#include "common.shd"
 
 out vec2 TexCoord;
 out vec3 Position;
@@ -17,7 +17,7 @@ void main()
 
 [Fragment]
 
-#include "common.glsl"
+#include "common.shd"
 
 in vec2 TexCoord;
 in vec3 Position;
