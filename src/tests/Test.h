@@ -124,7 +124,7 @@ void Test::onDraw()
 
 	mTransform.setRotationX(-90);
 	mTransform.setRotationY(180);
-	mTransform.setScale(0.1);
+	mTransform.setScale(0.1f);
 
 	renderer->setShaderUniform(ShaderConstants::ProjectionMatrix, camera->getProjectionMatrix());
 	renderer->setShaderUniform(ShaderConstants::ModelViewMatrix, camera->getViewMatrix() * mTransform.getMatrix());

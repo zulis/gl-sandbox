@@ -108,7 +108,7 @@ MeshData MeshDataLoader::loadFromFile(const std::string &fileName, float scaleFa
 
 		const aiVector3D zero3D(0.0f, 0.0f, 0.0f);
 
-		for(auto m = 0; m < scene->mNumMeshes; ++m)
+		for(unsigned int m = 0; m < scene->mNumMeshes; ++m)
 		{
 			const aiMesh* mesh = scene->mMeshes[m];
 
@@ -128,7 +128,7 @@ MeshData MeshDataLoader::loadFromFile(const std::string &fileName, float scaleFa
 			meshData.geometryVec.push_back(meshDataGeometry);
 		}
 
-		for (auto i = 0; i < scene->mNumMaterials; ++i)
+		for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
 		{
 			MeshDataMaterial meshDataMaterial;
 			const aiMaterial* material = scene->mMaterials[i];
