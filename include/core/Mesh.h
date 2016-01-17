@@ -15,8 +15,8 @@ public:
 	~Mesh();
 
 	void loadFromFile(const std::string& fileName);
-	void makeDrawable(Renderer* renderer, const ShaderID shader);
-	void draw(Renderer* renderer);
+	void makeDrawable(const Renderer& renderer, const ShaderID shader);
+	void draw();
 	AABB getAABB();
 
 private:
@@ -45,9 +45,9 @@ Mesh::~Mesh()
 
 void Mesh::loadFromFile(const std::string& fileName)
 {
-	auto loader = new MeshDataLoader(fileName);
+	MeshDataLoader loader(fileName);
 
-	for(auto& mdg : loader->getMeshData()->geometryVec)
+	for(auto& mdg : loader.getMeshData()->geometryVec)
 	{
 		auto geometry = new Geometry();
 		geometry->setVertices(mdg.vertices);
@@ -64,22 +64,20 @@ void Mesh::loadFromFile(const std::string& fileName)
 		mGeometyVec.push_back(geometry);
 	}
 
-	mMaterialMap = loader->getMeshData()->materialMap;
-
-	delete loader;
+	mMaterialMap = loader.getMeshData()->materialMap;
 }
 
 //=========================================================================
-void Mesh::makeDrawable(Renderer* renderer, const ShaderID shader)
+void Mesh::makeDrawable(const Renderer& renderer, const ShaderID shader)
 {
 	for(auto& geometry : mGeometyVec)
 	{
-		geometry->prepare(renderer->getShader(shader));
+		geometry->prepare(renderer.getShader(shader));
 	}
 }
 
 //=========================================================================
-void Mesh::draw(Renderer* renderer)
+void Mesh::draw()
 {
 	for(auto& geometry : mGeometyVec)
 	{

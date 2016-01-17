@@ -37,15 +37,6 @@
     <ClInclude Include="..\include\Core\Window.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\StateManager.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\core\Game.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\core\State.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\Input.h">
       <Filter>include\core</Filter>
     </ClInclude>
@@ -97,28 +88,13 @@
     <ClInclude Include="..\include\core\Transform.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\Listeners.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\external\src\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\external\src\imgui\imgui.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\FileMonitor.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\core\ListenerSet.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\core\CameraControllers.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\MeshDataLoader.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\core\Entities.h">
       <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\core\Renderer.h">
@@ -137,6 +113,15 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\include\core\Ui.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\NUi.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Mesh.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\Hud.h">
       <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>

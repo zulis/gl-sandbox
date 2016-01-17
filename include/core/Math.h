@@ -7,3 +7,4 @@
 #include <glm/ext.hpp>
 
 using namespace glm;
+using glm::int64; // fixes glm and awesomium ambiguous symbol error

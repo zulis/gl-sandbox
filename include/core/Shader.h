@@ -118,9 +118,7 @@ Shader::Shader(const std::string &fileName)
 		fsText.erase(fsText.find(fsPattern), fsPattern.length());
 	}
 
-	mProgram = glCreateProgram();
-
-	if(loadFromRaw(vsText, gsText, fsText))
+	if (loadFromRaw(vsText, gsText, fsText))
 		link();
 }
 
@@ -233,6 +231,8 @@ bool Shader::loadFromString(const std::string &source, const ShaderType& shaderT
 //=========================================================================
 bool Shader::link()
 {
+	mProgram = glCreateProgram();
+
 	for (const auto& s : mShaderVec)
 		glAttachShader(mProgram, std::get<2>(s));
 
