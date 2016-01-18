@@ -55,13 +55,15 @@ Hud::Hud(const std::string& fileName, float width, float height)
 			#version 430 \n
 
 			in vec3 VertexPosition;
-			in vec2 VertexTexCoord;
 			out vec2 TexCoord;
+
+			uniform vec2 translate;
+			uniform vec2 scale;
 
 			void main()
 			{
-				gl_Position = /*MVP */ vec4(VertexPosition.x, VertexPosition.y, 0.0, 1.0);
-				TexCoord = VertexTexCoord;
+				gl_Position = vec4(translate + vec2(VertexPosition) * scale, 0.0, 1.0);
+				TexCoord = (vec2(VertexPosition.x, VertexPosition.y) + 1.0) * 0.5;
 			}
 
 			[Fragment]
@@ -78,8 +80,9 @@ Hud::Hud(const std::string& fileName, float width, float height)
 			}
 		), Shader::SourceType::String);
 
-
-	mTexture = new Texture(fileName);
+	Texture::Format tf;
+	tf.setFlipped(true);
+	mTexture = new Texture(fileName, tf);
 
 	if(width == 0 || height == 0)
 	{
@@ -97,12 +100,23 @@ Hud::Hud(const std::string& fileName, float width, float height)
 
 	std::vector<vec2> vertices =
 	{
+		/*
 		vec2(0.0f, 0.0f),
 		vec2(mWidth, 0.0f),
 		vec2(mWidth, mHeight),
 		vec2(0.0f, mHeight)
+		*/
+		
+		vec2(-1.0f, -1.0f),
+		vec2(1.0f, -1.0f),
+		vec2(-1.0f, 1.0f),
+		vec2(-1.0f, 1.0f),
+		vec2(1.0f, -1.0f),
+		vec2(1.0f, 1.0f)
+
 	};
 
+	/*
 	std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3 };
 
 	std::vector<vec2> texCoords =
@@ -112,11 +126,12 @@ Hud::Hud(const std::string& fileName, float width, float height)
 		vec2(1.0f, 1.0f),
 		vec2(0.0f, 1.0f)
 	};
+	*/
 
 	mGeometry = new Geometry();
 	mGeometry->setVertices(vertices);
-	mGeometry->setIndices(indices);
-	mGeometry->setTexCoords(texCoords);
+	//mGeometry->setIndices(indices);
+	//mGeometry->setTexCoords(texCoords);
 	mGeometry->prepare(*mShader);
 }
 
@@ -131,27 +146,29 @@ Hud::~Hud()
 //=========================================================================
 void Hud::draw(unsigned int windowWidth, unsigned int windowHeight)
 {
-	//auto halfImageScale = vec2((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight);
+	auto halfImageScale = vec2((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight);
 
 	//mPosition.x = -1 + halfImageScale.x + mPosition.x / windowWidth;
 	//mPosition.y = 1 - halfImageScale.y - mPosition.y / windowHeight;
 
-	mMatrix = mat4(1.0f);
+	//mMatrix = mat4(1.0f);
 	//mMatrix = rotate(mMatrix, mRotation, vec3(0.0f, 0.0f, 1.0f));
-	//mMatrix = translate(mMatrix, vec3(1.0, -1.0f, 0.0f));
+	//mMatrix = translate(mMatrix, vec3(1.0, 0.0f, 0.0f) * vec3(halfImageScale, 1.0f));
 
 
 	//mMatrix = translate(mMatrix, vec3(mPosition.x, mPosition.y, 0.0f));
 	//mMatrix = scale(mMatrix, vec3((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight, 0.0f));
 
-	mat4 projection = ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
+//	mat4 projection = ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
 	//auto mvp = mMatrix * mat4(1.0f) * projection;
-	auto mvp = projection * glm::mat4(1.0f);
+
+	vec2 translate = vec2(0, 0);
 
 	mShader->bind();
 	mTexture->bind();
 	mShader->setUniform(ShaderConstants::ColorMap, 0);
-	mShader->setUniform(ShaderConstants::MVP, mvp);
+	mShader->setUniform("translate", translate);
+	mShader->setUniform("scale", halfImageScale);
 
 	mGeometry->draw();
 

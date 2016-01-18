@@ -16,6 +16,8 @@ public:
 	virtual void onResize(const unsigned int width, const unsigned int height);
 
 private:
+	unsigned int mViewportWidth;
+	unsigned int mViewportHeight;
 	TextureID mTexD;
 	TextureID mTexN;
 	TextureID mTexS;
@@ -61,7 +63,8 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	gl::enableCullFace(gl::CullFaceType::Back);
 
 	//mNui.addUi(1280, 720, "http://www.google.com");
-	mHud = new Hud("assets/textures/default/UV_mapper.jpg");
+	//mHud = new Hud("assets/textures/default/UV_mapper.jpg");
+	mHud = new Hud("assets/textures/misc/256x256a.png");
 }
 
 //=========================================================================
@@ -126,7 +129,6 @@ void Test::onUpdate(double deltaTime)
 //=========================================================================
 void Test::onDraw()
 {
-	/*
 	//if (!camera.intersects(mMesh.getAABB().transformed(mTransform.getMatrix())))
 		//return;
 
@@ -161,15 +163,16 @@ void Test::onDraw()
 
 	//mNui.draw(&renderer);
 
-	renderer.reset();
-	*/
+	//gl::enable2D();
+	mHud->draw(mViewportWidth, mViewportHeight, Hud::Position::CENTER);
 
-	gl::enable2D();
-	mHud->draw(1280, 720, Hud::Position::CENTER);
+	renderer.reset();
 }
 
 //=========================================================================
 void Test::onResize(const unsigned int width, const unsigned int height)
 {
+	mViewportWidth = width;
+	mViewportHeight = height;
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 }
