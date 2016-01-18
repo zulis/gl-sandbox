@@ -10,11 +10,11 @@
 
 //using namespace Awesomium;
 
-class NUi
+class HtmlUi
 {
 public:
-	NUi();
-	~NUi();
+	HtmlUi();
+	~HtmlUi();
 	void addUi(unsigned int width, unsigned int height, const std::string& url);
 	void draw(Renderer* renderer);
 
@@ -26,12 +26,12 @@ private:
 };
 
 //=========================================================================
-NUi::NUi()
+HtmlUi::HtmlUi()
 {
 }
 
 //=========================================================================
-NUi::~NUi()
+HtmlUi::~HtmlUi()
 {
 	if (mTextureID)
 		glDeleteTextures(1, &mTextureID);
@@ -46,7 +46,7 @@ NUi::~NUi()
 	Awesomium::WebCore::Shutdown();
 }
 
-void NUi::addUi(unsigned int width, unsigned int height, const std::string& url)
+void HtmlUi::addUi(unsigned int width, unsigned int height, const std::string& url)
 {
 	using namespace Awesomium;
 
@@ -87,7 +87,7 @@ void NUi::addUi(unsigned int width, unsigned int height, const std::string& url)
 static bool NuiOnce = true;
 
 //=========================================================================
-void NUi::draw(Renderer* renderer)
+void HtmlUi::draw(Renderer* renderer)
 {
 	using namespace Awesomium;
 

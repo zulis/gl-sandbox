@@ -50,7 +50,35 @@ private:
 //=========================================================================
 Hud::Hud(const std::string& fileName, float width, float height)
 {
-	mShader = new Shader("assets/shaders/quad.shd");
+	mShader = new Shader(MULTI_LINE(
+			[Vertex]
+			#version 430 \n
+
+			in vec3 VertexPosition;
+			in vec2 VertexTexCoord;
+			out vec2 TexCoord;
+
+			void main()
+			{
+				gl_Position = /*MVP */ vec4(VertexPosition.x, VertexPosition.y, 0.0, 1.0);
+				TexCoord = VertexTexCoord;
+			}
+
+			[Fragment]
+			#version 430 \n
+
+			in vec2 TexCoord;
+			out vec4 FragColor;
+
+			layout(binding = 0) uniform sampler2D ColorMap;
+
+			void main()
+			{
+				FragColor = texture2D(ColorMap, TexCoord);
+			}
+		), Shader::SourceType::String);
+
+
 	mTexture = new Texture(fileName);
 
 	if(width == 0 || height == 0)

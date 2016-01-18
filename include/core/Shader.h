@@ -15,11 +15,18 @@
 #include "core/Resource.h"
 
 #define ERROR_BUFSIZE 1024
+#define MULTI_LINE(...) #__VA_ARGS__
 
 class Shader
 {
 public:
-	Shader(const std::string &fileName);
+	enum class SourceType
+	{
+		File,
+		String
+	};
+
+	Shader(const std::string &fileName, const SourceType& sourceType = SourceType::File);
 	~Shader();
 
 	void bind();
@@ -68,25 +75,33 @@ private:
 };
 
 //=========================================================================
-Shader::Shader(const std::string &fileName)
+Shader::Shader(const std::string &source, const SourceType& sourceType)
 {
-	mFileName = fileName;
-	std::ifstream source(fileName);
-
-	if (source.fail())
-	{
-		error("Failed to load shader: %s", fileName.c_str());
-		source.close();
-		return;
-	}
-
-	source.close();
-
+	std::string shaderText;
 	std::string vsPattern = "[Vertex]";
 	std::string gsPattern = "[Geometry]";
 	std::string fsPattern = "[Fragment]";
 
-	auto shaderText = readFile(fileName);
+	if (sourceType == SourceType::File)
+	{
+		mFileName = source;
+		std::ifstream stream(source);
+
+		if (stream.fail())
+		{
+			error("Failed to load shader: %s", source.c_str());
+			stream.close();
+			return;
+		}
+
+		stream.close();
+		shaderText = readFile(source);
+	}
+	else
+	{
+		mFileName = "from string";
+		shaderText = source;
+	}
 
 	size_t vsPos = shaderText.find(vsPattern);
 	size_t gsPos = shaderText.find(gsPattern);
@@ -371,7 +386,7 @@ void Shader::showInfo()
 	std::map<GLuint, std::string> attributeMap;
 	for (auto i = mAttributeMap.begin(); i != mAttributeMap.end(); ++i)
 		attributeMap[i->second] = i->first;
-	
+
 
 	note("------------------------------------------------");
 	//     log("Shader: %s\n", fileName.c_str());
@@ -411,7 +426,7 @@ std::string Shader::readFile(const std::string &fileName)
 		file.read(&result[0], result.size());
 		file.close();
 	}
-	
+
 	return result;
 }
 

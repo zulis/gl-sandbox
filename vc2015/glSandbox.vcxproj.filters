@@ -115,13 +115,13 @@
     <ClInclude Include="..\include\core\Ui.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\NUi.h">
-      <Filter>include\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\Mesh.h">
       <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\core\Hud.h">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\core\HtmlUi.h">
       <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>

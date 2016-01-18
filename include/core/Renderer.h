@@ -25,7 +25,7 @@ public:
 	TextureID addTexture(const Color& color, const Texture::Format& format = Texture::Format());
 	void setTexture(const TextureID texureID, int textureUnit = 0);
 
-	ShaderID addShader(const std::string& fileName);
+	ShaderID addShader(const std::string& source, const Shader::SourceType& sourceType = Shader::SourceType::File);
 	void setShader(const ShaderID shaderID);
 	//void setShaderUniform(const std::string &name, const Texture* tex);
 	//void setShaderUniform(const std::string &name, const TextureCube* tex);
@@ -115,9 +115,9 @@ void Renderer::setTexture(const TextureID texureID, int textureUnit)
 }
 
 //=========================================================================
-ShaderID Renderer::addShader(const std::string& fileName)
+ShaderID Renderer::addShader(const std::string& source, const Shader::SourceType& sourceType)
 {
-	auto shader = Resource::get<Shader>(fileName);
+	auto shader = Resource::get<Shader>(source, sourceType);
 	mShaders.push_back(shader.get());
 	return mShaders.size() - 1;
 }
