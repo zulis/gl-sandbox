@@ -4,6 +4,7 @@
 //#include <vector>
 //#include <map>
 #include "core/GL.h"
+#include "core/Math.h"
 #include "core/Color.h"
 #include "core/Log.h"
 #include "core/Image.h"
@@ -23,6 +24,7 @@ public:
 	void bind(GLuint textureUnit = 0);
 	void unbind();
 
+	vec2 getSize() const;
 	int getWidth() const;
 	int getHeight() const;
 	GLuint getTextureID() const;
@@ -245,6 +247,11 @@ void Texture::unbind()
 	}
 }
 
+//=========================================================================
+vec2 Texture::getSize() const
+{
+	return vec2(mWidth, mHeight);
+}
 
 //=========================================================================
 int Texture::getWidth() const

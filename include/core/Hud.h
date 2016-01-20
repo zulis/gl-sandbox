@@ -20,100 +20,75 @@ public:
 		CENTER
 	};
 
-	Hud(const std::string& fileName = std::string(), float width = 0, float height = 0);
+	Hud(const std::string& fileName, unsigned int viewportWidth, unsigned int viewportHeight);
 	~Hud();
 
-	void draw(unsigned int windowWidth, unsigned int windowHeight);
-	void draw(unsigned int windowWidth, unsigned int windowHeight, Position position, float offsetX = 0.0f, float offsetY = 0.0f);
-	float getWidth() const;
-	float getHeight() const;
-	void setPosition(float x, float y);
-	void setRotation(float degrees);
-
+	inline void draw();
+	inline void setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight);
+	inline void setPosition(Position position, float offsetX = 0.0f, float offsetY = 0.0f);
 
 private:
-	float mWidth;
-	float mHeight;
-	unsigned int mWindowWidth;
-	unsigned int mWindowHeight;
-	float mRotation { 0.0f };
-	vec2 mPosition;
-	vec2 mScale { vec2(1) };
-
+	vec2 mTextureSize;
+	vec2 mViewportSize;
+	vec2 mScale{ vec2(1) };
+	vec2 mTranslate{ vec2(0) };
+	Position mPosition{ Position::CENTER };
 	Shader* mShader;
 	Texture* mTexture;
 	Geometry* mGeometry;
-	mat4 mMatrix { mat4(1.0f) };
-
 };
 
 //=========================================================================
-Hud::Hud(const std::string& fileName, float width, float height)
+Hud::Hud(const std::string& fileName, unsigned int viewportWidth, unsigned int viewportHeight)
 {
+	mViewportSize = vec2(viewportWidth, viewportHeight);
+
 	mShader = new Shader(MULTI_LINE(
-			[Vertex]
-			#version 430 \n
+	[Vertex]
+	#version 430 \n
 
-			in vec3 VertexPosition;
-			out vec2 TexCoord;
+	in vec3 VertexPosition;
+	out vec2 TexCoord;
 
-			uniform vec2 translate;
-			uniform vec2 scale;
+	uniform vec2 translate;
+	uniform vec2 scale;
 
-			void main()
-			{
-				gl_Position = vec4(translate + vec2(VertexPosition) * scale, 0.0, 1.0);
-				TexCoord = (vec2(VertexPosition.x, VertexPosition.y) + 1.0) * 0.5;
-			}
-
-			[Fragment]
-			#version 430 \n
-
-			in vec2 TexCoord;
-			out vec4 FragColor;
-
-			layout(binding = 0) uniform sampler2D ColorMap;
-
-			void main()
-			{
-				FragColor = texture2D(ColorMap, TexCoord);
-			}
-		), Shader::SourceType::String);
-
-	Texture::Format tf;
-	tf.setFlipped(true);
-	mTexture = new Texture(fileName, tf);
-
-	if(width == 0 || height == 0)
+	void main()
 	{
-		mWidth = (float)mTexture->getWidth();
-		mHeight = (float)mTexture->getHeight();
-	}
-	else
-	{
-		mWidth = width;
-		mHeight = height;
+		gl_Position = vec4(translate + vec2(VertexPosition) * scale, 0.0, 1.0);
+		TexCoord = (vec2(VertexPosition.x, VertexPosition.y) + 1.0) * 0.5;
 	}
 
-	mWidth = mWidth / 2.0f;
-	mHeight = mHeight / 2.0f;
+	[Fragment]
+	#version 430 \n
+
+	in vec2 TexCoord;
+	out vec4 FragColor;
+
+	layout(binding = 0) uniform sampler2D ColorMap;
+
+	void main()
+	{
+		FragColor = texture2D(ColorMap, TexCoord);
+	}
+	), Shader::SourceType::String);
+
+	Texture::Format format;
+	format.setFlipped(true);
+	//format.setMagFilter(GL_NEAREST);
+	//format.setMinFilter(GL_NEAREST);
+	mTexture = new Texture(fileName, format);
+	mTextureSize = mTexture->getSize();
+	mScale = vec2(mTextureSize.x / mViewportSize.x, mTextureSize.y / mViewportSize.y);
 
 	std::vector<vec2> vertices =
 	{
-		/*
-		vec2(0.0f, 0.0f),
-		vec2(mWidth, 0.0f),
-		vec2(mWidth, mHeight),
-		vec2(0.0f, mHeight)
-		*/
-		
 		vec2(-1.0f, -1.0f),
 		vec2(1.0f, -1.0f),
 		vec2(-1.0f, 1.0f),
 		vec2(-1.0f, 1.0f),
 		vec2(1.0f, -1.0f),
 		vec2(1.0f, 1.0f)
-
 	};
 
 	/*
@@ -144,42 +119,23 @@ Hud::~Hud()
 }
 
 //=========================================================================
-void Hud::draw(unsigned int windowWidth, unsigned int windowHeight)
+inline void Hud::draw()
 {
-	auto halfImageScale = vec2((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight);
-
-	//mPosition.x = -1 + halfImageScale.x + mPosition.x / windowWidth;
-	//mPosition.y = 1 - halfImageScale.y - mPosition.y / windowHeight;
-
-	//mMatrix = mat4(1.0f);
-	//mMatrix = rotate(mMatrix, mRotation, vec3(0.0f, 0.0f, 1.0f));
-	//mMatrix = translate(mMatrix, vec3(1.0, 0.0f, 0.0f) * vec3(halfImageScale, 1.0f));
-
-
-	//mMatrix = translate(mMatrix, vec3(mPosition.x, mPosition.y, 0.0f));
-	//mMatrix = scale(mMatrix, vec3((float)mWidth / (float)windowWidth, (float)mHeight / (float)windowHeight, 0.0f));
-
-//	mat4 projection = ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f);
-	//auto mvp = mMatrix * mat4(1.0f) * projection;
-
-	vec2 translate = vec2(0, 0);
-
 	mShader->bind();
 	mTexture->bind();
 	mShader->setUniform(ShaderConstants::ColorMap, 0);
-	mShader->setUniform("translate", translate);
-	mShader->setUniform("scale", halfImageScale);
-
+	mShader->setUniform("translate", mTranslate);
+	mShader->setUniform("scale", mScale);
 	mGeometry->draw();
-
 	mTexture->unbind();
 	mShader->unbind();
 }
 
+/*
 //=========================================================================
-void Hud::draw(unsigned int windowWidth, unsigned int windowHeight, Position position, float offsetX, float offsetY)
+inline void Hud::draw(unsigned int windowWidth, unsigned int windowHeight, Position position, float offsetX, float offsetY)
 {
-	/*
+
 	float x = 0.0f;
 	float y = 0.0f;
 
@@ -239,30 +195,50 @@ void Hud::draw(unsigned int windowWidth, unsigned int windowHeight, Position pos
 
 	//setPosition(x + offsetX / w, y - offsetY / h);
 
-	*/
+
 	draw(windowWidth, windowHeight);
 }
+*/
 
 //=========================================================================
-float Hud::getWidth() const
+void Hud::setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight)
 {
-	return mWidth;
+	mViewportSize = vec2(viewportWidth, viewportHeight);
+	mScale = vec2(mTextureSize.x / (float)viewportWidth, mTextureSize.y / (float)viewportHeight);
+	setPosition(mPosition);
 }
 
 //=========================================================================
-float Hud::getHeight() const
+void Hud::setPosition(Position position, float offsetX, float offsetY)
 {
-	return mHeight;
-}
+	mPosition = position;
 
-//=========================================================================
-void Hud::setRotation(float degrees)
-{
-	mRotation = degrees;
-}
 
-//=========================================================================
-void Hud::setPosition(float x, float y)
-{
-	mPosition = vec2(x, y);
+	switch (position)
+	{
+	case Hud::TOP:
+		mTranslate.x = 0;
+		//mTranslate.y = (mViewportSize.y - mTextureSize.y / 2.0f) * mScale.y;
+		break;
+	case Hud::BOTTOM:
+		break;
+	case Hud::LEFT:
+		break;
+	case Hud::RIGHT:
+		break;
+	case Hud::TOPLEFT:
+		break;
+	case Hud::TOPRIGHT:
+		break;
+	case Hud::BOTTOMLEFT:
+		break;
+	case Hud::BOTTOMRIGHT:
+		break;
+	case Hud::CENTER:
+		mTranslate.x = 0;
+		mTranslate.y = 0;
+		break;
+	default:
+		break;
+	}
 }

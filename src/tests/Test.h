@@ -16,8 +16,6 @@ public:
 	virtual void onResize(const unsigned int width, const unsigned int height);
 
 private:
-	unsigned int mViewportWidth;
-	unsigned int mViewportHeight;
 	TextureID mTexD;
 	TextureID mTexN;
 	TextureID mTexS;
@@ -40,7 +38,7 @@ private:
 };
 
 //=========================================================================
-Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
+Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 {
 	setTitle("Game!");
 	renderer.setCearColor(Color::gray(0.5f));
@@ -64,7 +62,8 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 
 	//mNui.addUi(1280, 720, "http://www.google.com");
 	//mHud = new Hud("assets/textures/default/UV_mapper.jpg");
-	mHud = new Hud("assets/textures/misc/256x256a.png");
+	mHud = new Hud("assets/textures/misc/256x256a.png", getViewportWidth(), getViewportHeight());
+	mHud->setPosition(Hud::Position::TOP);
 }
 
 //=========================================================================
@@ -164,7 +163,8 @@ void Test::onDraw()
 	//mNui.draw(&renderer);
 
 	//gl::enable2D();
-	mHud->draw(mViewportWidth, mViewportHeight, Hud::Position::CENTER);
+	//mHud->draw(mViewportWidth, mViewportHeight, Hud::Position::CENTER);
+	mHud->draw();
 
 	renderer.reset();
 }
@@ -172,7 +172,6 @@ void Test::onDraw()
 //=========================================================================
 void Test::onResize(const unsigned int width, const unsigned int height)
 {
-	mViewportWidth = width;
-	mViewportHeight = height;
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+	mHud->setViewportSize(width, height);
 }

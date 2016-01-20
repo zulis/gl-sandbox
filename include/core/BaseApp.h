@@ -10,6 +10,7 @@
 #include "core/Ui.h"
 #include <glfw/glfw3.h>
 #include <glfw/glfw3native.h>
+#include "core/Math.h"
 #include "core/Input.h"
 #include "core/Renderer.h"
 #include "core/Camera.h"
@@ -50,6 +51,9 @@ public:
 	void hideMouse();
 	void setClipboardText(const char *text);
 	const char *getClipboardText();
+	vec2 getViewportSize() const;
+	unsigned int getViewportWidth() const;
+	unsigned int getViewportHeight() const;
 
 protected:
 	Renderer renderer;
@@ -61,6 +65,7 @@ private:
 	Input mInput;
 	bool mRunning{ false };
 	bool mShowUI{ false };
+	vec2 mViewportSize;
 
 private:
 	inline static void errorCallback(int errorCode, const char* description);
@@ -137,6 +142,7 @@ void BaseApp::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	gl::setViewport(width, height);
 	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
+	baseApp->mViewportSize = vec2(width, height);
 	baseApp->onResize(width, height);
 }
 
@@ -147,6 +153,8 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 
 	if (!glfwInit())
 		exit(1);
+
+	mViewportSize = vec2(width, height);
 
 	//glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -371,4 +379,22 @@ void BaseApp::setClipboardText(const char *text)
 const char *BaseApp::getClipboardText()
 {
 	return glfwGetClipboardString(mWindow);
+}
+
+//=========================================================================
+glm::vec2 BaseApp::getViewportSize() const
+{
+	return mViewportSize;
+}
+
+//=========================================================================
+unsigned int BaseApp::getViewportWidth() const
+{
+	return static_cast<int>(mViewportSize.x);
+}
+
+//=========================================================================
+unsigned int BaseApp::getViewportHeight() const
+{
+	return static_cast<int>(mViewportSize.y);
 }
