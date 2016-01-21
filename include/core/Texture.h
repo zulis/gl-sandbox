@@ -19,6 +19,7 @@ public:
 
 	Texture(const std::string &fileName = std::string(), const Format &format = Format());
 	Texture(const Color &color, const Format &format = Format());
+	Texture(const int width, const int height, const unsigned char *pixels);
 	~Texture();
 
 	void bind(GLuint textureUnit = 0);
@@ -55,7 +56,7 @@ private:
 	GLuint mTextureID;
 	GLuint mTextureUnit;
 	Format mFormat;
-	const char *mFileName;
+	const char *mFileName = nullptr;
 
 	//unsigned char *mPixels;
 	unsigned int mWidth;
@@ -147,9 +148,16 @@ Texture::Texture(const std::string &fileName, const Format &format) : mWidth(0),
 	getTexture(fileName, format);
 }
 
+//=========================================================================
 Texture::Texture(const Color &color, const Format &format) : mWidth(0), mHeight(0), mTextureUnit(TEXTURE_UNIT_NONE)
 {
 	getTexture(color, format);
+}
+
+//=========================================================================
+Texture::Texture(const int width, const int height, const unsigned char * pixels) : mWidth(width), mHeight(height), mTextureUnit(TEXTURE_UNIT_NONE)
+{
+	loadFromRaw(GL_BGRA, width, height, pixels);
 }
 
 //=========================================================================
@@ -158,7 +166,8 @@ Texture::~Texture()
 	if (mTextureID)
 		glDeleteTextures(1, &mTextureID);
 
-	note("Texture released: %s", mFileName);
+	if(mFileName != nullptr)
+		note("Texture released: %s", mFileName);
 }
 
 //=========================================================================

@@ -3,6 +3,7 @@
 #include "core/BaseApp.h"
 //#include "core/NUi.h"
 #include "core/Hud.h"
+#include "core/HtmlHud.h"
 
 class Test : public BaseApp
 {
@@ -26,6 +27,7 @@ private:
 
 	//NUi mNui;
 	Hud* mHud;
+	HtmlHud* mHtmlHud;
 	
 	const float strafeSpeed
 	{
@@ -60,16 +62,19 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 
 	gl::enableCullFace(gl::CullFaceType::Back);
 
-	//mNui.addUi(1280, 720, "http://www.google.com");
-	//mHud = new Hud("assets/textures/default/UV_mapper.jpg");
 	mHud = new Hud("assets/textures/misc/256x256a.png", getViewportWidth(), getViewportHeight());
 	mHud->setPosition(Hud::BOTTOMRIGHT, -10, -10);
+
+	mHtmlHud = new HtmlHud("http://www.youtube.com", getViewportWidth(), getViewportHeight());
+	mHtmlHud->setContentSize(800, 600);
+	mHtmlHud->setPosition(HtmlHud::TOPLEFT, 10, 10);
 }
 
 //=========================================================================
 Test::~Test()
 {
 	delete mHud;
+	delete mHtmlHud;
 }
 
 //=========================================================================
@@ -118,6 +123,8 @@ void Test::onInput(const Input& input)
 		camera.move(Camera::FORWARD);
 		camera.setDirection(dir);
 	}
+
+	mHtmlHud->onInput(input);
 }
 
 //=========================================================================
@@ -165,6 +172,8 @@ void Test::onDraw()
 	//gl::enable2D();
 	mHud->draw();
 
+	mHtmlHud->draw();
+
 	renderer.reset();
 }
 
@@ -173,4 +182,5 @@ void Test::onResize(const unsigned int width, const unsigned int height)
 {
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 	mHud->setViewportSize(width, height);
+	mHtmlHud->setViewportSize(width, height);
 }

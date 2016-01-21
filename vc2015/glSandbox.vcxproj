@@ -175,8 +175,8 @@
     <ClInclude Include="..\include\core\Color.h" />
     <ClInclude Include="..\include\core\Geometry.h" />
     <ClInclude Include="..\include\core\GL.h" />
+    <ClInclude Include="..\include\core\HtmlHud.h" />
     <ClInclude Include="..\include\core\Mesh.h" />
-    <ClInclude Include="..\include\core\HtmlUi.h" />
     <ClInclude Include="..\include\core\Hud.h" />
     <ClInclude Include="..\include\core\Renderer.h" />
     <ClInclude Include="..\include\core\Image.h" />
