@@ -23,9 +23,9 @@ public:
 	Hud(const std::string& fileName, unsigned int viewportWidth, unsigned int viewportHeight);
 	~Hud();
 
-	inline void draw();
-	inline void setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight);
-	inline void setPosition(Position position, float offsetX = 0.0f, float offsetY = 0.0f);
+	void draw();
+	void setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight);
+	void setPosition(Position position, float offsetX = 0.0f, float offsetY = 0.0f);
 
 private:
 	vec2 mTextureSize;
@@ -33,51 +33,50 @@ private:
 	vec2 mScale{ vec2(1) };
 	vec2 mTranslate{ vec2(0) };
 	Position mPosition{ Position::CENTER };
+	float mOffsetX{ 0 };
+	float mOffsetY{ 0 };
 	Shader* mShader;
 	Texture* mTexture;
 	Geometry* mGeometry;
 };
 
 //=========================================================================
-Hud::Hud(const std::string& fileName, unsigned int viewportWidth, unsigned int viewportHeight)
+Hud::Hud(const std::string & fileName, unsigned int viewportWidth, unsigned int viewportHeight)
 {
 	mViewportSize = vec2(viewportWidth, viewportHeight);
 
-	mShader = new Shader(MULTI_LINE(
-	[Vertex]
-	#version 430 \n
+	mShader = new Shader(R"(
+		[Vertex]
+		#version 430
+		
+		in vec3 VertexPosition;
+		in vec2 VertexTexCoord;
+		out vec2 TexCoord;
+		
+		uniform mat4 model;
+		uniform vec2 scale;
+		
+		void main()
+		{
+			gl_Position = model * vec4(vec2(VertexPosition) * scale, 0.0, 1.0);
+			TexCoord = VertexTexCoord;
+		}
+		
+		[Fragment]
+		#version 430
+		
+		in vec2 TexCoord;
+		out vec4 FragColor;
+		
+		layout(binding = 0) uniform sampler2D ColorMap;
+		
+		void main()
+		{
+			FragColor = texture2D(ColorMap, TexCoord);
+		}
+	)", Shader::SourceType::String);
 
-	in vec3 VertexPosition;
-	out vec2 TexCoord;
-
-	uniform vec2 translate;
-	uniform vec2 scale;
-
-	void main()
-	{
-		gl_Position = vec4(translate + vec2(VertexPosition) * scale, 0.0, 1.0);
-		TexCoord = (vec2(VertexPosition.x, VertexPosition.y) + 1.0) * 0.5;
-	}
-
-	[Fragment]
-	#version 430 \n
-
-	in vec2 TexCoord;
-	out vec4 FragColor;
-
-	layout(binding = 0) uniform sampler2D ColorMap;
-
-	void main()
-	{
-		FragColor = texture2D(ColorMap, TexCoord);
-	}
-	), Shader::SourceType::String);
-
-	Texture::Format format;
-	format.setFlipped(true);
-	//format.setMagFilter(GL_NEAREST);
-	//format.setMinFilter(GL_NEAREST);
-	mTexture = new Texture(fileName, format);
+	mTexture = new Texture(fileName);
 	mTextureSize = mTexture->getSize();
 	mScale = vec2(mTextureSize.x / mViewportSize.x, mTextureSize.y / mViewportSize.y);
 
@@ -86,27 +85,24 @@ Hud::Hud(const std::string& fileName, unsigned int viewportWidth, unsigned int v
 		vec2(-1.0f, -1.0f),
 		vec2(1.0f, -1.0f),
 		vec2(-1.0f, 1.0f),
-		vec2(-1.0f, 1.0f),
-		vec2(1.0f, -1.0f),
 		vec2(1.0f, 1.0f)
 	};
 
-	/*
-	std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3 };
+	std::vector<unsigned int> indices = { 0, 1, 2, 1, 3, 2 };
 
 	std::vector<vec2> texCoords =
 	{
-		vec2(0.0f, 0.0f),
-		vec2(1.0f, 0.0f),
+
+		vec2(0.0f, 1.0f),
 		vec2(1.0f, 1.0f),
-		vec2(0.0f, 1.0f)
+		vec2(0.0f, 0.0f),
+		vec2(1.0f, 0.0f)
 	};
-	*/
 
 	mGeometry = new Geometry();
 	mGeometry->setVertices(vertices);
-	//mGeometry->setIndices(indices);
-	//mGeometry->setTexCoords(texCoords);
+	mGeometry->setIndices(indices);
+	mGeometry->setTexCoords(texCoords);
 	mGeometry->prepare(*mShader);
 }
 
@@ -121,124 +117,72 @@ Hud::~Hud()
 //=========================================================================
 inline void Hud::draw()
 {
+	mat4 model = glm::translate(mat4(1.0f), vec3(mTranslate, 0.0f));
+
 	mShader->bind();
 	mTexture->bind();
 	mShader->setUniform(ShaderConstants::ColorMap, 0);
-	mShader->setUniform("translate", mTranslate);
+	mShader->setUniform("model", model);
 	mShader->setUniform("scale", mScale);
 	mGeometry->draw();
 	mTexture->unbind();
 	mShader->unbind();
 }
 
-/*
-//=========================================================================
-inline void Hud::draw(unsigned int windowWidth, unsigned int windowHeight, Position position, float offsetX, float offsetY)
-{
-
-	float x = 0.0f;
-	float y = 0.0f;
-
-	auto w = windowWidth;
-	auto h = windowHeight;
-
-	auto scaleX = (float)mWidth / (float)windowWidth;
-	auto scaleY = (float)mHeight / (float)windowHeight;
-
-	position = LEFT;
-
-	switch(position)
-	{
-		case Position::TOP:
-			mPosition = vec2(windowWidth - mWidth, 0.0f);
-			break;
-
-		case Position::BOTTOM:
-			mPosition = vec2(windowWidth - mWidth, windowHeight * 2 - mHeight * 2);
-			break;
-
-		case Position::LEFT:
-			mPosition = vec2(0.0f, windowHeight - mHeight);
-			break;
-
-		case Position::RIGHT:
-			mPosition = vec2(1, 0);
-			break;
-
-		case Position::TOPLEFT:
-			mPosition = vec2(-1, 1);
-			break;
-
-		case Position::TOPRIGHT:
-			mPosition = vec2(1, 1);
-			break;
-
-		case Position::BOTTOMLEFT:
-			mPosition = vec2(-1, -1);
-			break;
-
-		case Position::BOTTOMRIGHT:
-			mPosition = vec2(1, -1);
-			break;
-
-		case Position::CENTER:
-			//x = (w - mWidth) / w;
-			//y = -(h - mHeight) / h;
-			break;
-
-		default:
-			break;
-	}
-
-	//mPosition.x += offsetX / windowWidth;
-	//mPosition.y -= offsetY / windowHeight;
-
-	//setPosition(x + offsetX / w, y - offsetY / h);
-
-
-	draw(windowWidth, windowHeight);
-}
-*/
-
 //=========================================================================
 void Hud::setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight)
 {
 	mViewportSize = vec2(viewportWidth, viewportHeight);
 	mScale = vec2(mTextureSize.x / (float)viewportWidth, mTextureSize.y / (float)viewportHeight);
-	setPosition(mPosition);
+	setPosition(mPosition, mOffsetX, mOffsetY);
 }
 
 //=========================================================================
 void Hud::setPosition(Position position, float offsetX, float offsetY)
 {
 	mPosition = position;
-
+	mOffsetX = offsetX;
+	mOffsetY = offsetY;
+	mTranslate = vec2(0.0f);
+	float x = (mViewportSize.x - mTextureSize.x) / mViewportSize.x;
+	float y = (mViewportSize.y - mTextureSize.y) / mViewportSize.y;
 
 	switch (position)
 	{
 	case Hud::TOP:
-		mTranslate.x = 0;
-		//mTranslate.y = (mViewportSize.y - mTextureSize.y / 2.0f) * mScale.y;
+		mTranslate.y = y;
 		break;
 	case Hud::BOTTOM:
+		mTranslate.y = -y;
 		break;
 	case Hud::LEFT:
+		mTranslate.x = -x;
 		break;
 	case Hud::RIGHT:
+		mTranslate.x = x;
 		break;
 	case Hud::TOPLEFT:
+		mTranslate.x = -x;
+		mTranslate.y = y;
 		break;
 	case Hud::TOPRIGHT:
+		mTranslate.x = x;
+		mTranslate.y = y;
 		break;
 	case Hud::BOTTOMLEFT:
+		mTranslate.x = -x;
+		mTranslate.y = -y;
 		break;
 	case Hud::BOTTOMRIGHT:
+		mTranslate.x = x;
+		mTranslate.y = -y;
 		break;
 	case Hud::CENTER:
-		mTranslate.x = 0;
-		mTranslate.y = 0;
 		break;
 	default:
 		break;
 	}
+
+	mTranslate.x = mTranslate.x + offsetX / mViewportSize.x;
+	mTranslate.y = mTranslate.y - offsetY / mViewportSize.y;
 }

@@ -15,7 +15,6 @@
 #include "core/Resource.h"
 
 #define ERROR_BUFSIZE 1024
-#define MULTI_LINE(...) #__VA_ARGS__
 
 class Shader
 {

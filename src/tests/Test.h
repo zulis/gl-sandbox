@@ -38,7 +38,7 @@ private:
 };
 
 //=========================================================================
-Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
+Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 {
 	setTitle("Game!");
 	renderer.setCearColor(Color::gray(0.5f));
@@ -63,7 +63,7 @@ Test::Test() : BaseApp(800, 600, WindowMode::Windowed)
 	//mNui.addUi(1280, 720, "http://www.google.com");
 	//mHud = new Hud("assets/textures/default/UV_mapper.jpg");
 	mHud = new Hud("assets/textures/misc/256x256a.png", getViewportWidth(), getViewportHeight());
-	mHud->setPosition(Hud::Position::TOP);
+	mHud->setPosition(Hud::BOTTOMRIGHT, -10, -10);
 }
 
 //=========================================================================
@@ -163,7 +163,6 @@ void Test::onDraw()
 	//mNui.draw(&renderer);
 
 	//gl::enable2D();
-	//mHud->draw(mViewportWidth, mViewportHeight, Hud::Position::CENTER);
 	mHud->draw();
 
 	renderer.reset();
