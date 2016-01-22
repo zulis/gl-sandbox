@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <WebCore.h>
 //#include <WebSession.h>
 //#include <WebPreferences.h>
@@ -9,6 +10,12 @@
 #include "core/Shader.h"
 #include "core/Texture.h"
 #include "core/Geometry.h"
+
+//using namespace Awesomium;
+
+typedef int HtmlViewID;
+
+#define HTMLVIEW_NONE (-1)
 
 class HtmlHud
 {
@@ -26,8 +33,11 @@ public:
 		CENTER
 	};
 
-	HtmlHud(const std::string& source, unsigned int viewportWidth, unsigned int viewportHeight);
+	HtmlHud(unsigned int viewportWidth, unsigned int viewportHeight);
 	~HtmlHud();
+
+	HtmlViewID addFromWeb(const std::string& source);
+	HtmlViewID addFromFile(const std::string& fileName);
 
 	void draw();
 	void onInput(const Input& input);
@@ -36,6 +46,8 @@ public:
 	void setContentSize(unsigned int width, unsigned int height);
 
 private:
+	std::vector<Awesomium::WebView*> mWebViewArray;
+
 	vec2 mTextureSize;
 	vec2 mViewportSize;
 	vec2 mScale{ vec2(1) };
@@ -44,13 +56,11 @@ private:
 	float mOffsetX{ 0 };
 	float mOffsetY{ 0 };
 	Shader* mShader;
-	//Texture* mTexture;
 	Geometry* mGeometry;
-	Awesomium::WebView* mWebView;
 };
 
 //=========================================================================
-HtmlHud::HtmlHud(const std::string& source, unsigned int viewportWidth, unsigned int viewportHeight)
+HtmlHud::HtmlHud(unsigned int viewportWidth, unsigned int viewportHeight)
 {
 	mViewportSize = vec2(viewportWidth, viewportHeight);
 
@@ -85,11 +95,6 @@ HtmlHud::HtmlHud(const std::string& source, unsigned int viewportWidth, unsigned
 		}
 	)", Shader::SourceType::String);
 
-	//mTexture = new Texture(fileName);
-	//mTextureSize = mTexture->getSize();
-	//mScale = vec2(mTextureSize.x / mViewportSize.x, mTextureSize.y / mViewportSize.y);
-	//mTextureSize = vec2(viewportWidth, viewportHeight);
-
 	std::vector<vec2> vertices =
 	{
 		vec2(-1.0f, -1.0f),
@@ -120,24 +125,39 @@ HtmlHud::HtmlHud(const std::string& source, unsigned int viewportWidth, unsigned
 	if (!WebCore::instance())
 		WebCore::Initialize(WebConfig());
 
-	//WebSession* session = WebCore::instance()->CreateWebSession("d:\session", WebPreferences.Default());
-	mWebView = WebCore::instance()->CreateWebView(viewportWidth, viewportHeight);
-	mWebView->SetTransparent(true);
-	mWebView->LoadURL(WebURL(WSLit(source.c_str())));
-
-	setContentSize(viewportWidth, viewportHeight);
+	//setContentSize(viewportWidth, viewportHeight);
 }
 
 //=========================================================================
 HtmlHud::~HtmlHud()
 {
 	delete mShader;
-	//delete mTexture;
 	delete mGeometry;
-	mWebView->Destroy();
+
+	for (Awesomium::WebView* webView : mWebViewArray)
+		webView->Destroy();
+
+	mWebViewArray.clear();
 
 	if (Awesomium::WebCore::instance())
 		Awesomium::WebCore::Shutdown();
+}
+
+//=========================================================================
+HtmlViewID HtmlHud::addFromWeb(const std::string& source)
+{
+	using namespace Awesomium;
+	WebView* webView = WebCore::instance()->CreateWebView(mViewportSize.x, mViewportSize.y);
+	webView->SetTransparent(true);
+	webView->LoadURL(WebURL(WSLit(source.c_str())));
+	mWebViewArray.push_back(webView);
+	return mWebViewArray.size() - 1;
+}
+
+//=========================================================================
+HtmlViewID HtmlHud::addFromFile(const std::string& fileName)
+{
+	return addFromWeb("file:///" + fileName);
 }
 
 //=========================================================================
@@ -147,29 +167,32 @@ inline void HtmlHud::draw()
 
 	WebCore::instance()->Update();
 
-	if (!mWebView->IsLoading())
+	for (WebView* webView : mWebViewArray)
 	{
-		BitmapSurface* surface = (BitmapSurface*)mWebView->surface();
+		if (!webView->IsLoading())
+		{
+			BitmapSurface* surface = (BitmapSurface*)webView->surface();
 
-		int w = surface->width();
-		int h = surface->height();
-		unsigned char *buffer = new unsigned char[w * h * 4];
-		surface->CopyTo(buffer, w * 4, 4, false, false);
-		Texture* texture = new Texture(w, h, buffer);
+			int w = surface->width();
+			int h = surface->height();
+			unsigned char *buffer = new unsigned char[w * h * 4];
+			surface->CopyTo(buffer, w * 4, 4, false, false);
+			Texture* texture = new Texture(w, h, buffer);
 
-		mat4 model = glm::translate(mat4(1.0f), vec3(mTranslate, 0.0f));
+			mat4 model = glm::translate(mat4(1.0f), vec3(mTranslate, 0.0f));
 
-		mShader->bind();
-		texture->bind();
-		mShader->setUniform(ShaderConstants::ColorMap, 0);
-		mShader->setUniform("model", model);
-		mShader->setUniform("scale", mScale);
-		mGeometry->draw();
-		texture->unbind();
-		mShader->unbind();
+			mShader->bind();
+			texture->bind();
+			mShader->setUniform(ShaderConstants::ColorMap, 0);
+			mShader->setUniform("model", model);
+			mShader->setUniform("scale", mScale);
+			mGeometry->draw();
+			texture->unbind();
+			mShader->unbind();
 
-		delete[] buffer;
-		delete texture;
+			delete[] buffer;
+			delete texture;
+		}
 	}
 }
 
@@ -200,16 +223,19 @@ TypeKey(VirtualKey.RETURN, "\r\n"); // Enter
 //=========================================================================
 void HtmlHud::onInput(const Input& input)
 {
-	mWebView->InjectMouseMove(input.getMouseX(), input.getMouseY());
+	for (Awesomium::WebView* webView : mWebViewArray)
+	{
+		webView->InjectMouseMove(input.getMouseX(), input.getMouseY());
 
-	if (input.isMouseDown(MouseButton::Left))
-		mWebView->InjectMouseDown(Awesomium::MouseButton::kMouseButton_Left);
-	else
-		mWebView->InjectMouseUp(Awesomium::MouseButton::kMouseButton_Left);
+		if (input.isMouseDown(MouseButton::Left))
+			webView->InjectMouseDown(Awesomium::MouseButton::kMouseButton_Left);
+		else
+			webView->InjectMouseUp(Awesomium::MouseButton::kMouseButton_Left);
 
-	mWebView->InjectMouseWheel(input.getMouseScroolY(), input.getMouseScroolX());
+		webView->InjectMouseWheel(input.getMouseScroolY(), input.getMouseScroolX());
 
-	//mWebView->InjectKeyboardEvent()
+		//webView->InjectKeyboardEvent()
+	}
 }
 
 //=========================================================================
@@ -273,7 +299,10 @@ void HtmlHud::setPosition(Position position, float offsetX, float offsetY)
 //=========================================================================
 void HtmlHud::setContentSize(unsigned int width, unsigned int height)
 {
-	mWebView->Resize(width, height);
-	mTextureSize = vec2(width, height);
-	onResize(mViewportSize.x, mViewportSize.y);
+	for (Awesomium::WebView* webView : mWebViewArray)
+	{
+		webView->Resize(width, height);
+		mTextureSize = vec2(width, height);
+		onResize(mViewportSize.x, mViewportSize.y);
+	}
 }

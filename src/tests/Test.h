@@ -27,7 +27,7 @@ private:
 
 	//NUi mNui;
 	Hud* mHud;
-	HtmlHud* mHtmlHud1;
+	HtmlHud* mHtmlHud;
 	//HtmlHud* mHtmlHud2;
 	
 	const float strafeSpeed
@@ -66,7 +66,12 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	mHud = new Hud("assets/textures/misc/256x256a.png", getViewportWidth(), getViewportHeight());
 	mHud->setPosition(Hud::BOTTOMRIGHT, -10, -10);
 
-	mHtmlHud1 = new HtmlHud("file:///assets/ui/main.html", getViewportWidth(), getViewportHeight());
+	mHtmlHud = new HtmlHud(getViewportWidth(), getViewportHeight());
+	//mHtmlHud->addFromWeb("http://www.yahoo.com");
+	mHtmlHud->addFromFile("assets/ui/main.html");
+	mHtmlHud->setPosition(HtmlHud::CENTER);
+
+	//mHtmlHud = new HtmlHud("file:///assets/ui/main.html", getViewportWidth(), getViewportHeight());
 	//mHtmlHud1 = new HtmlHud("http://www.yahoo.com", getViewportWidth(), getViewportHeight());
 	//mHtmlHud1->setContentSize(300, 400);
 	//mHtmlHud1->setPosition(HtmlHud::CENTER);
@@ -80,7 +85,7 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 Test::~Test()
 {
 	delete mHud;
-	delete mHtmlHud1;
+	delete mHtmlHud;
 	//delete mHtmlHud2;
 }
 
@@ -131,7 +136,7 @@ void Test::onInput(const Input& input)
 		camera.setDirection(dir);
 	}
 
-	mHtmlHud1->onInput(input);
+	mHtmlHud->onInput(input);
 	//mHtmlHud2->onInput(input);
 }
 
@@ -180,7 +185,7 @@ void Test::onDraw()
 	//gl::enable2D();
 	mHud->draw();
 
-	mHtmlHud1->draw();
+	mHtmlHud->draw();
 	//mHtmlHud2->draw();
 
 	renderer.reset();
@@ -191,6 +196,6 @@ void Test::onResize(const unsigned int width, const unsigned int height)
 {
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 	mHud->onResize(width, height);
-	mHtmlHud1->onResize(width, height);
+	mHtmlHud->onResize(width, height);
 	//mHtmlHud2->onResize(width, height);
 }
