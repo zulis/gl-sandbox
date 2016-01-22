@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link type="text/css" href="jQueryUI/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryUI/js/jquery-ui-1.8.12.custom.min.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			$(function() {
+				//$('.ui-widget').show('slide', 500);
+				$('.ui-button').css({ width: '200px' });	
+				$('.ui-button').hover(
+					function() { $(this).addClass('ui-state-hover'); $(this).focus(); $(this).addClass('ui-state-focus'); },
+					function() { $(this).removeClass('ui-state-hover'); $(this).removeClass('ui-state-focus'); }
+				);
+				
+				///////////////////////////////////////////////
+				var dialogOpts = {
+					autoOpen: true,
+					//position: ['left top'],
+					position: ['center'],
+					title: 'C·u·b·i·c·a',
+					//show: 'slide',
+					draggable: false,
+					closeOnEscape: false,
+					resizable: false,
+					height: 'auto',
+					width: 'auto',
+					open: function(event, ui) {
+						$(".ui-dialog-titlebar-close").hide();
+						$('.ui-button').removeClass('ui-state-focus');
+						$('#btnPlay').addClass('ui-state-hover');
+						$('#btnPlay').focus();
+					}
+				};
+				$("#dialog").dialog(dialogOpts);
+				
+				$('#buttons').mouseenter(function() {
+					$('.ui-button').removeClass('ui-state-hover');
+					$('.ui-button').removeClass('ui-state-focus');
+					$('.ui-button').blur();
+				});
+				$('#buttons').mouseleave(function() {
+					$('.ui-button').removeClass('ui-state-hover');
+					$('.ui-button').blur();
+					$('#btnPlay').addClass('ui-state-hover');
+					$('#btnPlay').focus();
+				});
+				
+				$('#btnPlay').click(function() {
+					Client.PlayClick();
+					return false;
+				});
+				$('#btnStatistics').click(function() {
+					Client.StatisticsClick();
+					return false;
+				});
+				$('#btnOptions').click(function() {
+					Client.OptionsClick();
+					return false;
+				});
+				$('#btnCredits').click(function() {
+					Client.CreditsClick();
+					return false;
+				});
+				$('#btnQuit').click(function() {
+					Client.QuitClick();
+					return false;
+				});
+				
+				$("body").css("-webkit-user-select","none");
+				$("body").css("-moz-user-select","none");
+				$("body").css("-ms-user-select","none");
+				$("body").css("-o-user-select","none");
+				$("body").css("user-select","none");
+			});
+			
+			function keyUp() {
+				var id=$("*:focus").attr("id");
+				var newid;
+				if (id=="btnStatistics") {
+					newid = "#btnPlay"
+				}
+				else if (id=="btnOptions") {
+					newid = "#btnStatistics"
+				}
+				else if (id=="btnCredits") {
+					newid = "#btnOptions"
+				}
+				else if (id=="btnQuit") {
+					newid = "#btnCredits"
+				}
+				else if (id=="btnPlay") {
+					newid = "#btnQuit"
+				}
+				else {
+					return;
+				}
+
+					$('#'+id).removeClass('ui-state-hover');
+					$('.ui-button').blur();
+					$(newid).addClass('ui-state-hover');
+					$(newid).focus().hover();
+			}
+			
+			function keyDown() {
+				var id=$("*:focus").attr("id");
+				var newid;
+				if (id=="btnPlay") {
+					newid = "#btnStatistics"
+				}
+				else if (id=="btnStatistics") {
+					newid = "#btnOptions"
+				}
+				else if (id=="btnOptions") {
+					newid = "#btnCredits"
+				}
+				else if (id=="btnCredits") {
+					newid = "#btnQuit"
+				}
+				else if (id=="btnQuit") {
+					newid = "#btnPlay"
+				}
+				else {
+					return;
+				}
+
+					$('#'+id).removeClass('ui-state-hover');
+					$('.ui-button').blur();
+					$(newid).addClass('ui-state-hover');
+					$(newid).focus().hover();
+			}
+			
+			function keyEnter() {
+				$('.ui-state-hover').click();
+			}
+		</script>
+	</head>
+	<body>
+		<div id="dialog">
+			<div id="buttons">
+				<p>
+					<button id="btnPlay" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+						<span class="ui-button-text">New game</span>
+					</button>
+				</p>
+				<p>
+					<button id="btnStatistics" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+						<span class="ui-button-text">Statistics</span>
+					</button>
+				</p>
+				<p>
+					<button id="btnOptions" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+						<span class="ui-button-text">Options</span>
+					</button>
+				</p>
+				<p>				
+					<button id="btnCredits" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+						<span class="ui-button-text">Credits</span>
+					</button>
+				</p>
+				<p>
+					<button id="btnQuit" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+						<span class="ui-button-text">Exit</span>
+					</button>
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

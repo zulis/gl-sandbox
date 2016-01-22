@@ -24,7 +24,7 @@ public:
 	~Hud();
 
 	void draw();
-	void setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight);
+	void onResize(unsigned int viewportWidth, unsigned int viewportHeight);
 	void setPosition(Position position, float offsetX = 0.0f, float offsetY = 0.0f);
 
 private:
@@ -130,7 +130,7 @@ inline void Hud::draw()
 }
 
 //=========================================================================
-void Hud::setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight)
+void Hud::onResize(unsigned int viewportWidth, unsigned int viewportHeight)
 {
 	mViewportSize = vec2(viewportWidth, viewportHeight);
 	mScale = vec2(mTextureSize.x / (float)viewportWidth, mTextureSize.y / (float)viewportHeight);

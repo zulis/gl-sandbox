@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			$(function() {
+				var helpTexts = [];
+				helpTexts[1] = ["Get the cube into the hole as fast as possible!", "And make as few moves as possible doing it!"];
+				helpTexts[6] = ["A single wooden tile is fragile and can’t hold the cube.", "Two wooden tiles can hold its weight."];
+				
+				$('#phrase').html(helpTexts[Client.sceneId][0]).hide().fadeIn('slow').delay(3500).fadeOut('slow');
+				
+				var txtLength = 0;
+				$.each(helpTexts[Client.sceneId], function(i, value) { txtLength++; });
+				var i = 1;
+				var intervalId = window.setInterval(function() {
+					$('#phrase').html(helpTexts[Client.sceneId][i++]);
+					$('#phrase').hide().fadeIn('slow').delay(3500).fadeOut('slow');
+					if(i > txtLength) {
+						$('#phrase').hide();
+						window.clearInterval(intervalId);
+					}
+				}, 5000);
+			});
+		</script>
+	</head>
+	<body style="background-color: transparent; -webkit-user-select: none;">
+		<div align="center" style="position: absolute; width: 500px; bottom:0; text-shadow: 0 0 8px #000; color: #fff;" >
+			<p><font id="phrase" size="10" color="white"><span ></span></font></p>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link type="text/css" href="jQueryUI/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryUI/js/jquery-ui-1.8.12.custom.min.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			$(function() {
+				$.ajax({
+					type: "GET",
+					url: Client.scenesFile,
+					//url: "scenes.xml",
+					dataType: "xml",
+					success: function(xml) {
+						$(xml).find("Scene").each(function(){
+							var id = $(this).attr("Id");
+							var name = $(this).attr("Name");
+							$("#level_list").append(new Option(name, id, false, false));
+						});
+					}
+				});
+				
+				var dialogOpts = {
+					autoOpen: true,
+					position: ["center"],
+					title: "Select level",
+					//show: "slide",
+					draggable: false,
+					closeOnEscape: false,
+					resizable: false,
+					height: 360,
+					width: 350,
+					buttons: [{
+								id: "btnMainMenu",
+								text: "Return",
+								click: function() { Client.MainMenuClick(); }
+							},
+							{
+								id: "btnPlay",
+								text: "Play",
+								click: function() { Client.PlayClick($("#level_list").val()); }
+							}],
+					open: function(event, ui) {
+						$(".ui-dialog-titlebar-close").hide();
+						$(".ui-button").removeClass("ui-state-focus");
+					}
+				};
+				$("#level_list").addClass("ui-widget ui-widget-content ui-corner-all");
+				$("#dialog").dialog(dialogOpts);
+				$("#btnPlay").focus();
+				$("#level_list").click(function() {
+					// construct image url and add unique parameter to prevent from caching
+					var selectedId = $(this).attr("value");
+					$.ajax({
+						type: "GET",
+						url: Client.scenesFile,
+						dataType: "xml",
+						success: function(xml) {
+							$(xml).find("Scene").each(function(){
+								var id = $(this).attr("Id");
+								var file = $(this).attr("File");
+								if (selectedId == id) {
+									var image = "../../" + file.replace(".xml", ".png") + "?x=" + new Date();
+									$("#imageBox").attr("src", image);
+								}
+							});
+						}
+					});
+				});
+
+				$(".ui-button").mouseenter(function() {
+					$(".ui-button").blur();
+				});
+				$(".ui-button").mouseleave(function() {
+					$("#btnPlay").focus();
+				});
+			});
+			
+			function selectLastPlayed(value) {
+				if (value == 0) {
+					$("#level_list").attr("selectedIndex", 0);
+				}
+				else {
+					$("#level_list").val(value);
+				}
+				$("#level_list").click();
+			}
+			
+			function setMaxPlayed(value) {
+				$("#level_list option").each(function(){
+					var v = parseInt($(this).val());
+					if(v > value) {
+						$("#level_list option[value='" + v + "']").attr("disabled", "disabled");
+					}
+				});	
+			}			
+			
+			function keyLeft() {
+				$(".ui-button").blur();
+				$("#btnMainMenu").focus();
+			}
+			
+			function keyRight() {
+			  var disabled = $("#btnPlay").button("option", "disabled");
+			  if(disabled == false) {
+				$(".ui-button").blur();
+				$("#btnPlay").focus();
+			  }
+			}
+			
+			function keyUp() {
+				var idx = $("#level_list").attr("selectedIndex");
+				disableNotPlayable(idx);
+				if(idx!=0) {
+				  idx--;
+				}
+				$("#level_list").attr("selectedIndex", idx);
+				$("#level_list").click();
+			}
+			
+			function keyDown() {
+			  var idx = $("#level_list").attr("selectedIndex");
+			  if(idx == $("#level_list option").length-1) {
+			      return;
+			  }
+			  else if(idx < $("#level_list option").length-1) {
+			      idx++;
+			  }
+			  disableNotPlayable(idx+1);
+			  $("#level_list").attr("selectedIndex", idx);
+			  $("#level_list").click();
+			}
+			
+			function disableNotPlayable(idx) {
+			  $(".ui-button").blur();
+			  var attr = $("#level_list option[value='" + idx + "']").attr("disabled");
+			  if (typeof attr !== "undefined" && attr !== false) {
+				$("#btnPlay").button("disable");
+				$("#btnMainMenu").focus();
+			  }
+			  else {
+			    $("#btnPlay").button("enable");
+				$("#btnPlay").focus();
+			  }
+			}
+			
+			function keyEnter() {
+				var disabled = $(".ui-state-focus").button("option", "disabled");
+				if(disabled == false) {
+				  $(".ui-state-focus").click();
+				}
+			}
+			
+			function keyEscape() {
+				$("#btnMainMenu").click();
+			}
+		</script>
+	</head>
+	<body style="background-color: transparent; -webkit-user-select: none;" >
+		<div id="dialog">
+			<select id="level_list" size="3" style="width: 100%; height: 100px;"></select>
+			<img id="imageBox" style="width: 100%; height: 100px; padding-top:15px;" />
+		</div>
+	</body>
+</html>

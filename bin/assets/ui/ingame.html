@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryRotate.js"></script>
+		<script type="text/javascript" src="jquery.stopwatch.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			// http://code.google.com/p/jqueryrotate/
+			var moves = 0;
+			var currAngle = 0;
+			var currAnimateTo = 90;
+			var timerStarted = true;
+				
+			$(function() {	
+				var func = function(){
+					$("#cube").rotate({ 
+						bind: 
+						 { 
+							click: function() {
+								rotateCube();
+							}
+						 } 
+					   
+					});
+                }
+                func();
+				
+				$('#clock').stopwatch();
+				$('.start').click().hide();
+				$('.stop').hide();
+				$('.reset').hide();
+			});
+			
+			function rotateCube() {
+				$("#cube").rotate({angle:currAngle, animateTo:currAnimateTo, easing:$.easing.easeInOutExpo});
+				currAngle += 90;
+				currAnimateTo += 90;
+				moves++;
+				$("#moves").text(moves).animate({
+					fontSize: '120%'
+				  }, 50 ).animate({
+					fontSize: '100%'
+				  }, 50 );
+			}
+			
+			function start() {
+				if(timerStarted == false) {
+					timerStarted = true;
+					$('.start').click();
+					$('.stop').hide();
+				}
+			}
+			
+			function stop() {
+				timerStarted = false;
+				$('.stop').click();
+				$('.start').hide();
+			}
+			
+			function restart() {
+				location.reload();
+			}
+			
+			function getMinutes() {
+				return $(".min").text();
+			}
+			
+			function getSeconds() {
+				return $(".sec").text();
+			}
+			
+			function getMoves() {
+				return $("#moves").text();
+			}
+		</script>
+		<style type="text/css">
+			.container {
+				//border: 1px solid #000;
+				width: 494px;
+				height: 494px;
+			}
+			
+			.cube {
+				position: absolute;
+				float: left;
+				left: 385px;
+				top: 383px;
+				width: 30px;
+			}
+			
+			.moves {
+				float: left;
+				font-size: 2em;
+				font-weight: bold;
+				text-align: center;
+				font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+				position: absolute;
+				left: 410px;
+				top: 380px;
+				width: 50px;
+			}
+			
+			.display {
+				position: absolute;
+				left: 375px;
+				top: 432px;
+				width: 80px;
+				padding-top: 10px;
+				border-top: 3px solid #000;
+				font-size: 1.1em;
+				font-weight: bold;
+				text-align: center;
+				font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+			}
+		</style>
+	</head>
+	<body style="background-color: transparent; -webkit-user-select: none;">
+		<div class="container">
+			<div class="cube">
+				<img id="cube" src="images/cube.png" />
+			</div>
+			<div class="moves">
+				<span id="moves">0</span>
+			</div>	
+			<div id="clock" />
+		</div>
+	</body>
+</html>

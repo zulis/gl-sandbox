@@ -2,6 +2,8 @@
 
 #include <string>
 #include <WebCore.h>
+//#include <WebSession.h>
+//#include <WebPreferences.h>
 #include <BitmapSurface.h>
 #include <STLHelpers.h>
 #include "core/Shader.h"
@@ -29,7 +31,7 @@ public:
 
 	void draw();
 	void onInput(const Input& input);
-	void setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight);
+	void onResize(const unsigned int viewportWidth, const unsigned int viewportHeight);
 	void setPosition(Position position, float offsetX = 0.0f, float offsetY = 0.0f);
 	void setContentSize(unsigned int width, unsigned int height);
 
@@ -86,7 +88,7 @@ HtmlHud::HtmlHud(const std::string& source, unsigned int viewportWidth, unsigned
 	//mTexture = new Texture(fileName);
 	//mTextureSize = mTexture->getSize();
 	//mScale = vec2(mTextureSize.x / mViewportSize.x, mTextureSize.y / mViewportSize.y);
-	mTextureSize = vec2(viewportWidth, viewportHeight);
+	//mTextureSize = vec2(viewportWidth, viewportHeight);
 
 	std::vector<vec2> vertices =
 	{
@@ -118,8 +120,12 @@ HtmlHud::HtmlHud(const std::string& source, unsigned int viewportWidth, unsigned
 	if (!WebCore::instance())
 		WebCore::Initialize(WebConfig());
 
+	//WebSession* session = WebCore::instance()->CreateWebSession("d:\session", WebPreferences.Default());
 	mWebView = WebCore::instance()->CreateWebView(viewportWidth, viewportHeight);
+	mWebView->SetTransparent(true);
 	mWebView->LoadURL(WebURL(WSLit(source.c_str())));
+
+	setContentSize(viewportWidth, viewportHeight);
 }
 
 //=========================================================================
@@ -131,7 +137,7 @@ HtmlHud::~HtmlHud()
 	mWebView->Destroy();
 
 	if (Awesomium::WebCore::instance())
-		Awesomium:: WebCore::Shutdown();
+		Awesomium::WebCore::Shutdown();
 }
 
 //=========================================================================
@@ -207,10 +213,10 @@ void HtmlHud::onInput(const Input& input)
 }
 
 //=========================================================================
-void HtmlHud::setViewportSize(unsigned int viewportWidth, unsigned int viewportHeight)
+void HtmlHud::onResize(const unsigned int viewportWidth, const unsigned int viewportHeight)
 {
 	mViewportSize = vec2(viewportWidth, viewportHeight);
-	mScale = vec2(mTextureSize.x / (float)viewportWidth, mTextureSize.y / (float)viewportHeight);
+	mScale = vec2(mTextureSize.x / viewportWidth, mTextureSize.y / viewportHeight);
 	setPosition(mPosition, mOffsetX, mOffsetY);
 }
 
@@ -269,5 +275,5 @@ void HtmlHud::setContentSize(unsigned int width, unsigned int height)
 {
 	mWebView->Resize(width, height);
 	mTextureSize = vec2(width, height);
-	setViewportSize(mViewportSize.x, mViewportSize.y);
+	onResize(mViewportSize.x, mViewportSize.y);
 }

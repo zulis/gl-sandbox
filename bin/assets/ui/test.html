@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Test</title>
+<style type="text/css">
+
+p::-moz-selection, input::-moz-selection, textarea::-moz-selection {
+    color: red;
+    background-color: grey;
+}
+</style>
+<script type="text/javascript">
+window.onload = function() {
+    var message = document.getElementById('itext');
+    // Select a portion of text
+    createSelection(message,3, 10);
+
+    // get the selected portion of text
+    var selectedText = message.value.substring(message.selectionStart, message.selectionEnd);
+};
+
+function createSelection(field, start, end) {
+    if( field.createTextRange ) {
+        var selRange = field.createTextRange();
+        selRange.collapse(true);
+        selRange.moveStart('character', start);
+        selRange.moveEnd('character', end);
+        selRange.select();
+    } else if( field.setSelectionRange ) {
+        field.setSelectionRange(start, end);
+    } else if( field.selectionStart ) {
+        field.selectionStart = start;
+        field.selectionEnd = end;
+    }
+    field.focus();
+}       
+</script>
+</head>
+
+<body>
+<p>This paragraph is selection-aware.</p>
+<form action="#">
+<select type="text2" id="itext2" value="So is this input[text]">
+	<
+</select>
+<input type="text" id="itext" value="So is this input[text]" />
+<textarea id="itextarea">And this textarea, as well</textarea>
+</form>
+</body>
+</html>

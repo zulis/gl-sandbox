@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link type="text/css" href="jQueryUI/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryUI/js/jquery-ui-1.8.12.custom.min.js"></script>
+		<script type="text/javascript" src="jquery.ui.selectmenu.js"></script>
+		<script type="text/javascript" src="jquery.ui.spinner.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			$('.ui-button').hover(
+					function() { $(this).addClass('ui-state-hover'); $(this).focus(); $(this).addClass('ui-state-focus'); },
+					function() { $(this).removeClass('ui-state-hover'); $(this).removeClass('ui-state-focus'); }
+				);
+				
+			$(function() {
+				var dialogOpts = {
+					autoOpen: true,
+					position: ['center'],
+					title: 'Options',
+					//show: 'slide',
+					draggable: false,
+					closeOnEscape: false,
+					resizable: false,
+					height: 'auto',
+					width: 'auto',
+					buttons: [{
+								id: "btnMainMenu",
+								text: "Main menu",
+								click: function() { Client.MainMenuClick(); }
+							},
+							{
+								id: "btnApply",
+								text: "Apply",
+								click: function() { Client.ApplyClick(); }
+							}],
+					open: function(event, ui) {
+						$(".ui-dialog-titlebar-close").hide();
+						$('.ui-button').removeClass('ui-state-focus');
+						$('#btnApply').focus();
+					}
+				};
+				$("#dialog").dialog(dialogOpts); //.effect("slide");
+				
+				// Full screen
+				$("#full_screen").button().next().button({
+							text: false,
+							icons: {
+									primary: "ui-icon-triangle-1-n"
+							}
+					}).click(function () {
+					var idx = $("#full_screen_list").attr('selectedIndex');
+					  if(idx!==0){
+											  idx--;
+					  }
+							$("#full_screen_list").attr('selectedIndex', idx);
+					   $("#full_screen").find('.ui-button-text').text($("#full_screen_list :selected").text());
+							
+					})
+					.next().button({
+							text: false,
+							icons: {
+									primary: "ui-icon-triangle-1-s"
+							}
+					}).click(function () {
+									var idx = $("#full_screen_list").attr('selectedIndex');
+					  
+							if(idx < $("#full_screen_list option").length-1) {
+											idx++;
+									  }
+							$("#full_screen_list").attr('selectedIndex', idx);
+					  $("#full_screen").find('.ui-button-text').text($("#full_screen_list :selected").text());
+				}).parent().buttonset();
+				$("#full_screen").find('.ui-button-text').text($("#full_screen_list :selected").text());
+				$("#full_screen_list").hide();
+				$("#full_screen").hover(function(){
+					$(this).removeClass('ui-state-hover');
+				}).mousedown(function(){
+					$(this).removeClass('ui-state-active');
+				});
+				
+				// Video mode
+				$("#video_mode").button().next().button({
+							text: false,
+							icons: {
+									primary: "ui-icon-triangle-1-n"
+							}
+					}).click(function () {
+					var idx = $("#video_mode_list").attr('selectedIndex');
+					  if(idx!==0){
+											  idx--;
+					  }
+							$("#video_mode_list").attr('selectedIndex', idx);
+					   $("#video_mode").find('.ui-button-text').text($("#video_mode_list :selected").text());
+							
+					}).next().button({
+							text: false,
+							icons: {
+									primary: "ui-icon-triangle-1-s"
+							}
+					}).click(function () {
+									var idx = $("#video_mode_list").attr('selectedIndex');
+					  
+							if(idx < $("#video_mode_list option").length-1) {
+											idx++;
+									  }
+							$("#video_mode_list").attr('selectedIndex', idx);
+					  $("#video_mode").find('.ui-button-text').text($("#video_mode_list :selected").text());
+				}).parent().buttonset();
+				$("#video_mode").find('.ui-button-text').text($("#video_mode_list :selected").text());
+				$("#video_mode_list").hide();
+				$("#video_mode").hover(function(){
+					$(this).removeClass('ui-state-hover');
+				}).mousedown(function(){
+					$(this).removeClass('ui-state-active');
+				});
+				
+				// Antialiasing
+				$(function() {
+					$( "#antialiasing" ).slider({
+						range: "min",
+						value: Client.antialiasing,
+						min: 1,
+						max: 16,
+						step: 1,
+						slide: function( event, ui ) {
+							$( "#amount" ).val( "$" + ui.value );
+						}
+					});
+				});
+				
+				// Music volume
+				$(function() {
+					$( "#music_volume" ).slider({
+						range: "min",
+						value: Client.musicVolume,
+						min: 0,
+						max: 100,
+						step: 1,
+						slide: function( event, ui ) {
+							$( "#amount" ).val( "$" + ui.value );
+							Client.MusicVolumeChanged(ui.value);
+						}
+					});
+				});
+				
+				// Fx volume
+				$(function() {
+					$( "#fx_volume" ).slider({
+						range: "min",
+						value: Client.fxVolume,
+						min: 0,
+						max: 100,
+						step: 1,
+						slide: function( event, ui ) {
+							$( "#amount" ).val( "$" + ui.value );
+							Client.FxVolumeChanged(ui.value);
+						}
+					});
+				});
+				
+				$('.ui-button').mouseenter(function() {
+					$('.ui-button').blur();
+				});
+				$('.ui-button').mouseleave(function() {
+					$('#btnApply').focus();
+				});
+			});
+			
+			function keyLeft() {
+				$('.ui-button').blur();
+				$('#btnMainMenu').focus();
+			}
+			
+			function keyRight() {
+				$('.ui-button').blur();
+				$('#btnApply').focus();
+			}
+			
+			function keyEnter() {
+				$('.ui-state-focus').click();
+			}
+			
+			function keyEscape() {
+				$('#btnMainMenu').click();
+			}
+			
+			function addVideoMode(v, t) {
+				$("#video_mode_list").append(new Option(t, v, false, false));
+				$("#video_mode").find('.ui-button-text').text($("#video_mode_list :selected").text());
+			}
+			
+			function setVideoMode(v) {
+				$("#video_mode_list").attr('selectedIndex', v);
+				$("#video_mode").find('.ui-button-text').text($("#video_mode_list :selected").text());
+			}
+			
+			function getVideoMode() {
+				return $("#video_mode_list :selected").val();
+			}
+			
+			function setIsFullScreen(v) {
+				if(v == true) {
+					$("#full_screen_list").attr('selectedIndex', 0);
+				}
+				else {
+					$("#full_screen_list").attr('selectedIndex', 1);
+				}
+				$("#full_screen").find('.ui-button-text').text($("#full_screen_list :selected").text());
+			}
+			
+			function getIsFullScreen() {
+				return $("#full_screen_list :selected").text() == "Yes";
+			}
+			
+			function getAntialiasingValue() {
+				return $("#antialiasing").slider("option", "value");
+			}
+			
+			function getMusicVolume() {
+				return $("#music_volume").slider("option", "value");
+			}
+			
+			function setMusicVolume(v) {
+				return $("#music_volume").slider("option", "value", v);
+			}
+			
+			function getFXVolume() {
+				return $("#fx_volume").slider("option", "value");
+			}
+			
+			function setFXVolume(v) {
+				return $("#fx_volume").slider("option", "value", v);
+			}
+		</script>
+		<style type="text/css">
+			label { float: right; margin-right: 10px;}		
+		</style>
+	</head>	
+	<body style="background-color: transparent; -webkit-user-select: none;">
+		<div id="dialog">
+			<table id="tbl" style="width: 100%">
+				<tr>
+					<td>
+						<label>Full screen</label>
+					</td>
+					<td>
+						<select id="full_screen_list">
+							<option>Yes</option>
+							<option>No</option>
+						</select>
+						<span id="full_screen" style="width: 150px"></span>
+						<button id="up">&nbsp;</button><button id="down">&nbsp;</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Video mode</label>
+					</td>
+					<td>
+						<select id="video_mode_list"></select>
+						<button id="video_mode" style="width: 152px"></button>
+						<button id="up">&nbsp;</button><button id="down">&nbsp;</button>
+					</td>
+				</tr>
+				<tr>
+					<td><label>Antialiasing</label></td>
+					<td><div id="antialiasing"></div></td>
+				</tr>
+				<tr>
+					<td><label>Music volume</label></td>
+					<td><div id="music_volume"></div></td>
+				</tr>
+				<tr>
+					<td><label>Fx volume</label></td>
+					<td><div id="fx_volume"></div></td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link type="text/css" href="jQueryUI/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryUI/js/jquery-ui-1.8.12.custom.min.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			$(function() {
+				var dialogOpts = {
+					autoOpen: true,
+					position: ['center'],
+					title: 'Statistics',
+					//show: 'slide',
+					draggable: false,
+					closeOnEscape: false,
+					resizable: false,
+					height: 'auto',
+					width: 310,
+					buttons: [{
+								id: "btnMainMenu",
+								text: "Main menu",
+								click: function() { Client.MainMenuClick(); }
+							}],
+					open: function(event, ui) {
+						$(".ui-dialog-titlebar-close").hide();
+						$('.ui-button').removeClass('ui-state-focus');
+					}
+				};
+				$("#dialog").dialog(dialogOpts).effect("slide");
+				$('#btnMainMenu').focus();
+				
+				$('.ui-button').mouseenter(function() {
+					$('.ui-button').blur();
+				});
+				$('.ui-button').mouseleave(function() {
+					$('#btnMainMenu').focus();
+				});
+			});
+			
+			function keyEnter() {
+				$('#btnMainMenu').click();
+			}
+			
+			function keyEscape() {
+				$('#btnMainMenu').click();
+			}
+		</script>
+	</head>
+	<body style="background-color: transparent; -webkit-user-select: none;">
+		<div id="dialog">
+			<p><span>Here will be some game statistics...</span></p>
+		</div>
+	</body>
+</html>

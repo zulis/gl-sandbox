@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link type="text/css" href="jQueryUI/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jQueryUI/js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jQueryUI/js/jquery-ui-1.8.12.custom.min.js"></script>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript">
+			$(function() {
+				var phrase = new Array();
+				phrase[0] = "To be or not to be...";
+				phrase[1] = "I like the way you tried to handle that.";
+				phrase[2] = "You almost thought out the solution to that problem.";
+				phrase[3] = "I have faith in your ability!";
+				phrase[4] = "I appreciate what you tried!";
+				phrase[5] = "You are really showing improvement.";
+				phrase[6] = "I know you will figure out a good way to do it next time.";
+				phrase[7] = "You don’t have to be perfect. Effort and improvement are important.";
+				phrase[8] = "I trust you to be responsible!";
+				phrase[9] = "It must make you proud of yourself when you accomplish this!";
+				phrase[10] = "You are a valuable part of the team!";
+				phrase[11] = "It is okay to make a mistake, we all do. What do you think you learned from it?";
+				phrase[12] = "How can we turn this into a positive?";
+				phrase[13] = "I’m proud of you for trying!";
+				phrase[14] = "I’ll bet by next year you will be able to handle it, you just need to grow a little.";
+				phrase[15] = "I know you are disappointed that you didn’t win, but you’ll do better next time.";
+
+				var rnd = Math.floor(Math.random() * phrase.length);
+				$('#phrase').html(phrase[rnd]);
+			
+				var dialogOpts = {
+					autoOpen: true,
+					position: ['center'],
+					title: 'Bad luck...',
+					//show: 'slide',
+					draggable: false,
+					closeOnEscape: false,
+					resizable: false,
+					height: 'auto',
+					width: 300,
+					buttons: [{
+								id: "btnMainMenu",
+								text: "Main menu",
+								click: function() { Client.MainMenuClick(); }
+							},
+							{
+								id: "btnRestart",
+								text: "Restart",
+								click: function() { Client.RestartClick(); }
+							}],
+					open: function(event, ui) {
+						$(".ui-dialog-titlebar-close").hide();
+						$('.ui-button').removeClass('ui-state-focus');
+						$('#btnRestart').focus();
+					}
+				};
+				$("#dialog").dialog(dialogOpts).effect("slide");
+				
+				$('.ui-button').mouseenter(function() {
+					$('.ui-button').blur();
+				});
+				$('.ui-button').mouseleave(function() {
+					$('#btnRestart').focus();
+				});
+			});
+			
+			function keyLeft() {
+				$('.ui-button').blur();
+				$('#btnMainMenu').focus();
+			}
+			
+			function keyRight() {
+				$('.ui-button').blur();
+				$('#btnRestart').focus();
+			}
+			
+			function keyEnter() {
+				$('.ui-state-focus').click();
+			}
+			
+			function keyEscape() {
+				$('#btnMainMenu').click();
+			}
+		</script>
+	</head>
+	<body style="background-color: transparent; -webkit-user-select: none;">
+		<div id="dialog">
+			<p><span id="phrase"></span></p>
+		</div>
+	</body>
+</html>
