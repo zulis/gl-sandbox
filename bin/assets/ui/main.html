@@ -18,8 +18,9 @@
 				///////////////////////////////////////////////
 				var dialogOpts = {
 					autoOpen: true,
-					//position: ['left top'],
-					position: ['center'],
+					position: ['left top'],
+					//position: ['center'],
+					//position: ['right center'],
 					title: 'C·u·b·i·c·a',
 					//show: 'slide',
 					draggable: false,
@@ -49,23 +50,23 @@
 				});
 				
 				$('#btnPlay').click(function() {
-					Client.PlayClick();
+					app.PlayClick(5);
 					return false;
 				});
 				$('#btnStatistics').click(function() {
-					Client.StatisticsClick();
+					app.StatisticsClick();
 					return false;
 				});
 				$('#btnOptions').click(function() {
-					Client.OptionsClick();
+					app.OptionsClick();
 					return false;
 				});
 				$('#btnCredits').click(function() {
-					Client.CreditsClick();
+					app.CreditsClick();
 					return false;
 				});
 				$('#btnQuit').click(function() {
-					Client.QuitClick();
+					app.QuitClick();
 					return false;
 				});
 				

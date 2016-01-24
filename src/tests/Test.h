@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/BaseApp.h"
-//#include "core/NUi.h"
 #include "core/Hud.h"
 #include "core/HtmlHud.h"
 
@@ -28,7 +27,8 @@ private:
 	//NUi mNui;
 	Hud* mHud;
 	HtmlHud* mHtmlHud;
-	//HtmlHud* mHtmlHud2;
+	HtmlViewID mHtmlView1ID;
+	HtmlViewID mHtmlView2ID;
 	
 	const float strafeSpeed
 	{
@@ -37,6 +37,25 @@ private:
 	const float strafeFastSpeed
 	{
 		0.4f
+	};
+
+	void OnQuitClick(Awesomium::WebView* caller, const Awesomium::JSArray& args)
+	{
+		quit();
+	};
+
+	void OnPlayClick(Awesomium::WebView* caller, const Awesomium::JSArray& args)
+	{
+		int i;
+		i = 0;
+
+		Awesomium::JSValue const & arg = args[0];
+		if (arg.IsInteger())
+		{
+			i = arg.ToInteger();
+			note("js value: %i", i);
+			mHtmlHud->setVisible(mHtmlView1ID, !mHtmlHud->isVisible(mHtmlView1ID));
+		}
 	};
 };
 
@@ -67,9 +86,12 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	mHud->setPosition(Hud::BOTTOMRIGHT, -10, -10);
 
 	mHtmlHud = new HtmlHud(getViewportWidth(), getViewportHeight());
-	//mHtmlHud->addFromWeb("http://www.yahoo.com");
-	mHtmlHud->addFromFile("assets/ui/main.html");
-	mHtmlHud->setPosition(HtmlHud::CENTER);
+	mHtmlView1ID = mHtmlHud->addFromWeb("http://www.google.com", 400, 300, false);
+	mHtmlHud->setPosition(mHtmlView1ID, HtmlHud::BOTTOMRIGHT);
+	mHtmlView2ID = mHtmlHud->addFromFile("assets/ui/main.html"/*, 250, 400*/);
+	mHtmlHud->addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnQuitClick), "QuitClick");
+	mHtmlHud->addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnPlayClick), "PlayClick");
+	//mHtmlHud->setPosition(mHtmlView2ID, HtmlHud::BOTTOMLEFT, -10, 20);
 
 	//mHtmlHud = new HtmlHud("file:///assets/ui/main.html", getViewportWidth(), getViewportHeight());
 	//mHtmlHud1 = new HtmlHud("http://www.yahoo.com", getViewportWidth(), getViewportHeight());
@@ -86,12 +108,14 @@ Test::~Test()
 {
 	delete mHud;
 	delete mHtmlHud;
-	//delete mHtmlHud2;
 }
 
 //=========================================================================
 void Test::onInput(const Input& input)
 {
+	if (input.isKeyUp(KEY_P))
+		mHtmlHud->setVisible(mHtmlView1ID, !mHtmlHud->isVisible(mHtmlView1ID));
+
 	if (input.isKeyDown(KEY_ESCAPE))
 		quit();
 
@@ -196,6 +220,7 @@ void Test::onResize(const unsigned int width, const unsigned int height)
 {
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 	mHud->onResize(width, height);
-	mHtmlHud->onResize(width, height);
+	//mHtmlHud->setContentSize(mHtmlView1ID, width, height);
+	//mHtmlHud->onResize(width, height);
 	//mHtmlHud2->onResize(width, height);
 }
