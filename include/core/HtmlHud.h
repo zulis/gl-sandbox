@@ -14,11 +14,12 @@
 #include "core/Texture.h"
 #include "core/Geometry.h"
 
-//using namespace Awesomium;
+using namespace Awesomium;
 
 typedef int HtmlViewID;
 
 #define HTMLVIEW_NONE (-1)
+#define mapKey(a, b) case KEY_##a: return KeyCodes::AK_##b;
 
 class HtmlHud
 {
@@ -36,11 +37,13 @@ public:
 		CENTER
 	};
 
-	HtmlHud(unsigned int viewportWidth, unsigned int viewportHeight);
+	HtmlHud();
 	~HtmlHud();
 
-	HtmlViewID addFromWeb(const std::string& source, unsigned int width = 0, unsigned int height = 0, bool transparent = true);
-	HtmlViewID addFromFile(const std::string& fileName, unsigned int width = 0, unsigned int height = 0, bool transparent = true);
+	void setup(unsigned int viewportWidth, unsigned int viewportHeight);
+
+	HtmlViewID addFromWeb(const std::string& source, bool transparent = true);
+	HtmlViewID addFromFile(const std::string& fileName, bool transparent = true);
 
 	void draw();
 	void draw(const HtmlViewID htmlViewID);
@@ -50,13 +53,14 @@ public:
 	//void setContentSize(const HtmlViewID htmlViewID, unsigned int width, unsigned int height);
 	void setVisible(const HtmlViewID htmlViewID, bool visible);
 	bool isVisible(const HtmlViewID htmlViewID);
+	void setFocus(const HtmlViewID htmlViewID, bool focus);
 
 	void addCallback(const HtmlViewID htmlViewID, JSDelegate delegate, const std::string& fuction);
 
 private:
 	struct WebViewContainer
 	{
-		Awesomium::WebView* webView;
+		WebView* webView;
 		Position position{ Position::CENTER };
 		ivec2 contentSize;
 		vec2 translate;
@@ -65,15 +69,46 @@ private:
 	};
 	std::vector<WebViewContainer> mWebViewArray;
 
-	Awesomium::WebSession* mWebSession;
+	WebSession* mWebSession;
 	MethodDispatcher methodDispatcher;
 	ivec2 mViewportSize;
 	Shader* mShader;
 	Geometry* mGeometry;
+
+	HtmlViewID mActiveHtmlView{ HTMLVIEW_NONE };
+
+	int getWebKeyFromInputKey(int key);
 };
 
 //=========================================================================
-HtmlHud::HtmlHud(unsigned int viewportWidth, unsigned int viewportHeight)
+HtmlHud::HtmlHud()
+{
+}
+
+//=========================================================================
+HtmlHud::~HtmlHud()
+{
+	delete mShader;
+	delete mGeometry;
+
+	for (auto & item : mWebViewArray)
+	{
+		item.webView->Stop();
+		item.webView->Destroy();
+	}
+
+	mWebViewArray.clear();
+
+	if (WebCore::instance())
+	{
+		mWebSession->Release();
+		//WebCore::instance()->Update();
+		WebCore::Shutdown();
+	}
+}
+
+//=========================================================================
+void HtmlHud::setup(unsigned int viewportWidth, unsigned int viewportHeight)
 {
 	mViewportSize = ivec2(viewportWidth, viewportHeight);
 
@@ -133,8 +168,6 @@ HtmlHud::HtmlHud(unsigned int viewportWidth, unsigned int viewportHeight)
 	mGeometry->setTexCoords(texCoords);
 	mGeometry->prepare(*mShader);
 
-	using namespace Awesomium;
-
 	if (!WebCore::instance())
 	{
 		WebCore::Initialize(WebConfig());
@@ -146,54 +179,25 @@ HtmlHud::HtmlHud(unsigned int viewportWidth, unsigned int viewportHeight)
 }
 
 //=========================================================================
-HtmlHud::~HtmlHud()
+inline HtmlViewID HtmlHud::addFromWeb(const std::string& source, bool transparent)
 {
-	delete mShader;
-	delete mGeometry;
-
-	for (auto & item : mWebViewArray)
-	{
-		item.webView->Stop();
-		item.webView->Destroy();
-	}
-
-	mWebViewArray.clear();
-
-	if (Awesomium::WebCore::instance())
-	{
-		mWebSession->Release();
-		//Awesomium::WebCore::instance()->Update();
-		Awesomium::WebCore::Shutdown();
-	}
-}
-
-//=========================================================================
-inline HtmlViewID HtmlHud::addFromWeb(const std::string& source, unsigned int width, unsigned int height, bool transparent)
-{
-	if (width == 0 || height == 0)
-	{
-		width = mViewportSize.x;
-		height = mViewportSize.y;
-	}
-
-	using namespace Awesomium;
-	WebView* webView = WebCore::instance()->CreateWebView(width, height, mWebSession);
+	WebView* webView = WebCore::instance()->CreateWebView(mViewportSize.x, mViewportSize.y, mWebSession);
 	webView->SetTransparent(transparent);
 	webView->LoadURL(WebURL(WSLit(source.c_str())));
 
 	mWebViewArray.push_back(WebViewContainer());
 	size_t id = mWebViewArray.size() - 1;
 	mWebViewArray[id].webView = webView;
-	mWebViewArray[id].contentSize = ivec2(width, height);
-	mWebViewArray[id].scale = vec2((float)width / mViewportSize.x, (float)height / mViewportSize.y);
+	mWebViewArray[id].contentSize = ivec2(mViewportSize.x, mViewportSize.y);
+	mWebViewArray[id].scale = vec2((float)mViewportSize.x / mViewportSize.x, (float)mViewportSize.y / mViewportSize.y);
 
 	return id;
 }
 
 //=========================================================================
-inline HtmlViewID HtmlHud::addFromFile(const std::string& fileName, unsigned int width, unsigned int height, bool transparent)
+inline HtmlViewID HtmlHud::addFromFile(const std::string& fileName, bool transparent)
 {
-	return addFromWeb("file:///" + fileName, width, height, transparent);
+	return addFromWeb("file:///" + fileName, transparent);
 }
 
 //=========================================================================
@@ -206,8 +210,6 @@ inline void HtmlHud::draw()
 //=========================================================================
 inline void HtmlHud::draw(const HtmlViewID htmlViewID)
 {
-	using namespace Awesomium;
-
 	assert(htmlViewID != HTMLVIEW_NONE);
 
 	if (static_cast<size_t>(htmlViewID) < mWebViewArray.size())
@@ -219,7 +221,7 @@ inline void HtmlHud::draw(const HtmlViewID htmlViewID)
 		{
 			BitmapSurface* surface = (BitmapSurface*)item.webView->surface();
 
-			if (surface != nullptr)
+			if (surface && surface->buffer() /*&& surface->is_dirty()*/)
 			{
 				int surfaceWidth = surface->width();
 				int surfaceHeight = surface->height();
@@ -245,30 +247,6 @@ inline void HtmlHud::draw(const HtmlViewID htmlViewID)
 	}
 }
 
-/*
-public void TypeKey(VirtualKey vk, string chr)
-{
-WebKeyboardEvent keyEvent = new WebKeyboardEvent();
-
-keyEvent.Type = WebKeyboardEventType.KeyDown;
-keyEvent.VirtualKeyCode = vk;
-webView.InjectKeyboardEvent(keyEvent);
-
-keyEvent.Type = WebKeyboardEventType.Char;
-keyEvent.Text = chr;
-webView.InjectKeyboardEvent(keyEvent);
-
-keyEvent.Type = WebKeyboardEventType.KeyUp;
-keyEvent.VirtualKeyCode = vk;
-webView.InjectKeyboardEvent(keyEvent);
-}
-
-TypeKey(VirtualKey.A, "A"); // uppercase A
-TypeKey(VirtualKey.B, "b"); // lowercase b
-TypeKey(VirtualKey.DOWN, ""); // down arrow
-TypeKey(VirtualKey.RETURN, "\r\n"); // Enter
-*/
-
 //=========================================================================
 void HtmlHud::onInput(const Input& input)
 {
@@ -278,13 +256,248 @@ void HtmlHud::onInput(const Input& input)
 		{
 			item.webView->InjectMouseMove(input.getMouseX(), input.getMouseY());
 
-			if (input.isMouseDown(MouseButton::Left))
-				item.webView->InjectMouseDown(Awesomium::MouseButton::kMouseButton_Left);
+			if (input.isMouseDown(Input::MouseButton::Left))
+				item.webView->InjectMouseDown(MouseButton::kMouseButton_Left);
 			else
-				item.webView->InjectMouseUp(Awesomium::MouseButton::kMouseButton_Left);
+				item.webView->InjectMouseUp(MouseButton::kMouseButton_Left);
+
+			// 			if (input.isMouseDown(Input::MouseButton::Right))
+			// 				item.webView->InjectMouseDown(MouseButton::kMouseButton_Right);
+			// 			else
+			// 				item.webView->InjectMouseUp(MouseButton::kMouseButton_Right);
+			// 			
+			// 			if (input.isMouseDown(Input::MouseButton::Middle))
+			// 				item.webView->InjectMouseDown(MouseButton::kMouseButton_Middle);
+			// 			else
+			// 				item.webView->InjectMouseUp(MouseButton::kMouseButton_Middle);
 
 			item.webView->InjectMouseWheel((int)input.getMouseScroolY(), (int)input.getMouseScroolX());
+
+			int lastKey = input.getLastKey();
+
+			if (lastKey != KEY_NONE)
+			{
+				item.webView->Focus();
+
+				int key = getWebKeyFromInputKey(lastKey);
+
+				//Awesomium::WebKeyboardEvent keyDown;
+				//keyDown.type = Awesomium::WebKeyboardEvent::kTypeKeyDown;
+				//keyDown.virtual_key_code = key;
+				//keyDown.native_key_code = key;
+				//keyDown.text[0] = key;
+				//keyDown.unmodified_text[0] = key;
+				//keyDown.modifiers = 0;
+				//// keyDown.modifiers  ???
+				//item.webView->InjectKeyboardEvent(keyDown);
+
+				Awesomium::WebKeyboardEvent typeChar;
+				typeChar.type = Awesomium::WebKeyboardEvent::kTypeChar;
+				typeChar.virtual_key_code = key;
+				typeChar.native_key_code = key;
+				typeChar.text[0] = key;
+				typeChar.unmodified_text[0] = key;
+				typeChar.modifiers = 0;
+				if (input.isKeyDown(KEY_LEFT_ALT) || input.isKeyDown(KEY_RIGHT_ALT))
+					typeChar.modifiers |= Awesomium::WebKeyboardEvent::kModAltKey;
+				if (input.isKeyDown(KEY_LEFT_CONTROL) || input.isKeyDown(KEY_RIGHT_CONTROL))
+					typeChar.modifiers |= Awesomium::WebKeyboardEvent::kModControlKey;
+				////if (event.key.keysym.mod & KMOD_LMETA || event.key.keysym.mod & KMOD_RMETA)
+				//	//keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModMetaKey;
+				if (input.isKeyDown(KEY_LEFT_SHIFT) || input.isKeyDown(KEY_RIGHT_SHIFT))
+					typeChar.modifiers |= Awesomium::WebKeyboardEvent::kModShiftKey;
+				////if (event.key.keysym.mod & KMOD_NUM)
+				//	//keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModIsKeypad;
+				item.webView->InjectKeyboardEvent(typeChar);
+
+				/*else if (!lastKey.isDown)
+				{
+					Awesomium::WebKeyboardEvent evt;
+					evt.type = Awesomium::WebKeyboardEvent::kTypeKeyUp;
+					evt.virtual_key_code = (char)lastKey.key;
+					evt.native_key_code = (char)lastKey.key;
+					evt.text[0] = (char)lastKey.key;
+					evt.unmodified_text[0] = (char)lastKey.key;
+					evt.modifiers = 0;
+					item.webView->InjectKeyboardEvent(evt);
+				}*/
+
+				//WebKeyboardEvent keyEvent;
+
+				//if (input.isKeyDown(lastKey))
+				//	keyEvent.type = WebKeyboardEvent::kTypeKeyDown;
+				//else if (input.isKeyUp(lastKey))
+				//	keyEvent.type = WebKeyboardEvent::kTypeKeyUp;
+
+				//char* buf = new char[20];
+				//keyEvent.virtual_key_code = getWebKeyFromInputKey(lastKey);
+				//Awesomium::GetKeyIdentifierFromVirtualKeyCode(keyEvent.virtual_key_code, &buf);
+				//strcpy(keyEvent.key_identifier, buf);
+				//delete[] buf;
+
+				//keyEvent.modifiers = 0;
+
+				//if (input.isKeyDown(KEY_LEFT_ALT) || input.isKeyDown(KEY_RIGHT_ALT))
+				//	keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModAltKey;
+				//if (input.isKeyDown(KEY_LEFT_CONTROL) || input.isKeyDown(KEY_RIGHT_CONTROL))
+				//	keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModControlKey;
+				////if (event.key.keysym.mod & KMOD_LMETA || event.key.keysym.mod & KMOD_RMETA)
+				//	//keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModMetaKey;
+				//if (input.isKeyDown(KEY_LEFT_SHIFT) || input.isKeyDown(KEY_RIGHT_SHIFT))
+				//	keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModShiftKey;
+				////if (event.key.keysym.mod & KMOD_NUM)
+				//	//keyEvent.modifiers |= Awesomium::WebKeyboardEvent::kModIsKeypad;
+
+				////item.webView->InjectKeyboardEvent(keyEvent);
+
+
+				//keyEvent.type = Awesomium::WebKeyboardEvent::kTypeChar;
+				//keyEvent.virtual_key_code = lastKey;
+				//keyEvent.native_key_code = lastKey;
+				//item.webView->InjectKeyboardEvent(keyEvent);
+
+
+			}
 		}
+	}
+}
+
+//=========================================================================
+int HtmlHud::getWebKeyFromInputKey(int key)
+{
+	switch (key) {
+		mapKey(BACKSPACE, BACK)
+			mapKey(TAB, TAB)
+			//mapKey(CLEAR, CLEAR)
+			mapKey(ENTER, RETURN)
+			mapKey(PAUSE, PAUSE)
+			mapKey(ESCAPE, ESCAPE)
+			mapKey(SPACE, SPACE)
+			//mapKey(EXCLAIM, 1)
+			//mapKey(QUOTEDBL, 2)
+			//mapKey(HASH, 3)
+			//mapKey(DOLLAR, 4)
+			//mapKey(AMPERSAND, 7)
+			//mapKey(QUOTE, OEM_7)
+			//mapKey(LEFTPAREN, 9)
+			//mapKey(RIGHTPAREN, 0)
+			//mapKey(ASTERISK, 8)
+			//mapKey(PLUS, OEM_PLUS)
+			mapKey(COMMA, OEM_COMMA)
+			mapKey(MINUS, OEM_MINUS)
+			mapKey(PERIOD, OEM_PERIOD)
+			mapKey(SLASH, OEM_2)
+			mapKey(0, 0)
+			mapKey(1, 1)
+			mapKey(2, 2)
+			mapKey(3, 3)
+			mapKey(4, 4)
+			mapKey(5, 5)
+			mapKey(6, 6)
+			mapKey(7, 7)
+			mapKey(8, 8)
+			mapKey(9, 9)
+			//mapKey(COLON, OEM_1)
+			mapKey(SEMICOLON, OEM_1)
+			//mapKey(LESS, OEM_COMMA)
+			//mapKey(EQUALS, OEM_PLUS)
+			//mapKey(GREATER, OEM_PERIOD)
+			//mapKey(QUESTION, OEM_2)
+			//mapKey(AT, 2)
+			//mapKey(LEFTBRACKET, OEM_4)
+			mapKey(BACKSLASH, OEM_5)
+			//mapKey(RIGHTBRACKET, OEM_6)
+			//mapKey(CARET, 6)
+			//mapKey(UNDERSCORE, OEM_MINUS)
+			//mapKey(BACKQUOTE, OEM_3)
+			mapKey(A, A)
+			mapKey(B, B)
+			mapKey(C, C)
+			mapKey(D, D)
+			mapKey(E, E)
+			mapKey(F, F)
+			mapKey(G, G)
+			mapKey(H, H)
+			mapKey(I, I)
+			mapKey(J, J)
+			mapKey(K, K)
+			mapKey(L, L)
+			mapKey(M, M)
+			mapKey(N, N)
+			mapKey(O, O)
+			mapKey(P, P)
+			mapKey(Q, Q)
+			mapKey(R, R)
+			mapKey(S, S)
+			mapKey(T, T)
+			mapKey(U, U)
+			mapKey(V, V)
+			mapKey(W, W)
+			mapKey(X, X)
+			mapKey(Y, Y)
+			mapKey(Z, Z)
+			mapKey(DELETE, DELETE)
+			mapKey(KP_0, NUMPAD0)
+			mapKey(KP_1, NUMPAD1)
+			mapKey(KP_2, NUMPAD2)
+			mapKey(KP_3, NUMPAD3)
+			mapKey(KP_4, NUMPAD4)
+			mapKey(KP_5, NUMPAD5)
+			mapKey(KP_6, NUMPAD6)
+			mapKey(KP_7, NUMPAD7)
+			mapKey(KP_8, NUMPAD8)
+			mapKey(KP_9, NUMPAD9)
+			mapKey(KP_DECIMAL, DECIMAL)
+			mapKey(KP_DIVIDE, DIVIDE)
+			mapKey(KP_MULTIPLY, MULTIPLY)
+			mapKey(KP_SUBTRACT, SUBTRACT)
+			mapKey(KP_ADD, ADD)
+			mapKey(KP_ENTER, RETURN)
+			//mapKey(KP_EQUALS, UNKNOWN)
+			mapKey(UP, UP)
+			mapKey(DOWN, DOWN)
+			mapKey(RIGHT, RIGHT)
+			mapKey(LEFT, LEFT)
+			mapKey(INSERT, INSERT)
+			mapKey(HOME, HOME)
+			mapKey(END, END)
+			//mapKey(PAGE_UP, PRIOR)
+			//mapKey(PAGE_DOWN, NEXT)
+			mapKey(F1, F1)
+			mapKey(F2, F2)
+			mapKey(F3, F3)
+			mapKey(F4, F4)
+			mapKey(F5, F5)
+			mapKey(F6, F6)
+			mapKey(F7, F7)
+			mapKey(F8, F8)
+			mapKey(F9, F9)
+			mapKey(F10, F10)
+			mapKey(F11, F11)
+			mapKey(F12, F12)
+			mapKey(F13, F13)
+			mapKey(F14, F14)
+			mapKey(F15, F15)
+			//mapKey(NUMLOCK, NUMLOCK)
+			//mapKey(CAPSLOCK, CAPITAL)
+			//mapKey(SCROLLOCK, SCROLL)
+			//mapKey(RSHIFT, RSHIFT)
+			//mapKey(LSHIFT, LSHIFT)
+			//mapKey(RCTRL, RCONTROL)
+			//mapKey(LCTRL, LCONTROL)
+			//mapKey(RALT, RMENU)
+			//mapKey(LALT, LMENU)
+			//mapKey(RMETA, LWIN)
+			//mapKey(LMETA, RWIN)
+			//mapKey(LSUPER, LWIN)
+			//mapKey(RSUPER, RWIN)
+			//mapKey(MODE, MODECHANGE)
+			//mapKey(COMPOSE, ACCEPT)
+			//mapKey(HELP, HELP)
+			//mapKey(PRINT, SNAPSHOT)
+			//mapKey(SYSREQ, EXECUTE)
+	default:
+		return KeyCodes::AK_UNKNOWN;
 	}
 }
 
@@ -293,11 +506,12 @@ void HtmlHud::onResize(const unsigned int viewportWidth, const unsigned int view
 {
 	//mViewportSize = vec2(viewportWidth, viewportHeight);
 
-	//for (auto & item : mWebViewArray)
-	//{
-	//	item.scale = vec2(item.contentSize.x / mViewportSize.x, item.contentSize.y / mViewportSize.y);
+	for (auto & item : mWebViewArray)
+	{
+		item.scale = vec2(item.contentSize.x / mViewportSize.x, item.contentSize.y / mViewportSize.y);
 	//	//setPosition(mPosition, mOffsetX, mOffsetY);
-	//}
+		item.webView->Resize(viewportWidth, viewportHeight);
+	}
 	////mScale = vec2(mTextureSize.x / viewportWidth, mTextureSize.y / viewportHeight);
 	////setPosition(mPosition, mOffsetX, mOffsetY);
 }
@@ -394,10 +608,22 @@ inline bool HtmlHud::isVisible(const HtmlViewID htmlViewID)
 }
 
 //=========================================================================
+void HtmlHud::setFocus(const HtmlViewID htmlViewID, bool focus)
+{
+	assert(htmlViewID != HTMLVIEW_NONE);
+
+	if (static_cast<size_t>(htmlViewID) < mWebViewArray.size())
+	{
+		if (focus)
+			mWebViewArray[htmlViewID].webView->Focus();
+		else
+			mWebViewArray[htmlViewID].webView->Unfocus();
+	}
+}
+
+//=========================================================================
 inline void HtmlHud::addCallback(const HtmlViewID htmlViewID, JSDelegate delegate, const std::string& fuction)
 {
-	using namespace Awesomium;
-
 	assert(htmlViewID != HTMLVIEW_NONE);
 
 	if (static_cast<size_t>(htmlViewID) < mWebViewArray.size())

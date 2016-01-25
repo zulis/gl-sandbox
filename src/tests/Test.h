@@ -25,8 +25,8 @@ private:
 	Transform mTransform;
 
 	//NUi mNui;
-	Hud* mHud;
-	HtmlHud* mHtmlHud;
+	Hud mHud;
+	HtmlHud mHtmlHud;
 	HtmlViewID mHtmlView1ID;
 	HtmlViewID mHtmlView2ID;
 	
@@ -54,7 +54,8 @@ private:
 		{
 			i = arg.ToInteger();
 			note("js value: %i", i);
-			mHtmlHud->setVisible(mHtmlView1ID, !mHtmlHud->isVisible(mHtmlView1ID));
+			mHtmlHud.setVisible(mHtmlView1ID, !mHtmlHud.isVisible(mHtmlView1ID));
+			mHtmlHud.setFocus(mHtmlView1ID, mHtmlHud.isVisible(mHtmlView1ID));
 		}
 	};
 };
@@ -82,16 +83,19 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 
 	gl::enableCullFace(gl::CullFaceType::Back);
 
-	mHud = new Hud("assets/textures/misc/256x256a.png", getViewportWidth(), getViewportHeight());
-	mHud->setPosition(Hud::BOTTOMRIGHT, -10, -10);
+	mHud.setup(getViewportWidth(), getViewportHeight());
+	mHud.loadFromFile("assets/textures/misc/256x256a.png");
+	mHud.setPosition(Hud::BOTTOMRIGHT, -10, -10);
 
-	mHtmlHud = new HtmlHud(getViewportWidth(), getViewportHeight());
-	mHtmlView1ID = mHtmlHud->addFromWeb("http://www.google.com", 400, 300, false);
-	mHtmlHud->setPosition(mHtmlView1ID, HtmlHud::BOTTOMRIGHT);
-	mHtmlView2ID = mHtmlHud->addFromFile("assets/ui/main.html"/*, 250, 400*/);
-	mHtmlHud->addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnQuitClick), "QuitClick");
-	mHtmlHud->addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnPlayClick), "PlayClick");
-	//mHtmlHud->setPosition(mHtmlView2ID, HtmlHud::BOTTOMLEFT, -10, 20);
+	mHtmlHud.setup(getViewportWidth(), getViewportHeight());
+	mHtmlView1ID = mHtmlHud.addFromWeb("http://www.google.com", false);
+	mHtmlHud.setPosition(mHtmlView1ID, HtmlHud::BOTTOMRIGHT);
+	mHtmlView2ID = mHtmlHud.addFromFile("assets/ui/main.html"/*, 250, 400*/);
+	mHtmlHud.addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnQuitClick), "QuitClick");
+	mHtmlHud.addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnPlayClick), "PlayClick");
+	//mHtmlHud.setPosition(mHtmlView2ID, HtmlHud::BOTTOMLEFT, -10, 20);
+
+	mHtmlHud.setFocus(mHtmlView1ID, true);
 
 	//mHtmlHud = new HtmlHud("file:///assets/ui/main.html", getViewportWidth(), getViewportHeight());
 	//mHtmlHud1 = new HtmlHud("http://www.yahoo.com", getViewportWidth(), getViewportHeight());
@@ -106,15 +110,13 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 //=========================================================================
 Test::~Test()
 {
-	delete mHud;
-	delete mHtmlHud;
 }
 
 //=========================================================================
 void Test::onInput(const Input& input)
 {
 	if (input.isKeyUp(KEY_P))
-		mHtmlHud->setVisible(mHtmlView1ID, !mHtmlHud->isVisible(mHtmlView1ID));
+		mHtmlHud.setVisible(mHtmlView1ID, !mHtmlHud.isVisible(mHtmlView1ID));
 
 	if (input.isKeyDown(KEY_ESCAPE))
 		quit();
@@ -142,7 +144,7 @@ void Test::onInput(const Input& input)
 	if (input.getMouseScroolY() != 0)
 		camera.move(input.getMouseScroolY() > 0 ? Camera::FORWARD : Camera::BACKWARD);
 
-	if (input.isMouseDown(MouseButton::Right))
+	if (input.isMouseDown(Input::MouseButton::Right))
 	{
 		hideMouse();
 		camera.rotate(static_cast<float>(input.getMouseChangeX()), static_cast<float>(input.getMouseChangeY()));
@@ -160,7 +162,7 @@ void Test::onInput(const Input& input)
 		camera.setDirection(dir);
 	}
 
-	mHtmlHud->onInput(input);
+	mHtmlHud.onInput(input);
 	//mHtmlHud2->onInput(input);
 }
 
@@ -207,9 +209,9 @@ void Test::onDraw()
 	//mNui.draw(&renderer);
 
 	//gl::enable2D();
-	mHud->draw();
+	mHud.draw();
 
-	mHtmlHud->draw();
+	mHtmlHud.draw();
 	//mHtmlHud2->draw();
 
 	renderer.reset();
@@ -219,8 +221,8 @@ void Test::onDraw()
 void Test::onResize(const unsigned int width, const unsigned int height)
 {
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
-	mHud->onResize(width, height);
-	//mHtmlHud->setContentSize(mHtmlView1ID, width, height);
-	//mHtmlHud->onResize(width, height);
+	mHud.onResize(width, height);
+	//mHtmlHud.setContentSize(mHtmlView1ID, width, height);
+	mHtmlHud.onResize(width, height);
 	//mHtmlHud2->onResize(width, height);
 }

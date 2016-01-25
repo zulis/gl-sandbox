@@ -109,14 +109,14 @@ void BaseApp::mouseButtonCallback(GLFWwindow* window, int button, int state, int
 {
 	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
 
-	MouseButton mouseButton;
+	Input::MouseButton mouseButton;
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
-		mouseButton = MouseButton::Left;
+		mouseButton = Input::MouseButton::Left;
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
-		mouseButton = MouseButton::Right;
+		mouseButton = Input::MouseButton::Right;
 	else if (button == GLFW_MOUSE_BUTTON_MIDDLE)
-		mouseButton = MouseButton::Middle;
+		mouseButton = Input::MouseButton::Middle;
 	else
 		return; // Unsupported
 

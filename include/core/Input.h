@@ -3,16 +3,18 @@
 #include <unordered_map>
 #include "core/Math.h"
 
-enum class MouseButton
-{
-	Left,
-	Right,
-	Middle
-};
+#define KEY_NONE (-1)
 
 class Input
 {
 public:
+	enum class MouseButton
+	{
+		Left,
+		Right,
+		Middle
+	};
+
 	Input() {};
 	~Input() {};
 
@@ -32,17 +34,19 @@ public:
 	double getMouseScroolX() const;
 	double getMouseScroolY() const;
 	bool isMouseDown(const MouseButton& button) const;
+	int getLastKey() const;
 
 private:
 	std::unordered_map<int, bool> mKeyMap;
 	mutable std::unordered_map<int, bool> mPrevKeyMap;
 	std::unordered_map<MouseButton, bool> mMouseMap;
-	int mMouseX {0};
-	int mMouseY { 0 };
-	int mMouseChangeX { 0 };
+	int mMouseX{ 0 };
+	int mMouseY{ 0 };
+	int mMouseChangeX{ 0 };
 	int mMouseChangeY{ 0 };
-	double mMouseScrollX { 0 };
-	double mMouseScrollY { 0 };
+	double mMouseScrollX{ 0 };
+	double mMouseScrollY{ 0 };
+	int mLastKey{ KEY_NONE };
 };
 
 //=========================================================================
@@ -50,6 +54,7 @@ void Input::setKeyStatus(int key, bool isDown)
 {
 	mPrevKeyMap = mKeyMap;
 	mKeyMap[key] = isDown;
+	mLastKey = isDown ? key : KEY_NONE;
 }
 
 //=========================================================================
@@ -57,7 +62,7 @@ bool Input::isKeyDown(int key) const
 {
 	auto it = mKeyMap.find(key);
 
-	if(it != mKeyMap.end())
+	if (it != mKeyMap.end())
 		return it->second;
 	else
 		return false;
@@ -69,9 +74,9 @@ bool Input::isKeyUp(int key) const
 	auto itPrev = mPrevKeyMap.find(key);
 	auto it = mKeyMap.find(key);
 
-	if(itPrev != mPrevKeyMap.end() && it != mKeyMap.end())
+	if (itPrev != mPrevKeyMap.end() && it != mKeyMap.end())
 	{
-		if(itPrev->second == true && it->second == false)
+		if (itPrev->second == true && it->second == false)
 		{
 			mPrevKeyMap[key] = false;
 			return true;
@@ -161,6 +166,12 @@ bool Input::isMouseDown(const MouseButton& button) const
 		return mMouseMap.at(button);
 	else
 		return false;
+}
+
+//=========================================================================
+int Input::getLastKey() const
+{
+	return mLastKey;
 }
 
 //=========================================================================

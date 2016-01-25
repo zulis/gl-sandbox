@@ -20,8 +20,11 @@ public:
 		CENTER
 	};
 
-	Hud(const std::string& fileName, unsigned int viewportWidth, unsigned int viewportHeight);
+	Hud();
 	~Hud();
+
+	void setup(unsigned int viewportWidth, unsigned int viewportHeight);
+	void loadFromFile(const std::string & fileName);
 
 	void draw();
 	void onResize(unsigned int viewportWidth, unsigned int viewportHeight);
@@ -41,7 +44,20 @@ private:
 };
 
 //=========================================================================
-Hud::Hud(const std::string & fileName, unsigned int viewportWidth, unsigned int viewportHeight)
+Hud::Hud()
+{
+}
+
+//=========================================================================
+Hud::~Hud()
+{
+	delete mShader;
+	delete mTexture;
+	delete mGeometry;
+}
+
+//=========================================================================
+void Hud::setup(unsigned int viewportWidth, unsigned int viewportHeight)
 {
 	mViewportSize = vec2(viewportWidth, viewportHeight);
 
@@ -76,10 +92,6 @@ Hud::Hud(const std::string & fileName, unsigned int viewportWidth, unsigned int 
 		}
 	)", Shader::SourceType::String);
 
-	mTexture = new Texture(fileName);
-	mTextureSize = mTexture->getSize();
-	mScale = vec2(mTextureSize.x / mViewportSize.x, mTextureSize.y / mViewportSize.y);
-
 	std::vector<vec2> vertices =
 	{
 		vec2(-1.0f, -1.0f),
@@ -107,11 +119,11 @@ Hud::Hud(const std::string & fileName, unsigned int viewportWidth, unsigned int 
 }
 
 //=========================================================================
-Hud::~Hud()
+void Hud::loadFromFile(const std::string & fileName)
 {
-	delete mShader;
-	delete mTexture;
-	delete mGeometry;
+	mTexture = new Texture(fileName);
+	mTextureSize = mTexture->getSize();
+	mScale = vec2(mTextureSize.x / mViewportSize.x, mTextureSize.y / mViewportSize.y);
 }
 
 //=========================================================================
