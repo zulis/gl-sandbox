@@ -44,6 +44,11 @@ private:
 		quit();
 	};
 
+	void OnQuitClick2()
+	{
+		quit();
+	};
+
 	void OnPlayClick(Awesomium::WebView* caller, const Awesomium::JSArray& args)
 	{
 		int i;

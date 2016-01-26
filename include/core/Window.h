@@ -88,14 +88,14 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 //=========================================================================
 void Window::mouseButtonCallback(GLFWwindow* window, int button, int state, int mod)
 {
-	MouseButton mouseButton;
+	Input::MouseButton mouseButton;
 
 	if(button == GLFW_MOUSE_BUTTON_LEFT)
-		mouseButton = MouseButton::Left;
+		mouseButton = Input::MouseButton::Left;
 	else if(button == GLFW_MOUSE_BUTTON_RIGHT)
-		mouseButton = MouseButton::Right;
+		mouseButton = Input::MouseButton::Right;
 	else if(button == GLFW_MOUSE_BUTTON_MIDDLE)
-		mouseButton = MouseButton::Middle;
+		mouseButton = Input::MouseButton::Middle;
 	else
 		return; // Unsupported
 

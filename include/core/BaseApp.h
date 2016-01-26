@@ -70,6 +70,7 @@ private:
 private:
 	inline static void errorCallback(int errorCode, const char* description);
 	inline static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	inline static void charCallback(GLFWwindow* window, unsigned int codepoint);
 	inline static void mouseButtonCallback(GLFWwindow* window, int button, int state, int mod);
 	inline static void cursorPosCallback(GLFWwindow* window, double x, double y);
 	inline static void scrollCallback(GLFWwindow* window, double offsetX, double offsetY);
@@ -102,6 +103,12 @@ void BaseApp::keyCallback(GLFWwindow* window, int key, int scancode, int action,
 
 	if (key == KEY_F1 && action == GLFW_PRESS)
 		baseApp->mShowUI = !baseApp->mShowUI;
+}
+
+//=========================================================================
+void BaseApp::charCallback(GLFWwindow* window, unsigned int codepoint)
+{
+	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
 }
 
 //=========================================================================
@@ -191,6 +198,7 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 
 	glfwSetWindowUserPointer(mWindow, this);
 	glfwSetKeyCallback(mWindow, keyCallback);
+	glfwSetCharCallback(mWindow, charCallback);
 	glfwSetMouseButtonCallback(mWindow, mouseButtonCallback);
 	glfwSetCursorPosCallback(mWindow, cursorPosCallback);
 	glfwSetScrollCallback(mWindow, scrollCallback);
