@@ -2,7 +2,7 @@
 
 #include "core/BaseApp.h"
 #include "core/Hud.h"
-#include "core/HtmlHud.h"
+#include "core/HtmlUi.h"
 
 class Test : public BaseApp
 {
@@ -26,10 +26,10 @@ private:
 
 	//NUi mNui;
 	Hud mHud;
-	HtmlHud mHtmlHud;
-	HtmlViewID mHtmlView1ID;
-	HtmlViewID mHtmlView2ID;
-	
+	HtmlUi mHtmlUi;
+	HtmlViewID mHtmlViewID_MainMenu;
+	HtmlViewID mHtmlViewID_Google;
+
 	const float strafeSpeed
 	{
 		0.2f
@@ -44,11 +44,6 @@ private:
 		quit();
 	};
 
-	void OnQuitClick2()
-	{
-		quit();
-	};
-
 	void OnPlayClick(Awesomium::WebView* caller, const Awesomium::JSArray& args)
 	{
 		int i;
@@ -59,8 +54,7 @@ private:
 		{
 			i = arg.ToInteger();
 			note("js value: %i", i);
-			mHtmlHud.setVisible(mHtmlView1ID, !mHtmlHud.isVisible(mHtmlView1ID));
-			mHtmlHud.setFocus(mHtmlView1ID, mHtmlHud.isVisible(mHtmlView1ID));
+			mHtmlUi.setActiveView(mHtmlViewID_Google);
 		}
 	};
 };
@@ -92,24 +86,12 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	mHud.loadFromFile("assets/textures/misc/256x256a.png");
 	mHud.setPosition(Hud::BOTTOMRIGHT, -10, -10);
 
-	mHtmlHud.setup(getViewportWidth(), getViewportHeight());
-	mHtmlView1ID = mHtmlHud.addFromWeb("http://www.google.com", false);
-	mHtmlHud.setPosition(mHtmlView1ID, HtmlHud::BOTTOMRIGHT);
-	mHtmlView2ID = mHtmlHud.addFromFile("assets/ui/main.html"/*, 250, 400*/);
-	mHtmlHud.addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnQuitClick), "QuitClick");
-	mHtmlHud.addCallback(mHtmlView2ID, JSDelegate(this, &Test::OnPlayClick), "PlayClick");
-	//mHtmlHud.setPosition(mHtmlView2ID, HtmlHud::BOTTOMLEFT, -10, 20);
-
-	mHtmlHud.setFocus(mHtmlView1ID, true);
-
-	//mHtmlHud = new HtmlHud("file:///assets/ui/main.html", getViewportWidth(), getViewportHeight());
-	//mHtmlHud1 = new HtmlHud("http://www.yahoo.com", getViewportWidth(), getViewportHeight());
-	//mHtmlHud1->setContentSize(300, 400);
-	//mHtmlHud1->setPosition(HtmlHud::CENTER);
-
-	//mHtmlHud2 = new HtmlHud("http://www.yahoo.com", getViewportWidth(), getViewportHeight());
-	//mHtmlHud2->setContentSize(800, 600);
-	//mHtmlHud2->setPosition(HtmlHud::TOPRIGHT, 10, 10);
+	mHtmlUi.setup(getViewportWidth(), getViewportHeight());
+	mHtmlViewID_MainMenu = mHtmlUi.addFromFile("assets/ui/main.html");
+	mHtmlUi.addCallback(mHtmlViewID_MainMenu, JSDelegate(this, &Test::OnQuitClick), "QuitClick");
+	mHtmlUi.addCallback(mHtmlViewID_MainMenu, JSDelegate(this, &Test::OnPlayClick), "PlayClick");
+	mHtmlViewID_Google = mHtmlUi.addFromWeb("http://www.google.com", false);
+	mHtmlUi.setActiveView(mHtmlViewID_MainMenu);
 }
 
 //=========================================================================
@@ -120,8 +102,11 @@ Test::~Test()
 //=========================================================================
 void Test::onInput(const Input& input)
 {
-	if (input.isKeyUp(KEY_P))
-		mHtmlHud.setVisible(mHtmlView1ID, !mHtmlHud.isVisible(mHtmlView1ID));
+	if (input.isKeyUp(KEY_F2))
+		if (mHtmlUi.isViewActive(mHtmlViewID_MainMenu))
+			mHtmlUi.setActiveView(HTMLVIEW_NONE);
+		else
+			mHtmlUi.setActiveView(mHtmlViewID_MainMenu);
 
 	if (input.isKeyDown(KEY_ESCAPE))
 		quit();
@@ -167,7 +152,7 @@ void Test::onInput(const Input& input)
 		camera.setDirection(dir);
 	}
 
-	mHtmlHud.onInput(input);
+	mHtmlUi.onInput(input);
 	//mHtmlHud2->onInput(input);
 }
 
@@ -216,8 +201,7 @@ void Test::onDraw()
 	//gl::enable2D();
 	mHud.draw();
 
-	mHtmlHud.draw();
-	//mHtmlHud2->draw();
+	mHtmlUi.draw();
 
 	renderer.reset();
 }
@@ -227,7 +211,5 @@ void Test::onResize(const unsigned int width, const unsigned int height)
 {
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 	mHud.onResize(width, height);
-	//mHtmlHud.setContentSize(mHtmlView1ID, width, height);
-	mHtmlHud.onResize(width, height);
-	//mHtmlHud2->onResize(width, height);
+	mHtmlUi.onResize(width, height);
 }

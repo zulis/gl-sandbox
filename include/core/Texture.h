@@ -22,6 +22,7 @@ public:
 	Texture(const int width, const int height, const unsigned char *pixels);
 	~Texture();
 
+	void changePixels(const unsigned char *pixels);
 	void bind(GLuint textureUnit = 0);
 	void unbind();
 
@@ -164,10 +165,20 @@ Texture::Texture(const int width, const int height, const unsigned char * pixels
 Texture::~Texture()
 {
 	if (mTextureID)
+	{
+		unbind();
 		glDeleteTextures(1, &mTextureID);
+	}
 
-	if(mFileName != nullptr)
+	if (mFileName != nullptr)
 		note("Texture released: %s", mFileName);
+}
+
+//=========================================================================
+void Texture::changePixels(const unsigned char *pixels)
+{
+	glBindTexture(mFormat.mTarget, mTextureID);
+	glTexSubImage2D(mFormat.mTarget, 0, 0, 0, mWidth, mHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 }
 
 //=========================================================================

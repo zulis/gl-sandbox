@@ -121,7 +121,7 @@
     <ClInclude Include="..\include\core\Hud.h">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\core\HtmlHud.h">
+    <ClInclude Include="..\include\core\HtmlUi.h">
       <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>
