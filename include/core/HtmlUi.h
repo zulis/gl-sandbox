@@ -449,13 +449,13 @@ inline void HtmlUi::addCallback(const HtmlViewID htmlViewID, JSDelegate delegate
 //=========================================================================
 void HtmlUi::setActiveView(const HtmlViewID htmlViewID)
 {
-	assert(htmlViewID != HTMLVIEW_NONE);
-
 	if (static_cast<size_t>(htmlViewID) < mWebViewArray.size())
 	{
 		mActiveHtmlView = htmlViewID;
 		mWebViewArray[htmlViewID].webView->Focus();
 	}
+	else
+		mActiveHtmlView = HTMLVIEW_NONE;
 }
 
 //=========================================================================
