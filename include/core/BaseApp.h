@@ -55,14 +55,14 @@ public:
 	unsigned int getViewportWidth() const;
 	unsigned int getViewportHeight() const;
 
-protected:
+//protected:
 	Renderer renderer;
 	Camera camera;
+	Input input;
 
 private:
 	GLFWwindow *mWindow;
 	std::string mTitle;
-	Input mInput;
 	bool mRunning{ false };
 	bool mShowUI{ false };
 	vec2 mViewportSize;
@@ -99,7 +99,7 @@ void BaseApp::keyCallback(GLFWwindow* window, int key, int scancode, int action,
 	else // GLFW_REPEAT must be ignored
 		return;
 
-	baseApp->mInput.setKeyStatus(key, isDown);
+	baseApp->input.setKeyStatus(key, isDown);
 
 	if (key == KEY_F1 && action == GLFW_PRESS)
 		baseApp->mShowUI = !baseApp->mShowUI;
@@ -127,21 +127,21 @@ void BaseApp::mouseButtonCallback(GLFWwindow* window, int button, int state, int
 	else
 		return; // Unsupported
 
-	baseApp->mInput.setMouseButtonStatus(mouseButton, state == GLFW_PRESS);
+	baseApp->input.setMouseButtonStatus(mouseButton, state == GLFW_PRESS);
 }
 
 //=========================================================================
 void BaseApp::cursorPosCallback(GLFWwindow* window, double x, double y)
 {
 	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
-	baseApp->mInput.setMousePositionStatus(static_cast<int>(x), static_cast<int>(y));
+	baseApp->input.setMousePositionStatus(static_cast<int>(x), static_cast<int>(y));
 }
 
 //=========================================================================
 void BaseApp::scrollCallback(GLFWwindow* window, double offsetX, double offsetY)
 {
 	BaseApp *baseApp = static_cast<BaseApp*>(glfwGetWindowUserPointer(window));
-	baseApp->mInput.setMouseScrollStatus(offsetX, offsetY);
+	baseApp->input.setMouseScrollStatus(offsetX, offsetY);
 }
 
 //=========================================================================
@@ -275,9 +275,9 @@ void BaseApp::run()
 		frameCounter += dt;
 
 		// Reset mouse statuses
-		onInput(mInput);
-		mInput.setMouseScrollStatus(0, 0);
-		mInput.setMousePositionChangeStatus(0, 0);
+		onInput(input);
+		input.setMouseScrollStatus(0, 0);
+		input.setMousePositionChangeStatus(0, 0);
 
 #ifdef _DEBUG
 		if (frameCounter >= 1.0)

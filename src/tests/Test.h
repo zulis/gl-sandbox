@@ -3,6 +3,7 @@
 #include "core/BaseApp.h"
 #include "core/Hud.h"
 #include "core/HtmlUi.h"
+#include "core/Entities.h"
 
 class Test : public BaseApp
 {

@@ -46,4 +46,12 @@ public:
 	{
 		return getResource<T>(std::forward<Args>(args)...);
 	}
+
+	/*
+	template<typename T, typename... Args>
+	T& getPtr() const
+	{
+		return *reinterpret_cast<T*>(Resource::get<T>(std::forward<Args>(args)...));
+	}
+	*/
 };

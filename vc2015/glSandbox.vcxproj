@@ -173,6 +173,7 @@
     <ClInclude Include="..\include\core\BaseApp.h" />
     <ClInclude Include="..\include\core\Camera.h" />
     <ClInclude Include="..\include\core\Color.h" />
+    <ClInclude Include="..\include\core\Entities.h" />
     <ClInclude Include="..\include\core\Geometry.h" />
     <ClInclude Include="..\include\core\GL.h" />
     <ClInclude Include="..\include\core\HtmlUi.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\include\core\Ui.h" />
     <ClInclude Include="..\include\core\Window.h" />
     <ClInclude Include="..\src\tests\Deferred.h" />
+    <ClInclude Include="..\src\tests\Game.h" />
     <ClInclude Include="..\src\tests\Test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

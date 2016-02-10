@@ -12,11 +12,21 @@
 //RUN(LoadLevelTest)
 //RUN(Deferred)
 
+/*
 #include "tests/Test.h"
 
 void main(int argc, char *argv[])
 {
 	Test test;
 	test.run();
+}
+*/
+
+#include "tests/Game.h"
+
+void main(int argc, char *argv[])
+{
+	Game game;
+	game.run();
 }
 

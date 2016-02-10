@@ -16,6 +16,7 @@ public:
 
 	void loadFromFile(const std::string& fileName);
 	void makeDrawable(const Renderer& renderer, const ShaderID shader);
+	void makeDrawable(const Shader& shader);
 	void draw();
 	AABB getAABB();
 
@@ -73,6 +74,15 @@ void Mesh::makeDrawable(const Renderer& renderer, const ShaderID shader)
 	for(auto& geometry : mGeometyVec)
 	{
 		geometry->prepare(renderer.getShader(shader));
+	}
+}
+
+//=========================================================================
+void Mesh::makeDrawable(const Shader& shader)
+{
+	for (auto& geometry : mGeometyVec)
+	{
+		geometry->prepare(shader);
 	}
 }
 
