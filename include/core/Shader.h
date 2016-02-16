@@ -14,8 +14,6 @@
 #include "core/StringUtils.h"
 #include "core/Resource.h"
 
-#define ERROR_BUFSIZE 1024
-
 class Shader
 {
 public:
@@ -99,6 +97,7 @@ Shader::Shader(const std::string &source, const SourceType& sourceType)
 	else
 	{
 		mFileName = "from string";
+		const char *sourceArray[1] = { source.c_str() };
 		shaderText = source;
 	}
 
@@ -208,9 +207,9 @@ bool Shader::loadFromString(const std::string &source, const ShaderType& shaderT
 
 	if (source != std::string())
 	{
-		auto shader = glCreateShader(type);
-		auto sourceChar = (const GLchar*)source.c_str();
-		glShaderSource(shader, 1, &sourceChar, NULL);
+		GLuint shader = glCreateShader(type);
+		const char *sourceArray[1] = { source.c_str() };
+		glShaderSource(shader, 1, sourceArray, NULL);
 		glCompileShader(shader);
 
 		GLint isCompiled = 0;
@@ -220,10 +219,13 @@ bool Shader::loadFromString(const std::string &source, const ShaderType& shaderT
 		{
 			error("Failed to compile %s shader: %s", typeStr, mFileName.c_str());
 
-			GLchar errorLog[ERROR_BUFSIZE];
+			GLint infoLogLength;
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+			GLchar* errorLog = new GLchar[infoLogLength + 1];
 			GLsizei length;
 
-			glGetShaderInfoLog(shader, ERROR_BUFSIZE, &length, errorLog);
+			glGetShaderInfoLog(shader, infoLogLength, &length, errorLog);
 
 			if (length > 0)
 				error(errorLog);
@@ -259,10 +261,13 @@ bool Shader::link()
 	{
 		note("Failed to link shader.");
 
-		GLchar errorLog[ERROR_BUFSIZE];
+		GLint infoLogLength;
+		glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		GLchar* errorLog = new GLchar[infoLogLength + 1];
 		GLsizei length;
 
-		glGetProgramInfoLog(mProgram, ERROR_BUFSIZE, &length, errorLog);
+		glGetProgramInfoLog(mProgram, infoLogLength, &length, errorLog);
 
 		if (length > 0)
 		{
