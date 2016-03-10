@@ -1,332 +1,189 @@
 #pragma once
 
-#include <iostream>
-#include <mutex>
-#include "core/Game.h"
-#include "core/Camera.h"
-//#include "core/Shape.h"
-//#include "core/Transform3d.h"
-#include "core/Resource.h"
-//#include "core/Image.h"
-#include "core/Texture.h"
-#include "core/Shader.h"
-#include "core/MeshDataLoader.h"
-#include "core/Geometry.h"
-#include "core/Transform.h"
-#include "core/FileMonitor.h"
-#include "core/Listeners.h"
-#include "core/Ui.h"
-#include "core/CameraControllers.h"
-#include "core/Entities.h"
+#include "core/BaseApp.h"
+#include "GBuffer.h"
 
-struct CInput : Component
-{
-	Input mInput;
-};
-
-struct CCamera : Component
-{
-	CameraPtr mCamera;
-	float mStrafeSpeed{ 0.2f };
-	float mStrafeFastSpeed{ 0.4f };
-
-	void init() override
-	{
-		mCamera = Camera::create();
-		mCamera->setRotateSpeed(0.002f);
-		mCamera->setStrafeSpeed(mStrafeSpeed);
-		mCamera->setPosition(vec3(3.5, 2.2, -8.8));
-		mCamera->setDirection(vec3(-0.4, 0.2, 0.9));
-	}
-
-	void update(double elapsedTime) override
-	{
-	}
-
-	void draw() override {}
-};
-
-class Deferred : public State, public FileMonitorListener
+class Deferred : public BaseApp
 {
 public:
-    Deferred() {};
-    ~Deferred() {};
+	Deferred();
+	~Deferred();
 
-    virtual void setup();
-    virtual void cleanup();
-    virtual void input(Input& input);
-    virtual void update(double elapsedTime);
-    virtual void draw();
-    virtual void resize(unsigned int width, unsigned int height);
-
-    virtual void onFileMonitorFileChange(const std::string &fileName);
-
+	virtual void onInput(const Input &input) override;
+	virtual void onUpdate(double deltaTime) override;
+	virtual void onDraw() override;
+	virtual void onResize(const unsigned int width, const unsigned int height) override;
 private:
-    //CameraPtr mCamera;
-    float mStrafeSpeed{ 0.2f };
-    float mStrafeFastSpeed{ 0.4f };
-
-    //ShaderRef mShader;
-    //GeometryRef mShape;
-    //Transform3D mTransform;
-    //TextureRef mColorTex;
-    ShaderPtr mShader;
-    std::vector<std::shared_ptr<Geometry>> mGeometryVec;
-	std::map<unsigned int, TextureRef> mTextureMap;
-    FileMonitorRef mFileMonitor;
-    vec3 mMousePickPos;
-	static bool mShowColorMap;
-
-	Manager mManager;
-	Entity* cameraEntity;
-
-	enum Group : std::size_t
-	{
-		GCamera,
-		GInput,
-		GMesh
-	};
-
-    void drawUI();
-	Entity& createCamera();
+	Mesh mMesh;
+	TextureID mTexD, mTexN, mTexS;
+	ShaderID mShaderGeometry;
+	GBuffer mGBuffer;
 };
 
-bool Deferred::mShowColorMap = true;
-
 //=========================================================================
-void Deferred::setup()
+Deferred::Deferred() : BaseApp(1280, 720, WindowMode::Windowed)
 {
-    //auto a1 = Resource::get<Texture>("assets\\textures\\default\\default_d.png");
-    //auto a2 = Resource::get<Texture>("assets\\textures\\default\\default_d.png");
-    //auto a3 = Resource::get<Texture>("assets\\textures\\default\\default_d.png");
+	setTitle("Deferred rendering...");
+	renderer.setCearColor(Color::gray(0.5f));
 
-    //auto b1 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
-    //auto b2 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
-    //auto b3 = Resource::get<Texture>("assets\\textures\\default\\default_n.png");
+	if (!mGBuffer.init(getViewportWidth(), getViewportHeight()))
+		quit();
 
-    //auto a1 = Resource::get<Texture>(Color::red());
-    //auto a2 = Resource::get<Texture>(Color::red());
-    //auto a3 = Resource::get<Texture>(Color::red());
+	// Setup some OpenGL options
+	//glEnable(GL_DEPTH_TEST);
 
-    //auto b1 = Resource::get<Texture>(Color::blue());
-    //auto b2 = Resource::get<Texture>(Color::blue());
-    //auto b3 = Resource::get<Texture>(Color::blue());
+	// Setup and compile our shaders
+	mShaderGeometry = renderer.addShader(R"(
+		[Vertex]
+		#include "core"
 
-    //auto sh1 = Shared<Shader>::create();
-    //sh1->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
-    //sh1->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
-    //sh1->link();
+		out vec2 TexCoord;
+		out vec3 Position;
+		out vec3 Normal;
 
-    mFileMonitor = FileMonitor::create();
-    mFileMonitor->addFile("assets\\shaders\\basic.vert");
-    mFileMonitor->addFile("assets\\shaders\\basic.frag");
-    mFileMonitor->addListener(this);
-
-    mShader = Shader::create();
-    mShader->loadFromFile("assets\\shaders\\basic.vert", ShaderType::Vertex);
-    mShader->loadFromFile("assets\\shaders\\basic.frag", ShaderType::Fragment);
-    mShader->link();
-
-	//auto mesh = Resource::get<MeshDataLoader>("assets\\models\\box\\box.obj");
-	//auto mesh = std::shared_ptr<MeshDataLoader>(new MeshDataLoader("assets\\models\\sponza\\sponza.obj", 0.5f));
-	auto mesh = std::shared_ptr<MeshDataLoader>(new MeshDataLoader("assets\\models\\leprechaun\\leprechaun.fbx"));
-	//auto mesh = Resource::get<MeshDataLoader>("assets\\models\\robot\\robot.obj");
-
-	auto meshData = mesh->getMeshData();
-
-	auto idx = 0;
-    for (const auto& geo : meshData.geometryVec)
-    {
-        auto geometry = Shared<Geometry>::create();
-		geometry->setIndices(geo.indices);
-        geometry->setVertices(geo.vertices);
-		geometry->setNormals(geo.normals);
-        geometry->setTexCoords(geo.texCoords);
-        geometry->setTangents(geo.tangents);
-        geometry->setBitangents(geo.bitangents);
-        geometry->prepare(*mShader);
-
-		mGeometryVec.push_back(geometry);
-
-		auto colorTex = meshData.materialMap[geo.materialIndex].textureMap[TextureType::ColorMap];
-		//note(colorTex.c_str());
-
-		if (colorTex.size() > 0)
-			mTextureMap[idx++] = Texture::create(("assets\\models\\leprechaun\\" + colorTex).c_str());
-    }
-
-
-    //mCamera = Camera::create();
-    //mCamera->setRotateSpeed(0.002f);
-    //mCamera->setStrafeSpeed(mStrafeSpeed);
-    //mCamera->setPosition(vec3(3.5, 2.2, -8.8));
-    //mCamera->setDirection(vec3(-0.4, 0.2, 0.9));
-
-    /*
-    mShader = Shader::create("assets/shaders/basic");
-    mShape = Shape::createCube();
-    mColorTex = Texture::create("assets/textures/default/default_d.png");*/
-
-	cameraEntity = &createCamera();
-}
-
-//=========================================================================
-void Deferred::cleanup()
-{
-
-}
-
-//=========================================================================
-void Deferred::input(Input& input)
-{
-	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
-
-	CameraController::flyController(cam, input);
-
-    if (input.isKeyDown(KEY_ESCAPE))
-        quit();
-
-    mMousePickPos = cam->pick(input.getMousePosition());
-}
-
-//=========================================================================
-void Deferred::update(double elapsedTime)
-{
-    mFileMonitor->update();
-
-	mManager.refresh();
-	mManager.update(elapsedTime);
-}
-
-//=========================================================================
-void Deferred::draw()
-{
-	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
-
-    gl::enableCullFace(gl::CullFaceType::Back);
-
-	mManager.draw();
-
-    Transform transform;
-    transform.setRotationX(-90);
-    transform.setRotationY(180);
-    transform.setScale(0.1);
-
-    mShader->bind();
-
-    mShader->setUniform(ShaderConstants::ProjectionMatrix, cam->getProjectionMatrix());
-    //mShader->setUniform(ShaderConstants::ViewMatrix,  mCamera->getViewMatrix());
-    //mShader->setUniform(ShaderConstants::ModelMatrix, transform.getMatrix());
-    mShader->setUniform(ShaderConstants::ModelViewMatrix, cam->getViewMatrix() * transform.getMatrix());
-    mShader->setUniform(ShaderConstants::MVP, cam->getProjectionMatrix() *  cam->getViewMatrix() * transform.getMatrix());
-
-    auto mv = cam->getViewMatrix() * transform.getMatrix();
-    mShader->setUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
-
-    //mShader->setUniform(ShaderConstants::MVP, mCamera->get ->getViewMatrix() * transform.getMatrix());
-
-	auto idx = 0;
-
-    for (const auto& geometry : mGeometryVec)
-    {
-		if (mTextureMap[idx] && mShowColorMap)
+		void main()
 		{
-			mTextureMap[idx]->bind();
-			mShader->setUniform(ShaderConstants::ColorMap, 0);
-			mShader->setUniform(ShaderConstants::ColorMapIsUsed, true);
+			TexCoord = VertexTexCoord;
+			vec4 position = ModelViewMatrix * vec4(VertexPosition, 1.0);
+			Position = position.xyz;
+			Normal = normalize(NormalMatrix * VertexNormal);
+			gl_Position = ProjectionMatrix * position;
 		}
-		else
-			mShader->setUniform(ShaderConstants::ColorMapIsUsed, false);
 
-		idx++;
+		[Fragment]
+		#include "core"
 
-        geometry->draw();
-    }
+		in vec2 TexCoord;
+		in vec3 Position;
+		in vec3 Normal;
 
-    mShader->unbind();
+		layout (location = 0) out vec3 WorldPosOut;   
+		layout (location = 1) out vec3 DiffuseOut;     
+		layout (location = 2) out vec3 NormalOut;     
+		layout (location = 3) out vec3 TexCoordOut;
 
-    //mColorTex->bind();
-    //mShader->bind();
+		void main()
+		{
+			WorldPosOut = Position;					
+			DiffuseOut  = texture(ColorMap, TexCoord).xyz;	
+			NormalOut   = normalize(Normal);					
+			TexCoordOut = vec3(TexCoord, 0.0);
+		}
+	)", Shader::SourceType::String);
 
-    ////mShader->setUniform(ShaderConstants::ProjectionMatrix, mCamera->getProjectionMatrix());
-    ////mShader->setUniform(ShaderConstants::ViewMatrix, mCamera->getViewMatrix());
-    ////mShader->setUniform(ShaderConstants::ModelMatrix, mTransform.getMatrix());
-    ////mShader->setUniform(ShaderConstants::ModelViewMatrix, mCamera->getViewMatrix() * mTransform.getMatrix());
-    //mShader->setUniform(ShaderConstants::MVP, mCamera->getProjectionMatrix() * mCamera->getViewMatrix() * mTransform.getMatrix());
-    //mShader->setUniform(ShaderConstants::ColorMapIsUsed, true);
-    ////mShader->setUniform(ShaderConstants::ColorMap, 0);
+	// Setup lights
+	
+	mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
+	mMesh.makeDrawable(renderer, mShaderGeometry);
+	
+	mTexD = renderer.addTexture("assets/models/leprechaun/leprechaun_d.png");
+	mTexN = renderer.addTexture("assets/models/leprechaun/leprechaun_n.png");
+	mTexS = renderer.addTexture("assets/models/leprechaun/leprechaun_s.png");
 
-    ////auto mv = mCamera->getViewMatrix() * mTransform.getMatrix();
-    ////mShader->setUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+	camera.setPosition(0, 2, -10);
+	camera.setLookAt(0, 4, 0);
 
-    //mShape->draw(*mShader);
-    //mShader->unbind();
-
-    //mColorTex->unbind();
-
-    gl::disableCullFace();
-
-    drawUI();
+	gl::enableCullFace(gl::CullFaceType::Back);
 }
 
 //=========================================================================
-void Deferred::resize(unsigned int width, unsigned int height)
+Deferred::~Deferred()
 {
-	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
-    cam->setAspectRatio((float)width / height);
 }
 
 //=========================================================================
-void Deferred::onFileMonitorFileChange(const std::string &fileName)
+inline void Deferred::onInput(const Input &input)
 {
-    mShader->reload();
+	if (input.isKeyDown(KEY_ESCAPE))
+		quit();
+
+	if (input.isKeyDown(KEY_LEFT_SHIFT))
+		camera.setStrafeSpeed(0.4f);
+	else
+		camera.setStrafeSpeed(0.2f);
+
+	if (input.isKeyDown(KEY_W))
+		camera.move(Camera::FORWARD);
+	else if (input.isKeyDown(KEY_S))
+		camera.move(Camera::BACKWARD);
+
+	if (input.isKeyDown(KEY_A))
+		camera.move(Camera::LEFT);
+	else if (input.isKeyDown(KEY_D))
+		camera.move(Camera::RIGHT);
+
+	if (input.isKeyDown(KEY_E))
+		camera.move(Camera::UP);
+	else if (input.isKeyDown(KEY_Q))
+		camera.move(Camera::DOWN);
+
+	if (input.getMouseScroolY() != 0)
+		camera.move(input.getMouseScroolY() > 0 ? Camera::FORWARD : Camera::BACKWARD);
+
+	if (input.isMouseDown(Input::MouseButton::Right))
+	{
+		hideMouse();
+		camera.rotate(static_cast<float>(input.getMouseChangeX()), static_cast<float>(input.getMouseChangeY()));
+	}
+	else
+		showMouse();
 }
 
 //=========================================================================
-void Deferred::drawUI()
+inline void Deferred::onUpdate(double deltaTime)
 {
-	auto& cam(cameraEntity->getComponent<CCamera>().mCamera);
-
-    ImGuiWindowFlags flags = 0;
-    flags |= ImGuiWindowFlags_NoTitleBar;
-    flags |= ImGuiWindowFlags_NoResize;
-	flags |= ImGuiWindowFlags_NoMove;
-
-    ui::SetNextWindowPos(ImVec2(10, 10), ImGuiSetCond_FirstUseEver); // ImGuiSetCond_Always //ImGuiSetCond_FirstUseEver);
-    ui::Begin("Test", (bool*)true, ImVec2(500, 1000), 0.0f, flags);
-
-    static bool showHelp = true;
-    if (ui::Button(showHelp ? "Hide help" : "Show help"))
-        showHelp ^= 1;
-
-    ui::SameLine();
-    if (ui::Button("Close"))
-        quit();
-
-    if (showHelp)
-    {
-        ui::Separator();
-        ui::Text("Frame time %.3f ms | FPS: %.1f", 1000.0f / ui::GetIO().Framerate, ui::GetIO().Framerate);
-
-        static int item = 1;
-        ui::Combo("combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
-
-        ui::Text("Cam position:  %s", to_string(cam->getPosition()).c_str());
-        ui::Text("Cam direction: %s", to_string(cam->getDirection()).c_str());
-        //ui::Text("Mouse pick:    %s", to_string(mMousePickPos).c_str());
-		ui::Checkbox("Show color map", &mShowColorMap);
-        
-    }
-
-    ui::End();
-
-    //ui::ShowTestWindow(NULL);
 }
 
-Entity& Deferred::createCamera()
+//=========================================================================
+inline void Deferred::onDraw()
 {
-	auto& entity(mManager.addEntity());
-	entity.addComponent<CCamera>();
-	entity.addGroup(Group::GCamera);
-	return entity;
+	// Geometry pass
+	mGBuffer.bindForWriting();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Transform transform;
+	transform.setRotationX(-90);
+	transform.setRotationY(180);
+	transform.setScale(0.1f);
+
+	renderer.setShader(mShaderGeometry);
+	renderer.setShaderUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
+	renderer.setShaderUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * transform.getMatrix());
+
+	auto mv = camera.getViewMatrix() * transform.getMatrix();
+	renderer.setShaderUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+
+	// Color map
+	renderer.setTexture(mTexD, 0);
+	renderer.setShaderUniform(ShaderConstants::ColorMap, 0);
+
+	// Draw mesh
+	mMesh.draw();
+
+	// Light pass
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	mGBuffer.bindForReading();
+
+	GLint halfWidth = (GLint)(getViewportWidth() / 2.0f);
+	GLint halfHeight = (GLint)(getViewportHeight() / 2.0f);
+
+	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_DIFFUSE);
+	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), 0, halfHeight, halfWidth, getViewportHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_NORMAL);
+	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), halfWidth, halfHeight, getViewportWidth(), getViewportHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_POSITION);
+	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), 0, 0, halfWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_TEXCOORD);
+	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), halfWidth, 0, getViewportWidth(), halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}
+
+//=========================================================================
+inline void Deferred::onResize(const unsigned int width, const unsigned int height)
+{
+	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+	mGBuffer.resize(width, height);
 }

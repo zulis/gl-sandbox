@@ -13,6 +13,9 @@
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
 
+#define ZERO_MEM(a) memset(a, 0, sizeof(a))
+#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
+
 namespace gl
 {
 

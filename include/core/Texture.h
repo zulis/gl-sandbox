@@ -253,7 +253,7 @@ void Texture::bind(GLuint textureUnit)
 	mTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + mTextureUnit);
 	glBindTexture(mFormat.mTarget, mTextureID);
-	glActiveTexture(GL_TEXTURE0); // ? Do we need it here?
+	//glActiveTexture(GL_TEXTURE0); // ? Do we need it here?
 }
 
 //=========================================================================

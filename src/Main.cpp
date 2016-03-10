@@ -22,12 +22,15 @@ void main(int argc, char *argv[])
 }
 */
 
+//#include "tests/Test.h"
 //#include "tests/Game.h"
-#include "tests/Test.h"
+#include "tests/Deferred.h"
 
 void main(int argc, char *argv[])
 {
-	Test game;
-	game.run();
+	//Test test;
+	//Game test;
+	Deferred test;
+	test.run();
 }
 

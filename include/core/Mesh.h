@@ -24,10 +24,6 @@ private:
 	std::vector<Geometry*> mGeometyVec;
 	std::map<unsigned int, MeshDataMaterial> mMaterialMap;
 	AABB mAABB;
-
-private:
-
-
 };
 
 //=========================================================================

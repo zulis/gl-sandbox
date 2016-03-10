@@ -175,7 +175,7 @@ void Test::onDraw()
 
 	renderer.setShaderUniform(ShaderConstants::ProjectionMatrix, camera.getProjectionMatrix());
 	renderer.setShaderUniform(ShaderConstants::ModelViewMatrix, camera.getViewMatrix() * mTransform.getMatrix());
-	renderer.setShaderUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * mTransform.getMatrix());
+	//renderer.setShaderUniform(ShaderConstants::MVP, camera.getProjectionMatrix() * camera.getViewMatrix() * mTransform.getMatrix());
 
 	auto mv = camera.getViewMatrix() * mTransform.getMatrix();
 	renderer.setShaderUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));

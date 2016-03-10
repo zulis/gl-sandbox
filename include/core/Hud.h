@@ -39,7 +39,7 @@ private:
 	float mOffsetX{ 0 };
 	float mOffsetY{ 0 };
 	Shader* mShader;
-	Texture* mTexture;
+	Texture* mTexture{ nullptr };
 	Geometry* mGeometry;
 };
 
@@ -52,7 +52,8 @@ Hud::Hud()
 Hud::~Hud()
 {
 	delete mShader;
-	delete mTexture;
+	if (mTexture)
+		delete mTexture;
 	delete mGeometry;
 }
 
@@ -63,28 +64,22 @@ void Hud::setup(unsigned int viewportWidth, unsigned int viewportHeight)
 
 	mShader = new Shader(R"(
 		[Vertex]
-		#version 430
-		
-		in vec3 VertexPosition;
-		in vec2 VertexTexCoord;
-		out vec2 TexCoord;
-		
-		uniform mat4 model;
+		#include "core"
 		uniform vec2 scale;
+
+		out vec2 TexCoord;
 		
 		void main()
 		{
-			gl_Position = model * vec4(vec2(VertexPosition) * scale, 0.0, 1.0);
+			gl_Position = ModelMatrix * vec4(vec2(VertexPosition) * scale, 0.0, 1.0);
 			TexCoord = VertexTexCoord;
 		}
 		
 		[Fragment]
-		#version 430
+		#include "core"
 		
 		in vec2 TexCoord;
 		out vec4 FragColor;
-		
-		layout(binding = 0) uniform sampler2D ColorMap;
 		
 		void main()
 		{
@@ -129,12 +124,14 @@ void Hud::loadFromFile(const std::string & fileName)
 //=========================================================================
 inline void Hud::draw()
 {
+	assert(mTexture != nullptr);
+
 	mat4 model = glm::translate(mat4(1.0f), vec3(mTranslate, 0.0f));
 
 	mShader->bind();
 	mTexture->bind();
 	mShader->setUniform(ShaderConstants::ColorMap, 0);
-	mShader->setUniform("model", model);
+	mShader->setUniform(ShaderConstants::ModelMatrix, model);
 	mShader->setUniform("scale", mScale);
 	mGeometry->draw();
 	mTexture->unbind();

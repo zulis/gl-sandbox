@@ -51,6 +51,8 @@ public:
 	static const std::string TilingU;
 	static const std::string TilingV;
 	static const std::string TilingUV;
+	// CORE shader source
+	static const std::string CoreShaderSource;
 };
 
 // VERTEX
@@ -99,3 +101,67 @@ const std::string ShaderConstants::OpacityMapIsUsed = std::string("OpacityMapIsU
 const std::string ShaderConstants::TilingU = std::string("TilingU");
 const std::string ShaderConstants::TilingV = std::string("TilingV");
 const std::string ShaderConstants::TilingUV = std::string("TilingUV");
+// CORE shader source
+const std::string ShaderConstants::CoreShaderSource = R"(
+	#version 430
+	#pragma optionNV(unroll all)
+
+	in vec3 VertexPosition;
+	in vec3 VertexNormal;
+	in vec2 VertexTexCoord;
+	in vec4 VertexTangent;
+	in vec3 VertexBitangent;
+
+	uniform mat4 ProjectionMatrix;
+	uniform mat4 ViewMatrix;
+	uniform mat4 ModelMatrix;
+	uniform mat4 ModelViewMatrix;
+	uniform mat4 MVP;
+	uniform mat3 NormalMatrix;
+
+	layout(binding = 0) uniform sampler2D ColorMap;
+	layout(binding = 1) uniform sampler2D NormalMap;
+	layout(binding = 2) uniform sampler2D HeightMap;
+	layout(binding = 3) uniform sampler2D SpecularMap;
+	layout(binding = 4) uniform sampler2D EmissiveMap;
+	layout(binding = 5) uniform sampler2D OpacityMap;
+
+	uniform bool ColorMapIsUsed;
+	uniform bool NormalMapIsUsed;
+	uniform bool HeightMapIsUsed;
+	uniform bool SpecularMapIsUsed;
+	uniform bool EmissiveMapIsUsed;
+	uniform bool OpacityMapIsUsed;
+	uniform float TilingU = 1.0;
+	uniform float TilingV = 1.0;
+	uniform vec2 TilingUV = vec2(1.0);
+
+	struct LightSource
+	{
+		vec4 ambient;
+		vec4 diffuse;
+		vec4 specular;
+		vec4 position;
+		vec4 lookAt; // directional & spot
+		vec2 attenuation; // point & spot
+		float cutoff;     // spot
+		float exponent;   // spot
+	};
+	const int MaxLights = 32;
+	uniform LightSource Lights[MaxLights];
+	uniform int TotalLights = 0;
+
+	struct MaterialInfo
+	{
+		vec4 ambient;
+		vec4 diffuse;
+		vec4 specular;
+		float shininess;
+	};
+	uniform MaterialInfo Material = MaterialInfo(
+		vec4(0.3, 0.3, 0.3, 1.0),
+		vec4(0.7, 0.7, 0.7, 1.0),
+		vec4(0.5, 0.5, 0.5, 1.0),
+		60.0
+	);
+)";

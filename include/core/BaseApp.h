@@ -2,14 +2,15 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #define WIN32_LEAN_AND_MEAN
+//#define GLFW_EXPOSE_NATIVE_WIN32
+//#define GLFW_EXPOSE_NATIVE_WGL
 #include <windows.h>
 #endif
 
 #include <string>
 #include "core/GL.h"
-#include "core/Ui.h"
 #include <glfw/glfw3.h>
-#include <glfw/glfw3native.h>
+//#include <glfw/glfw3native.h>
 #include "core/Math.h"
 #include "core/Input.h"
 #include "core/Renderer.h"
@@ -21,6 +22,7 @@
 #include "core/Mesh.h"
 #include "core/AABB.h"
 #include "core/Log.h"
+#include "core/Hud.h"
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
@@ -64,7 +66,6 @@ private:
 	GLFWwindow *mWindow;
 	std::string mTitle;
 	bool mRunning{ false };
-	bool mShowUI{ false };
 	vec2 mViewportSize;
 
 private:
@@ -100,9 +101,6 @@ void BaseApp::keyCallback(GLFWwindow* window, int key, int scancode, int action,
 		return;
 
 	baseApp->input.setKeyStatus(key, isDown);
-
-	if (key == KEY_F1 && action == GLFW_PRESS)
-		baseApp->mShowUI = !baseApp->mShowUI;
 }
 
 //=========================================================================
@@ -164,10 +162,10 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	mViewportSize = vec2(width, height);
 
 	//glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Specifies whether the OpenGL context should be forward-compatible
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 #ifdef _DEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -208,6 +206,9 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 
+	// Define the viewport dimensions
+	glViewport(0, 0, width, height);
+
 	if (GLEW_OK != err)
 	{
 		error("OpenGL initialisation failed: %s", glewGetErrorString(err));
@@ -231,9 +232,6 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	note("GL Version (string)  = %s", glVersion);
 	note("GL Version (integer) = %d.%d", glMajor, glMinor);
 	note("GLSL Version = %s", glslVersion);
-
-	ImGuiWrapper::ImGui_ImplGlfwGL3_Init(mWindow, false);
-	//ImGuiWrapper::setStyle();
 }
 
 //=========================================================================
@@ -241,7 +239,6 @@ BaseApp::~BaseApp()
 {
 	if (mWindow)
 	{
-		ImGuiWrapper::ImGui_ImplGlfwGL3_Shutdown();
 		glfwDestroyWindow(mWindow);
 		glfwTerminate();
 	}
@@ -298,53 +295,15 @@ void BaseApp::run()
 
 		// Enable 3D rendering & alpha
 		gl::enable3D();
-		gl::enableAlphaBlending();
 		gl::clear(renderer.mClearColor);
 
 		onDraw();
 
+		renderer.reset();
+
 		static float clear_color = 0.0f;
 		static bool show_test_window;
 		static bool show_another_window;
-
-		/*
-		ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
-
-		{
-		static float f = 0.0f;
-		ImGui::Text("Hello, world!");
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-		ImGui::ColorEdit3("clear color", (float*)&clear_color);
-		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		if (ImGui::Button("Another Window")) show_another_window ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		}
-
-		// 2. Show another simple window, this time using an explicit Begin/End pair
-		if (show_another_window)
-		{
-		ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
-		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello");
-		ImGui::End();
-		}
-
-		// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-		if (show_test_window)
-		{
-		ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiSetCond_FirstUseEver);
-		ImGui::ShowTestWindow(&show_test_window);
-		}
-
-		ImGui::Render();
-		*/
-
-		if (mShowUI)
-		{
-			ImGuiWrapper::ImGui_ImplGlfwGL3_NewFrame();
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::Render();
-		}
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();

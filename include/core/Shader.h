@@ -13,6 +13,7 @@
 #include "core/Color.h"
 #include "core/StringUtils.h"
 #include "core/Resource.h"
+#include "core/ShaderConstants.h"
 
 class Shader
 {
@@ -368,7 +369,10 @@ std::string Shader::parseSource(const std::string &source)
 			std::string path = StringUtils::cutTail(mFileName.c_str(), "\\/");
 
 			// Include file content
-			strStream << readFile(path + line);
+			if (line == "core")
+				strStream << ShaderConstants::CoreShaderSource;
+			else
+				strStream << readFile(path + line);
 		}
 		else
 			strStream << line << std::endl;
@@ -629,7 +633,9 @@ GLuint Shader::getUniform(const std::string &name) const
 		return it->second;
 	else
 	{
-		//error("Uniform '%s' not found\n", name.c_str());
+#ifdef _DEBUG
+		error("Uniform '%s' not found\n", name.c_str());
+#endif
 		return -1;
 	}
 }

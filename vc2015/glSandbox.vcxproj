@@ -160,15 +160,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\external\src\imgui\imgui.cpp" />
-    <ClCompile Include="..\external\src\imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\external\src\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\external\src\imgui\imconfig.h" />
-    <ClInclude Include="..\external\src\imgui\imgui.h" />
-    <ClInclude Include="..\external\src\imgui\imgui_internal.h" />
     <ClInclude Include="..\include\core\AABB.h" />
     <ClInclude Include="..\include\core\BaseApp.h" />
     <ClInclude Include="..\include\core\Camera.h" />
@@ -193,10 +187,9 @@
     <ClInclude Include="..\include\core\StringUtils.h" />
     <ClInclude Include="..\include\core\Texture.h" />
     <ClInclude Include="..\include\core\Transform.h" />
-    <ClInclude Include="..\include\core\Ui.h" />
-    <ClInclude Include="..\include\core\Window.h" />
     <ClInclude Include="..\src\tests\Deferred.h" />
     <ClInclude Include="..\src\tests\Game.h" />
+    <ClInclude Include="..\src\tests\GBuffer.h" />
     <ClInclude Include="..\src\tests\Test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

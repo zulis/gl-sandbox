@@ -1,6 +1,6 @@
 [Vertex]
 
-#include "common.shd"
+#include "core"
 
 out vec2 TexCoord;
 out vec3 Position;
@@ -17,7 +17,7 @@ void main()
 
 [Fragment]
 
-#include "common.shd"
+#include "core"
 
 in vec2 TexCoord;
 in vec3 Position;

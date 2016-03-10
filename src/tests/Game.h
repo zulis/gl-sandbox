@@ -131,7 +131,7 @@ private:
 			game->renderer.setShader(shader);
 			game->renderer.setShaderUniform(ShaderConstants::ProjectionMatrix, game->camera.getProjectionMatrix());
 			game->renderer.setShaderUniform(ShaderConstants::ModelViewMatrix, game->camera.getViewMatrix() * transform.getMatrix());
-			game->renderer.setShaderUniform(ShaderConstants::MVP, game->camera.getProjectionMatrix() * game->camera.getViewMatrix() * transform.getMatrix());
+			//game->renderer.setShaderUniform(ShaderConstants::MVP, game->camera.getProjectionMatrix() * game->camera.getViewMatrix() * transform.getMatrix());
 
 			auto mv = game->camera.getViewMatrix() * transform.getMatrix();
 			game->renderer.setShaderUniform(ShaderConstants::NormalMatrix, mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
