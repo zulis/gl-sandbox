@@ -106,5 +106,8 @@
     <ClInclude Include="..\src\tests\Deferred1.h">
       <Filter>src\tests</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\tests\Deferred2.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

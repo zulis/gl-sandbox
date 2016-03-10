@@ -8,29 +8,17 @@
 #endif
 */
 
-//RUN(Test)
-//RUN(LoadLevelTest)
-//RUN(Deferred)
-
-/*
-#include "tests/Test.h"
-
-void main(int argc, char *argv[])
-{
-	Test test;
-	test.run();
-}
-*/
-
 //#include "tests/Test.h"
 //#include "tests/Game.h"
 #include "tests/Deferred1.h"
+#include "tests/Deferred2.h"
 
 void main(int argc, char *argv[])
 {
 	//Test test;
 	//Game test;
-	Deferred1 test;
+	//Deferred1 test;
+	Deferred2 test;
 	test.run();
 }
 
