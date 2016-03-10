@@ -85,9 +85,6 @@
     <ClInclude Include="..\src\tests\Test.h">
       <Filter>src\tests</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tests\Deferred.h">
-      <Filter>src\tests</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\core\Mesh.h">
       <Filter>include\core</Filter>
     </ClInclude>
@@ -104,6 +101,9 @@
       <Filter>src\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tests\GBuffer.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tests\Deferred1.h">
       <Filter>src\tests</Filter>
     </ClInclude>
   </ItemGroup>

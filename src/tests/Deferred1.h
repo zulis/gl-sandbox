@@ -3,11 +3,11 @@
 #include "core/BaseApp.h"
 #include "GBuffer.h"
 
-class Deferred : public BaseApp
+class Deferred1 : public BaseApp
 {
 public:
-	Deferred();
-	~Deferred();
+	Deferred1();
+	~Deferred1();
 
 	virtual void onInput(const Input &input) override;
 	virtual void onUpdate(double deltaTime) override;
@@ -21,16 +21,13 @@ private:
 };
 
 //=========================================================================
-Deferred::Deferred() : BaseApp(1280, 720, WindowMode::Windowed)
+Deferred1::Deferred1() : BaseApp(1280, 720, WindowMode::Windowed)
 {
 	setTitle("Deferred rendering...");
 	renderer.setCearColor(Color::gray(0.5f));
 
 	if (!mGBuffer.init(getViewportWidth(), getViewportHeight()))
 		quit();
-
-	// Setup some OpenGL options
-	//glEnable(GL_DEPTH_TEST);
 
 	// Setup and compile our shaders
 	mShaderGeometry = renderer.addShader(R"(
@@ -87,12 +84,12 @@ Deferred::Deferred() : BaseApp(1280, 720, WindowMode::Windowed)
 }
 
 //=========================================================================
-Deferred::~Deferred()
+Deferred1::~Deferred1()
 {
 }
 
 //=========================================================================
-inline void Deferred::onInput(const Input &input)
+inline void Deferred1::onInput(const Input &input)
 {
 	if (input.isKeyDown(KEY_ESCAPE))
 		quit();
@@ -130,12 +127,12 @@ inline void Deferred::onInput(const Input &input)
 }
 
 //=========================================================================
-inline void Deferred::onUpdate(double deltaTime)
+inline void Deferred1::onUpdate(double deltaTime)
 {
 }
 
 //=========================================================================
-inline void Deferred::onDraw()
+inline void Deferred1::onDraw()
 {
 	// Geometry pass
 	mGBuffer.bindForWriting();
@@ -182,7 +179,7 @@ inline void Deferred::onDraw()
 }
 
 //=========================================================================
-inline void Deferred::onResize(const unsigned int width, const unsigned int height)
+inline void Deferred1::onResize(const unsigned int width, const unsigned int height)
 {
 	camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 	mGBuffer.resize(width, height);

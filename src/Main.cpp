@@ -24,13 +24,13 @@ void main(int argc, char *argv[])
 
 //#include "tests/Test.h"
 //#include "tests/Game.h"
-#include "tests/Deferred.h"
+#include "tests/Deferred1.h"
 
 void main(int argc, char *argv[])
 {
 	//Test test;
 	//Game test;
-	Deferred test;
+	Deferred1 test;
 	test.run();
 }
 
