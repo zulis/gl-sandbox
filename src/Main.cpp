@@ -1,15 +1,11 @@
-//#include "tests/Test.h"
-//#include "tests/LoadLevelTest.h"
-//#include "tests/Deferred.h"
-
 /*
 #ifdef _MSC_VER
 #    pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 */
 
-//#include "tests/Test.h"
-//#include "tests/Game.h"
+#include "tests/Test.h"
+#include "tests/Game.h"
 #include "tests/Deferred1.h"
 #include "tests/Deferred2.h"
 

@@ -293,8 +293,6 @@ void BaseApp::run()
 			accumulator -= frameTime;
 		}
 
-		// Enable 3D rendering & alpha
-		gl::enable3D();
 		gl::clear(renderer.mClearColor);
 
 		onDraw();

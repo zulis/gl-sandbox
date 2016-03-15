@@ -92,6 +92,9 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	mHtmlUi.addCallback(mHtmlViewID_MainMenu, JSDelegate(this, &Test::OnPlayClick), "PlayClick");
 	mHtmlViewID_Google = mHtmlUi.addFromWeb("http://www.google.com", false);
 	mHtmlUi.setActiveView(mHtmlViewID_MainMenu);
+
+	gl::enableAlphaBlending();
+	gl::enableDepthRead();
 }
 
 //=========================================================================

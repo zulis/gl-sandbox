@@ -80,6 +80,7 @@ Deferred1::Deferred1() : BaseApp(1280, 720, WindowMode::Windowed)
 	camera.setPosition(0, 2, -10);
 	camera.setLookAt(0, 4, 0);
 
+	gl::enableDepthRead();
 	gl::enableCullFace(gl::CullFaceType::Back);
 }
 
