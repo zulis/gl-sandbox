@@ -17,6 +17,8 @@ private:
 	Mesh mMesh;
 	TextureID mTexD, mTexN, mTexS;
 	ShaderID mShaderGeometry;
+	ShaderID mShaderPointLight;
+	ShaderID mShaderDirectionalLight;
 	GBuffer mGBuffer;
 };
 
@@ -68,6 +70,136 @@ Deferred2::Deferred2() : BaseApp(1280, 720, WindowMode::Windowed)
 		}
 	)", Shader::SourceType::String);
 
+	mShaderDirectionalLight = renderer.addShader(R"(
+		[Vertex]
+		#include "core"
+
+		void main()
+		{
+			vec4 position = ModelViewMatrix * vec4(VertexPosition, 1.0);          
+			gl_Position = ProjectionMatrix * position;
+		}
+
+		[Fragment]
+		#include "core"
+
+		struct BaseLight
+		{
+			vec3 Color;
+			float AmbientIntensity;
+			float DiffuseIntensity;
+		};
+
+		struct DirectionalLight
+		{
+			BaseLight Base;
+			vec3 Direction;
+		};
+
+		struct Attenuation
+		{
+			float Constant;
+			float Linear;
+			float Exp;
+		};
+
+		struct PointLight
+		{
+			BaseLight Base;
+			vec3 Position;
+			Attenuation Atten;
+		};
+
+		struct SpotLight
+		{
+			PointLight Base;
+			vec3 Direction;
+			float Cutoff;
+		};
+
+		uniform sampler2D gPositionMap;
+		uniform sampler2D gColorMap;
+		uniform sampler2D gNormalMap;
+		uniform DirectionalLight gDirectionalLight;
+		uniform PointLight gPointLight;
+		uniform SpotLight gSpotLight;
+		uniform vec3 gEyeWorldPos;
+		uniform float gMatSpecularIntensity;
+		uniform float gSpecularPower;
+		uniform int gLightType;
+		uniform vec2 gScreenSize;
+
+		vec4 CalcLightInternal(BaseLight Light,
+							   vec3 LightDirection,
+							   vec3 WorldPos,
+							   vec3 Normal)
+		{
+			vec4 AmbientColor = vec4(Light.Color * Light.AmbientIntensity, 1.0);
+			float DiffuseFactor = dot(Normal, -LightDirection);
+
+					vec4 DiffuseColor  = vec4(0, 0, 0, 0);
+			vec4 SpecularColor = vec4(0, 0, 0, 0);
+
+					if (DiffuseFactor > 0.0) {
+				DiffuseColor = vec4(Light.Color * Light.DiffuseIntensity * DiffuseFactor, 1.0);
+
+						vec3 VertexToEye = normalize(gEyeWorldPos - WorldPos);
+				vec3 LightReflect = normalize(reflect(LightDirection, Normal));
+				float SpecularFactor = dot(VertexToEye, LightReflect);        
+				if (SpecularFactor > 0.0) {
+					SpecularFactor = pow(SpecularFactor, gSpecularPower);
+					SpecularColor = vec4(Light.Color * gMatSpecularIntensity * SpecularFactor, 1.0);
+				}
+			}
+
+					return (AmbientColor + DiffuseColor + SpecularColor);
+		}
+
+		vec4 CalcDirectionalLight(vec3 WorldPos, vec3 Normal)
+		{
+			return CalcLightInternal(gDirectionalLight.Base,
+									 gDirectionalLight.Direction,
+									 WorldPos,
+									 Normal);
+		}
+
+		vec4 CalcPointLight(vec3 WorldPos, vec3 Normal)
+		{
+			vec3 LightDirection = WorldPos - gPointLight.Position;
+			float Distance = length(LightDirection);
+			LightDirection = normalize(LightDirection);
+
+					vec4 Color = CalcLightInternal(gPointLight.Base, LightDirection, WorldPos, Normal);
+
+					float Attenuation =  gPointLight.Atten.Constant +
+								 gPointLight.Atten.Linear * Distance +
+								 gPointLight.Atten.Exp * Distance * Distance;
+
+					Attenuation = max(1.0, Attenuation);
+
+					return Color / Attenuation;
+		}
+
+
+		vec2 CalcTexCoord()
+		{
+			return gl_FragCoord.xy / gScreenSize;
+		}
+
+		out vec4 FragColor;
+
+		void main()
+		{
+			vec2 TexCoord = CalcTexCoord();
+			vec3 WorldPos = texture(gPositionMap, TexCoord).xyz;
+			vec3 Color = texture(gColorMap, TexCoord).xyz;
+			vec3 Normal = texture(gNormalMap, TexCoord).xyz;
+			Normal = normalize(Normal);
+
+					FragColor = vec4(Color, 1.0) * CalcDirectionalLight(WorldPos, Normal);
+		}
+	)", Shader::SourceType::String);
+
 	// Setup lights
 	
 	mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
@@ -80,7 +212,6 @@ Deferred2::Deferred2() : BaseApp(1280, 720, WindowMode::Windowed)
 	camera.setPosition(0, 2, -10);
 	camera.setLookAt(0, 4, 0);
 
-	gl::enableDepthRead();
 	gl::enableCullFace(gl::CullFaceType::Back);
 }
 
@@ -135,7 +266,16 @@ inline void Deferred2::onUpdate(double deltaTime)
 //=========================================================================
 inline void Deferred2::onDraw()
 {
+	// --------------------------------------------------------------------
 	// Geometry pass
+	// --------------------------------------------------------------------
+	
+	gl::disableAlphaBlending();
+	// Only the geometry pass updates the depth buffer
+	//gl::enableDepthWrite();
+	//gl::enableDepthRead();
+	gl::enable3D();
+
 	mGBuffer.bindForWriting();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -157,6 +297,23 @@ inline void Deferred2::onDraw()
 
 	// Draw mesh
 	mMesh.draw();
+
+	//gl::disableDepthWrite();
+	//gl::disableDepthRead();
+
+	gl::enable2D();
+
+	// --------------------------------------------------------------------
+	// Begin light passes
+	// --------------------------------------------------------------------
+
+	//glEnable(GL_BLEND);
+	//glBlendEquation(GL_FUNC_ADD);
+	//glBlendFunc(GL_ONE, GL_ONE);
+
+	//// ? glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	//mGBuffer.bindForReading();
+	//glClear(GL_COLOR_BUFFER_BIT);
 
 	// Light pass
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

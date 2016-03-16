@@ -79,7 +79,7 @@ inline void enableDepthRead()
 	glDepthFunc(GL_LESS);
 }
 
-void disableDepthRead()
+inline void disableDepthRead()
 {
 	glDisable(GL_DEPTH_TEST);
 }
