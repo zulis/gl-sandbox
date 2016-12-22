@@ -214,3 +214,4 @@ $RECYCLE.BIN/
 *.msp
 bin/imgui.ini
 bin/imgui.ini
+vc2015/glSandbox.VC.db
