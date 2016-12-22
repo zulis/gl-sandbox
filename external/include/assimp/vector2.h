@@ -103,7 +103,7 @@ typedef aiVector2t<float> aiVector2D;
 #else
 
 struct aiVector2D {
-    float x,y;
+    float x, y;
 };
 
 #endif // __cplusplus

@@ -458,11 +458,13 @@ public:
      *    to the #Importer instance.  */
     const aiScene* ApplyPostProcessing(unsigned int pFlags);
 
+    const aiScene* ApplyCustomizedPostProcessing( BaseProcess *rootProcess, bool requestValidation );
+
     // -------------------------------------------------------------------
     /** @brief Reads the given file and returns its contents if successful.
      *
      * This function is provided for backward compatibility.
-     * See the const char* version for detailled docs.
+     * See the const char* version for detailed docs.
      * @see ReadFile(const char*, pFlags)  */
     const aiScene* ReadFile(
         const std::string& pFile,

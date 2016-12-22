@@ -159,8 +159,6 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	if (!glfwInit())
 		exit(1);
 
-	mViewportSize = vec2(width, height);
-
 	//glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -179,6 +177,8 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 		width = vidmode->width;
 		height = vidmode->height;
 	}
+
+	mViewportSize = vec2(width, height);
 
 	mWindow = glfwCreateWindow(width, height, "", (mode == WindowMode::FullScreen || mode == WindowMode::FullScreenNative) ? mon : NULL, NULL);
 

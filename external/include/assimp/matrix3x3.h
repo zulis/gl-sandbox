@@ -160,8 +160,6 @@ public:
         const aiVector3t<TReal>& to, aiMatrix3x3t& out);
 
 public:
-
-
     TReal a1, a2, a3;
     TReal b1, b2, b3;
     TReal c1, c2, c3;
@@ -172,13 +170,12 @@ typedef aiMatrix3x3t<float> aiMatrix3x3;
 #else
 
 struct aiMatrix3x3 {
-
     float a1, a2, a3;
     float b1, b2, b3;
     float c1, c2, c3;
 } PACK_STRUCT;
 
-#endif
+#endif // __cplusplus
 
 #include "./Compiler/poppack1.h"
 
