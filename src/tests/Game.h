@@ -115,7 +115,7 @@ private:
 			//texSpecular = renderer->addTexture(Color::white());
 
 			mesh.loadFromFile(fileName);
-			mesh.makeDrawable(game->renderer, shader);
+			//mesh.makeDrawable(game->renderer, shader);
 		}
 
 		void init() override

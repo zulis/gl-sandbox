@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/BaseApp.h"
-#include "GBuffer.h"
+#include "GBuffer1.h"
 
 class Deferred1 : public BaseApp
 {
@@ -17,7 +17,7 @@ private:
 	Mesh mMesh;
 	TextureID mTexD, mTexN, mTexS;
 	ShaderID mShaderGeometry;
-	GBuffer mGBuffer;
+	GBuffer1 mGBuffer;
 };
 
 //=========================================================================
@@ -71,7 +71,7 @@ Deferred1::Deferred1() : BaseApp(1280, 720, WindowMode::Windowed)
 	// Setup lights
 	
 	mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
-	mMesh.makeDrawable(renderer, mShaderGeometry);
+	//mMesh.makeDrawable(renderer, mShaderGeometry);
 	
 	mTexD = renderer.addTexture("assets/models/leprechaun/leprechaun_d.png");
 	mTexN = renderer.addTexture("assets/models/leprechaun/leprechaun_n.png");
@@ -166,16 +166,16 @@ inline void Deferred1::onDraw()
 	GLint halfWidth = (GLint)(getViewportWidth() / 2.0f);
 	GLint halfHeight = (GLint)(getViewportHeight() / 2.0f);
 
-	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_DIFFUSE);
+	mGBuffer.setReadBuffer(GBuffer1::GBUFFER_TEXTURE_TYPE_DIFFUSE);
 	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), 0, halfHeight, halfWidth, getViewportHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_NORMAL);
+	mGBuffer.setReadBuffer(GBuffer1::GBUFFER_TEXTURE_TYPE_NORMAL);
 	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), halfWidth, halfHeight, getViewportWidth(), getViewportHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_POSITION);
+	mGBuffer.setReadBuffer(GBuffer1::GBUFFER_TEXTURE_TYPE_POSITION);
 	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), 0, 0, halfWidth, halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-	mGBuffer.setReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_TEXCOORD);
+	mGBuffer.setReadBuffer(GBuffer1::GBUFFER_TEXTURE_TYPE_TEXCOORD);
 	glBlitFramebuffer(0, 0, getViewportWidth(), getViewportHeight(), halfWidth, 0, getViewportWidth(), halfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 

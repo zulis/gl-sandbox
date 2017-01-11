@@ -189,8 +189,12 @@
     <ClInclude Include="..\include\core\Transform.h" />
     <ClInclude Include="..\src\tests\Deferred1.h" />
     <ClInclude Include="..\src\tests\Deferred2.h" />
+    <ClInclude Include="..\src\tests\Deferred3.h" />
     <ClInclude Include="..\src\tests\Game.h" />
-    <ClInclude Include="..\src\tests\GBuffer.h" />
+    <ClInclude Include="..\src\tests\GBuffer1.h" />
+    <ClInclude Include="..\src\tests\GBuffer2.h" />
+    <ClInclude Include="..\src\tests\Light.h" />
+    <ClInclude Include="..\src\tests\MeshTest.h" />
     <ClInclude Include="..\src\tests\Test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

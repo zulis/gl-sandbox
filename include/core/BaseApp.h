@@ -16,7 +16,7 @@
 #include "core/Renderer.h"
 #include "core/Camera.h"
 #include "core/Transform.h"
-#include "core/Light.h"
+//#include "core/Light.h"
 #include "core/MeshData.h"
 #include "core/MeshDataLoader.h"
 #include "core/Mesh.h"
@@ -56,6 +56,7 @@ public:
 	vec2 getViewportSize() const;
 	unsigned int getViewportWidth() const;
 	unsigned int getViewportHeight() const;
+	float getTime() const;
 
 //protected:
 	Renderer renderer;
@@ -192,7 +193,7 @@ BaseApp::BaseApp(int width, int height, WindowMode mode)
 	//glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	// VSync: 0 - off, 1 - on
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	glfwSetWindowUserPointer(mWindow, this);
 	glfwSetKeyCallback(mWindow, keyCallback);
@@ -257,55 +258,47 @@ void BaseApp::run()
 	}
 
 	glfwSetTime(0.0);
-	double lastTimeStamp = 0.0;
-	double accumulator = 0.0;
-	double frameCounter = 0.0;
-	const double frameTime = 1.0 / 60.0;
-	int frames = 0;
+	const double limitFPS = 1.0 / 60.0;
+	double lastTime = glfwGetTime(), timer = lastTime;
+	double deltaTime = 0, nowTime = 0;
+	int frames = 0, updates = 0;
 
 	while (!glfwWindowShouldClose(mWindow) && mRunning)
 	{
-		const double timeStamp = glfwGetTime();
-		const double dt = timeStamp - lastTimeStamp;
-		lastTimeStamp = timeStamp;
-		accumulator += dt;
-		frameCounter += dt;
+		// Measure time
+		nowTime = glfwGetTime();
+		deltaTime += (nowTime - lastTime) / limitFPS;
+		lastTime = nowTime;
 
 		// Reset mouse statuses
 		onInput(input);
 		input.setMouseScrollStatus(0, 0);
 		input.setMousePositionChangeStatus(0, 0);
 
+		// Only update at 60 frames / s
+		while (deltaTime >= 1.0) {
+			onUpdate(deltaTime);
+			updates++;
+			deltaTime--;
+		}
+
+		// Render at maximum possible frames
+		gl::clear(renderer.mClearColor);
+		onDraw();
+		renderer.reset();
+		frames++;
+
 #ifdef _DEBUG
-		if (frameCounter >= 1.0)
+		if (glfwGetTime() - timer > 1.0)
 		{
-			double totalTime = 1000.0 * frameCounter / (double)frames;
-			double fps = 1000.0f / totalTime;
-			glfwSetWindowTitle(mWindow, std::string(mTitle + " [FPS: " + std::to_string(static_cast<int>(trunc(fps))) + "]").c_str());
-			frames = 0;
-			frameCounter = 0;
+			timer++;
+			glfwSetWindowTitle(mWindow, std::string(mTitle + " [FPS: " + std::to_string(static_cast<int>(trunc(frames))) + " Updates: " + std::to_string(updates) + "]").c_str());
+			updates = 0, frames = 0;
 		}
 #endif
 
-		while (mRunning && accumulator >= frameTime)
-		{
-			onUpdate(frameTime);
-			accumulator -= frameTime;
-		}
-
-		gl::clear(renderer.mClearColor);
-
-		onDraw();
-
-		renderer.reset();
-
-		static float clear_color = 0.0f;
-		static bool show_test_window;
-		static bool show_another_window;
-
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
-		frames++;
 	}
 }
 
@@ -362,4 +355,10 @@ unsigned int BaseApp::getViewportWidth() const
 unsigned int BaseApp::getViewportHeight() const
 {
 	return static_cast<int>(mViewportSize.y);
+}
+
+//=========================================================================
+float BaseApp::getTime() const
+{
+	return (GLfloat)glfwGetTime();
 }

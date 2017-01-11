@@ -144,7 +144,7 @@ void HtmlUi::setup(unsigned int viewportWidth, unsigned int viewportHeight)
 	mGeometry->setVertices(vertices);
 	mGeometry->setIndices(indices);
 	mGeometry->setTexCoords(texCoords);
-	mGeometry->prepare(*mShader);
+	//mGeometry->prepare(*mShader);
 
 	if (!WebCore::instance())
 	{

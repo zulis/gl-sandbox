@@ -32,7 +32,7 @@ public:
 	void setIndices(const std::vector<unsigned int>& indices);
 	void setTexCoords(const std::vector<vec2>& texCoords);
 	void setNormals(const std::vector<vec3>& normals);
-	void setTangents(const std::vector<vec4>& tangents);
+	void setTangents(const std::vector<vec3>& tangents);
 	void setBitangents(const std::vector<vec3>& bitangents);
 
 	void addVertices(const std::vector<vec3>& vertices);
@@ -40,7 +40,7 @@ public:
 	void addIndices(const std::vector<unsigned int>& indices);
 	void addTexCoords(const std::vector<vec2>& texCoords);
 	void addNormals(const std::vector<vec3>& normals);
-	void addTangents(const std::vector<vec4>& tangents);
+	void addTangents(const std::vector<vec3>& tangents);
 	void addBitangents(const std::vector<vec3>& bitangents);
 
 	void setDrawType(DrawType drawType);
@@ -49,7 +49,7 @@ public:
 	const std::vector<unsigned int> getIndices() const;
 	const std::vector<vec2> getTexCoords() const;
 	const std::vector<vec3> getNormals() const;
-	const std::vector<vec4> getTangents() const;
+	const std::vector<vec3> getTangents() const;
 	const std::vector<vec3> getBitangents() const;
 	unsigned int getDrawType() const;
 	const AABB getAABB() const;
@@ -60,7 +60,8 @@ public:
 	bool hasTangents() const;
 	bool hasBitangents() const;
 
-	void prepare(const Shader& shader);
+	void prepare();
+	//void prepare(const Shader& shader);
 	void draw() const;
 
 private:
@@ -69,7 +70,7 @@ private:
 	std::vector<unsigned int> mIndices;
 	std::vector<vec2> mTexCoords;
 	std::vector<vec3> mNormals;
-	std::vector<vec4> mTangents;
+	std::vector<vec3> mTangents;
 	std::vector<vec3> mBitangents;
 	GLuint mVaoHandle;
 	GLuint mVboHandle[6];
@@ -144,7 +145,7 @@ void Geometry::setNormals(const std::vector<vec3>& normals)
 }
 
 //=========================================================================
-void Geometry::setTangents(const std::vector<vec4>& tangents)
+void Geometry::setTangents(const std::vector<vec3>& tangents)
 {
 	mTangents = tangents;
 }
@@ -191,7 +192,7 @@ void Geometry::addNormals(const std::vector<vec3>& normals)
 }
 
 //=========================================================================
-void Geometry::addTangents(const std::vector<vec4>& tangents)
+void Geometry::addTangents(const std::vector<vec3>& tangents)
 {
 	for (auto& val : tangents)
 		mTangents.emplace_back(val);
@@ -235,7 +236,7 @@ const std::vector<vec3> Geometry::getNormals() const
 }
 
 //=========================================================================
-const std::vector<vec4> Geometry::getTangents() const
+const std::vector<vec3> Geometry::getTangents() const
 {
 	return mTangents;
 }
@@ -283,61 +284,48 @@ bool Geometry::hasBitangents() const
 }
 
 //=========================================================================
-void Geometry::prepare(const Shader& shader)
+void Geometry::prepare()
 {
-	if (!hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
+	if (!hasNormals())
 		generateNormals();
 
-	if (!hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
+	if (!hasTangents())
 		generateTangents();
-
-	GLuint locVertices = shader.getAttribute(ShaderConstants::VertexPosition);
 
 	glGenVertexArrays(1, &mVaoHandle);
 	glBindVertexArray(mVaoHandle);
 
 	glGenBuffers(6, mVboHandle);
 
+	// Vertex Positions
+	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[0]);
 	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * 3 * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
-	glEnableVertexAttribArray(locVertices);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
 
-	if (hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
-	{
-		GLuint locNormals = shader.getAttribute(ShaderConstants::VertexNormal);
-		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[1]);
-		glBufferData(GL_ARRAY_BUFFER, mNormals.size() * 3 * sizeof(float), &mNormals[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
-		glEnableVertexAttribArray(locNormals);
-	}
+	// Vertex Normals
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[1]);
+	glBufferData(GL_ARRAY_BUFFER, mNormals.size() * 3 * sizeof(float), &mNormals[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
 
-	if (hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
-	{
-		GLuint locTangents = shader.getAttribute(ShaderConstants::VertexTangent);
-		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[2]);
-		glBufferData(GL_ARRAY_BUFFER, mTangents.size() * 4 * sizeof(float), &mTangents[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(locTangents, 4, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
-		glEnableVertexAttribArray(locTangents);
-	}
+	// Vertex Texture Coords
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[2]);
+	glBufferData(GL_ARRAY_BUFFER, mTexCoords.size() * 2 * sizeof(float), &mTexCoords[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
 
-	if (hasBitangents() && shader.hasAttribute(ShaderConstants::VertexBitangent))
-	{
-		GLuint locBitangents = shader.getAttribute(ShaderConstants::VertexBitangent);
-		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[3]);
-		glBufferData(GL_ARRAY_BUFFER, mBitangents.size() * 3 * sizeof(float), &mBitangents[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(locBitangents, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
-		glEnableVertexAttribArray(locBitangents);
-	}
-
-	if (hasTexCoords() && shader.hasAttribute(ShaderConstants::VertexTexCoord))
-	{
-		GLuint locTexCoords = shader.getAttribute(ShaderConstants::VertexTexCoord);
-		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[4]);
-		glBufferData(GL_ARRAY_BUFFER, mTexCoords.size() * 2 * sizeof(float), &mTexCoords[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(locTexCoords, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
-		glEnableVertexAttribArray(locTexCoords);
-	}
+	// Vertex Tangent
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[3]);
+	glBufferData(GL_ARRAY_BUFFER, mTangents.size() * 3 * sizeof(float), &mTangents[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+	
+	// Vertex Bitangent
+	glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[4]);
+	glBufferData(GL_ARRAY_BUFFER, mBitangents.size() * 3 * sizeof(float), &mBitangents[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
 
 	if (mIndices.size() > 0)
 	{
@@ -347,6 +335,72 @@ void Geometry::prepare(const Shader& shader)
 
 	glBindVertexArray(0);
 }
+
+//=========================================================================
+//void Geometry::prepare(const Shader& shader)
+//{
+//	if (!hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
+//		generateNormals();
+//
+//	if (!hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
+//		generateTangents();
+//
+//	GLuint locVertices = shader.getAttribute(ShaderConstants::VertexPosition);
+//
+//	glGenVertexArrays(1, &mVaoHandle);
+//	glBindVertexArray(mVaoHandle);
+//
+//	glGenBuffers(6, mVboHandle);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[0]);
+//	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * 3 * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
+//	glVertexAttribPointer(locVertices, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+//	glEnableVertexAttribArray(locVertices);
+//
+//	if (hasNormals() && shader.hasAttribute(ShaderConstants::VertexNormal))
+//	{
+//		GLuint locNormals = shader.getAttribute(ShaderConstants::VertexNormal);
+//		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[1]);
+//		glBufferData(GL_ARRAY_BUFFER, mNormals.size() * 3 * sizeof(float), &mNormals[0], GL_STATIC_DRAW);
+//		glVertexAttribPointer(locNormals, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+//		glEnableVertexAttribArray(locNormals);
+//	}
+//
+//	if (hasTangents() && shader.hasAttribute(ShaderConstants::VertexTangent))
+//	{
+//		GLuint locTangents = shader.getAttribute(ShaderConstants::VertexTangent);
+//		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[2]);
+//		glBufferData(GL_ARRAY_BUFFER, mTangents.size() * 4 * sizeof(float), &mTangents[0], GL_STATIC_DRAW);
+//		glVertexAttribPointer(locTangents, 4, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+//		glEnableVertexAttribArray(locTangents);
+//	}
+//
+//	if (hasBitangents() && shader.hasAttribute(ShaderConstants::VertexBitangent))
+//	{
+//		GLuint locBitangents = shader.getAttribute(ShaderConstants::VertexBitangent);
+//		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[3]);
+//		glBufferData(GL_ARRAY_BUFFER, mBitangents.size() * 3 * sizeof(float), &mBitangents[0], GL_STATIC_DRAW);
+//		glVertexAttribPointer(locBitangents, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+//		glEnableVertexAttribArray(locBitangents);
+//	}
+//
+//	if (hasTexCoords() && shader.hasAttribute(ShaderConstants::VertexTexCoord))
+//	{
+//		GLuint locTexCoords = shader.getAttribute(ShaderConstants::VertexTexCoord);
+//		glBindBuffer(GL_ARRAY_BUFFER, mVboHandle[4]);
+//		glBufferData(GL_ARRAY_BUFFER, mTexCoords.size() * 2 * sizeof(float), &mTexCoords[0], GL_STATIC_DRAW);
+//		glVertexAttribPointer(locTexCoords, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte*)NULL + (0)));
+//		glEnableVertexAttribArray(locTexCoords);
+//	}
+//
+//	if (mIndices.size() > 0)
+//	{
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVboHandle[5]);
+//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(unsigned int), &mIndices[0], GL_STATIC_DRAW);
+//	}
+//
+//	glBindVertexArray(0);
+//}
 
 //=========================================================================
 void Geometry::draw() const
@@ -486,7 +540,7 @@ void Geometry::generateTangents()
 			//mTangents[i] = vec3(normalize(t1 - (dot(n, t1) * n)));
 			mTangents[i] = vec4(normalize(t1 - (dot(n, t1) * n)), 0.0f);
 			// Store handedness in w
-			mTangents[i].w = (dot(cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
+			//mTangents[i].w = (dot(cross(n, t1), t2) < 0.0f) ? -1.0f : 1.0f;
 		}
 
 		tan1Accum.clear();

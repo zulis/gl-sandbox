@@ -22,6 +22,8 @@ public:
 	static Color yellow();
 	static Color white();
 	static Color pink();
+	static Color orange();
+	static Color cyan();
 	static Color normal();
 
 	operator Color* ();
@@ -120,6 +122,18 @@ Color Color::white()
 Color Color::pink()
 {
 	return Color(1, 0, 1);
+}
+
+//=========================================================================
+Color Color::orange()
+{
+	return Color(1, 165.0f / 255.0f, 0);
+}
+
+//=========================================================================
+Color Color::cyan()
+{
+	return Color(0, 1, 1);
 }
 
 //=========================================================================

@@ -43,7 +43,8 @@ private:
 	std::vector<unsigned int> getIndices(const aiMesh* aimesh);
 	std::vector<vec3> getVertices(const aiMesh* aimesh, float scaleFactor);
 	std::vector<vec3> getNormals(const aiMesh* aimesh);
-	std::vector<vec4> getTangents(const aiMesh* aimesh);
+	//std::vector<vec4> getTangents(const aiMesh* aimesh);
+	std::vector<vec3> getTangents(const aiMesh* aimesh);
 	std::vector<vec3> getBitangents(const aiMesh* aimesh);
 	std::vector<vec2> getTexCoords(const aiMesh* aimesh);
 };
@@ -360,32 +361,45 @@ std::vector<vec3> MeshDataLoader::getNormals(const aiMesh* aimesh)
 }
 
 //=========================================================================
-std::vector<vec4> MeshDataLoader::getTangents(const aiMesh* aimesh)
+//std::vector<vec4> MeshDataLoader::getTangents(const aiMesh* aimesh)
+//{
+//	std::vector<vec4> tangents;
+//
+//	if(aimesh->HasTangentsAndBitangents())
+//	{
+//		for(unsigned int i = 0; i < aimesh->mNumVertices; ++i)
+//		{
+//			vec3 t = get(aimesh->mTangents[i]);
+//			vec3 n = get(aimesh->mNormals[i]);
+//			vec3 b = get(aimesh->mBitangents[i]);
+//
+//			// Orthogonalize and normalize the tangent so we can use it in something
+//			// approximating a T, N, B inverse matrix
+//			vec3 ti = normalize(t - n * dot(n, t));
+//
+//			// Get determinant of T,B,N 3x3 matrix by dot*cross method
+//			float det = (dot(cross(n, t), b));
+//
+//			if(det < 0.0f)
+//				det = -1.0f;
+//			else
+//				det = 1.0f;
+//
+//			tangents.push_back(vec4(ti.x, ti.y, ti.z, det));
+//		}
+//	}
+//
+//	return tangents;
+//}
+//=========================================================================
+std::vector<vec3> MeshDataLoader::getTangents(const aiMesh* aimesh)
 {
-	std::vector<vec4> tangents;
+	std::vector<vec3> tangents;
 
-	if(aimesh->HasTangentsAndBitangents())
+	if (aimesh->HasTangentsAndBitangents())
 	{
-		for(unsigned int i = 0; i < aimesh->mNumVertices; ++i)
-		{
-			vec3 t = get(aimesh->mTangents[i]);
-			vec3 n = get(aimesh->mNormals[i]);
-			vec3 b = get(aimesh->mBitangents[i]);
-
-			// Orthogonalize and normalize the tangent so we can use it in something
-			// approximating a T, N, B inverse matrix
-			vec3 ti = normalize(t - n * dot(n, t));
-
-			// Get determinant of T,B,N 3x3 matrix by dot*cross method
-			float det = (dot(cross(n, t), b));
-
-			if(det < 0.0f)
-				det = -1.0f;
-			else
-				det = 1.0f;
-
-			tangents.push_back(vec4(ti.x, ti.y, ti.z, det));
-		}
+		for (unsigned int i = 0; i < aimesh->mNumVertices; ++i)
+			tangents.push_back(get(aimesh->mTangents[i]));
 	}
 
 	return tangents;

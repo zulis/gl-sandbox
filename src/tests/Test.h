@@ -75,7 +75,7 @@ Test::Test() : BaseApp(1280, 720, WindowMode::Windowed)
 	//mMesh.loadFromFile("assets/models/box/box.fbx");
 	mMesh.loadFromFile("assets/models/leprechaun/leprechaun.fbx");
 	//mMesh.loadFromFile("assets/models/sponza/sponza.obj");
-	mMesh.makeDrawable(renderer, mShader);
+	//mMesh.makeDrawable(renderer, mShader);
 
 	camera.setPosition(0, 2, -10);
 	camera.setLookAt(0, 4, 0);

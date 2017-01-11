@@ -1,5 +1,7 @@
 #pragma once
 
+// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
+
 #include "core/Math.h"
 
 class Transform
@@ -332,6 +334,7 @@ quat Transform::lookAt(const vec3& direction, vec3 desiredUp) const
 }
 
 //=========================================================================
+// http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
 void Transform::setRotateTowards(const quat& target, float maxAngle)
 {
 	setRotation(rotateTowards(mRotation, target, maxAngle));

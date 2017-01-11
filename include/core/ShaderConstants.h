@@ -106,11 +106,11 @@ const std::string ShaderConstants::CoreShaderSource = R"(
 	#version 430
 	#pragma optionNV(unroll all)
 
-	in vec3 VertexPosition;
-	in vec3 VertexNormal;
-	in vec2 VertexTexCoord;
-	in vec4 VertexTangent;
-	in vec3 VertexBitangent;
+	layout (location = 0) in vec3 VertexPosition;
+	layout (location = 1) in vec3 VertexNormal;
+	layout (location = 2) in vec2 VertexTexCoord;
+	layout (location = 3) in vec4 VertexTangent;
+	layout (location = 4) in vec3 VertexBitangent;
 
 	uniform mat4 ProjectionMatrix;
 	uniform mat4 ViewMatrix;
@@ -119,12 +119,12 @@ const std::string ShaderConstants::CoreShaderSource = R"(
 	uniform mat4 MVP;
 	uniform mat3 NormalMatrix;
 
-	layout(binding = 0) uniform sampler2D ColorMap;
-	layout(binding = 1) uniform sampler2D NormalMap;
-	layout(binding = 2) uniform sampler2D HeightMap;
-	layout(binding = 3) uniform sampler2D SpecularMap;
-	layout(binding = 4) uniform sampler2D EmissiveMap;
-	layout(binding = 5) uniform sampler2D OpacityMap;
+	layout (binding = 0) uniform sampler2D ColorMap;
+	layout (binding = 1) uniform sampler2D NormalMap;
+	layout (binding = 2) uniform sampler2D HeightMap;
+	layout (binding = 3) uniform sampler2D SpecularMap;
+	layout (binding = 4) uniform sampler2D EmissiveMap;
+	layout (binding = 5) uniform sampler2D OpacityMap;
 
 	uniform bool ColorMapIsUsed;
 	uniform bool NormalMapIsUsed;

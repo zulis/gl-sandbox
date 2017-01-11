@@ -51,7 +51,7 @@ struct MeshDataGeometry
 	std::vector<unsigned int> indices;
 	std::vector<vec3> normals;
 	std::vector<vec2> texCoords;
-	std::vector<vec4> tangents;
+	std::vector<vec3> tangents;
 	std::vector<vec3> bitangents;
 	unsigned int materialIndex;
 };

@@ -100,13 +100,25 @@
     <ClInclude Include="..\src\tests\Game.h">
       <Filter>src\tests</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\tests\GBuffer.h">
-      <Filter>src\tests</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\tests\Deferred1.h">
       <Filter>src\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tests\Deferred2.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tests\GBuffer1.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tests\GBuffer2.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tests\Light.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tests\Deferred3.h">
+      <Filter>src\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tests\MeshTest.h">
       <Filter>src\tests</Filter>
     </ClInclude>
   </ItemGroup>

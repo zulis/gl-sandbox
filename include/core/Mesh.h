@@ -15,8 +15,8 @@ public:
 	~Mesh();
 
 	void loadFromFile(const std::string& fileName);
-	void makeDrawable(const Renderer& renderer, const ShaderID shader);
-	void makeDrawable(const Shader& shader);
+	//void makeDrawable(const Renderer& renderer, const ShaderID shader);
+	//void makeDrawable(const Shader& shader);
 	void draw();
 	AABB getAABB();
 
@@ -53,6 +53,7 @@ void Mesh::loadFromFile(const std::string& fileName)
 		geometry->setTexCoords(mdg.texCoords);
 		geometry->setTangents(mdg.tangents);
 		geometry->setBitangents(mdg.bitangents);
+		geometry->prepare();
 		
 		AABB geometryAABB = geometry->getAABB();
 		mAABB.setMin(min(mAABB.getMin(), geometryAABB.getMin()));
@@ -65,22 +66,22 @@ void Mesh::loadFromFile(const std::string& fileName)
 }
 
 //=========================================================================
-void Mesh::makeDrawable(const Renderer& renderer, const ShaderID shader)
-{
-	for(auto& geometry : mGeometyVec)
-	{
-		geometry->prepare(renderer.getShader(shader));
-	}
-}
+//void Mesh::makeDrawable(const Renderer& renderer, const ShaderID shader)
+//{
+//	for(auto& geometry : mGeometyVec)
+//	{
+//		geometry->prepare(renderer.getShader(shader));
+//	}
+//}
 
 //=========================================================================
-void Mesh::makeDrawable(const Shader& shader)
-{
-	for (auto& geometry : mGeometyVec)
-	{
-		geometry->prepare(shader);
-	}
-}
+//void Mesh::makeDrawable(const Shader& shader)
+//{
+//	for (auto& geometry : mGeometyVec)
+//	{
+//		geometry->prepare(shader);
+//	}
+//}
 
 //=========================================================================
 void Mesh::draw()
