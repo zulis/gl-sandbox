@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <functional>
-#include "math/math.h"
+#include "math/Math.h"
 
 namespace library
 {
@@ -274,35 +274,36 @@ public:
     Window();
     virtual ~Window();
 
-    void set_title(const char *title);
-    void set_size(int width, int height);
-    void center_screen();
+    void setTitle(const char *title);
+    void setSize(int width, int height);
+    void centerScreen();
+    void swapBuffers();
 
-    void handle_events();
-    std::function<void()> close_event;
-    std::function<void(int, int)> size_change_event;
-    std::function<void(int, int)> position_change_event;
+    void handleEvents();
+    std::function<void()> closeEvent;
+    std::function<void(int, int)> resizeEvent;
+    std::function<void(int, int)> positionChangeEvent;
 
-    bool is_key_down(Key key);
-    bool is_key_pressed(Key key);
-    bool is_key_shift_down();
-    bool is_key_ctrl_down();
-    bool is_key_alt_down();
-    bool is_key_super_down();
+    bool isKeyDown(Key key);
+    bool isKeyPressed(Key key);
+    bool isKeyShiftDown();
+    bool isKeyCtrlDown();
+    bool isKeyAltDown();
+    bool isKeySuperDown();
 
-    const bool *get_keys_down();
-    const char *get_text_input();
+    const bool *getKeysDown();
+    const char *getTextInput();
 
-    ivec2 get_mouse_position();
-    ivec2 get_mouse_change();
-    int get_mouse_wheel_change();
-    bool is_mouse_button_down(Button button);
+    ivec2 getMousePosition();
+    ivec2 getMouseChange();
+    int getMouseWheelChange();
+    bool isMouseButtonDown(Button button);
 
-    void *get_window_handle();
-    void *get_display();
-    int get_width();
-    int get_height();
-    ivec2 get_size();
+    void *getWindowHandle();
+    void *getDisplay();
+    int getWidth();
+    int getHeight();
+    ivec2 getSize();
 
 private:
     class Impl;

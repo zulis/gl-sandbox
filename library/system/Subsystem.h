@@ -6,86 +6,86 @@
 
 namespace library
 {
-namespace core
+namespace subsystem
 {
-struct subsystem_context;
+struct Context;
 namespace details
 {
-subsystem_context &context();
+Context &context();
 }
 
-struct subsystem_context
+struct Context
 {
     template<typename S, typename... Args>
-    S &add_subsystem(Args &&... args);
+    S &add(Args &&... args);
 
     template<typename S>
-    S &get_subsystem();
+    S &get();
 
     template<typename S>
-    bool has_subsystem() const;
+    bool has() const;
 
     template<typename S>
-    void remove_subsystem();
+    void remove();
 
 protected:
     std::unordered_map<unsigned int, std::shared_ptr<void>> subsystems;
 };
 
 template<typename S, typename... Args>
-S &subsystem_context::add_subsystem(Args &&... args)
+S &Context::add(Args &&... args)
 {
-    assert(!has_subsystem<S>() && "duplicated subsystem");
+    assert(!has<S>() && "duplicated subsystem");
     const auto index = typeid(S).hash_code();
     subsystems.emplace(std::make_pair(index, std::make_unique<S>(std::forward<Args>(args)...)));
-    return get_subsystem<S>();
+    return get<S>();
 }
 
 template<typename S>
-S &subsystem_context::get_subsystem()
+S &Context::get()
 {
-    assert(has_subsystem<S>() && "failed to find subsystem");
+    assert(has<S>() && "failed to find subsystem");
     const auto index = typeid(S).hash_code();
     return *reinterpret_cast<S *>(subsystems[index].get());
 }
 
 template<typename S>
-bool subsystem_context::has_subsystem() const
+bool Context::has() const
 {
     const auto index = typeid(S).hash_code();
     return subsystems.find(index) != subsystems.end();
 }
 
 template<typename S>
-void subsystem_context::subsystem_context::remove_subsystem()
+void Context::remove()
 {
-    assert(has_subsystem<S>() && "failed to find subsystem");
+    assert(has<S>() && "failed to find subsystem");
     const auto index = typeid(S).hash_code();
     subsystems.erase(index);
 }
 
 template<typename S, typename... Args>
-S &add_subsystem(Args &&... args)
+S &add(Args &&... args)
 {
-    return details::context().add_subsystem<S>(std::forward<Args>(args)...);
+    return details::context().add<S>(std::forward<Args>(args)...);
 }
 
 template<typename S>
-S &get_subsystem()
+S &get()
 {
-    return details::context().get_subsystem<S>();
+    return details::context().get<S>();
 }
 
 template<typename S>
-bool has_subsystem()
+bool has()
 {
-    return details::context().has_subsystem<S>();
+    return details::context().has<S>();
 }
 
 template<typename S>
-void remove_subsystem()
+void remove()
 {
-    details::context().remove_subsystem<S>();
+    details::context().remove<S>();
 }
 }
 }

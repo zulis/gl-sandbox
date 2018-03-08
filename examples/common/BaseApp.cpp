@@ -1,30 +1,62 @@
 #include "BaseApp.h"
-#include <system/subsystem.h>
-#include <window/window.h>
+#include <system/Subsystem.h>
+#include <window/Window.h>
+#include <simulation/Simulation.h>
 
 using namespace library;
 
-BaseApp::BaseApp()
+class BaseApp::Impl
 {
-    core::add_subsystem<Window>();
+public:
+    bool running{false};
+};
+
+BaseApp::BaseApp(const char *title)
+    : impl{std::make_unique<Impl>()}
+{
+    auto &window = subsystem::add<Window>();
+    subsystem::add<Simulation>();
+
+    window.setTitle(title);
+}
+
+BaseApp::~BaseApp()
+{
+    subsystem::remove<Simulation>();
+    subsystem::remove<Window>();
 }
 
 void BaseApp::run()
 {
-    m_running = true;
-    auto& window = core::get_subsystem<Window>();
+    impl->running = true;
+    auto &window = subsystem::get<Window>();
+    auto &simulation = subsystem::get<Simulation>();
 
+    simulation.setMaxFps(60);
+    onResize(window.getWidth(), window.getWidth());
 
-    while (m_running) {
+    while (impl->running && !window.isKeyDown(Key::Escape)) {
+        simulation.runOneFrame();
+        auto dt = simulation.getDeltaTime();
 
-        window.handle_events();
+        window.handleEvents();
 
-        if(window.is_key_down(Key::Escape))
-            quit();
+        window.closeEvent = [this]
+        { quit(); };
+
+        window.resizeEvent = [this](int width, int height)
+        {
+            onResize(width, height);
+        };
+
+        update(dt.count());
+        draw();
+
+        window.swapBuffers();
     }
 }
 
 void BaseApp::quit()
 {
-    m_running = false;
+    impl->running = false;
 }
