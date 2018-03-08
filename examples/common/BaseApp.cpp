@@ -9,6 +9,7 @@ class BaseApp::Impl
 {
 public:
     bool running{false};
+    bool isFullScreen{false};
 };
 
 BaseApp::BaseApp(const char *title)
@@ -41,13 +42,21 @@ void BaseApp::run()
 
         window.handleEvents();
 
+        // On window close
         window.closeEvent = [this]
         { quit(); };
 
+        // On widow resize
         window.resizeEvent = [this](int width, int height)
         {
             onResize(width, height);
         };
+
+        // Toggle full screen
+        if (window.isKeyPressed(Key::F11)) {
+            impl->isFullScreen ? window.setWindowMode(WindowMode::Windowed) : window.setWindowMode(WindowMode::FullScreenNative);
+            impl->isFullScreen = !impl->isFullScreen;
+        }
 
         update(dt.count());
         draw();

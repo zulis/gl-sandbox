@@ -282,7 +282,7 @@ public:
     void handleEvents();
     std::function<void()> closeEvent;
     std::function<void(int, int)> resizeEvent;
-    std::function<void(int, int)> positionChangeEvent;
+    std::function<void(int, int)> positionEvent;
 
     bool isKeyDown(Key key);
     bool isKeyPressed(Key key);
@@ -290,7 +290,6 @@ public:
     bool isKeyCtrlDown();
     bool isKeyAltDown();
     bool isKeySuperDown();
-
     const bool *getKeysDown();
     const char *getTextInput();
 
@@ -304,6 +303,7 @@ public:
     int getWidth();
     int getHeight();
     ivec2 getSize();
+    void setWindowMode(const WindowMode &mode);
 
 private:
     class Impl;

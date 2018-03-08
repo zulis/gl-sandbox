@@ -1,11 +1,9 @@
 #include "Window.h"
-
-#include <glad/glad.h>
-
 #include <SDL_config.h>
 #include <SDL.h>
 #include <SDL_syswm.h>
 #include <SDL_video.h>
+#include <glad/glad.h>
 
 #define MAX_KEYBOARD_KEYS 512
 #define MAX_TEXT_SIZE 32
@@ -31,25 +29,25 @@ public:
 
     struct KeyboardState
     {
-        bool keys_down[MAX_KEYBOARD_KEYS];
-        bool keys_up[MAX_KEYBOARD_KEYS];
-        char text_input[MAX_TEXT_SIZE];
-        bool key_alt;
-        bool key_ctrl;
-        bool key_shift;
-        bool key_super;
+        bool keysDown[MAX_KEYBOARD_KEYS];
+        bool keysUp[MAX_KEYBOARD_KEYS];
+        char textInput[MAX_TEXT_SIZE];
+        bool keyAlt;
+        bool keyCtrl;
+        bool keyShift;
+        bool keySuper;
     };
 
     struct MouseState
     {
-        bool buttons_down[MAX_MOUSE_BUTTONS];
+        bool buttonsDown[MAX_MOUSE_BUTTONS];
         ivec2 position;
         ivec2 change;
         int wheel;
     };
 
-    KeyboardState keyboard_state;
-    MouseState mouse_state;
+    KeyboardState keyboardState;
+    MouseState mouseState;
 };
 
 Window::Window()
@@ -137,11 +135,11 @@ void Window::swapBuffers()
 
 void Window::handleEvents()
 {
-    memset(impl->keyboard_state.text_input, 0, MAX_TEXT_SIZE);
-    impl->mouse_state.change = ivec2();
-    impl->mouse_state.wheel = 0;
+    memset(impl->keyboardState.textInput, 0, MAX_TEXT_SIZE);
+    impl->mouseState.change = ivec2();
+    impl->mouseState.wheel = 0;
     for (int i = 0; i < MAX_KEYBOARD_KEYS; i++) {
-        impl->keyboard_state.keys_up[i] = false;
+        impl->keyboardState.keysUp[i] = false;
     }
 
     SDL_Event event;
@@ -156,40 +154,40 @@ void Window::handleEvents()
             case SDL_KEYDOWN:
             case SDL_KEYUP: {
                 int scan_code = event.key.keysym.scancode;
-                impl->keyboard_state.keys_down[scan_code] = (event.type == SDL_KEYDOWN);
-                impl->keyboard_state.keys_up[scan_code] = (event.type == SDL_KEYUP);
-                impl->keyboard_state.key_shift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-                impl->keyboard_state.key_ctrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-                impl->keyboard_state.key_alt = ((SDL_GetModState() & KMOD_ALT) != 0);
-                impl->keyboard_state.key_super = ((SDL_GetModState() & KMOD_GUI) != 0);
+                impl->keyboardState.keysDown[scan_code] = (event.type == SDL_KEYDOWN);
+                impl->keyboardState.keysUp[scan_code] = (event.type == SDL_KEYUP);
+                impl->keyboardState.keyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+                impl->keyboardState.keyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+                impl->keyboardState.keyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
+                impl->keyboardState.keySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
             }
                 break;
             case SDL_TEXTINPUT: {
-                memcpy(impl->keyboard_state.text_input, event.text.text, sizeof(event.text.text));
+                memcpy(impl->keyboardState.textInput, event.text.text, sizeof(event.text.text));
             }
                 break;
             case SDL_MOUSEMOTION: {
-                impl->mouse_state.position = ivec2(event.motion.x, event.motion.y);
-                impl->mouse_state.change = ivec2(event.motion.xrel, event.motion.yrel);
+                impl->mouseState.position = ivec2(event.motion.x, event.motion.y);
+                impl->mouseState.change = ivec2(event.motion.xrel, event.motion.yrel);
             }
                 break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP: {
                 switch (event.button.button) {
                     case SDL_BUTTON_LEFT:
-                        impl->mouse_state.buttons_down[(int) Button::Left] = event.button.state;
+                        impl->mouseState.buttonsDown[(int) Button::Left] = event.button.state;
                         break;
                     case SDL_BUTTON_RIGHT:
-                        impl->mouse_state.buttons_down[(int) Button::Right] = event.button.state;
+                        impl->mouseState.buttonsDown[(int) Button::Right] = event.button.state;
                         break;
                     case SDL_BUTTON_MIDDLE:
-                        impl->mouse_state.buttons_down[(int) Button::Middle] = event.button.state;
+                        impl->mouseState.buttonsDown[(int) Button::Middle] = event.button.state;
                         break;
                 }
             }
                 break;
             case SDL_MOUSEWHEEL: {
-                impl->mouse_state.wheel = event.wheel.x != 0 ? event.wheel.x : event.wheel.y;
+                impl->mouseState.wheel = event.wheel.x != 0 ? event.wheel.x : event.wheel.y;
             }
                 break;
             case SDL_WINDOWEVENT: {
@@ -206,8 +204,8 @@ void Window::handleEvents()
                     case SDL_WINDOWEVENT_MOVED: {
                         int x, y;
                         SDL_GetWindowPosition(impl->window, &x, &y);
-                        if (positionChangeEvent)
-                            positionChangeEvent(x, y);
+                        if (positionEvent)
+                            positionEvent(x, y);
                     }
                         break;
                     case SDL_WINDOWEVENT_CLOSE: {
@@ -223,62 +221,62 @@ void Window::handleEvents()
 }
 bool Window::isKeyDown(Key key)
 {
-    return impl->keyboard_state.keys_down[(int) key];
+    return impl->keyboardState.keysDown[(int) key];
 }
 
 bool Window::isKeyPressed(Key key)
 {
-    return impl->keyboard_state.keys_up[(int) key];
+    return impl->keyboardState.keysUp[(int) key];
 }
 
 bool Window::isKeyShiftDown()
 {
-    return impl->keyboard_state.key_shift;
+    return impl->keyboardState.keyShift;
 }
 
 bool Window::isKeyCtrlDown()
 {
-    return impl->keyboard_state.key_ctrl;
+    return impl->keyboardState.keyCtrl;
 }
 
 bool Window::isKeyAltDown()
 {
-    return impl->keyboard_state.key_alt;
+    return impl->keyboardState.keyAlt;
 }
 
 bool Window::isKeySuperDown()
 {
-    return impl->keyboard_state.key_super;
+    return impl->keyboardState.keySuper;
 }
 
 const bool *Window::getKeysDown()
 {
-    return impl->keyboard_state.keys_down;
+    return impl->keyboardState.keysDown;
 }
 
 const char *Window::getTextInput()
 {
-    return impl->keyboard_state.text_input;
+    return impl->keyboardState.textInput;
 }
 
 ivec2 Window::getMousePosition()
 {
-    return impl->mouse_state.position;
+    return impl->mouseState.position;
 }
 
 ivec2 Window::getMouseChange()
 {
-    return impl->mouse_state.change;
+    return impl->mouseState.change;
 }
 
 int Window::getMouseWheelChange()
 {
-    return impl->mouse_state.wheel;
+    return impl->mouseState.wheel;
 }
 
 bool Window::isMouseButtonDown(Button button)
 {
-    return impl->mouse_state.buttons_down[(int) button];
+    return impl->mouseState.buttonsDown[(int) button];
 }
 
 void *Window::getWindowHandle()
@@ -320,6 +318,27 @@ int Window::getHeight()
 ivec2 Window::getSize()
 {
     return ivec2(impl->width, impl->height);
+}
+
+void Window::setWindowMode(const WindowMode &mode)
+{
+    bool isFullScreen = SDL_GetWindowFlags(impl->window) & SDL_WINDOW_FULLSCREEN;
+    bool isFullScreenDesktop = SDL_GetWindowFlags(impl->window) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+
+    switch (mode) {
+        case WindowMode::Windowed:
+            SDL_SetWindowFullscreen(impl->window, 0);
+            break;
+        case WindowMode::FullScreen:
+            SDL_SetWindowFullscreen(impl->window, SDL_WINDOW_FULLSCREEN);
+            break;
+        case WindowMode::FullScreenNative: {
+            SDL_SetWindowFullscreen(impl->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            //SDL_SetWindowFullscreen(impl->window, isFullScreenDesktop ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
+            //SDL_ShowCursor(isFullScreenDesktop);
+        }
+            break;
+    }
 }
 
 }

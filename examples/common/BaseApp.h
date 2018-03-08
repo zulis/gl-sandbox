@@ -2,6 +2,7 @@
 #define PROJECT_BASE_APP_H
 
 #include <memory>
+#include <glad/glad.h>
 
 class BaseApp
 {

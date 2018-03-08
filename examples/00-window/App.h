@@ -11,8 +11,6 @@ public:
     void update(double deltaTime) override;
     void draw() override;
     void onResize(int width, int height) override;
-
 };
-
 
 #endif //PROJECT_APP_H
