@@ -8,8 +8,8 @@
 # sdl
 add_subdirectory(SDL)
 
-# gl3w
-add_subdirectory(gl3w)
+# glad
+include(glad.cmake)
 
 # glm
 include(glm.cmake)

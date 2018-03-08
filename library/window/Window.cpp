@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <glad/glad.h>
+
 #include <SDL_config.h>
 #include <SDL.h>
 #include <SDL_syswm.h>
@@ -53,11 +55,16 @@ public:
 Window::Window()
     : impl{std::make_unique<Impl>()}
 {
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
+    //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // whether the output is single or double buffered; defaults to double buffering on
+    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // the minimum number of bits in the depth buffer; defaults to 16
+
+
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
     }
     else {
@@ -83,8 +90,15 @@ Window::Window()
                 printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
             }
             else {
-                // Initialize glew
-                //glewInit();
+                if (!gladLoadGL()) {
+                    printf("Error occurred on loading glad.\n");
+                }
+                else {
+                    printf("Vendor:          %s\n", glGetString(GL_VENDOR));
+                    printf("Renderer:        %s\n", glGetString(GL_RENDERER));
+                    printf("Version OpenGL:  %s\n", glGetString(GL_VERSION));
+                    printf("Version GLSL:    %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+                }
             }
         }
     }
