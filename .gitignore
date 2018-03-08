@@ -185,7 +185,8 @@ FakesAssemblies/
 .LSOverride
 
 # Icon must ends with two \r.
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -216,3 +217,6 @@ bin/imgui.ini
 bin/imgui.ini
 *.VC.db
 *.VC.opendb
+
+.idea
+cmake-build-debug

@@ -1,0 +1,15 @@
+# glfw
+#set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build the GLFW example programs")
+#set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build the GLFW test programs")
+#set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation")
+#set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target")
+#add_subdirectory(glfw)
+
+# sdl
+add_subdirectory(SDL)
+
+# gl3w
+add_subdirectory(gl3w)
+
+# glm
+include(glm.cmake)
