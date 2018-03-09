@@ -5,7 +5,7 @@
 #set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target")
 #add_subdirectory(glfw)
 
-# sdl
+# SDL
 add_subdirectory(SDL)
 
 # glad
@@ -13,3 +13,9 @@ include(glad.cmake)
 
 # glm
 include(glm.cmake)
+
+# imgui
+include(imgui.cmake)
+
+# stb
+include(stb.cmake)
