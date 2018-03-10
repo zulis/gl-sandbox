@@ -8,13 +8,13 @@ namespace library
 {
 namespace subsystem
 {
-struct Context;
+struct SubsystemContext;
 namespace details
 {
-Context &context();
+SubsystemContext &context();
 }
 
-struct Context
+struct SubsystemContext
 {
     template<typename S, typename... Args>
     S &add(Args &&... args);
@@ -33,7 +33,7 @@ protected:
 };
 
 template<typename S, typename... Args>
-S &Context::add(Args &&... args)
+S &SubsystemContext::add(Args &&... args)
 {
     assert(!has<S>() && "duplicated subsystem");
     const auto index = typeid(S).hash_code();
@@ -42,7 +42,7 @@ S &Context::add(Args &&... args)
 }
 
 template<typename S>
-S &Context::get()
+S &SubsystemContext::get()
 {
     assert(has<S>() && "failed to find subsystem");
     const auto index = typeid(S).hash_code();
@@ -50,14 +50,14 @@ S &Context::get()
 }
 
 template<typename S>
-bool Context::has() const
+bool SubsystemContext::has() const
 {
     const auto index = typeid(S).hash_code();
     return subsystems.find(index) != subsystems.end();
 }
 
 template<typename S>
-void Context::remove()
+void SubsystemContext::remove()
 {
     assert(has<S>() && "failed to find subsystem");
     const auto index = typeid(S).hash_code();

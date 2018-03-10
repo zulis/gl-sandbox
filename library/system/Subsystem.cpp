@@ -6,9 +6,9 @@ namespace subsystem
 {
 namespace details
 {
-Context &context()
+SubsystemContext &context()
 {
-    static Context s_context;
+    static SubsystemContext s_context;
     return s_context;
 }
 }
