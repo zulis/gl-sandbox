@@ -63,11 +63,15 @@ int TextureHandler::getHeight() const
     return height;
 }
 
+//=========================================================================
+
 class Texture::Impl
 {
 public:
     std::shared_ptr<TextureHandler> textureHandler;
 };
+
+//=========================================================================
 
 Texture::Texture()
     : impl{std::make_unique<Impl>()}

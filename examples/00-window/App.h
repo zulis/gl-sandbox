@@ -3,6 +3,7 @@
 
 #include "../common/BaseApp.h"
 #include "graphics/Texture.h"
+#include "graphics/Shader.h"
 
 using namespace library;
 
@@ -17,6 +18,7 @@ public:
 
 private:
     Texture tex1, tex2;
+    Shader sh1;
 };
 
 #endif //PROJECT_APP_H
