@@ -34,7 +34,7 @@ private:
     std::unordered_map<std::string, GLuint> mAttributeMap;
     std::unordered_map<std::string, GLuint> mUniformMap;
     GLuint mProgram;
-    std::string mFileName;
+    std::string mSource;
     std::string readFile(const std::string &fileName);
     bool compileAll(std::string &vertexShader, std::string &geometryShader, std::string &fragmentShader);
     bool compile(const std::string &source, const ShaderType &shaderType);
@@ -52,7 +52,7 @@ ShaderHandler::ShaderHandler(const std::string &source, const SourceType& source
 
     if (sourceType == SourceType::File)
     {
-        mFileName = source;
+        mSource = source;
         std::ifstream stream(source);
 
         if (stream.fail())
@@ -67,7 +67,7 @@ ShaderHandler::ShaderHandler(const std::string &source, const SourceType& source
     }
     else
     {
-        mFileName = "from string";
+        mSource = "from string";
         shaderText = source;
     }
 
@@ -173,17 +173,17 @@ bool ShaderHandler::compile(const std::string &source, const ShaderType &shaderT
     {
         case ShaderType::Vertex:
             type = GL_VERTEX_SHADER;
-            typeStr = "vertex";
+            typeStr = "Vertex";
             break;
 
         case ShaderType::Geometry:
             type = GL_GEOMETRY_SHADER;
-            typeStr = "geometry";
+            typeStr = "Geometry";
             break;
 
         case ShaderType::Fragment:
             type = GL_FRAGMENT_SHADER;
-            typeStr = "fragment";
+            typeStr = "Fragment";
             break;
     }
 
@@ -199,7 +199,7 @@ bool ShaderHandler::compile(const std::string &source, const ShaderType &shaderT
 
         if (isCompiled == GL_FALSE)
         {
-            error("Failed to compile %s shader: {}", typeStr, mFileName.c_str());
+            error("Failed to compile %s shader: {}", typeStr, mSource.c_str());
 
             GLint infoLogLength;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
@@ -217,9 +217,9 @@ bool ShaderHandler::compile(const std::string &source, const ShaderType &shaderT
             return false;
         }
 
-        mShaderVec.push_back(std::make_tuple(shaderType, mFileName, shader));
+        mShaderVec.push_back(std::make_tuple(shaderType, mSource, shader));
 
-        note("Shader compiled ({}): {}", typeStr, mFileName.c_str());
+        note("{} shader ({}) compiled", typeStr, mSource.c_str());
         return true;
     }
     else
@@ -245,7 +245,7 @@ std::string ShaderHandler::parseSource(const std::string &source)
             line = StringUtils::extract(line, '"');
 
             // Extract path name
-            std::string path = StringUtils::cutTail(mFileName.c_str(), "\\/");
+            std::string path = StringUtils::cutTail(mSource.c_str(), "\\/");
 
             // Include file content
             if (line == "core")
