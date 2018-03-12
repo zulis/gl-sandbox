@@ -5,15 +5,17 @@
 
 namespace library
 {
+struct LogContext
+{
+    LogContext(const std::shared_ptr<spdlog::logger> &logger);
+    static std::shared_ptr<spdlog::logger> getLogger();
 
-static std::shared_ptr<spdlog::logger> logger = spdlog::stderr_logger_mt("console");
-//static std::shared_ptr<spdlog::logger> logger = spdlog::basic_logger_mt("Log", "log.txt");
+private:
+    static std::shared_ptr<spdlog::logger> logger;
+};
 
-#define note(...) library::logger->info(__VA_ARGS__)
-#define error(...) library::logger->error(__VA_ARGS__)
-
-//#define note(fmt, ...) {printf(fmt, ##__VA_ARGS__);printf("\n");}
-//#define error(fmt, ...) {printf(fmt, ##__VA_ARGS__);printf("\n");}
+#define note(...) LogContext::getLogger()->info(__VA_ARGS__)
+#define error(...) LogContext::getLogger()->error(__VA_ARGS__)
 }
 
 #endif //PROJECT_LOG_H

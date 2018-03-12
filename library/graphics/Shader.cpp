@@ -1,8 +1,8 @@
 #include "Shader.h"
 #include "GL.h"
-#include "../system/Log.h"
-#include "../system/StringUtils.h"
-#include "../system/Resource.h"
+#include "system/Log.h"
+#include "system/StringUtils.h"
+#include "system/Resource.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -57,7 +57,7 @@ ShaderHandler::ShaderHandler(const std::string &source, const SourceType& source
 
         if (stream.fail())
         {
-            error("Failed to load shader: %s", source.c_str());
+            error("Failed to load shader: {}", source.c_str());
             stream.close();
             return;
         }
@@ -199,7 +199,7 @@ bool ShaderHandler::compile(const std::string &source, const ShaderType &shaderT
 
         if (isCompiled == GL_FALSE)
         {
-            error("Failed to compile %s shader: %s", typeStr, mFileName.c_str());
+            error("Failed to compile %s shader: {}", typeStr, mFileName.c_str());
 
             GLint infoLogLength;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
@@ -219,7 +219,7 @@ bool ShaderHandler::compile(const std::string &source, const ShaderType &shaderT
 
         mShaderVec.push_back(std::make_tuple(shaderType, mFileName, shader));
 
-        note("Shader compiled (%s): %s", typeStr, mFileName.c_str());
+        note("Shader compiled ({}): {}", typeStr, mFileName.c_str());
         return true;
     }
     else
@@ -383,7 +383,7 @@ void ShaderHandler::showInfo()
 
     for (auto i = uniformMap.begin(); i != uniformMap.end(); ++i)
     {
-        note("  %s -> %d", i->second.c_str(), i->first);
+        note("  {} -> {}", i->second.c_str(), i->first);
     }
 
     //log("\n");
@@ -391,7 +391,7 @@ void ShaderHandler::showInfo()
 
     for (auto i = attributeMap.begin(); i != attributeMap.end(); ++i)
     {
-        note("  %s -> %d", i->second.c_str(), i->first);
+        note("  {} -> {}", i->second.c_str(), i->first);
     }
 
     note("------------------------------------------------");

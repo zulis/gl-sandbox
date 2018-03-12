@@ -1,9 +1,10 @@
 #include "Window.h"
+#include "system/Log.h"
+#include "graphics/GL.h"
 #include <SDL_config.h>
 #include <SDL.h>
 #include <SDL_syswm.h>
 #include <SDL_video.h>
-#include <glad/glad.h>
 
 #define MAX_KEYBOARD_KEYS 512
 #define MAX_TEXT_SIZE 32
@@ -63,7 +64,7 @@ Window::Window()
 
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        error("SDL could not initialize! SDL_Error: {}", SDL_GetError());
     }
     else {
         Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI; // | SDL_WINDOW_MAXIMIZED;
@@ -79,23 +80,23 @@ Window::Window()
         );
 
         if (impl->window == nullptr) {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+            error("Window could not be created! SDL_Error: {}", SDL_GetError());
         }
         else {
             impl->glContext = SDL_GL_CreateContext(impl->window);
 
             if (impl->glContext == nullptr) {
-                printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+                error("OpenGL context could not be created! SDL Error: {}", SDL_GetError());
             }
             else {
                 if (!gladLoadGL()) {
-                    printf("Error occurred on loading glad.\n");
+                    error("Error occurred on loading glad.");
                 }
                 else {
-                    printf("Vendor:          %s\n", glGetString(GL_VENDOR));
-                    printf("Renderer:        %s\n", glGetString(GL_RENDERER));
-                    printf("Version OpenGL:  %s\n", glGetString(GL_VERSION));
-                    printf("Version GLSL:    %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+                    note("Vendor:         {}", glGetString(GL_VENDOR));
+                    note("Renderer:       {}", glGetString(GL_RENDERER));
+                    note("Version OpenGL: {}", glGetString(GL_VERSION));
+                    note("Version GLSL:   {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
                 }
             }
         }
