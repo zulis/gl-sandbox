@@ -21,5 +21,4 @@ include(imgui.cmake)
 include(stb.cmake)
 
 # spdlog
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build the GLFW example programs")
 add_subdirectory(spdlog)
