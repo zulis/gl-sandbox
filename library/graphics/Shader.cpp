@@ -408,6 +408,7 @@ class Shader::Impl
 {
 public:
     std::shared_ptr<ShaderHandler> shaderRef;
+    std::string fileName;
 };
 
 //=========================================================================
@@ -423,6 +424,7 @@ Shader::~Shader()
 
 void Shader::fromFile(const std::string &fileName)
 {
+    impl->fileName = fileName;
     impl->shaderRef = Resource::get<ShaderHandler>(fileName, ShaderHandler::SourceType::File);
 }
 
@@ -434,6 +436,19 @@ void Shader::fromString(const std::string &source)
 void Shader::bind()
 {
     impl->shaderRef->bind();
+}
+
+void Shader::reload()
+{
+    if(impl->fileName != std::string())
+    {
+        note("Reloading shader");
+        impl->shaderRef.reset();
+        impl->shaderRef = std::make_shared<ShaderHandler>(impl->fileName, ShaderHandler::SourceType::File);
+    }
+    else{
+        note("Shaders from string can not be reloaded!");
+    }
 }
 
 }

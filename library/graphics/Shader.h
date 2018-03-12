@@ -21,6 +21,7 @@ public:
     void fromFile(const std::string &fileName);
     void fromString(const std::string &source);
     void bind();
+	void reload();
 
 private:
     class Impl;
