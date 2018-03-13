@@ -34,7 +34,6 @@ void BaseApp::run()
     auto &simulation = subsystem::get<Simulation>();
 
     simulation.setMaxFps(60);
-    onResize(window.getWidth(), window.getWidth());
 
     while (impl->running && !window.isKeyDown(Key::Escape)) {
         simulation.runOneFrame();

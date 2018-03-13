@@ -1,5 +1,4 @@
-#ifndef PROJECT_FILESYSTEM_H
-#define PROJECT_FILESYSTEM_H
+#pragma once
 
 namespace library
 {
@@ -10,4 +9,3 @@ public:
 };
 }
 
-#endif //PROJECT_FILESYSTEM_H

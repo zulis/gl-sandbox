@@ -1,5 +1,4 @@
-#ifndef PROJECT_TEXTURE_H
-#define PROJECT_TEXTURE_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -22,5 +21,3 @@ private:
     std::unique_ptr<Impl> impl;
 };
 }
-
-#endif //PROJECT_TEXTURE_H

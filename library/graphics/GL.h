@@ -1,5 +1,4 @@
-#ifndef PROJECT_GL_H
-#define PROJECT_GL_H
+#pragma once
 
 #include <glad/glad.h>
 
@@ -11,4 +10,3 @@
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
 
-#endif //PROJECT_GL_H

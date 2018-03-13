@@ -1,5 +1,4 @@
-#ifndef PROJECT_LOG_H
-#define PROJECT_LOG_H
+#pragma once
 
 #include <spdlog/spdlog.h>
 
@@ -18,4 +17,3 @@ private:
 #define error(...) LogContext::getLogger()->error(__VA_ARGS__)
 }
 
-#endif //PROJECT_LOG_H

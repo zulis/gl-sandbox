@@ -2,8 +2,10 @@
 #define PROJECT_APP_H
 
 #include "../common/BaseApp.h"
+#include "math/Math.h"
 #include "graphics/Texture.h"
 #include "graphics/Shader.h"
+#include "graphics/Geometry.h"
 
 using namespace library;
 
@@ -11,14 +13,16 @@ class App : public BaseApp
 {
 public:
     App();
-    ~App() = default;
+    ~App();
     void update(double deltaTime) override;
     void draw() override;
     void onResize(int width, int height) override;
 
 private:
-    Texture tex1, tex2;
-    Shader sh1;
+    Texture texture;
+    Shader shader;
+    Geometry geometry;
+    unsigned int vbo, vao, ebo;
 };
 
 #endif //PROJECT_APP_H

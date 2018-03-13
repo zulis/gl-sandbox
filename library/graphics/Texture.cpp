@@ -45,6 +45,8 @@ TextureHandler::TextureHandler(const std::string &fileName)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
 
 		stbi_image_free(pixels);
+
+        note("Texture loaded: {}", fileName);
 	}
 	else
 	{
@@ -55,6 +57,7 @@ TextureHandler::TextureHandler(const std::string &fileName)
 TextureHandler::~TextureHandler()
 {
     glDeleteTextures(1, &textureID);
+    note("Texture released.");
 }
 
 void TextureHandler::bind(unsigned int unit)

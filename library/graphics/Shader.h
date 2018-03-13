@@ -1,5 +1,4 @@
-#ifndef PROJECT_SHADER_H
-#define PROJECT_SHADER_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -29,5 +28,3 @@ private:
 
 };
 }
-
-#endif //PROJECT_SHADER_H

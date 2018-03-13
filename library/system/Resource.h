@@ -1,5 +1,4 @@
-#ifndef PROJECT_RESOURCE_H
-#define PROJECT_RESOURCE_H
+#pragma once
 
 #include <memory>
 #include <map>
@@ -57,4 +56,3 @@ public:
 };
 }
 
-#endif //PROJECT_RESOURCE_H
