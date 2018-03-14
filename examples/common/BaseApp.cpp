@@ -37,7 +37,7 @@ void BaseApp::run()
 
     while (impl->running && !window.isKeyDown(Key::Escape)) {
         simulation.runOneFrame();
-        auto dt = simulation.getDeltaTime();
+        auto deltaTime = simulation.getDeltaTime();
 
         window.handleEvents();
 
@@ -57,7 +57,7 @@ void BaseApp::run()
             impl->isFullScreen = !impl->isFullScreen;
         }
 
-        update(dt.count());
+        update(deltaTime.count());
         draw();
 
         window.swapBuffers();

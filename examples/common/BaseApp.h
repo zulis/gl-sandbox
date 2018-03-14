@@ -13,7 +13,7 @@ public:
     void run();
     void quit();
 
-    virtual void update(double deltaTime) = 0;
+    virtual void update(float deltaTime) = 0;
     virtual void draw() = 0;
     virtual void onResize(int width, int height) {};
 

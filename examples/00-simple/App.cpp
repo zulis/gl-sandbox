@@ -57,7 +57,7 @@ App::App()
     geometry.setTexCoords(texCoords);
 }
 
-void App::update(double deltaTime)
+void App::update(float deltaTime)
 {
 }
 

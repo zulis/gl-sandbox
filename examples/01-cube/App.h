@@ -13,7 +13,7 @@ class App : public BaseApp
 public:
     App();
     ~App() = default;
-    void update(double deltaTime) override;
+    void update(float deltaTime) override;
     void draw() override;
     void onResize(int width, int height) override;
 
@@ -21,7 +21,9 @@ private:
     Texture texture;
     Shader shader;
     Geometry geometry;
-    mat4 mvp{mat4(1.0f)};
+    mat4 projection;
+    mat4 view;
+    mat4 model;
 };
 
 #endif //PROJECT_APP_H
