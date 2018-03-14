@@ -21,6 +21,7 @@ private:
     Texture texture;
     Shader shader;
     Geometry geometry;
+    mat4 mvp{mat4(1.0f)};
 };
 
 #endif //PROJECT_APP_H
