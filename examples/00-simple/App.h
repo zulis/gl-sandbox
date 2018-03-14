@@ -2,7 +2,6 @@
 #define PROJECT_APP_H
 
 #include "../common/BaseApp.h"
-#include "math/Math.h"
 #include "graphics/Texture.h"
 #include "graphics/Shader.h"
 #include "graphics/Geometry.h"
@@ -13,7 +12,7 @@ class App : public BaseApp
 {
 public:
     App();
-    ~App();
+    ~App() = default;
     void update(double deltaTime) override;
     void draw() override;
     void onResize(int width, int height) override;
