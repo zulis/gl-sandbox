@@ -1,13 +1,16 @@
 glSandbox
 =======
 
-My attempt to write C++ OpenGL graphics library suitable for game development. Project is compatible with Windows and Linux systems.
+My attempt to write C++ OpenGL graphics library suitable for small game development.
 
-Library moto:
+Library motto:
 
  * Write less, get quick results.
  * Flexibility.
  * Cross platform.
+ 
+ I'm pretty sure that nobody will use it, but for me it's a pleasure to work on it and get some experience.
+ Please be kind and [tweet me](https://twitter.com/Zulis79) if you found it useful :)
 
 ## Examples
 
