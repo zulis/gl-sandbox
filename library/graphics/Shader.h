@@ -16,7 +16,7 @@ public:
     };
 
     Shader();
-    ~Shader();
+    virtual ~Shader();
 
     void fromFile(const std::string &fileName);
     void fromString(const std::string &source);

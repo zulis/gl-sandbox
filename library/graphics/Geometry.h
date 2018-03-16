@@ -12,19 +12,19 @@ class Geometry
 public:
     enum DrawType
     {
-        TRIANGLES = 0x0004,     // GL_TRIANGLES
-        TRIANGLESTRIP = 0x0005, // GL_TRIANGLE_STRIP
-        TRIANGLEFAN = 0x0006,   // GL_TRIANGLE_FAN
-        QUADS = 0x0007,         // GL_QUADS
-        POINTS = 0x0000,        // GL_POINTS
-        LINE = 0x0001,          // GL_LINE
-        LINELOOP = 0x0002,      // GL_LINE_LOOP
-        POLYGON = 0x0009        // GL_POLYGON
+        Triangles = 0x0004,     // GL_TRIANGLES
+        TriangleStrip = 0x0005, // GL_TRIANGLE_STRIP
+        TriangleFan = 0x0006,   // GL_TRIANGLE_FAN
+        Quads = 0x0007,         // GL_QUADS
+        Points = 0x0000,        // GL_POINTS
+        Line = 0x0001,          // GL_LINE
+        LineLoop = 0x0002,      // GL_LINE_LOOP
+        Polygon = 0x0009        // GL_POLYGON
     };
 
     Geometry();
     Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices);
-    ~Geometry();
+    virtual ~Geometry();
 
     void setVertices(const std::vector<vec3> &vertices);
     void setVertices(const std::vector<vec2> &vertices);

@@ -6,7 +6,7 @@ namespace library
 class Geometry::Impl
 {
 public:
-    DrawType drawType{DrawType::TRIANGLES};
+    DrawType drawType{DrawType::Triangles};
     std::vector<vec3> vertices;
     std::vector<unsigned int> indices;
     std::vector<vec2> texCoords;

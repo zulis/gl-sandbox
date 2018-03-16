@@ -151,7 +151,6 @@ App::App()
     geometry.setVertices(vertices);
     geometry.setIndices(indices);
     geometry.setTexCoords(texCoords);
-    //geometry.setNormals(normals);
 
     auto& window = subsystem::get<Window>();
     projection = perspective(radians(45.0f), (float)window.getWidth() / (float)window.getHeight(), 0.1f, 1000.0f);
@@ -166,11 +165,9 @@ void App::update(float deltaTime)
 {
     float angle = deltaTime / 1000.0 * 30;
     model = model *
-        rotate(mat4(1.0f), angle * 2.0f, vec3(1, 0, 0))  *  // X axis
+        rotate(mat4(1.0f), angle * 2.0f, vec3(1, 0, 0)) *  // X axis
         rotate(mat4(1.0f), angle * 4.0f, vec3(0, 1, 0)) *  // Y axis
-        rotate(mat4(1.0f), angle * 3.0f, vec3(0, 0, 1));  // Z axis
-
-    //model = glm::mat4(1.0f);
+        rotate(mat4(1.0f), angle * 3.0f, vec3(0, 0, 1));   // Z axis
 }
 
 void App::draw()
