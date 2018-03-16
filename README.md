@@ -8,6 +8,7 @@ Library motto:
  * Write less, get quick results.
  * Flexibility.
  * Cross platform.
+ * Clean header files.
  
  I'm pretty sure that nobody will use it, but for me it's a pleasure to work on it and get some experience.
  Please be kind and [tweet me](https://twitter.com/Zulis79) if you found it useful :)
