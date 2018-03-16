@@ -39,10 +39,11 @@ App::App()
 	)");
 
     mesh.fromFile("assets/models/leprechaun/leprechaun.fbx");
+    //mesh.fromFile("assets/models/box/box.fbx");
 
     projection =
         perspective(radians(45.0f), (float) window->getWidth() / (float) window->getHeight(), 0.1f, 1000.0f);
-    view = lookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    view = lookAt(glm::vec3(140, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     model = mat4(1.0);
 
     glEnable(GL_CULL_FACE);
