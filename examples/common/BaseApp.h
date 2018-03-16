@@ -2,7 +2,8 @@
 #define PROJECT_BASE_APP_H
 
 #include <memory>
-#include <glad/glad.h>
+#include "window/Window.h"
+#include "graphics/GL.h"
 
 class BaseApp
 {
@@ -16,6 +17,8 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void draw() = 0;
     virtual void onResize(int width, int height) {};
+
+    library::Window* window;
 
 private:
     class Impl;

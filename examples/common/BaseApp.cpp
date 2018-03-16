@@ -1,6 +1,5 @@
 #include "BaseApp.h"
 #include "system/Subsystem.h"
-#include "window/Window.h"
 #include "simulation/Simulation.h"
 
 using namespace library;
@@ -15,10 +14,10 @@ public:
 BaseApp::BaseApp(const char *title)
     : impl{std::make_unique<Impl>()}
 {
-    auto &window = subsystem::add<Window>();
+    window = &subsystem::add<Window>();
     subsystem::add<Simulation>();
 
-    window.setTitle(title);
+    window->setTitle(title);
 }
 
 BaseApp::~BaseApp()
@@ -30,37 +29,37 @@ BaseApp::~BaseApp()
 void BaseApp::run()
 {
     impl->running = true;
-    auto &window = subsystem::get<Window>();
     auto &simulation = subsystem::get<Simulation>();
 
     simulation.setMaxFps(60);
 
-    while (impl->running && !window.isKeyDown(Key::Escape)) {
+    while (impl->running && !window->isKeyDown(Key::Escape)) {
         simulation.runOneFrame();
         auto deltaTime = simulation.getDeltaTime();
 
-        window.handleEvents();
+        window->handleEvents();
 
         // On window close
-        window.closeEvent = [this]
+        window->closeEvent = [this]
         { quit(); };
 
         // On widow resize
-        window.resizeEvent = [this](int width, int height)
+        window->resizeEvent = [this](int width, int height)
         {
             onResize(width, height);
         };
 
         // Toggle full screen
-        if (window.isKeyPressed(Key::F11)) {
-            impl->isFullScreen ? window.setWindowMode(WindowMode::Windowed) : window.setWindowMode(WindowMode::FullScreenNative);
+        if (window->isKeyPressed(Key::F11)) {
+            impl->isFullScreen ? window->setWindowMode(WindowMode::Windowed) : window
+                ->setWindowMode(WindowMode::FullScreenNative);
             impl->isFullScreen = !impl->isFullScreen;
         }
 
         update(deltaTime.count());
         draw();
 
-        window.swapBuffers();
+        window->swapBuffers();
     }
 }
 

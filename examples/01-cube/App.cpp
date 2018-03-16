@@ -1,6 +1,5 @@
 #include "App.h"
 #include "system/Subsystem.h"
-#include "window/Window.h"
 
 App::App()
     : BaseApp("Cube")
@@ -152,8 +151,8 @@ App::App()
     geometry.setIndices(indices);
     geometry.setTexCoords(texCoords);
 
-    auto& window = subsystem::get<Window>();
-    projection = perspective(radians(45.0f), (float)window.getWidth() / (float)window.getHeight(), 0.1f, 1000.0f);
+    projection =
+        perspective(radians(45.0f), (float) window->getWidth() / (float) window->getHeight(), 0.1f, 1000.0f);
     view = lookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     model = mat4(1.0);
 
@@ -188,5 +187,5 @@ void App::draw()
 
 void App::onResize(int width, int height)
 {
-    projection = perspective(radians(45.0f), (float)width / (float)height, 0.1f, 1000.0f);
+    projection = perspective(radians(45.0f), (float) width / (float) height, 0.1f, 1000.0f);
 }
