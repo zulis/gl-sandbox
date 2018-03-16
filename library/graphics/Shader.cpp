@@ -473,19 +473,16 @@ void Shader::reload()
     }
 }
 
-//=========================================================================
 //void Shader::setUniform(const std::string &name, const Texture* tex)
 //{
 //	glUniform1i(getUniform(name), tex->index);
 //}
 
-//=========================================================================
 //void Shader::setUniform(const std::string &name, const TextureCube *tex)
 //{
 //	glUniform1i(getUniform(name), tex->index);
 //}
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, int i) const
 {
     auto uniform = impl->getUniform(name);
@@ -494,7 +491,6 @@ void Shader::setUniform(const std::string &name, int i) const
         glUniform1i(uniform, i);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, unsigned int i) const
 {
     auto uniform = impl->getUniform(name);
@@ -503,7 +499,6 @@ void Shader::setUniform(const std::string &name, unsigned int i) const
         glUniform1i(uniform, i);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, float f) const
 {
     auto uniform = impl->getUniform(name);
@@ -512,7 +507,6 @@ void Shader::setUniform(const std::string &name, float f) const
         glUniform1f(uniform, f);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, float f1, float f2) const
 {
     auto uniform = impl->getUniform(name);
@@ -521,13 +515,11 @@ void Shader::setUniform(const std::string &name, float f1, float f2) const
         glUniform2f(uniform, f1, f2);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, const vec2& vec2) const
 {
     setUniform(name, vec2.x, vec2.y);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, float f1, float f2, float f3) const
 {
     auto uniform = impl->getUniform(name);
@@ -536,7 +528,6 @@ void Shader::setUniform(const std::string &name, float f1, float f2, float f3) c
         glUniform3f(uniform, f1, f2, f3);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, float f1, float f2, float f3, float f4) const
 {
     auto uniform = impl->getUniform(name);
@@ -545,19 +536,16 @@ void Shader::setUniform(const std::string &name, float f1, float f2, float f3, f
         glUniform4f(uniform, f1, f2, f3, f4);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, const vec3& vec3) const
 {
     setUniform(name, vec3.x, vec3.y, vec3.z);
 }
 
-//=========================================================================
 //void Shader::setUniform(const std::string &name, const vec4& vec4) const
 //{
 //	setUniform(name, vec4.x, vec4.y, vec4.z, vec4.w);
 //}
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, const vec4* vec4, int count) const
 {
     auto uniform = impl->getUniform(name);
@@ -566,7 +554,6 @@ void Shader::setUniform(const std::string &name, const vec4* vec4, int count) co
         glUniform4fv(uniform, count, (GLfloat*)vec4);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, const vec4& vec4) const
 {
     auto uniform = impl->getUniform(name);
@@ -575,7 +562,6 @@ void Shader::setUniform(const std::string &name, const vec4& vec4) const
         glUniform4fv(uniform, 1, (GLfloat*)&vec4);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, const mat3& mat3, bool transpose) const
 {
     auto uniform = impl->getUniform(name);
@@ -584,7 +570,6 @@ void Shader::setUniform(const std::string &name, const mat3& mat3, bool transpos
         glUniformMatrix3fv(uniform, 1, transpose ? GL_TRUE : GL_FALSE, &mat3[0][0]);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, const mat4& mat4, bool transpose) const
 {
     auto uniform = impl->getUniform(name);
@@ -593,7 +578,6 @@ void Shader::setUniform(const std::string &name, const mat4& mat4, bool transpos
         glUniformMatrix4fv(uniform, 1, transpose ? GL_TRUE : GL_FALSE, &mat4[0][0]);
 }
 
-//=========================================================================
 void Shader::setUniform(const std::string &name, bool b) const
 {
     auto uniform = impl->getUniform(name);
@@ -602,7 +586,6 @@ void Shader::setUniform(const std::string &name, bool b) const
         glUniform1i(uniform, b ? 1 : 0);
 }
 
-//=========================================================================
 /*void Shader::setUniform(const std::string &name, const Color& color) const
 {
     setUniform(name, color.r, color.g, color.b, color.a);

@@ -1,5 +1,4 @@
 #include "App.h"
-#include "system/Subsystem.h"
 
 App::App()
     : BaseApp("Cube")
