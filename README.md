@@ -9,15 +9,16 @@ Library moto:
  * Flexibility.
  * Cross platform.
 
-Examples
-----------------
+## Examples
 
-## 01-cube
+See examples folder for more details.
+
+### 01-cube
 
 Rotating textured cube.  
 ![01-cube](screenshots/01-cube.png)
 
-## 00-simple
+### 00-simple
 
 Simple window and texture.  
 ![00-simple](screenshots/00-simple.png)
