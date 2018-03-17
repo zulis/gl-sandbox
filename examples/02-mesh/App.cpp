@@ -3,7 +3,7 @@
 App::App()
     : BaseApp("Mesh")
 {
-    texture.fromFile("assets/textures/uv.jpg");
+    colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
 
     shader.fromString(R"(
 		[Vertex]
@@ -33,7 +33,6 @@ App::App()
 
         void main()
         {
-            //vec2 flippedTexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
 	        FragColor = texture(colorMap, texCoord);
         }
 	)");
@@ -91,9 +90,7 @@ void App::update(float deltaTime)
 
 void App::draw()
 {
-    // Set background color as cornflower blue
     glClearColor(0.39f, 0.58f, 0.93f, 1.f);
-    // Clear color buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader.bind();
@@ -101,7 +98,7 @@ void App::draw()
     shader.setUniform("view", camera.getViewMatrix());
     shader.setUniform("model", model);
 
-    texture.bind();
+    colorMap.bind();
     mesh.draw();
 }
 

@@ -17,7 +17,7 @@ public:
     void onResize(int width, int height) override;
 
 private:
-    Texture texture;
+    Texture colorMap;
     Shader shader;
     Mesh mesh;
 	mat4 model{ mat4(1.0) };
