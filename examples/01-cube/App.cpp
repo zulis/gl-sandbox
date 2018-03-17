@@ -186,5 +186,6 @@ void App::draw()
 
 void App::onResize(int width, int height)
 {
+    glViewport(0, 0, width, height);
     projection = perspective(radians(45.0f), (float) width / (float) height, 0.1f, 1000.0f);
 }

@@ -342,4 +342,9 @@ void Window::setWindowMode(const WindowMode &mode)
     }
 }
 
+void Window::showMouse(bool show)
+{
+	SDL_ShowCursor(show);
+}
+
 }

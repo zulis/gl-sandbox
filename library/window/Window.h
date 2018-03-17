@@ -304,6 +304,7 @@ public:
     int getHeight();
     ivec2 getSize();
     void setWindowMode(const WindowMode &mode);
+	void showMouse(bool show = true);
 
 private:
     class Impl;

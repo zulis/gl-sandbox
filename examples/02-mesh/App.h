@@ -1,5 +1,4 @@
-#ifndef PROJECT_APP_H
-#define PROJECT_APP_H
+#pragma once
 
 #include "../common/BaseApp.h"
 #include "graphics/Texture.h"
@@ -21,9 +20,6 @@ private:
     Texture texture;
     Shader shader;
     Mesh mesh;
-    mat4 projection;
-    mat4 view;
-    mat4 model;
+	mat4 model{ mat4(1.0) };
 };
 
-#endif //PROJECT_APP_H

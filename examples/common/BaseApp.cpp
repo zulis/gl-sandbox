@@ -33,6 +33,8 @@ void BaseApp::run()
 
     simulation.setMaxFps(60);
 
+	onResize(window->getWidth(), window->getHeight());
+
     while (impl->running && !window->isKeyDown(Key::Escape)) {
         simulation.runOneFrame();
         auto deltaTime = simulation.getDeltaTime();

@@ -1,5 +1,4 @@
-#ifndef PROJECT_APP_H
-#define PROJECT_APP_H
+#pragma once
 
 #include "../common/BaseApp.h"
 #include "graphics/Texture.h"
@@ -25,5 +24,3 @@ private:
     mat4 view;
     mat4 model;
 };
-
-#endif //PROJECT_APP_H

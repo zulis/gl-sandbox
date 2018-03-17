@@ -33,18 +33,22 @@ App::App()
 
         void main()
         {
-            vec2 flippedTexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
-	        FragColor = texture(colorMap, flippedTexCoord);
+            //vec2 flippedTexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
+	        FragColor = texture(colorMap, texCoord);
         }
 	)");
 
     mesh.fromFile("assets/models/leprechaun/leprechaun.fbx");
-    //mesh.fromFile("assets/models/box/box.fbx");
 
-    projection =
-        perspective(radians(45.0f), (float) window->getWidth() / (float) window->getHeight(), 0.1f, 1000.0f);
-    view = lookAt(glm::vec3(140, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-    model = mat4(1.0);
+	model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(0.1f));
+
+    camera.setPosition(0, 2, -10);
+    camera.setLookAt(0, 4, 0);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -52,11 +56,37 @@ App::App()
 
 void App::update(float deltaTime)
 {
-    float angle = deltaTime / 1000.0 * 30;
-    model = model *
-        rotate(mat4(1.0f), angle * 2.0f, vec3(1, 0, 0)) *  // X axis
-        rotate(mat4(1.0f), angle * 4.0f, vec3(0, 1, 0)) *  // Y axis
-        rotate(mat4(1.0f), angle * 3.0f, vec3(0, 0, 1));   // Z axis
+    if (window->isKeyShiftDown())
+        camera.setStrafeSpeed(0.4f);
+    else
+        camera.setStrafeSpeed(0.2f);
+
+    if (window->isKeyDown(Key::W))
+        camera.move(Camera::FORWARD);
+    else if (window->isKeyDown(Key::S))
+        camera.move(Camera::BACKWARD);
+
+    if (window->isKeyDown(Key::A))
+        camera.move(Camera::LEFT);
+    else if (window->isKeyDown(Key::D))
+        camera.move(Camera::RIGHT);
+
+    if (window->isKeyDown(Key::E))
+        camera.move(Camera::UP);
+    else if (window->isKeyDown(Key::Q))
+        camera.move(Camera::DOWN);
+
+    if (window->getMouseWheelChange() != 0)
+        camera.move(window->getMouseWheelChange() > 0 ? Camera::FORWARD : Camera::BACKWARD);
+
+    if (window->isMouseButtonDown(Button::Right)) {
+        window->showMouse(false);
+        auto mouseChange = window->getMouseChange();
+        camera.rotate(mouseChange.x * .5f, mouseChange.y * .5f);
+    }
+	else {
+		window->showMouse(true);
+	}
 }
 
 void App::draw()
@@ -67,8 +97,8 @@ void App::draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader.bind();
-    shader.setUniform("projection", projection);
-    shader.setUniform("view", view);
+    shader.setUniform("projection", camera.getProjectionMatrix());
+    shader.setUniform("view", camera.getViewMatrix());
     shader.setUniform("model", model);
 
     texture.bind();
@@ -77,5 +107,6 @@ void App::draw()
 
 void App::onResize(int width, int height)
 {
-    projection = perspective(radians(45.0f), (float) width / (float) height, 0.1f, 1000.0f);
+    glViewport(0, 0, width, height);
+    camera.setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 }

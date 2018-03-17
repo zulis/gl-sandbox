@@ -6,7 +6,7 @@ include_directories(${SDL2_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/external/SDL/
 include_directories(${CMAKE_BINARY_DIR}/external/assimp/include ${CMAKE_SOURCE_DIR}/external/assimp/include)
 
 file(GLOB_RECURSE ALL_FILES *.cpp *.h)
-add_library(${PROJECT_NAME} ${LIB_TYPE} ${ALL_FILES} graphics/Mesh.cpp graphics/Mesh.h)
+add_library(${PROJECT_NAME} ${LIB_TYPE} ${ALL_FILES})
 target_link_libraries(${PROJECT_NAME} PUBLIC SDL2-static)
 target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 target_link_libraries(${PROJECT_NAME} PUBLIC glm)

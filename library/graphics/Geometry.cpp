@@ -142,11 +142,11 @@ void Geometry::Impl::generateTangents()
 
 void Geometry::Impl::prepare()
 {
-    if (!hasNormals())
+    /*if (!hasNormals())
         generateNormals();
 
     if (!hasTangents())
-        generateTangents();
+        generateTangents();*/
 
     glGenVertexArrays(1, &vaoHandle);
     glBindVertexArray(vaoHandle);
@@ -160,10 +160,12 @@ void Geometry::Impl::prepare()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
 
     // Vertex Normals
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle[1]);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * 3 * sizeof(float), &normals[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
+	if (hasNormals()) {
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandle[1]);
+		glBufferData(GL_ARRAY_BUFFER, normals.size() * 3 * sizeof(float), &normals[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
+	}
 
     // Vertex Texture Coords
     glEnableVertexAttribArray(2);
@@ -172,16 +174,20 @@ void Geometry::Impl::prepare()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
 
     // Vertex Tangent
-    glEnableVertexAttribArray(3);
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle[3]);
-    glBufferData(GL_ARRAY_BUFFER, tangents.size() * 3 * sizeof(float), &tangents[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
+	if (hasTangents()) {
+		glEnableVertexAttribArray(3);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandle[3]);
+		glBufferData(GL_ARRAY_BUFFER, tangents.size() * 3 * sizeof(float), &tangents[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
+	}
 
     // Vertex Bitangent
-    glEnableVertexAttribArray(4);
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle[4]);
-    glBufferData(GL_ARRAY_BUFFER, bitangents.size() * 3 * sizeof(float), &bitangents[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
+	if(hasBitangents()) {
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandle[4]);
+		glBufferData(GL_ARRAY_BUFFER, bitangents.size() * 3 * sizeof(float), &bitangents[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
+	}
 
     if (indices.size() > 0) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandle[5]);

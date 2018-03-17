@@ -1,5 +1,4 @@
-#ifndef PROJECT_APP_H
-#define PROJECT_APP_H
+#pragma once
 
 #include "../common/BaseApp.h"
 #include "graphics/Texture.h"
@@ -23,4 +22,3 @@ private:
     Geometry geometry;
 };
 
-#endif //PROJECT_APP_H

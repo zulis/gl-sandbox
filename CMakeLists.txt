@@ -21,6 +21,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
+#SET(CMAKE_CONFIGURATION_TYPES "Debug;Release'MinSizeRel;RelWithDebInfo" CACHE STRING "" FORCE)
+
 add_subdirectory(external)
 add_subdirectory(library)
 add_subdirectory(examples)
