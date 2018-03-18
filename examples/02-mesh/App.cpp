@@ -56,9 +56,9 @@ App::App()
 void App::update(float deltaTime)
 {
     if (window->isKeyShiftDown())
-        camera.setStrafeSpeed(0.4f);
+        camera.setStrafeSpeed(14.0f * deltaTime);
     else
-        camera.setStrafeSpeed(0.2f);
+        camera.setStrafeSpeed(12.0f * deltaTime);
 
     if (window->isKeyDown(Key::W))
         camera.move(Camera::FORWARD);
@@ -81,7 +81,8 @@ void App::update(float deltaTime)
     if (window->isMouseButtonDown(Button::Right)) {
         window->showMouse(false);
         auto mouseChange = window->getMouseChange();
-        camera.rotate(mouseChange.x * .5f, mouseChange.y * .5f);
+        //camera.rotate(mouseChange.x * .5f, mouseChange.y * .5f);
+		camera.rotate(mouseChange.x * deltaTime * 15.0f, mouseChange.y * deltaTime * 15.0f);
     }
 	else {
 		window->showMouse(true);
