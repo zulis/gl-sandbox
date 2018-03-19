@@ -35,7 +35,7 @@ App::App()
         {
             FragColor = texture(colorMap, texCoord);
         }
-	)");
+    )");
 
     mesh.fromFile("assets/models/leprechaun/leprechaun.fbx");
 
