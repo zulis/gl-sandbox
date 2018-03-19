@@ -62,12 +62,12 @@ Window::Window()
     //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // whether the output is single or double buffered; defaults to double buffering on
     //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // the minimum number of bits in the depth buffer; defaults to 16
 
-
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         error("SDL could not initialize! SDL_Error: {}", SDL_GetError());
     }
     else {
-        Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI; // | SDL_WINDOW_MAXIMIZED;
+        Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+            | SDL_WINDOW_ALLOW_HIGHDPI; // | SDL_WINDOW_MAXIMIZED;
         //if (!m_window_mode) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
         impl->window = SDL_CreateWindow(
@@ -344,7 +344,14 @@ void Window::setWindowMode(const WindowMode &mode)
 
 void Window::showMouse(bool show)
 {
-	SDL_ShowCursor(show);
+    if (show) {
+        SDL_ShowCursor(SDL_ENABLE);
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
+    else {
+        SDL_ShowCursor(SDL_DISABLE);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
 }
 
 }
