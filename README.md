@@ -17,12 +17,17 @@ Library motto:
 
 See examples folder for more details.
 
+### 02-mesh
+
+Mesh loading using Assimp and use of FPS camera.
+![01-cube](screenshots/02-mesh.png)
+
 ### 01-cube
 
-Rotating textured cube.  
+Rotating textured cube.
 ![01-cube](screenshots/01-cube.png)
 
 ### 00-simple
 
-Simple window and texture.  
+Simple window and texture.
 ![00-simple](screenshots/00-simple.png)
