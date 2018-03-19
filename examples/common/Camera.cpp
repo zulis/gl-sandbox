@@ -91,7 +91,7 @@ Camera::~Camera()
 {
 }
 
-void Camera::setPosition(vec3 position)
+void Camera::setPosition(const vec3 &position)
 {
     impl->position = position;
     impl->update();
@@ -102,7 +102,7 @@ void Camera::setPosition(float x, float y, float z)
     setPosition(vec3(x, y, z));
 }
 
-void Camera::setDirection(vec3 direction)
+void Camera::setDirection(const vec3 &direction)
 {
     auto tmpPosition = impl->position;
     setPosition(vec3(0));
@@ -115,10 +115,10 @@ void Camera::setDirection(float x, float y, float z)
     setDirection(vec3(x, y, z));
 }
 
-void Camera::setLookAt(vec3 point)
+void Camera::setLookAt(const vec3 &lookAt)
 {
-    if (point != impl->position) {
-        vec3 direction = normalize(point - impl->position);
+    if (lookAt != impl->position) {
+        vec3 direction = normalize(lookAt - impl->position);
         impl->verticalAngle = asinf(direction.y);
         impl->horizontalAngle = atan2f(direction.x, direction.z);
         impl->update();
@@ -130,12 +130,12 @@ void Camera::setLookAt(float x, float y, float z)
     setLookAt(vec3(x, y, z));
 }
 
-vec3 Camera::getPosition() const
+vec3 &Camera::getPosition() const
 {
     return impl->position;
 }
 
-vec3 Camera::getDirection() const
+vec3 &Camera::getDirection() const
 {
     return impl->direction;
 }
@@ -146,12 +146,12 @@ void Camera::setAspectRatio(float ratio)
     impl->update();
 }
 
-mat4 Camera::getViewMatrix() const
+mat4 &Camera::getViewMatrix() const
 {
     return impl->view;
 }
 
-mat4 Camera::getProjectionMatrix() const
+mat4 &Camera::getProjectionMatrix() const
 {
     return impl->projection;
 }
@@ -241,12 +241,12 @@ bool Camera::contains(const AABB &aabb) const
     return true;
 }
 
-vec3 Camera::getRight() const
+vec3 &Camera::getRight() const
 {
     return impl->right;
 }
 
-vec3 Camera::getUp() const
+vec3 &Camera::getUp() const
 {
     return impl->up;
 }
@@ -266,7 +266,7 @@ void Camera::setStrafeSpeed(float speed)
     impl->strafeSpeed = speed;
 }
 
-vec3 Camera::pick(const ivec2 &mousePos)
+vec3 Camera::pick(const ivec2 &mousePos) const
 {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -276,7 +276,10 @@ vec3 Camera::pick(const ivec2 &mousePos)
     GLint winY = viewport[3] - mousePos.y;
     glReadPixels(winX, winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &zCursor);
 
-    vec3 pos = glm::unProject(vec3(winX, winY, zCursor), impl->view, impl->projection, ivec4(viewport[0], viewport[1], viewport[2], viewport[3]));
+    vec3 pos = glm::unProject(vec3(winX, winY, zCursor),
+                              impl->view,
+                              impl->projection,
+                              ivec4(viewport[0], viewport[1], viewport[2], viewport[3]));
 
     return pos;
 }

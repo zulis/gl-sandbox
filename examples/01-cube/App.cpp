@@ -38,40 +38,44 @@ App::App()
         }
 	)");
 
-    std::vector<vec3> vertices = {
+    float v[] = {
         // Front
-        vec3(-1.0, -1.0, 1.0),
-        vec3(1.0, -1.0, 1.0),
-        vec3(1.0, 1.0, 1.0),
-        vec3(-1.0, 1.0, 1.0),
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0,
+        1.0, 1.0, 1.0,
+        -1.0, 1.0, 1.0,
         // Right
-        vec3(1.0, -1.0, 1.0),
-        vec3(1.0, -1.0, -1.0),
-        vec3(1.0, 1.0, -1.0),
-        vec3(1.0, 1.0, 1.0),
+        1.0, -1.0, 1.0,
+        1.0, -1.0, -1.0,
+        1.0, 1.0, -1.0,
+        1.0, 1.0, 1.0,
         // Back
-        vec3(-1.0, -1.0, -1.0),
-        vec3(-1.0, 1.0, -1.0),
-        vec3(1.0, 1.0, -1.0),
-        vec3(1.0, -1.0, -1.0),
+        -1.0, -1.0, -1.0,
+        -1.0, 1.0, -1.0,
+        1.0, 1.0, -1.0,
+        1.0, -1.0, -1.0,
         // Left
-        vec3(-1.0, -1.0, 1.0),
-        vec3(-1.0, 1.0, 1.0),
-        vec3(-1.0, 1.0, -1.0),
-        vec3(-1.0, -1.0, -1.0),
+        -1.0, -1.0, 1.0,
+        -1.0, 1.0, 1.0,
+        -1.0, 1.0, -1.0,
+        -1.0, -1.0, -1.0,
         // Bottom
-        vec3(-1.0, -1.0, 1.0),
-        vec3(-1.0, -1.0, -1.0),
-        vec3(1.0, -1.0, -1.0),
-        vec3(1.0, -1.0, 1.0),
+        -1.0, -1.0, 1.0,
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0, 1.0,
         // Top
-        vec3(-1.0, 1.0, 1.0),
-        vec3(1.0, 1.0, 1.0),
-        vec3(1.0, 1.0, -1.0),
-        vec3(-1.0, 1.0, -1.0)
+        -1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+        1.0, 1.0, -1.0,
+        -1.0, 1.0, -1.0
     };
 
-    std::vector<unsigned int> indices = {
+    unsigned int vLength = sizeof(v) / sizeof(*v);
+    std::vector<glm::vec3> vertices(vLength);
+    std::memcpy(&vertices[0].x, &v[0], vLength * sizeof(float));
+
+    unsigned int i[] = {
         0, 1, 2, 0, 2, 3,
         4, 5, 6, 4, 6, 7,
         8, 9, 10, 8, 10, 11,
@@ -80,75 +84,88 @@ App::App()
         20, 21, 22, 20, 22, 23
     };
 
-    std::vector<vec2> texCoords = {
+    unsigned int iLength = sizeof(i) / sizeof(*i);
+    std::vector<unsigned int> indices(iLength);
+    std::memcpy(&indices[0], &i[0], iLength * sizeof(unsigned int));
+
+    float tx[] = {
         // Front
-        vec2(0.0f, 0.0f),
-        vec2(1.0f, 0.0f),
-        vec2(1.0f, 1.0f),
-        vec2(0.0f, 1.0f),
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
         // Right
-        vec2(0.0f, 0.0f),
-        vec2(1.0f, 0.0f),
-        vec2(1.0f, 1.0f),
-        vec2(0.0f, 1.0f),
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
         // Back
-        vec2(0.0f, 0.0f),
-        vec2(1.0f, 0.0f),
-        vec2(1.0f, 1.0f),
-        vec2(0.0f, 1.0f),
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
         // Left
-        vec2(0.0f, 0.0f),
-        vec2(1.0f, 0.0f),
-        vec2(1.0f, 1.0f),
-        vec2(0.0f, 1.0f),
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
         // Bottom
-        vec2(0.0f, 0.0f),
-        vec2(1.0f, 0.0f),
-        vec2(1.0f, 1.0f),
-        vec2(0.0f, 1.0f),
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
         // Top
-        vec2(0.0f, 0.0f),
-        vec2(1.0f, 0.0f),
-        vec2(1.0f, 1.0f),
-        vec2(0.0f, 1.0f)
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f
     };
 
-    /*std::vector<vec3> normals = {
+    unsigned int txLength = sizeof(tx) / sizeof(*tx);
+    std::vector<glm::vec2> texCoords(txLength);
+    std::memcpy(&texCoords[0].x, &tx[0], txLength * sizeof(float));
+
+    float n[] = {
         // Front
-        vec3(0.0f, 0.0f, 1.0f),
-        vec3(0.0f, 0.0f, 1.0f),
-        vec3(0.0f, 0.0f, 1.0f),
-        vec3(0.0f, 0.0f, 1.0f),
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
         // Right
-        vec3(1.0f, 0.0f, 0.0f),
-        vec3(1.0f, 0.0f, 0.0f),
-        vec3(1.0f, 0.0f, 0.0f),
-        vec3(1.0f, 0.0f, 0.0f),
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
         // Back
-        vec3(0.0f, 0.0f, -1.0f),
-        vec3(0.0f, 0.0f, -1.0f),
-        vec3(0.0f, 0.0f, -1.0f),
-        vec3(0.0f, 0.0f, -1.0f),
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
         // Left
-        vec3(-1.0f, 0.0f, 0.0f),
-        vec3(-1.0f, 0.0f, 0.0f),
-        vec3(-1.0f, 0.0f, 0.0f),
-        vec3(-1.0f, 0.0f, 0.0f),
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
         // Bottom
-        vec3(0.0f, -1.0f, 0.0f),
-        vec3(0.0f, -1.0f, 0.0f),
-        vec3(0.0f, -1.0f, 0.0f),
-        vec3(0.0f, -1.0f, 0.0f),
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
         // Top
-        vec3(0.0f, 1.0f, 0.0f),
-        vec3(0.0f, 1.0f, 0.0f),
-        vec3(0.0f, 1.0f, 0.0f),
-        vec3(0.0f, 1.0f, 0.0f)
-    };*/
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
+    };
+
+    unsigned int nLength = sizeof(n) / sizeof(*n);
+    std::vector<glm::vec3> normals(nLength);
+    std::memcpy(&normals[0].x, &n[0], nLength * sizeof(float));
 
     geometry.setVertices(vertices);
     geometry.setIndices(indices);
     geometry.setTexCoords(texCoords);
+    geometry.setNormals(normals); // Not used in this example
 
     projection =
         perspective(radians(45.0f), (float) window->getWidth() / (float) window->getHeight(), 0.1f, 1000.0f);
