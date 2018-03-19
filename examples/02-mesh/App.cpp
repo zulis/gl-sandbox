@@ -6,10 +6,10 @@ App::App()
     colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
 
     shader.fromString(R"(
-		[Vertex]
-		#version 430
+        [Vertex]
+        #version 430
         layout (location = 0) in vec3 VertexPosition;
-	    layout (location = 2) in vec2 VertexTexCoord;
+        layout (location = 2) in vec2 VertexTexCoord;
 
         uniform mat4 projection;
         uniform mat4 view;
@@ -17,14 +17,14 @@ App::App()
 
         out vec2 texCoord;
 
-		void main()
-		{
+        void main()
+        {
             texCoord = VertexTexCoord;
             gl_Position = projection * view * model * vec4(VertexPosition, 1.0);
-		}
+        }
 
-		[Fragment]
-		#version 430
+        [Fragment]
+        #version 430
         out vec4 FragColor;
 
         in vec2 texCoord;
@@ -33,15 +33,15 @@ App::App()
 
         void main()
         {
-	        FragColor = texture(colorMap, texCoord);
+            FragColor = texture(colorMap, texCoord);
         }
 	)");
 
     mesh.fromFile("assets/models/leprechaun/leprechaun.fbx");
 
-    model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(0.1f));
+    model = rotate(model, radians(-90.f), vec3(1.0f, 0.0f, 0.0f));
+    model = rotate(model, radians(180.f), vec3(0.0f, 0.0f, 1.0f));
+    model = scale(model, vec3(0.1f));
 
     camera.setPosition(0, 2, -10);
     camera.setLookAt(0, 4, 0);
@@ -81,7 +81,6 @@ void App::update(float deltaTime)
     if (window->isMouseButtonDown(Button::Right)) {
         window->showMouse(false);
         auto mouseChange = window->getMouseChange();
-        //camera.rotate(mouseChange.x * .5f, mouseChange.y * .5f);
         camera.rotate(mouseChange.x * deltaTime * 15.0f, mouseChange.y * deltaTime * 15.0f);
     }
     else {
