@@ -6,21 +6,21 @@ App::App()
     texture.fromFile("assets/textures/uv.jpg");
 
     shader.fromString(R"(
-		[Vertex]
-		#version 430
+	[Vertex]
+	#version 430
         layout (location = 0) in vec3 VertexPosition;
         layout (location = 2) in vec2 VertexTexCoord;
 
         out vec2 TexCoord;
 
-		void main()
-		{
-			gl_Position = vec4(VertexPosition, 1.0);
-	        TexCoord = vec2(VertexTexCoord.x, VertexTexCoord.y);
-		}
+	void main()
+	{
+	    gl_Position = vec4(VertexPosition, 1.0);
+            TexCoord = vec2(VertexTexCoord.x, VertexTexCoord.y);
+	}
 
-		[Fragment]
-		#version 430
+	[Fragment]
+	#version 430
         out vec4 FragColor;
 
         in vec2 TexCoord;
@@ -29,26 +29,25 @@ App::App()
 
         void main()
         {
-	        FragColor = texture(texture1, TexCoord);
+	    FragColor = texture(texture1, TexCoord);
         }
-	)");
+    )");
 
-    std::vector<vec2> vertices =
-        {
-            vec2(-0.5f, -0.5f),
-            vec2(0.5f, -0.5f),
-            vec2(-0.5f, 0.5f),
-            vec2(0.5f, 0.5f)};
+    std::vector<vec2> vertices = {
+        vec2(-0.5f, -0.5f),
+        vec2(0.5f, -0.5f),
+        vec2(-0.5f, 0.5f),
+        vec2(0.5f, 0.5f)
+    };
 
     std::vector<unsigned int> indices = {0, 1, 2, 1, 3, 2};
 
-    std::vector<vec2> texCoords =
-        {
-
-            vec2(0.0f, 1.0f),
-            vec2(1.0f, 1.0f),
-            vec2(0.0f, 0.0f),
-            vec2(1.0f, 0.0f)};
+    std::vector<vec2> texCoords = {
+        vec2(0.0f, 1.0f),
+        vec2(1.0f, 1.0f),
+        vec2(0.0f, 0.0f),
+        vec2(1.0f, 0.0f)
+    };
 
     geometry.setVertices(vertices);
     geometry.setIndices(indices);
