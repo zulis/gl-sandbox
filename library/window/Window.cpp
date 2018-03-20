@@ -55,6 +55,11 @@ Window::Window()
     : impl{std::make_unique<Impl>()}
 {
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -66,14 +71,14 @@ Window::Window()
         error("SDL could not initialize! SDL_Error: {}", SDL_GetError());
     }
     else {
-        Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
-            | SDL_WINDOW_ALLOW_HIGHDPI; // | SDL_WINDOW_MAXIMIZED;
+        Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+            | SDL_WINDOW_ALLOW_HIGHDPI; // SDL_WINDOW_OPENGL | | SDL_RENDERER_PRESENTVSYNC; // | SDL_WINDOW_MAXIMIZED;
         //if (!m_window_mode) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
         impl->window = SDL_CreateWindow(
             nullptr,
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
             impl->width,
             impl->height,
             flags
@@ -84,6 +89,8 @@ Window::Window()
         }
         else {
             impl->glContext = SDL_GL_CreateContext(impl->window);
+
+            SDL_GL_SetSwapInterval(1); // Enable vsync
 
             if (impl->glContext == nullptr) {
                 error("OpenGL context could not be created! SDL Error: {}", SDL_GetError());

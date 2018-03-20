@@ -42,8 +42,8 @@ App::App()
     model = rotate(model, radians(-90.f), vec3(1.0f, 0.0f, 0.0f));
     model = scale(model, vec3(0.1f));
 
-    camera.setPosition(0, 4, 12);
-    camera.setLookAt(0, 4, 0);
+    camera.setPosition(-3, 4, 12);
+    camera.setLookAt(-3, 4, 0);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
