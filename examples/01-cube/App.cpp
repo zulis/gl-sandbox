@@ -6,10 +6,10 @@ App::App()
     texture.fromFile("assets/textures/uv.jpg");
 
     shader.fromString(R"(
-		[Vertex]
-		#version 430
+	[Vertex]
+	#version 430
         layout (location = 0) in vec3 VertexPosition;
-	    layout (location = 2) in vec2 VertexTexCoord;
+	layout (location = 2) in vec2 VertexTexCoord;
 
         uniform mat4 projection;
         uniform mat4 view;
@@ -17,14 +17,14 @@ App::App()
 
         out vec2 texCoord;
 
-		void main()
-		{
-	        texCoord = VertexTexCoord;
+	void main()
+	{
+	    texCoord = VertexTexCoord;
             gl_Position = projection * view * model * vec4(VertexPosition, 1.0);
-		}
+	}
 
-		[Fragment]
-		#version 430
+	[Fragment]
+	#version 430
         out vec4 FragColor;
 
         in vec2 texCoord;
@@ -34,9 +34,9 @@ App::App()
         void main()
         {
             vec2 flippedTexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
-	        FragColor = texture(colorMap, flippedTexCoord);
+	    FragColor = texture(colorMap, flippedTexCoord);
         }
-	)");
+    )");
 
     float v[] = {
         // Front
