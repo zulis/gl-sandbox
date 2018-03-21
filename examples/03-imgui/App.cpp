@@ -3,7 +3,7 @@
 App::App()
     : BaseApp("Mesh")
 {
-    colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
+    //colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
 
     shader.fromString(R"(
         [Vertex]
@@ -92,13 +92,17 @@ void App::draw()
     glClearColor(0.39f, 0.58f, 0.93f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shader.bind();
+    /*shader.bind();
     shader.setUniform("projection", camera.getProjectionMatrix());
     shader.setUniform("view", camera.getViewMatrix());
     shader.setUniform("model", model);
 
     colorMap.bind();
-    mesh.draw();
+    mesh.draw();*/
+
+	bool show_demo_window = true;
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::ShowDemoWindow(&show_demo_window);
 }
 
 void App::onResize(int width, int height)

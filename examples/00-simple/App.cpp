@@ -15,7 +15,7 @@ App::App()
 
 	void main()
 	{
-	    gl_Position = vec4(VertexPosition, 1.0);
+	    gl_Position = vec4(VertexPosition.xy, 0, 1);
             TexCoord = vec2(VertexTexCoord.x, VertexTexCoord.y);
 	}
 

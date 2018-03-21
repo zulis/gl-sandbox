@@ -1,37 +1,39 @@
 #pragma once
 
 #include "math/Math.h"
-#include <imgui.h>
+#include <memory>
 
 namespace library
 {
-class UI
-{
-public:
-    UI();
-    virtual ~UI();
+	class UI
+	{
+	public:
+		UI();
+		virtual ~UI();
 
-    struct ui_events
-    {
-        ivec2 window_size;
-        float delta_time;
-        bool is_key_shift_down;
-        bool is_key_ctrl_down;
-        bool is_key_alt_down;
-        bool is_key_super_down;
-        ivec2 mouse_position;
-        int mouse_wheel;
-        bool is_mouse_button_left_down;
-        bool is_mouse_button_right_down;
-        bool is_mouse_button_middle_down;
-        const bool *keys_down;
-        const char *text_input;
-    };
+		struct Events
+		{
+			ivec2 windowSize;
+			float deltaTime;
+			bool isKeyShiftDown;
+			bool isKeyCtrlDown;
+			bool isKeyAltDown;
+			bool isKeySuperDown;
+			ivec2 mousePosition;
+			int mouseWheel;
+			bool isMouseButtonLeftDown;
+			bool isMouseButtonRightDown;
+			bool isMouseButtonMiddleDown;
+			const bool *keysDown;
+			const char *textInput;
+		};
 
-    void set_events(const ui_events &events);
-    void frame_start();
-    void frame_end();
+		void setEvents(const Events &events);
+		void frameStart();
+		void frameEnd();
 
-    ImFont* font;
-};
+	private:
+		class Impl;
+		std::unique_ptr<Impl> impl;
+	};
 }

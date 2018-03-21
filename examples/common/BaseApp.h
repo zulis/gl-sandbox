@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <imgui.h>
 #include "Camera.h"
 #include "window/Window.h"
 #include "graphics/GL.h"
