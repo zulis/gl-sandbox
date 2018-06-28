@@ -1,7 +1,7 @@
 #include "App.h"
 
 App::App()
-    : BaseApp("Mesh")
+    : BaseApp("ImGui")
 {
     //colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
 
