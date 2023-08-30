@@ -33,6 +33,8 @@
 
 # Custom
 .vs
+.vscode
 .idea
 cmake-build-*
+build
 bin

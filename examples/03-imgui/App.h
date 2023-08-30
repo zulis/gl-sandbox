@@ -14,12 +14,12 @@ public:
     ~App() = default;
     void update(float deltaTime) override;
     void draw() override;
+    void drawUI() override;
     void onResize(int width, int height) override;
 
 private:
     Texture colorMap;
     Shader shader;
     Mesh mesh;
-	mat4 model{ mat4(1.0) };
+    mat4 model{mat4(1.0)};
 };
-

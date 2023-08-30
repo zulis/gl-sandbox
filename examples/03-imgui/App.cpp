@@ -3,7 +3,7 @@
 App::App()
     : BaseApp("ImGui")
 {
-    //colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
+    // colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
 
     shader.fromString(R"(
         [Vertex]
@@ -77,12 +77,14 @@ void App::update(float deltaTime)
     if (window->getMouseWheelChange() != 0)
         camera.move(window->getMouseWheelChange() > 0 ? Camera::FORWARD : Camera::BACKWARD);
 
-    if (window->isMouseButtonDown(Button::Right)) {
+    if (window->isMouseButtonDown(Button::Right))
+    {
         window->showMouse(false);
         auto mouseChange = window->getMouseChange();
         camera.rotate(mouseChange.x * deltaTime * 15.0f, mouseChange.y * deltaTime * 15.0f);
     }
-    else {
+    else
+    {
         window->showMouse(true);
     }
 }
@@ -100,9 +102,13 @@ void App::draw()
     colorMap.bind();
     mesh.draw();*/
 
-	bool show_demo_window = true;
-	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::ShowDemoWindow(&show_demo_window);
+    bool show_demo_window = true;
+    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+    ImGui::ShowDemoWindow(&show_demo_window);
+}
+
+void App::drawUI()
+{
 }
 
 void App::onResize(int width, int height)

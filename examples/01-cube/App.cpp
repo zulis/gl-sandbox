@@ -68,8 +68,7 @@ App::App()
         -1.0, 1.0, 1.0,
         1.0, 1.0, 1.0,
         1.0, 1.0, -1.0,
-        -1.0, 1.0, -1.0
-    };
+        -1.0, 1.0, -1.0};
 
     unsigned int vLength = sizeof(v) / sizeof(*v);
     std::vector<glm::vec3> vertices(vLength);
@@ -81,8 +80,7 @@ App::App()
         8, 9, 10, 8, 10, 11,
         12, 13, 14, 12, 14, 15,
         16, 17, 18, 16, 18, 19,
-        20, 21, 22, 20, 22, 23
-    };
+        20, 21, 22, 20, 22, 23};
 
     unsigned int iLength = sizeof(i) / sizeof(*i);
     std::vector<unsigned int> indices(iLength);
@@ -118,8 +116,7 @@ App::App()
         0.0f, 0.0f,
         1.0f, 0.0f,
         1.0f, 1.0f,
-        0.0f, 1.0f
-    };
+        0.0f, 1.0f};
 
     unsigned int txLength = sizeof(tx) / sizeof(*tx);
     std::vector<glm::vec2> texCoords(txLength);
@@ -155,8 +152,7 @@ App::App()
         0.0f, 1.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
-    };
+        0.0f, 1.0f, 0.0f};
 
     unsigned int nLength = sizeof(n) / sizeof(*n);
     std::vector<glm::vec3> normals(nLength);
@@ -168,7 +164,7 @@ App::App()
     geometry.setNormals(normals); // Not used in this example
 
     projection =
-        perspective(radians(45.0f), (float) window->getWidth() / (float) window->getHeight(), 0.1f, 1000.0f);
+        perspective(radians(45.0f), (float)window->getWidth() / (float)window->getHeight(), 0.1f, 1000.0f);
     view = lookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     model = mat4(1.0);
 
@@ -180,9 +176,9 @@ void App::update(float deltaTime)
 {
     float angle = deltaTime / 1000.0 * 30;
     model = model *
-        rotate(mat4(1.0f), angle * 2.0f, vec3(1, 0, 0)) *  // X axis
-        rotate(mat4(1.0f), angle * 4.0f, vec3(0, 1, 0)) *  // Y axis
-        rotate(mat4(1.0f), angle * 3.0f, vec3(0, 0, 1));   // Z axis
+            rotate(mat4(1.0f), angle * 2.0f, vec3(1, 0, 0)) * // X axis
+            rotate(mat4(1.0f), angle * 4.0f, vec3(0, 1, 0)) * // Y axis
+            rotate(mat4(1.0f), angle * 3.0f, vec3(0, 0, 1));  // Z axis
 }
 
 void App::draw()
@@ -199,8 +195,14 @@ void App::draw()
     geometry.draw();
 }
 
+void App::drawUI()
+{
+    static bool show_demo_window = true;
+    ImGui::ShowDemoWindow(&show_demo_window);
+}
+
 void App::onResize(int width, int height)
 {
     glViewport(0, 0, width, height);
-    projection = perspective(radians(45.0f), (float) width / (float) height, 0.1f, 1000.0f);
+    projection = perspective(radians(45.0f), (float)width / (float)height, 0.1f, 1000.0f);
 }

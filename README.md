@@ -32,12 +32,12 @@ Rotating textured cube.
 Simple window and texture.
 ![00-simple](screenshots/00-simple.png)
 
-## To update all submodules
-```
-git submodule update --remote --merge
-```
-
 ## To get all submodules
 ```
 git submodule update --init --recursive
+```
+
+## To update all submodules
+```
+git submodule update --remote --recursive --merge
 ```

@@ -17,10 +17,11 @@ public:
 
     virtual void update(float deltaTime) = 0;
     virtual void draw() = 0;
-    virtual void onResize(int width, int height) {};
+    virtual void onResize(int width, int height){};
+    virtual void drawUI() = 0;
 
-    library::Window* window;
-	Camera camera;
+    library::Window *window;
+    Camera camera;
 
 private:
     class Impl;

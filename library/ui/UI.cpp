@@ -13,11 +13,11 @@ namespace library
 		Impl();
 		virtual ~Impl();
 
-		void draw(ImDrawData* draw_data);
+		void draw(ImDrawData *draw_data);
 
 	private:
-		ImGuiContext * mImgui;
-		GLuint  g_FontTexture = 0;
+		ImGuiContext *mImgui;
+		GLuint g_FontTexture = 0;
 		Shader mShader;
 		Geometry mGeometry;
 	};
@@ -87,17 +87,15 @@ namespace library
 			vec2(-1.0f, -1.0f),
 			vec2(1.0f, -1.0f),
 			vec2(-1.0f, 1.0f),
-			vec2(1.0f, 1.0f)
-		};
+			vec2(1.0f, 1.0f)};
 
-		std::vector<unsigned int> indices = { 0, 1, 2, 1, 3, 2 };
+		std::vector<unsigned int> indices = {0, 1, 2, 1, 3, 2};
 
 		std::vector<vec2> texCoords = {
 			vec2(0.0f, 1.0f),
 			vec2(1.0f, 1.0f),
 			vec2(0.0f, 0.0f),
-			vec2(1.0f, 0.0f)
-		};
+			vec2(1.0f, 0.0f)};
 
 		mGeometry.setVertices(vertices);
 		mGeometry.setIndices(indices);
@@ -116,9 +114,9 @@ namespace library
 		ImGui::DestroyContext();
 	}
 
-	void UI::Impl::draw(ImDrawData* draw_data)
+	void UI::Impl::draw(ImDrawData *draw_data)
 	{
-		ImGuiIO& io = ImGui::GetIO();
+		ImGuiIO &io = ImGui::GetIO();
 
 		/*const float ortho_projection[4][4] =
 		{
@@ -147,15 +145,15 @@ namespace library
 		*/
 
 		mShader.bind();
-		//mShader.setUniform("projection", orthoProjection);
+		// mShader.setUniform("projection", orthoProjection);
 		mGeometry.draw();
 	}
 
 	//=========================================================================
 
-	UI::UI() : impl{ std::make_unique<Impl>() }
+	UI::UI() : impl{std::make_unique<Impl>()}
 	{
-		ImGuiStyle& style = ImGui::GetStyle();
+		ImGuiStyle &style = ImGui::GetStyle();
 		style.WindowRounding = 0.0f;
 		style.ChildRounding = 0.0f;
 		style.PopupRounding = 0.0f;
@@ -166,7 +164,7 @@ namespace library
 
 	UI::~UI()
 	{
-		//imguiShutdown();
+		// imguiShutdown();
 	}
 
 	void UI::setEvents(const Events &events)
@@ -195,6 +193,11 @@ namespace library
 	void UI::frameEnd()
 	{
 		ImGui::Render();
+
+		// glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+		// glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+		// glClear(GL_COLOR_BUFFER_BIT);
+
 		impl->draw(ImGui::GetDrawData());
 	}
 }

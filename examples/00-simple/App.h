@@ -14,6 +14,7 @@ public:
     ~App() = default;
     void update(float deltaTime) override;
     void draw() override;
+    void drawUI() override;
     void onResize(int width, int height) override;
 
 private:
@@ -21,4 +22,3 @@ private:
     Shader shader;
     Geometry geometry;
 };
-
