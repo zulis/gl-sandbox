@@ -3,7 +3,7 @@
 	url = https://github.com/g-truc/glm.git
 [submodule "external/SDL"]
 	path = external/SDL
-	url = https://github.com/SDL-mirror/SDL.git
+	url = https://github.com/libsdl-org/SDL.git
 [submodule "external/stb"]
 	path = external/stb
 	url = https://github.com/nothings/stb.git
@@ -13,6 +13,7 @@
 [submodule "external/spdlog"]
 	path = external/spdlog
 	url = https://github.com/gabime/spdlog.git
+	branch = v1.x
 [submodule "external/assimp"]
 	path = external/assimp
 	url = https://github.com/assimp/assimp.git
