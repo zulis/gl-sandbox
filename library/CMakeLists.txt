@@ -1,0 +1,24 @@
+project(library LANGUAGES CXX)
+
+# sdl
+include_directories(${CMAKE_SOURCE_DIR}/external/SDL/include)
+# assimp
+include_directories(${CMAKE_BINARY_DIR}/external/assimp/include ${CMAKE_SOURCE_DIR}/external/assimp/include)
+
+file(GLOB_RECURSE ALL_FILES *.cpp *.h)
+add_library(${PROJECT_NAME} ${LIB_TYPE} ${ALL_FILES})
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+if(TARGET SDL3-static)
+	target_link_libraries(${PROJECT_NAME} PUBLIC SDL3-static)
+elseif(TARGET SDL3::SDL3-static)
+	target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3-static)
+elseif(TARGET SDL3::SDL3)
+	target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3)
+endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC glad)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
+target_link_libraries(${PROJECT_NAME} PUBLIC stb)
+target_link_libraries(${PROJECT_NAME} PUBLIC spdlog)
+target_link_libraries(${PROJECT_NAME} PUBLIC assimp)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

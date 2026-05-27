@@ -1,0 +1,12 @@
+#pragma once
+
+#include <glad/glad.h>
+
+#if !defined(GL_TEXTURE_MAX_ANISOTROPY_EXT)
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#endif
+
+#if !defined(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT)
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
+
