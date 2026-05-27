@@ -17,7 +17,7 @@ public:
 
     AABB();
     AABB(const vec3 &min, const vec3 &max);
-    ~AABB() = default;
+    ~AABB();
 
     vec3 getCenter() const;
     vec3 getSize() const;

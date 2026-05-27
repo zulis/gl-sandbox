@@ -1,5 +1,7 @@
 #include "AABB.h"
 
+#include <limits>
+
 namespace library
 {
 class AABB::Impl
@@ -17,17 +19,16 @@ AABB::Impl::Impl(const vec3 &min, const vec3 &max)
 //=========================================================================
 
 AABB::AABB()
-    : impl{std::make_unique<Impl>()}
+    : AABB(vec3(std::numeric_limits<float>::max()), vec3(std::numeric_limits<float>::lowest()))
 {
-    auto minFloat = std::numeric_limits<float>::min();
-    auto maxFloat = std::numeric_limits<float>::max();
-    new(this) AABB(vec3(maxFloat), vec3(minFloat));
 }
 
 AABB::AABB(const vec3 &min, const vec3 &max)
     : impl{std::make_unique<Impl>(min, max)}
 {
 }
+
+AABB::~AABB() = default;
 
 vec3 AABB::getCenter() const
 {
