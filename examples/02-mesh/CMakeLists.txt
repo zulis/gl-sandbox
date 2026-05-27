@@ -1,4 +1,4 @@
-project(02-mesh)
+project(02-mesh LANGUAGES CXX)
 file(GLOB_RECURSE ALL_FILES ../common/*cpp ../common/*.h *.cpp *.h)
 add_executable(${PROJECT_NAME} ${ALL_FILES})
 target_link_libraries(${PROJECT_NAME} library)

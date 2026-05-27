@@ -1,10 +1,11 @@
 #include "Window.h"
 #include "system/Log.h"
 #include "graphics/GL.h"
-#include <SDL_config.h>
-#include <SDL.h>
-#include <SDL_syswm.h>
-#include <SDL_video.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_properties.h>
+#include <SDL3/SDL_video.h>
+
+#include <cstring>
 
 #define MAX_KEYBOARD_KEYS 512
 #define MAX_TEXT_SIZE 32
@@ -20,31 +21,23 @@ public:
     int width{1280};
     int height{720};
 
-    SDL_SysWMinfo get_window_info()
-    {
-        SDL_SysWMinfo window_info;
-        SDL_VERSION(&window_info.version);
-        SDL_GetWindowWMInfo(window, &window_info);
-        return window_info;
-    }
-
     struct KeyboardState
     {
-        bool keysDown[MAX_KEYBOARD_KEYS];
-        bool keysUp[MAX_KEYBOARD_KEYS];
-        char textInput[MAX_TEXT_SIZE];
-        bool keyAlt;
-        bool keyCtrl;
-        bool keyShift;
-        bool keySuper;
+        bool keysDown[MAX_KEYBOARD_KEYS]{};
+        bool keysUp[MAX_KEYBOARD_KEYS]{};
+        char textInput[MAX_TEXT_SIZE]{};
+        bool keyAlt{};
+        bool keyCtrl{};
+        bool keyShift{};
+        bool keySuper{};
     };
 
     struct MouseState
     {
-        bool buttonsDown[MAX_MOUSE_BUTTONS];
+        bool buttonsDown[MAX_MOUSE_BUTTONS]{};
         ivec2 position;
         ivec2 change;
-        int wheel;
+        int wheel{};
     };
 
     KeyboardState keyboardState;
@@ -67,27 +60,20 @@ Window::Window()
     //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // whether the output is single or double buffered; defaults to double buffering on
     //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // the minimum number of bits in the depth buffer; defaults to 16
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
         error("SDL could not initialize! SDL_Error: {}", SDL_GetError());
     }
     else {
-        Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
-            | SDL_WINDOW_ALLOW_HIGHDPI; // SDL_WINDOW_OPENGL | | SDL_RENDERER_PRESENTVSYNC; // | SDL_WINDOW_MAXIMIZED;
+        SDL_WindowFlags flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
         //if (!m_window_mode) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-        impl->window = SDL_CreateWindow(
-            nullptr,
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
-            impl->width,
-            impl->height,
-            flags
-        );
+        impl->window = SDL_CreateWindow(nullptr, impl->width, impl->height, flags);
 
         if (impl->window == nullptr) {
             error("Window could not be created! SDL_Error: {}", SDL_GetError());
         }
         else {
+            SDL_SetWindowPosition(impl->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
             impl->glContext = SDL_GL_CreateContext(impl->window);
 
             SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -100,10 +86,10 @@ Window::Window()
                     error("Error occurred on loading glad.");
                 }
                 else {
-                    note("Vendor:         {}", glGetString(GL_VENDOR));
-                    note("Renderer:       {}", glGetString(GL_RENDERER));
-                    note("Version OpenGL: {}", glGetString(GL_VERSION));
-                    note("Version GLSL:   {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+                    note("Vendor:         {}", reinterpret_cast<const char *>(glGetString(GL_VENDOR)));
+                    note("Renderer:       {}", reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+                    note("Version OpenGL: {}", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+                    note("Version GLSL:   {}", reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
                 }
             }
         }
@@ -131,14 +117,22 @@ void Window::setSize(int width, int height)
 
 void Window::centerScreen()
 {
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-    SDL_SetWindowPosition(impl->window, dm.w / 2 - impl->width / 2, dm.h / 2 - impl->height / 2);
+    SDL_SetWindowPosition(impl->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 }
 
 void Window::swapBuffers()
 {
     SDL_GL_SwapWindow(impl->window);
+}
+
+SDL_Window *Window::getSDLWindow()
+{
+    return impl->window;
+}
+
+void *Window::getGLContext()
+{
+    return impl->glContext;
 }
 
 void Window::handleEvents()
@@ -153,75 +147,72 @@ void Window::handleEvents()
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
+        if (eventCallback) {
+            eventCallback(&event);
+        }
+
         switch (event.type) {
-            case SDL_QUIT: {
+            case SDL_EVENT_QUIT: {
                 if (closeEvent)
                     closeEvent();
             }
                 break;
-            case SDL_KEYDOWN:
-            case SDL_KEYUP: {
-                int scan_code = event.key.keysym.scancode;
-                impl->keyboardState.keysDown[scan_code] = (event.type == SDL_KEYDOWN);
-                impl->keyboardState.keysUp[scan_code] = (event.type == SDL_KEYUP);
-                impl->keyboardState.keyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-                impl->keyboardState.keyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-                impl->keyboardState.keyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
-                impl->keyboardState.keySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP: {
+                int scan_code = event.key.scancode;
+                impl->keyboardState.keysDown[scan_code] = event.key.down;
+                impl->keyboardState.keysUp[scan_code] = !event.key.down;
+                const SDL_Keymod keyMods = SDL_GetModState();
+                impl->keyboardState.keyShift = ((keyMods & SDL_KMOD_SHIFT) != 0);
+                impl->keyboardState.keyCtrl = ((keyMods & SDL_KMOD_CTRL) != 0);
+                impl->keyboardState.keyAlt = ((keyMods & SDL_KMOD_ALT) != 0);
+                impl->keyboardState.keySuper = ((keyMods & SDL_KMOD_GUI) != 0);
             }
                 break;
-            case SDL_TEXTINPUT: {
-                memcpy(impl->keyboardState.textInput, event.text.text, sizeof(event.text.text));
+            case SDL_EVENT_TEXT_INPUT: {
+                std::strncpy(impl->keyboardState.textInput, event.text.text, MAX_TEXT_SIZE - 1);
+                impl->keyboardState.textInput[MAX_TEXT_SIZE - 1] = '\0';
             }
                 break;
-            case SDL_MOUSEMOTION: {
-                impl->mouseState.position = ivec2(event.motion.x, event.motion.y);
-                impl->mouseState.change = ivec2(event.motion.xrel, event.motion.yrel);
+            case SDL_EVENT_MOUSE_MOTION: {
+                impl->mouseState.position = ivec2((int) event.motion.x, (int) event.motion.y);
+                impl->mouseState.change = ivec2((int) event.motion.xrel, (int) event.motion.yrel);
             }
                 break;
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP: {
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP: {
                 switch (event.button.button) {
                     case SDL_BUTTON_LEFT:
-                        impl->mouseState.buttonsDown[(int) Button::Left] = event.button.state;
+                        impl->mouseState.buttonsDown[(int) Button::Left] = event.button.down;
                         break;
                     case SDL_BUTTON_RIGHT:
-                        impl->mouseState.buttonsDown[(int) Button::Right] = event.button.state;
+                        impl->mouseState.buttonsDown[(int) Button::Right] = event.button.down;
                         break;
                     case SDL_BUTTON_MIDDLE:
-                        impl->mouseState.buttonsDown[(int) Button::Middle] = event.button.state;
+                        impl->mouseState.buttonsDown[(int) Button::Middle] = event.button.down;
                         break;
                 }
             }
                 break;
-            case SDL_MOUSEWHEEL: {
+            case SDL_EVENT_MOUSE_WHEEL: {
                 impl->mouseState.wheel = event.wheel.x != 0 ? event.wheel.x : event.wheel.y;
             }
                 break;
-            case SDL_WINDOWEVENT: {
-                switch (event.window.event) {
-                    case SDL_WINDOWEVENT_RESIZED: {
-                        int w, h;
-                        SDL_GetWindowSize(impl->window, &w, &h);
-                        impl->width = w;
-                        impl->height = h;
-                        if (resizeEvent)
-                            resizeEvent(w, h);
-                    }
-                        break;
-                    case SDL_WINDOWEVENT_MOVED: {
-                        int x, y;
-                        SDL_GetWindowPosition(impl->window, &x, &y);
-                        if (positionEvent)
-                            positionEvent(x, y);
-                    }
-                        break;
-                    case SDL_WINDOWEVENT_CLOSE: {
-                        if (closeEvent)
-                            closeEvent();
-                    }
-                        break;
-                }
+            case SDL_EVENT_WINDOW_RESIZED: {
+                impl->width = event.window.data1;
+                impl->height = event.window.data2;
+                if (resizeEvent)
+                    resizeEvent(impl->width, impl->height);
+            }
+                break;
+            case SDL_EVENT_WINDOW_MOVED: {
+                if (positionEvent)
+                    positionEvent(event.window.data1, event.window.data2);
+            }
+                break;
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED: {
+                if (closeEvent)
+                    closeEvent();
             }
                 break;
         }
@@ -289,14 +280,14 @@ bool Window::isMouseButtonDown(Button button)
 
 void *Window::getWindowHandle()
 {
-    SDL_SysWMinfo window_info = impl->get_window_info();
+    SDL_PropertiesID props = SDL_GetWindowProperties(impl->window);
 
 #ifdef _WIN32
-    return window_info.info.win.window;
+    return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
 #elif defined(__linux__)
-    return (void *) (uintptr_t) window_info.info.x11.window;
+    return (void *) (uintptr_t) SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
 #elif defined(__APPLE__)
-    return window_info.info.cocoa.window;
+    return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
 #else
     return nullptr;
 #endif
@@ -304,10 +295,10 @@ void *Window::getWindowHandle()
 
 void *Window::getDisplay()
 {
-    SDL_SysWMinfo window_info = impl->get_window_info();
+    SDL_PropertiesID props = SDL_GetWindowProperties(impl->window);
 
 #if defined(__linux__)
-    return window_info.info.x11.display;
+    return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_X11_DISPLAY_POINTER, nullptr);
 #else
     return nullptr;
 #endif
@@ -331,19 +322,18 @@ ivec2 Window::getSize()
 void Window::setWindowMode(const WindowMode &mode)
 {
     bool isFullScreen = SDL_GetWindowFlags(impl->window) & SDL_WINDOW_FULLSCREEN;
-    bool isFullScreenDesktop = SDL_GetWindowFlags(impl->window) & SDL_WINDOW_FULLSCREEN_DESKTOP;
 
     switch (mode) {
         case WindowMode::Windowed:
-            SDL_SetWindowFullscreen(impl->window, 0);
+            SDL_SetWindowFullscreen(impl->window, false);
             break;
         case WindowMode::FullScreen:
-            SDL_SetWindowFullscreen(impl->window, SDL_WINDOW_FULLSCREEN);
+            SDL_SetWindowFullscreenMode(impl->window, SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(impl->window)));
+            SDL_SetWindowFullscreen(impl->window, true);
             break;
         case WindowMode::FullScreenNative: {
-            SDL_SetWindowFullscreen(impl->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-            //SDL_SetWindowFullscreen(impl->window, isFullScreenDesktop ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
-            //SDL_ShowCursor(isFullScreenDesktop);
+            SDL_SetWindowFullscreenMode(impl->window, nullptr);
+            SDL_SetWindowFullscreen(impl->window, true);
         }
             break;
     }
@@ -352,12 +342,12 @@ void Window::setWindowMode(const WindowMode &mode)
 void Window::showMouse(bool show)
 {
     if (show) {
-        SDL_ShowCursor(SDL_ENABLE);
-        SDL_SetRelativeMouseMode(SDL_FALSE);
+        SDL_ShowCursor();
+        SDL_SetWindowRelativeMouseMode(impl->window, false);
     }
     else {
-        SDL_ShowCursor(SDL_DISABLE);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
+        SDL_HideCursor();
+        SDL_SetWindowRelativeMouseMode(impl->window, true);
     }
 }
 

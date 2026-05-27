@@ -102,13 +102,13 @@ void App::draw()
     colorMap.bind();
     mesh.draw();*/
 
-    bool show_demo_window = true;
-    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-    ImGui::ShowDemoWindow(&show_demo_window);
 }
 
 void App::drawUI()
 {
+    static bool show_demo_window = true;
+    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+    ImGui::ShowDemoWindow(&show_demo_window);
 }
 
 void App::onResize(int width, int height)

@@ -1,9 +1,13 @@
 #include "UI.h"
-#include "graphics/GL.h"
-#include "graphics/Shader.h"
-#include "graphics/Geometry.h"
+
+#include "system/Subsystem.h"
+#include "window/Window.h"
+
 #include <imgui.h>
-#include <imgui_internal.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_sdl3.h>
+
+#include <cassert>
 
 namespace library
 {
@@ -11,148 +15,30 @@ namespace library
 	{
 	public:
 		Impl();
-		virtual ~Impl();
+		~Impl();
 
+		void makeCurrent();
 		void draw(ImDrawData *draw_data);
 
+		float deltaTime{1.0f / 60.0f};
+
 	private:
-		ImGuiContext *mImgui;
-		GLuint g_FontTexture = 0;
-		Shader mShader;
-		Geometry mGeometry;
+		ImGuiContext *context{nullptr};
 	};
 
 	UI::Impl::Impl()
 	{
-		mImgui = ImGui::CreateContext();
-		ImGuiIO &io = ImGui::GetIO();
+		auto &window = subsystem::get<Window>();
 
-		// Create font
-		unsigned char *pixels;
-		int width, height;
+		context = ImGui::CreateContext();
+		ImGui::SetCurrentContext(context);
+
+		ImGuiIO &io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 		io.Fonts->AddFontDefault();
-		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
-		// Upload texture to graphics system
-		GLint last_texture;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-		glGenTextures(1, &g_FontTexture);
-		glBindTexture(GL_TEXTURE_2D, g_FontTexture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		ImGui::StyleColorsDark();
 
-		// Store our identifier
-		io.Fonts->TexID = (void *)(intptr_t)g_FontTexture;
-
-		// Restore state
-		glBindTexture(GL_TEXTURE_2D, last_texture);
-
-		mShader.fromString(R"(
-			[Vertex]
-			#version 430
-			layout (location = 0) in vec3 VertexPosition;
-			layout (location = 2) in vec2 VertexTexCoord;
-			//in vec4 Color;
-			out vec2 TexCoord;
-			out vec4 vColor;
-
-			uniform mat4 projection;
-
-			void main()
-			{
-				TexCoord = VertexTexCoord;
-				vColor = vec4(1, 1, 1, 0); //Color;
-				//gl_Position = projection * vec4(VertexPosition.xy, 0, 1);
-				gl_Position = vec4(VertexPosition.xy, 0, 1);
-			}
-
-			[Fragment]
-			#version 430
-			in vec2 TexCoord;
-			in vec4 vColor;
-			out vec4 FragColor;
-
-			uniform sampler2D colorMap;
-
-			void main()
-			{
-				//FragColor = vColor * texture(colorMap, TexCoord.st);
-				FragColor = texture(colorMap, TexCoord);
-			}
-		)");
-
-		std::vector<vec2> vertices = {
-			vec2(-1.0f, -1.0f),
-			vec2(1.0f, -1.0f),
-			vec2(-1.0f, 1.0f),
-			vec2(1.0f, 1.0f)};
-
-		std::vector<unsigned int> indices = {0, 1, 2, 1, 3, 2};
-
-		std::vector<vec2> texCoords = {
-			vec2(0.0f, 1.0f),
-			vec2(1.0f, 1.0f),
-			vec2(0.0f, 0.0f),
-			vec2(1.0f, 0.0f)};
-
-		mGeometry.setVertices(vertices);
-		mGeometry.setIndices(indices);
-		mGeometry.setTexCoords(texCoords);
-	}
-
-	UI::Impl::~Impl()
-	{
-		if (g_FontTexture)
-		{
-			glDeleteTextures(1, &g_FontTexture);
-			ImGui::GetIO().Fonts->TexID = 0;
-			g_FontTexture = 0;
-		}
-
-		ImGui::DestroyContext();
-	}
-
-	void UI::Impl::draw(ImDrawData *draw_data)
-	{
-		ImGuiIO &io = ImGui::GetIO();
-
-		/*const float ortho_projection[4][4] =
-		{
-			{ 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-			{ 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-			{ 0.0f,                  0.0f,                    -1.0f, 0.0f },
-			{ -1.0f,                 1.0f,                     0.0f, 1.0f },
-		};*/
-
-		mat4 orthoProjection(0.0f);
-		orthoProjection[0][0] = 2.0f / io.DisplaySize.x;
-		orthoProjection[0][1] = 2.0f / -io.DisplaySize.y;
-		orthoProjection[2][2] = -1.0f;
-		orthoProjection[3][0] = -1.0f;
-		orthoProjection[3][1] = 1.0f;
-		orthoProjection[3][3] = 1.0f;
-
-		/*
-		vec4 orthoProjection(0.0f);
-		orthoProjection[0] = 2.0f / io.DisplaySize.x;
-		orthoProjection[5] = 2.0f / -io.DisplaySize.y;
-		orthoProjection[10] = -1.0f;
-		orthoProjection[12] = -1.0f;
-		orthoProjection[13] = 1.0f;
-		orthoProjection[15] = 1.0f;
-		*/
-
-		mShader.bind();
-		// mShader.setUniform("projection", orthoProjection);
-		mGeometry.draw();
-	}
-
-	//=========================================================================
-
-	UI::UI() : impl{std::make_unique<Impl>()}
-	{
 		ImGuiStyle &style = ImGui::GetStyle();
 		style.WindowRounding = 0.0f;
 		style.ChildRounding = 0.0f;
@@ -160,44 +46,69 @@ namespace library
 		style.FrameRounding = 0.0f;
 		style.ScrollbarRounding = 0.0f;
 		style.GrabRounding = 0.0f;
+
+		assert(ImGui_ImplSDL3_InitForOpenGL(window.getSDLWindow(), window.getGLContext()));
+		assert(ImGui_ImplOpenGL3_Init("#version 430 core"));
+
+		window.eventCallback = [](const SDL_Event *event)
+		{
+			ImGui_ImplSDL3_ProcessEvent(event);
+		};
+	}
+
+	UI::Impl::~Impl()
+	{
+		if (subsystem::has<Window>())
+		{
+			subsystem::get<Window>().eventCallback = nullptr;
+		}
+
+		ImGui::SetCurrentContext(context);
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplSDL3_Shutdown();
+		ImGui::DestroyContext(context);
+	}
+
+	void UI::Impl::makeCurrent()
+	{
+		ImGui::SetCurrentContext(context);
+	}
+
+	void UI::Impl::draw(ImDrawData *draw_data)
+	{
+		ImGui_ImplOpenGL3_RenderDrawData(draw_data);
+	}
+
+	UI::UI() : impl{std::make_unique<Impl>()}
+	{
 	}
 
 	UI::~UI()
 	{
-		// imguiShutdown();
 	}
 
 	void UI::setEvents(const Events &events)
 	{
-		ImGuiIO &io = ImGui::GetIO();
-		io.DisplaySize = ImVec2((float)events.windowSize.x, (float)events.windowSize.y);
-		io.DeltaTime = events.deltaTime;
-		io.KeyShift = events.isKeyShiftDown;
-		io.KeyCtrl = events.isKeyCtrlDown;
-		io.KeyAlt = events.isKeyAltDown;
-		io.KeySuper = events.isKeySuperDown;
-		io.MousePos = ImVec2((float)events.mousePosition.x, (float)events.mousePosition.y);
-		io.MouseWheel = (float)events.mouseWheel;
-		io.MouseDown[0] = events.isMouseButtonLeftDown;
-		io.MouseDown[1] = events.isMouseButtonRightDown;
-		io.MouseDown[2] = events.isMouseButtonMiddleDown;
-		memcpy(io.KeysDown, events.keysDown, 512 * sizeof(bool));
-		io.AddInputCharactersUTF8(events.textInput);
+		impl->makeCurrent();
+		if (events.deltaTime > 0.0f)
+		{
+			impl->deltaTime = events.deltaTime;
+		}
 	}
 
 	void UI::frameStart()
 	{
+		impl->makeCurrent();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL3_NewFrame();
+		ImGui::GetIO().DeltaTime = impl->deltaTime;
 		ImGui::NewFrame();
 	}
 
 	void UI::frameEnd()
 	{
+		impl->makeCurrent();
 		ImGui::Render();
-
-		// glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-		// glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-		// glClear(GL_COLOR_BUFFER_BIT);
-
 		impl->draw(ImGui::GetDrawData());
 	}
 }

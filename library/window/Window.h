@@ -4,6 +4,9 @@
 #include <functional>
 #include "math/Math.h"
 
+struct SDL_Window;
+union SDL_Event;
+
 namespace library
 {
 
@@ -280,6 +283,7 @@ public:
     void swapBuffers();
 
     void handleEvents();
+    std::function<void(const SDL_Event *)> eventCallback;
     std::function<void()> closeEvent;
     std::function<void(int, int)> resizeEvent;
     std::function<void(int, int)> positionEvent;
@@ -298,6 +302,8 @@ public:
     int getMouseWheelChange();
     bool isMouseButtonDown(Button button);
 
+    SDL_Window *getSDLWindow();
+    void *getGLContext();
     void *getWindowHandle();
     void *getDisplay();
     int getWidth();
