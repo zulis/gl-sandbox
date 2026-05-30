@@ -24,6 +24,10 @@ public:
 
     Geometry();
     Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices);
+    Geometry(const Geometry &) = delete;
+    Geometry &operator=(const Geometry &) = delete;
+    Geometry(Geometry &&other) noexcept;
+    Geometry &operator=(Geometry &&other) noexcept;
     virtual ~Geometry();
 
     void setVertices(const std::vector<vec3> &vertices);

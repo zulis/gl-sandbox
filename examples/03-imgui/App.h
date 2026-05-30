@@ -4,6 +4,8 @@
 #include "graphics/Texture.h"
 #include "graphics/Shader.h"
 #include "graphics/Mesh.h"
+#include "graphics/Geometry.h"
+#include "graphics/Primitive.h"
 
 using namespace library;
 
@@ -21,5 +23,6 @@ private:
     Texture colorMap;
     Shader shader;
     Mesh mesh;
+    Geometry geometry;
     mat4 model{mat4(1.0)};
 };

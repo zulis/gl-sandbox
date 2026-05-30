@@ -13,9 +13,9 @@ public:
     std::vector<vec3> normals;
     std::vector<vec3> tangents;
     std::vector<vec3> bitangents;
-    GLuint vaoHandle;
-    GLuint vboHandle[6];
-    bool prepared;
+    GLuint vaoHandle{0};
+    GLuint vboHandle[6]{0, 0, 0, 0, 0, 0};
+    bool prepared{false};
 
     bool hasIndices() const;
     bool hasTexCoords() const;
@@ -25,7 +25,6 @@ public:
     void generateNormals();
     void generateTangents();
     void prepare();
-
 };
 
 bool Geometry::Impl::hasIndices() const
@@ -148,6 +147,10 @@ void Geometry::Impl::prepare()
     if (!hasTangents())
         generateTangents();*/
 
+    if (vertices.empty()) {
+        return;
+    }
+
     glGenVertexArrays(1, &vaoHandle);
     glBindVertexArray(vaoHandle);
 
@@ -168,10 +171,12 @@ void Geometry::Impl::prepare()
 	}
 
     // Vertex Texture Coords
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle[2]);
-    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * 2 * sizeof(float), &texCoords[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
+    if (hasTexCoords()) {
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, vboHandle[2]);
+        glBufferData(GL_ARRAY_BUFFER, texCoords.size() * 2 * sizeof(float), &texCoords[0], GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte *) NULL + (0)));
+    }
 
     // Vertex Tangent
 	if (hasTangents()) {
@@ -212,8 +217,16 @@ Geometry::Geometry(std::vector<vec3> vertices, std::vector<unsigned int> indices
     setIndices(indices);
 }
 
+Geometry::Geometry(Geometry &&other) noexcept = default;
+
+Geometry &Geometry::operator=(Geometry &&other) noexcept = default;
+
 Geometry::~Geometry()
 {
+    if (!impl) {
+        return;
+    }
+
     impl->vertices.clear();
     impl->indices.clear();
     impl->texCoords.clear();
@@ -444,6 +457,10 @@ bool Geometry::hasBitangents() const
 
 void Geometry::draw()
 {
+    if (impl->vertices.empty()) {
+        return;
+    }
+
     if (!impl->prepared) {
         impl->prepare();
     }
@@ -451,10 +468,10 @@ void Geometry::draw()
     glBindVertexArray(impl->vaoHandle);
 
     if (impl->indices.size() > 0) {
-        glDrawElements(impl->drawType, impl->indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, ((GLubyte *) NULL + (0)));
+        glDrawElements(impl->drawType, static_cast<GLsizei>(impl->indices.size()), GL_UNSIGNED_INT, ((GLubyte *) NULL + (0)));
     }
     else {
-        glDrawArrays(impl->drawType, 0, impl->vertices.size() * 3 * sizeof(float));
+        glDrawArrays(impl->drawType, 0, static_cast<GLsizei>(impl->vertices.size()));
     }
 
     glBindVertexArray(0);

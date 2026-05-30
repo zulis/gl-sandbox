@@ -4,6 +4,7 @@
 #include "graphics/Texture.h"
 #include "graphics/Shader.h"
 #include "graphics/Geometry.h"
+#include "graphics/Primitive.h"
 #include <imgui.h>
 
 using namespace library;
