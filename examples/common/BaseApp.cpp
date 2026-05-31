@@ -35,7 +35,7 @@ void BaseApp::run()
     auto &simulation = subsystem::get<Simulation>();
     auto &ui = subsystem::get<UI>();
 
-    simulation.setMaxFps(60);
+    simulation.setTimeSmoothingStep(4);
 
     onResize(window->getWidth(), window->getHeight());
 

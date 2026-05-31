@@ -76,7 +76,7 @@ Window::Window()
             SDL_SetWindowPosition(impl->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
             impl->glContext = SDL_GL_CreateContext(impl->window);
 
-            SDL_GL_SetSwapInterval(1); // Enable vsync
+            SDL_GL_SetSwapInterval(0); // Disable vsync; frame pacing is handled by Simulation
 
             if (impl->glContext == nullptr) {
                 error("OpenGL context could not be created! SDL Error: {}", SDL_GetError());

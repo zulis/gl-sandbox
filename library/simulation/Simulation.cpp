@@ -17,12 +17,14 @@ public:
     unsigned int max_inactive_fps = 20;
     /// previous time steps for smoothing in seconds
     std::vector<duration_t> previous_timesteps;
-    /// next frame time step in seconds
-    duration_t timestep = duration_t::zero();
+    /// raw frame time step in seconds
+    duration_t raw_timestep = duration_t::zero();
+    /// smoothed frame time step in seconds
+    duration_t smoothed_timestep = duration_t::zero();
     /// current frame
     std::uint64_t frame = 0;
     /// how many frames to average for the smoothed time step
-    unsigned int smoothing_step = 11;
+    unsigned int smoothing_step = 4;
     /// frame update timer
     timepoint_t last_frame_timepoint = clock_t::now();
     /// time point when we launched
@@ -37,10 +39,10 @@ public:
         return std::chrono::duration_cast<duration_t>(std::chrono::duration<double>(1.0 / static_cast<double>(fps)));
     }
 
-    void updateTimestep(duration_t elapsed)
+    void updateSmoothedTimestep(duration_t elapsed)
     {
         if (smoothing_step == 0) {
-            timestep = elapsed;
+            smoothed_timestep = elapsed;
             return;
         }
 
@@ -51,13 +53,13 @@ public:
             previous_timesteps.erase(begin, begin + int(previous_timesteps.size() - smoothing_step));
         }
 
-        timestep = duration_t::zero();
+        smoothed_timestep = duration_t::zero();
 
         for (const auto step : previous_timesteps) {
-            timestep += step;
+            smoothed_timestep += step;
         }
 
-        timestep /= static_cast<duration_t::rep>(previous_timesteps.size());
+        smoothed_timestep /= static_cast<duration_t::rep>(previous_timesteps.size());
     }
 
 };
@@ -113,7 +115,8 @@ void Simulation::runOneFrame()
         }
     }
 
-    impl->updateTimestep(elapsed);
+    impl->raw_timestep = elapsed;
+    impl->updateSmoothedTimestep(elapsed);
 
     ++impl->frame;
 }
@@ -139,12 +142,17 @@ void Simulation::setTimeSmoothingStep(unsigned int step)
 
     if (step == 0) {
         impl->previous_timesteps.clear();
+        impl->smoothed_timestep = impl->raw_timestep;
         return;
     }
 
     if (impl->previous_timesteps.size() > step) {
         auto begin = impl->previous_timesteps.begin();
         impl->previous_timesteps.erase(begin, begin + int(impl->previous_timesteps.size() - step));
+    }
+
+    if (!impl->previous_timesteps.empty()) {
+        impl->updateSmoothedTimestep(impl->previous_timesteps.back());
     }
 }
 
@@ -155,13 +163,20 @@ Simulation::duration_t Simulation::getTimeSinceLaunch() const
 
 unsigned Simulation::getFps() const
 {
-    auto dt = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(impl->timestep).count();
+    const auto timestep = impl->smoothed_timestep != duration_t::zero() ? impl->smoothed_timestep : impl->raw_timestep;
+    auto dt = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(timestep).count();
     return static_cast<unsigned>(dt == 0.0f ? 0 : 1000.0f / dt);
 }
 
 std::chrono::duration<float> Simulation::getDeltaTime() const
 {
-    auto dt = std::chrono::duration_cast<std::chrono::duration<float>>(impl->timestep);
+    auto dt = std::chrono::duration_cast<std::chrono::duration<float>>(impl->raw_timestep);
+    return dt;
+}
+
+std::chrono::duration<float> Simulation::getSmoothedDeltaTime() const
+{
+    auto dt = std::chrono::duration_cast<std::chrono::duration<float>>(impl->smoothed_timestep);
     return dt;
 }
 

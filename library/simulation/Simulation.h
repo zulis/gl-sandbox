@@ -23,6 +23,7 @@ public:
     duration_t getTimeSinceLaunch() const;
     unsigned getFps() const;
     std::chrono::duration<float> getDeltaTime() const;
+    std::chrono::duration<float> getSmoothedDeltaTime() const;
 
 private:
     class Impl;

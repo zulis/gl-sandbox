@@ -7,7 +7,7 @@ namespace
     constexpr float kPrimaryLightHeight = 1.15f;
     constexpr float kSecondaryLightHeight = -0.95f;
     constexpr float kTertiaryLightHeight = 0.25f;
-    constexpr float kLightOrbitSpeed = 50.0f;
+    constexpr float kLightOrbitSpeed = 100.0f;
 }
 
 App::App()
