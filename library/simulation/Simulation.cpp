@@ -28,11 +28,45 @@ public:
     /// time point when we launched
     timepoint_t launch_timepoint = clock_t::now();
 
+    static duration_t getFrameDuration(unsigned int fps)
+    {
+        if (fps == 0) {
+            return duration_t::zero();
+        }
+
+        return std::chrono::duration_cast<duration_t>(std::chrono::duration<double>(1.0 / static_cast<double>(fps)));
+    }
+
+    void updateTimestep(duration_t elapsed)
+    {
+        if (smoothing_step == 0) {
+            timestep = elapsed;
+            return;
+        }
+
+        previous_timesteps.push_back(elapsed);
+
+        if (previous_timesteps.size() > smoothing_step) {
+            auto begin = previous_timesteps.begin();
+            previous_timesteps.erase(begin, begin + int(previous_timesteps.size() - smoothing_step));
+        }
+
+        timestep = duration_t::zero();
+
+        for (const auto step : previous_timesteps) {
+            timestep += step;
+        }
+
+        timestep /= static_cast<duration_t::rep>(previous_timesteps.size());
+    }
+
 };
 
 Simulation::Simulation()
     : impl{std::make_unique<Impl>()}
 {
+    impl->last_frame_timepoint = impl->launch_timepoint;
+
     if (impl->max_inactive_fps == 0) {
         impl->max_inactive_fps = std::max(impl->max_inactive_fps, impl->max_fps);
     }
@@ -43,78 +77,43 @@ Simulation::~Simulation()
 
 void Simulation::runOneFrame()
 {
-    duration_t elapsed = clock_t::now() - impl->last_frame_timepoint;
-    if(impl->max_fps > 0)
-    {
-        duration_t target_duration = 1000ms / impl->max_fps;
+    const auto previous_frame_timepoint = impl->last_frame_timepoint;
+    auto frame_timepoint = clock_t::now();
 
-        for(;;)
-        {
-            elapsed = clock_t::now() - impl->last_frame_timepoint;
-            if(elapsed >= target_duration)
-            {
-                break;
-            }
+    if (impl->max_fps > 0) {
+        const duration_t target_duration = Impl::getFrameDuration(impl->max_fps);
+        const auto target_timepoint = previous_frame_timepoint + target_duration;
+        const auto sleep_threshold = std::chrono::duration_cast<duration_t>(1500us);
 
-            if(elapsed < duration_t(0))
-            {
-                break;
-            }
-            duration_t sleep_time = (target_duration - elapsed);
-            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(sleep_time);
+        if (frame_timepoint + sleep_threshold < target_timepoint) {
+            std::this_thread::sleep_until(target_timepoint - sleep_threshold);
+            frame_timepoint = clock_t::now();
+        }
 
-            if(sleep_time > std::chrono::microseconds(1000))
-            {
-                if(ms.count() > 0)
-                {
-                    sleep_time /= ms.count();
-                }
-
-                std::this_thread::sleep_for(sleep_time);
-            }
+        while (frame_timepoint < target_timepoint) {
+            std::this_thread::yield();
+            frame_timepoint = clock_t::now();
         }
     }
 
-    if(elapsed < duration_t(0))
-    {
-        elapsed = duration_t(0);
+    duration_t elapsed = frame_timepoint - previous_frame_timepoint;
+
+    if (elapsed < duration_t::zero()) {
+        elapsed = duration_t::zero();
     }
-    impl->last_frame_timepoint = clock_t::now();
+
+    impl->last_frame_timepoint = frame_timepoint;
 
     // if fps lower than minimum, clamp eplased time
-    if(impl->min_fps > 0)
-    {
-        duration_t target_duration = 1000ms / impl->min_fps;
-        if(elapsed > target_duration)
-        {
+    if (impl->min_fps > 0) {
+        duration_t target_duration = Impl::getFrameDuration(impl->min_fps);
+
+        if (elapsed > target_duration) {
             elapsed = target_duration;
         }
     }
 
-    // perform time step smoothing
-    if(impl->smoothing_step > 0)
-    {
-        impl->timestep = duration_t::zero();
-        impl->previous_timesteps.push_back(elapsed);
-        if(impl->previous_timesteps.size() > impl->smoothing_step)
-        {
-            auto begin = impl->previous_timesteps.begin();
-            impl->previous_timesteps.erase(begin, begin + int(impl->previous_timesteps.size() - impl->smoothing_step));
-            for(auto step : impl->previous_timesteps)
-            {
-                impl->timestep += step;
-            }
-            impl->timestep /= static_cast<duration_t::rep>(impl->previous_timesteps.size());
-        }
-        else
-        {
-            impl->timestep = impl->previous_timesteps.back();
-        }
-    }
-    else
-    {
-        impl->timestep = elapsed;
-    }
+    impl->updateTimestep(elapsed);
 
     ++impl->frame;
 }
@@ -137,6 +136,16 @@ void Simulation::setMaxInactiveFps(unsigned int fps)
 void Simulation::setTimeSmoothingStep(unsigned int step)
 {
     impl->smoothing_step = step;
+
+    if (step == 0) {
+        impl->previous_timesteps.clear();
+        return;
+    }
+
+    if (impl->previous_timesteps.size() > step) {
+        auto begin = impl->previous_timesteps.begin();
+        impl->previous_timesteps.erase(begin, begin + int(impl->previous_timesteps.size() - step));
+    }
 }
 
 Simulation::duration_t Simulation::getTimeSinceLaunch() const

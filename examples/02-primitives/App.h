@@ -5,7 +5,6 @@
 #include "graphics/Shader.h"
 #include "graphics/Geometry.h"
 #include "graphics/Primitive.h"
-#include <imgui.h>
 
 using namespace library;
 
@@ -22,7 +21,10 @@ public:
 private:
     Texture texture;
     Shader shader;
-    Geometry geometry;
+    Geometry geometry1;
+    Geometry geometry2;
+    Geometry geometry3;
+    Geometry geometry4;
     mat4 projection;
     mat4 view;
     mat4 model;

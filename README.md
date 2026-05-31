@@ -16,15 +16,25 @@ I'm pretty sure that nobody will use it, but for me it's a pleasure to work on i
 
 See examples folder for more details.
 
-### 02-mesh
+### 04-imgui
+
+Render user interface using Dear ImGui.
+![04-imgui](screenshots/04-imgui.png)
+
+### 03-mesh
 
 Mesh loading using Assimp and use of FPS camera.
-![01-cube](screenshots/02-mesh.png)
+![03-mesh](screenshots/03-mesh.png)
 
-### 01-cube
+### 02-primitives
 
-Rotating textured cube.
-![01-cube](screenshots/01-cube.png)
+Predefined primitives.
+![02-primitives](screenshots/02-primitives.png)
+
+### 01-custom-geometry
+
+Rotating custom geometry.
+![01-custom-geometry](screenshots/01-custom-geometry.png)
 
 ### 00-simple
 

@@ -1,6 +1,8 @@
 #include "Camera.h"
 #include "graphics/GL.h"
 
+#include <algorithm>
+
 using namespace library;
 
 class Camera::Impl
@@ -13,7 +15,7 @@ public:
     vec3 direction;
     mat4 view;
     mat4 projection;
-    float rotateSpeed{0.005f};
+    float mouseSensitivity{0.005f};
     float strafeSpeed{5.0f};
     float fov;
     float aspectRatio{4.0f / 3.0f};
@@ -166,6 +168,16 @@ void Camera::setPerspective(float fov, float aspectRatio, float nearPlane, float
     impl->update();
 }
 
+void Camera::setMouseSensitivity(float sensitivity)
+{
+    impl->mouseSensitivity = std::max(sensitivity, 0.0f);
+}
+
+float Camera::getMouseSensitivity() const
+{
+    return impl->mouseSensitivity;
+}
+
 float Camera::getFarClip() const
 {
     return impl->farClip;
@@ -178,14 +190,14 @@ float Camera::getNearClip() const
 
 void Camera::rotate(float x, float y)
 {
-    impl->horizontalAngle += impl->rotateSpeed * -x;
-    impl->verticalAngle += impl->rotateSpeed * -y;
+    impl->horizontalAngle += impl->mouseSensitivity * -x;
+    impl->verticalAngle += impl->mouseSensitivity * -y;
     impl->update();
 }
 
 void Camera::setRotateSpeed(float speed)
 {
-    impl->rotateSpeed = speed;
+    setMouseSensitivity(speed);
 }
 
 void Camera::move(MovementType movement)

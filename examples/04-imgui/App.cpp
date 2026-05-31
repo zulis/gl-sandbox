@@ -1,10 +1,8 @@
 #include "App.h"
 
 App::App()
-    : BaseApp("Mesh")
+    : BaseApp("ImGui")
 {
-    colorMap.fromFile("assets/models/leprechaun/leprechaun_d.png");
-
     shader.fromString(R"(
         [Vertex]
         #version 430
@@ -42,8 +40,9 @@ App::App()
     model = rotate(model, radians(-90.f), vec3(1.0f, 0.0f, 0.0f));
     model = scale(model, vec3(0.1f));
 
-    camera.setPosition(0, 4, 12);
-    camera.setLookAt(0, 4, 0);
+    camera.setPosition(-3, 4, 12);
+    camera.setLookAt(-3, 4, 0);
+    camera.setMouseSensitivity(0.00125f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -81,7 +80,7 @@ void App::update(float deltaTime)
     {
         window->showMouse(false);
         auto mouseChange = window->getMouseChange();
-        camera.rotate(mouseChange.x * deltaTime * 15.0f, mouseChange.y * deltaTime * 15.0f);
+        camera.rotate(mouseChange.x, mouseChange.y);
     }
     else
     {
@@ -94,17 +93,21 @@ void App::draw()
     glClearColor(0.39f, 0.58f, 0.93f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shader.bind();
+    /*shader.bind();
     shader.setUniform("projection", camera.getProjectionMatrix());
     shader.setUniform("view", camera.getViewMatrix());
     shader.setUniform("model", model);
 
     colorMap.bind();
-    mesh.draw();
+    mesh.draw();*/
+
 }
 
 void App::drawUI()
 {
+    static bool show_demo_window = true;
+    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+    ImGui::ShowDemoWindow(&show_demo_window);
 }
 
 void App::onResize(int width, int height)

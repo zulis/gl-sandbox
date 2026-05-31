@@ -8,7 +8,7 @@ namespace library
 {
 class Simulation
 {
-    using clock_t = std::chrono::high_resolution_clock;
+    using clock_t = std::chrono::steady_clock;
     using timepoint_t = clock_t::time_point;
     using duration_t = clock_t::duration;
 public:

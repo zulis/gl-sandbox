@@ -19,6 +19,8 @@ public:
     void setLookAt(float x, float y, float z);
     void setAspectRatio(float ratio);
     void setPerspective(float fov, float aspectRatio, float nearPlane, float farPlane);
+    void setMouseSensitivity(float sensitivity);
+    float getMouseSensitivity() const;
     void setRotateSpeed(float speed);
     void setStrafeSpeed(float speed);
     void setNearClip(float nearClip);

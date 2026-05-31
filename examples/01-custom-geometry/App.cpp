@@ -1,7 +1,7 @@
 #include "App.h"
 
 App::App()
-    : BaseApp("Cube")
+    : BaseApp("Custom geometry")
 {
     texture.fromFile("assets/textures/uv.jpg");
 
@@ -197,8 +197,6 @@ void App::draw()
 
 void App::drawUI()
 {
-    static bool show_demo_window = true;
-    ImGui::ShowDemoWindow(&show_demo_window);
 }
 
 void App::onResize(int width, int height)
