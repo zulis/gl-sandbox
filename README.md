@@ -38,8 +38,9 @@ Predefined primitives.
 01-custom-geometry
 ------------------
 
-Rotating custom geometry.
+Rotating custom geometry and logging to the terminal.
 ![01-custom-geometry](screenshots/01-custom-geometry.png)
+![01-logging](screenshots/01-logging.png)
 
 00-simple
 ---------

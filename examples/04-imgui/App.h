@@ -1,11 +1,6 @@
 #pragma once
 
 #include "../common/BaseApp.h"
-#include "graphics/Texture.h"
-#include "graphics/Shader.h"
-#include "graphics/Mesh.h"
-#include "graphics/Geometry.h"
-#include "graphics/Primitive.h"
 
 using namespace library;
 
@@ -18,11 +13,4 @@ public:
     void draw() override;
     void drawUI() override;
     void onResize(int width, int height) override;
-
-private:
-    Texture colorMap;
-    Shader shader;
-    Mesh mesh;
-    Geometry geometry;
-    mat4 model{mat4(1.0)};
 };
