@@ -307,4 +307,84 @@ Geometry Primitive::cylinder(float radius, float height, unsigned int segments)
 
     return makeGeometry(std::move(vertices), std::move(indices), std::move(normals), std::move(texCoords));
 }
+
+Geometry Primitive::capsule(float radius, float height, unsigned int segments)
+{
+    const unsigned int clampedSegments = std::max(segments, 3u);
+    const unsigned int hemisphereRings = std::max(clampedSegments / 2, 2u);
+    const float cylinderHalfHeight = std::max(height * 0.5f - radius, 0.0f);
+
+    if (cylinderHalfHeight == 0.0f) {
+        return sphere(radius, clampedSegments, hemisphereRings * 2);
+    }
+
+    const unsigned int ringCount = hemisphereRings * 2 + 2;
+    const unsigned int stride = clampedSegments + 1;
+    const float totalHalfHeight = cylinderHalfHeight + radius;
+    const float totalHeight = totalHalfHeight * 2.0f;
+
+    std::vector<vec3> vertices;
+    std::vector<vec3> normals;
+    std::vector<vec2> texCoords;
+    std::vector<unsigned int> indices;
+
+    vertices.reserve(ringCount * stride);
+    normals.reserve(ringCount * stride);
+    texCoords.reserve(ringCount * stride);
+    indices.reserve((ringCount - 1) * clampedSegments * 6);
+
+    auto appendRing = [&](float y, float ringRadius, float normalY) {
+        const float v = (y + totalHalfHeight) / totalHeight;
+
+        for (unsigned int segment = 0; segment <= clampedSegments; ++segment) {
+            const float u = static_cast<float>(segment) / static_cast<float>(clampedSegments);
+            const float angle = u * two_pi<float>();
+            const float x = std::cos(angle);
+            const float z = std::sin(angle);
+
+            vertices.push_back(vec3(ringRadius * x, y, ringRadius * z));
+            normals.push_back(normalize(vec3(x * ringRadius, normalY * radius, z * ringRadius)));
+            texCoords.push_back(vec2(u, v));
+        }
+    };
+
+    for (unsigned int ring = 0; ring <= hemisphereRings; ++ring) {
+        const float t = static_cast<float>(ring) / static_cast<float>(hemisphereRings);
+        const float angle = t * half_pi<float>();
+        const float y = cylinderHalfHeight + std::cos(angle) * radius;
+        const float ringRadius = std::sin(angle) * radius;
+        appendRing(y, ringRadius, std::cos(angle));
+    }
+
+    appendRing(-cylinderHalfHeight, radius, 0.0f);
+
+    for (unsigned int ring = 1; ring <= hemisphereRings; ++ring) {
+        const float t = static_cast<float>(ring) / static_cast<float>(hemisphereRings);
+        const float angle = t * half_pi<float>();
+        const float y = -cylinderHalfHeight - std::sin(angle) * radius;
+        const float ringRadius = std::cos(angle) * radius;
+        appendRing(y, ringRadius, -std::sin(angle));
+    }
+
+    for (unsigned int ring = 0; ring < ringCount - 1; ++ring) {
+        for (unsigned int segment = 0; segment < clampedSegments; ++segment) {
+            const unsigned int current = ring * stride + segment;
+            const unsigned int next = current + stride;
+
+            if (ring != 0) {
+                indices.push_back(current);
+                indices.push_back(current + 1);
+                indices.push_back(next);
+            }
+
+            if (ring != ringCount - 2) {
+                indices.push_back(current + 1);
+                indices.push_back(next + 1);
+                indices.push_back(next);
+            }
+        }
+    }
+
+    return makeGeometry(std::move(vertices), std::move(indices), std::move(normals), std::move(texCoords));
+}
 }

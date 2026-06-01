@@ -41,7 +41,7 @@ App::App()
     geometry1 = Primitive::box();
     geometry2 = Primitive::cone();
     geometry3 = Primitive::sphere();
-    geometry4 = Primitive::cylinder();
+    geometry4 = Primitive::capsule();
 
     projection =
         perspective(radians(45.0f), (float)window->getWidth() / (float)window->getHeight(), 0.1f, 1000.0f);

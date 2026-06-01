@@ -32,7 +32,7 @@ Mesh loading using Assimp and use of FPS camera.
 02-primitives
 -------------
 
-Predefined primitives.
+Predefined primitives: box, plane, cone, sphere, cylinder and capsule.
 ![02-primitives](screenshots/02-primitives.png)
 
 01-custom-geometry
